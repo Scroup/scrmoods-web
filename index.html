@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>scrmoods</title>
+<meta name="theme-color" content="#38166B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="scrmoods">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root {
+  --purple: #38166B; --teal: #5FA7C3; --link: #4F9CBF; --gray: #F4F4F4; --border: #D9DCDF;
+  --text: #222; --text2: #555; --muted: #999; --bad: #D9534F; --mid: #F0AD4E; --good: #5CB85C;
+  --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: #fff; color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 17px; }
+body { padding-top: calc(60px + var(--safe-top)); padding-bottom: calc(64px + var(--safe-bottom)); }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+input, textarea, select { font: inherit; }
+
+/* top bar */
+#top { position: fixed; top: 0; left: 0; right: 0; z-index: 10; background: var(--purple); color: #fff;
+  padding-top: var(--safe-top); }
+#top .row { height: 60px; display: flex; align-items: center; padding: 0 12px; gap: 14px; }
+#top .logo { width: 40px; height: 40px; border-radius: 10px; background: #fff; display: grid; place-items: center; }
+#top h1 { font-size: 21px; font-weight: 500; margin: 0; flex: 1; }
+#top .gear { width: 40px; height: 40px; display: grid; place-items: center; }
+
+/* bottom nav */
+#nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; background: var(--purple);
+  display: flex; padding-bottom: var(--safe-bottom); }
+#nav button { flex: 1; height: 64px; color: rgba(255,255,255,.72); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px; font-size: 12.5px; position: relative; }
+#nav button.on { color: #fff; }
+#nav button.on::after { content: ""; position: absolute; left: 12%; right: 12%; bottom: 0; height: 3px; background: var(--teal); }
+#nav svg { width: 24px; height: 24px; fill: currentColor; }
+
+/* date bar */
+.datebar { position: sticky; top: calc(60px + var(--safe-top)); z-index: 5; background: #fff; display: flex; align-items: center;
+  height: 60px; padding: 0 6px; border-bottom: 1px solid #E0E0E0; }
+.datebar .arrow { width: 48px; height: 48px; display: grid; place-items: center; }
+.datebar .arrow svg { width: 30px; height: 30px; stroke: var(--text); fill: none; stroke-width: 2.4; }
+.datebar .arrow:disabled svg { stroke: #ccc; }
+.datebar .title { flex: 1; text-align: center; color: var(--teal); font-size: 20px; }
+
+/* sections */
+.section { padding-bottom: 14px; }
+.section.shade { background: var(--gray); }
+.section h2 { font-size: 20px; font-weight: 400; margin: 0 16px; padding: 18px 0 8px; border-bottom: 1px solid #E6E6E6; }
+.q { font-size: 17px; color: var(--text2); margin: 14px 16px 8px; }
+.seg { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #fff; margin: 0 12px; }
+.seg + .seg { margin-top: 6px; }
+.seg button { flex: 1; min-height: 46px; padding: 6px 4px; font-size: 15px; color: var(--text); text-align: center;
+  border-left: 1px solid var(--border); line-height: 1.2; }
+.seg button:first-child { border-left: 0; }
+.seg button.on { background: var(--purple); color: #fff; font-weight: 500; }
+.yn { display: flex; align-items: center; gap: 12px; padding: 10px 12px 4px 16px; }
+.yn .q { margin: 0; flex: 1; }
+.yn .seg { margin: 0; width: 140px; flex: none; }
+.num .head { display: flex; align-items: center; margin: 14px 16px 2px; }
+.num .head .q { margin: 0; flex: 1; }
+.num .ctrl { display: flex; align-items: center; padding: 0 4px; }
+.num .ctrl button.pm { width: 48px; height: 48px; font-size: 28px; color: var(--text); }
+.num input[type=range] { flex: 1; accent-color: var(--teal); height: 32px; }
+.small-btn { color: var(--text2); font-size: 15px; padding: 6px 8px; }
+.textq textarea { display: block; width: calc(100% - 24px); margin: 0 12px; min-height: 64px; border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px; resize: vertical; background: #fff; }
+.link { display: block; margin: 8px auto 0; padding: 12px; color: var(--link); font-size: 18px; font-weight: 500; text-align: center; }
+.links { display: flex; justify-content: space-around; }
+.note-text { padding: 8px 16px; white-space: pre-wrap; }
+.note-text.empty { color: var(--muted); }
+.h2row { position: relative; }
+.h2row .small-btn { position: absolute; right: 12px; top: 14px; }
+.tnote { display: flex; align-items: flex-start; gap: 10px; padding: 6px 4px 0 16px; }
+.tnote .t { color: var(--teal); font-size: 15px; padding-top: 2px; }
+.tnote .x { flex: 1; white-space: pre-wrap; }
+.tnote button { color: #aaa; width: 32px; height: 28px; font-size: 18px; }
+
+/* calendar */
+.calgrid { display: grid; grid-template-columns: repeat(7, 1fr); padding: 0 8px; gap: 2px; }
+.calgrid .wd { text-align: center; font-size: 13px; color: var(--text2); padding: 8px 0; }
+.day { aspect-ratio: 1; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+.day.today { box-shadow: inset 0 0 0 1.5px var(--teal); font-weight: 700; }
+.day.sel { background: var(--purple); color: #fff; }
+.day.future { color: #bbb; }
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 8px 16px; font-size: 14px; align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.info { color: var(--text2); font-size: 15px; padding: 6px 16px; }
+.hint { color: var(--muted); font-size: 14px; padding: 4px 16px; }
+
+/* graph */
+.picker { margin: 16px 12px 0; position: relative; }
+.picker select { width: 100%; appearance: none; -webkit-appearance: none; border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 36px 12px 14px; background: #fff; color: var(--text); font-size: 16px; }
+.picker::after { content: "▾"; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text2); pointer-events: none; }
+.chart { margin: 12px 8px 0; }
+.chart svg { width: 100%; height: auto; display: block; }
+.stat { display: flex; padding: 5px 16px; }
+.stat span:first-child { flex: 1; color: var(--text2); }
+.stat span:last-child { font-weight: 500; }
+.dist { display: flex; align-items: center; padding: 3px 16px; font-size: 14px; gap: 8px; }
+.dist .l { width: 96px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dist .b { flex: 1; height: 14px; background: #F0F0F0; border-radius: 4px; overflow: hidden; }
+.dist .b i { display: block; height: 100%; border-radius: 4px; }
+.dist .c { width: 30px; color: var(--text2); text-align: right; }
+.ov { display: flex; gap: 10px; padding: 9px 16px; border-bottom: 1px solid #F0F0F0; font-size: 15px; width: 100%; text-align: left; }
+.ov .l { flex: 1; }
+.ov .s { color: var(--text2); font-size: 14px; max-width: 46%; text-align: right; }
+
+/* data / manage */
+.btn { display: block; width: calc(100% - 32px); margin: 8px 16px; padding: 13px; border-radius: 22px; text-align: center; font-weight: 500; }
+.btn.primary { background: var(--purple); color: #fff; }
+.btn.outline { border: 1px solid #bbb; color: var(--purple); }
+.mono { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--text2); padding: 0 16px; word-break: break-all; }
+.backrow { display: flex; align-items: center; gap: 6px; padding: 6px 4px; border-bottom: 1px solid #E0E0E0; font-size: 20px; }
+.backrow button { width: 44px; height: 44px; font-size: 24px; }
+.prow { display: flex; align-items: center; padding: 6px 4px 6px 16px; gap: 2px; }
+.prow .lab { flex: 1; min-width: 0; }
+.prow .lab div:first-child { font-size: 16px; }
+.prow .lab div:last-child { font-size: 13px; color: #888; }
+.prow .ic { width: 38px; height: 38px; color: var(--text2); font-size: 18px; display: grid; place-items: center; }
+.prow .ic:disabled { color: #ddd; }
+.prow .ic.red { color: #C0392B; }
+.empty { color: var(--muted); padding: 6px 16px; font-size: 15px; }
+
+/* dialogs */
+#modal { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.4); display: none; align-items: center; justify-content: center; padding: 16px; }
+#modal.open { display: flex; }
+.dlg { background: #fff; border-radius: 18px; width: 100%; max-width: 480px; max-height: calc(100vh - 64px); display: flex; flex-direction: column; }
+.dlg h3 { margin: 0; padding: 20px 20px 10px; font-size: 20px; font-weight: 500; }
+.dlg .body { padding: 0 20px; overflow: auto; }
+.dlg .acts { display: flex; justify-content: flex-end; gap: 6px; padding: 12px 14px 14px; }
+.dlg .acts button { color: var(--purple); font-weight: 500; padding: 10px 14px; }
+.dlg label.f { display: block; font-size: 14px; color: var(--text2); margin: 12px 0 4px; }
+.dlg input[type=text], .dlg input[type=number], .dlg textarea { width: 100%; border: 1px solid #bbb; border-radius: 6px; padding: 10px; background: #fff; }
+.dlg textarea { min-height: 110px; resize: vertical; }
+.dlg .radio { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 15px; }
+.dlg .radio input { width: 20px; height: 20px; accent-color: var(--purple); margin: 0; }
+.dlg .row3 { display: flex; gap: 8px; }
+.dlg .row3 > div { flex: 1; }
+.err { color: #C0392B; font-size: 14px; margin-top: 8px; }
+.toast { position: fixed; left: 50%; bottom: calc(80px + var(--safe-bottom)); transform: translateX(-50%); background: #333; color: #fff;
+  padding: 10px 16px; border-radius: 20px; font-size: 15px; z-index: 60; }
+</style>
+</head>
+<body>
+<div id="top"><div class="row">
+  <div class="logo"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="#38166B" d="M4 11h4v9H4zM10 4h4v16h-4zM16 8h4v12h-4z"/></svg></div>
+  <h1>scrmoods</h1>
+  <button class="gear" data-act="manage" aria-label="Tracking points">
+    <svg width="24" height="24" viewBox="0 0 24 24"><path fill="#fff" d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.48.48 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg>
+  </button>
+</div></div>
+
+<main id="main"></main>
+
+<nav id="nav">
+  <button data-tab="checkin"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"/></svg>Check-in</button>
+  <button data-tab="calendar"><svg viewBox="0 0 24 24"><path d="M9 11H7v2h2zm4 0h-2v2h2zm4 0h-2v2h2zm2-7h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14z"/></svg>Calendar</button>
+  <button data-tab="graph"><svg viewBox="0 0 24 24"><path d="M4 11h4v9H4zM10 4h4v16h-4zM16 8h4v12h-4z"/></svg>Graph</button>
+  <button data-tab="data"><svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3zm0 4h2v-2H3zm0-8h2V7H3zm4 4h14v-2H7zm0 4h14v-2H7zM7 7v2h14V7z"/></svg>Data</button>
+</nav>
+
+<div id="modal"></div>
+<input type="file" id="importFile" accept=".xml,text/xml,application/xml,text/plain" hidden>
+
+<script>
+'use strict';
+/* =====================================================================
+   Data model — identical to the Android app, and the same XML file format,
+   so an export from one can be imported into the other.
+   ===================================================================== */
+const KEY = 'scrmoods.xml';
+const FREQ = ['Not at all', 'Somewhat', 'Fairly', 'Very'];
+const LEVEL = ['Not at all', 'Low', 'Medium', 'High'];
+const TYPES = { scale: 'Scale (choose one option)', yesno: 'Yes / No', number: 'Number (slider)', text: 'Text' };
+
+const DEFAULT_SECTIONS = [
+  { id: 'daily', title: 'Daily Check-in' },
+  { id: 'health', title: 'Health and Self Care' },
+  { id: 'social', title: 'Mental and Social Stimulation' },
+  { id: 'custom', title: 'Custom tracking points' },
+  { id: 'meds', title: 'Medications/Supplements (check off those you took today)' },
+];
+const P = (id, section, type, label, extra = {}) =>
+  Object.assign({ id, section, type, label, options: [], min: 0, max: 10, step: 1, unit: '', archived: false }, extra);
+const DEFAULT_POINTS = [
+  P('outlook', 'daily', 'scale', 'How was your overall outlook today?', { options: ['Negative', 'Neutral', 'Positive'] }),
+  P('productive', 'daily', 'scale', 'How productive were you today?', { options: FREQ }),
+  P('motivated', 'daily', 'scale', 'How motivated did you feel today?', { options: FREQ }),
+  P('lonely', 'daily', 'scale', 'Did you feel lonely today?', { options: FREQ }),
+  P('depressed', 'daily', 'scale', 'Did you feel depressed or hopeless today?', { options: FREQ }),
+  P('anxious', 'daily', 'scale', 'Did you feel anxious today?', { options: FREQ }),
+  P('sleep_hours', 'health', 'number', "Last night's sleep", { min: 0, max: 16, step: 0.5, unit: 'hrs' }),
+  P('restful_sleep', 'health', 'yesno', "Did you have a restful night's sleep?"),
+  P('nutrition', 'health', 'yesno', 'Have you met your nutrition needs today?'),
+  P('outside', 'health', 'yesno', 'Did you spend time outside?'),
+  P('exercise', 'health', 'yesno', 'Did you exercise today?'),
+  P('hygiene', 'health', 'yesno', 'Did you tend to your personal hygiene today?'),
+  P('friends_family', 'social', 'yesno', 'Did you spend quality time engaging with friends or family?'),
+  P('mindfulness', 'social', 'yesno', 'Did you practice any kind of mindfulness or meditation?'),
+  P('therapy', 'social', 'yesno', 'Did you have talk therapy today?'),
+  P('chores', 'social', 'yesno', 'Did you accomplish any household chores or tasks?'),
+  P('news_media', 'social', 'scale', 'News and media exposure:', { options: LEVEL }),
+  P('social_media', 'social', 'scale', 'Social media exposure:', { options: LEVEL }),
+];
+const clone = o => JSON.parse(JSON.stringify(o));
+const defaults = () => ({ sections: clone(DEFAULT_SECTIONS), points: clone(DEFAULT_POINTS), entries: {} });
+
+const fmtNum = n => (Math.round(n * 10) / 10).toString();
+function display(p, v) {
+  if (v == null) return '';
+  if (p.type === 'scale') return p.options[+v] ?? v;
+  if (p.type === 'yesno') return v === '1' ? 'Yes' : 'No';
+  if (p.type === 'number') return fmtNum(parseFloat(v)) + (p.unit ? ' ' + p.unit : '');
+  return v;
+}
+const entryEmpty = e => !e || (Object.keys(e.values).length === 0 && !e.note && e.timed.length === 0);
+
+/* ---------- XML ---------- */
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+function toXml(d) {
+  const L = ["<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>", '<scrmoods version="1">', '  <sections>'];
+  for (const s of d.sections) L.push(`    <section id="${esc(s.id)}" title="${esc(s.title)}" />`);
+  L.push('  </sections>', '  <points>');
+  for (const p of d.points) {
+    let a = `id="${esc(p.id)}" section="${esc(p.section)}" type="${p.type}" label="${esc(p.label)}"`;
+    if (p.type === 'number') a += ` min="${p.min}" max="${p.max}" step="${p.step}" unit="${esc(p.unit)}"`;
+    a += ` archived="${p.archived}"`;
+    if (p.options.length) {
+      L.push(`    <point ${a}>`);
+      for (const o of p.options) L.push(`      <option>${esc(o)}</option>`);
+      L.push('    </point>');
+    } else L.push(`    <point ${a} />`);
+  }
+  L.push('  </points>', '  <entries>');
+  const byId = Object.fromEntries(d.points.map(p => [p.id, p]));
+  for (const date of Object.keys(d.entries).sort()) {
+    const e = d.entries[date];
+    if (entryEmpty(e)) continue;
+    L.push(`    <entry date="${date}">`);
+    for (const [pid, v] of Object.entries(e.values)) {
+      const t = byId[pid] ? ` text="${esc(display(byId[pid], v))}"` : '';
+      L.push(`      <value point="${esc(pid)}"${t}>${esc(v)}</value>`);
+    }
+    if (e.note) L.push(`      <note>${esc(e.note)}</note>`);
+    for (const t of e.timed) L.push(`      <timednote time="${esc(t.time)}">${esc(t.text)}</timednote>`);
+    L.push('    </entry>');
+  }
+  L.push('  </entries>', '</scrmoods>', '');
+  return L.join('\n');
+}
+function fromXml(text) {
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  const root = doc.documentElement;
+  if (!root || root.nodeName !== 'scrmoods' || doc.getElementsByTagName('parsererror').length)
+    throw new Error('This is not a scrmoods file');
+  const num = (v, def) => { const n = parseFloat(v); return isNaN(n) ? def : n; };
+  const sections = [...root.getElementsByTagName('section')].map(s => ({ id: s.getAttribute('id') || '', title: s.getAttribute('title') || '' }));
+  for (const d of DEFAULT_SECTIONS) if (!sections.some(s => s.id === d.id)) sections.push(clone(d));
+  const points = [...root.getElementsByTagName('point')].map(p => ({
+    id: p.getAttribute('id') || '',
+    section: p.getAttribute('section') || 'custom',
+    type: TYPES[p.getAttribute('type')] ? p.getAttribute('type') : 'yesno',
+    label: p.getAttribute('label') || '',
+    options: [...p.getElementsByTagName('option')].map(o => o.textContent),
+    min: num(p.getAttribute('min'), 0), max: num(p.getAttribute('max'), 10), step: num(p.getAttribute('step'), 1),
+    unit: p.getAttribute('unit') || '',
+    archived: p.getAttribute('archived') === 'true',
+  })).filter(p => p.id);
+  const entries = {};
+  for (const e of root.getElementsByTagName('entry')) {
+    const date = e.getAttribute('date'); if (!date) continue;
+    const values = {};
+    for (const v of e.getElementsByTagName('value')) if (v.getAttribute('point')) values[v.getAttribute('point')] = v.textContent;
+    const note = e.getElementsByTagName('note')[0]?.textContent || '';
+    const timed = [...e.getElementsByTagName('timednote')].map(t => ({ time: t.getAttribute('time') || '', text: t.textContent }));
+    entries[date] = { values, note, timed };
+  }
+  return { sections, points, entries };
+}
+
+/* ---------- storage ---------- */
+let D;
+function load() {
+  let raw = null;
+  try { raw = localStorage.getItem(KEY); } catch (e) {}
+  if (raw) {
+    try { D = fromXml(raw); return; }
+    catch (e) {
+      try { localStorage.setItem(KEY + '.unreadable-' + Date.now(), raw); } catch (_) {}
+      setTimeout(() => toast('Saved data could not be read; a copy was kept. Starting fresh.'), 300);
+    }
+  }
+  D = defaults(); save();
+}
+function save() {
+  try { localStorage.setItem(KEY, toXml(D)); }
+  catch (e) { toast('Could not save! Storage may be full: export your data.'); }
+}
+const entry = date => D.entries[date] || { values: {}, note: '', timed: [] };
+function updateEntry(date, fn) {
+  const e = clone(entry(date)); fn(e);
+  if (entryEmpty(e)) delete D.entries[date]; else D.entries[date] = e;
+  save();
+}
+function setValue(date, pid, v) { updateEntry(date, e => { if (v == null || v === '') delete e.values[pid]; else e.values[pid] = String(v); }); }
+
+/* =====================================================================
+   UI
+   ===================================================================== */
+const $main = document.getElementById('main');
+const $modal = document.getElementById('modal');
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseYmd = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = parseYmd(s); d.setDate(d.getDate() + n); return ymd(d); };
+const today = () => ymd(new Date());
+
+const ui = { tab: 'checkin', date: today(), manage: false, month: null, graphPoint: null, range: 1 };
+try { const t = sessionStorage.getItem('scrmoods.tab'); if (t) ui.tab = t; } catch (e) {}
+
+function render() {
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', !ui.manage && b.dataset.tab === ui.tab));
+  document.getElementById('nav').style.display = ui.manage ? 'none' : 'flex';
+  if (ui.manage) return renderManage();
+  ({ checkin: renderCheckin, calendar: renderCalendar, graph: renderGraph, data: renderData })[ui.tab]();
+}
+
+/* ---------- check-in ---------- */
+const ARROW_L = '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+const ARROW_R = '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
+
+function seg(options, selected, act, pid, multiRow = true) {
+  const rows = [];
+  const all = options.map((o, i) => [o, i]);
+  const chunk = multiRow ? 5 : all.length;
+  for (let i = 0; i < all.length; i += chunk) rows.push(all.slice(i, i + chunk));
+  return rows.map(r => `<div class="seg">${r.map(([o, i]) =>
+    `<button class="${selected === i ? 'on' : ''}" data-act="${act}" data-pid="${esc(pid)}" data-i="${i}">${esc(o)}</button>`).join('')}</div>`).join('');
+}
+
+function pointInput(p, v) {
+  const sel = v == null ? null : parseInt(v);
+  if (p.type === 'scale') return `<div class="q">${esc(p.label)}</div>${seg(p.options, sel, 'pick', p.id)}`;
+  if (p.type === 'yesno') return `<div class="yn"><div class="q">${esc(p.label)}</div>${seg(['No', 'Yes'], sel, 'pick', p.id)}</div>`;
+  if (p.type === 'number') {
+    const has = v != null;
+    const val = has ? parseFloat(v) : p.min;
+    const unit = p.unit ? ` (${esc(p.unit)})` : '';
+    return `<div class="num">
+      <div class="head"><div class="q">${esc(p.label)}${unit}: <span id="nv-${esc(p.id)}">${has ? fmtNum(val) : '–'}</span></div>
+        ${has ? `<button class="small-btn" data-act="clear" data-pid="${esc(p.id)}">Clear</button>` : ''}</div>
+      <div class="ctrl">
+        <button class="pm" data-act="minus" data-pid="${esc(p.id)}">—</button>
+        <input type="range" min="${p.min}" max="${p.max}" step="${p.step}" value="${val}" data-pid="${esc(p.id)}">
+        <button class="pm" data-act="plus" data-pid="${esc(p.id)}">+</button>
+      </div></div>`;
+  }
+  return `<div class="textq"><div class="q">${esc(p.label)}</div><textarea data-pid="${esc(p.id)}">${esc(v || '')}</textarea></div>`;
+}
+
+function renderCheckin() {
+  const t = today(), d = ui.date, e = entry(d);
+  const dt = parseYmd(d);
+  const opts = { weekday: 'short', month: 'short', day: 'numeric' };
+  if (dt.getFullYear() !== new Date().getFullYear()) opts.year = 'numeric';
+  let h = `<div class="datebar">
+    <button class="arrow" data-act="prev" aria-label="Previous day">${ARROW_L}</button>
+    <button class="title" data-act="todayDate">${dt.toLocaleDateString(undefined, opts)}</button>
+    <button class="arrow" data-act="next" aria-label="Next day" ${d >= t ? 'disabled' : ''}>${ARROW_R}</button></div>`;
+  let shade = false;
+  for (const s of D.sections) {
+    const pts = D.points.filter(p => p.section === s.id && !p.archived);
+    if (!pts.length && s.id !== 'custom' && s.id !== 'meds') continue;
+    h += `<div class="section ${shade ? 'shade' : ''}"><h2>${esc(s.title)}</h2>`;
+    shade = !shade;
+    for (const p of pts) h += pointInput(p, e.values[p.id]);
+    if (s.id === 'custom') h += `<button class="link" data-act="addPoint" data-sec="custom">Add custom tracking point</button>`;
+    if (s.id === 'meds') h += `<div class="links"><button class="link" data-act="addPoint" data-sec="meds">Add medication</button>
+      <button class="link" data-act="manage">Edit medications</button></div>`;
+    h += '</div>';
+  }
+  h += `<div class="section ${shade ? 'shade' : ''}"><div class="h2row"><h2>Today's Note:</h2>
+      <button class="small-btn" data-act="editNote">Edit</button></div>
+    <div class="note-text ${e.note ? '' : 'empty'}" data-act="editNote">${e.note ? esc(e.note) : 'Tap Edit to write a note for this day.'}</div></div>`;
+  h += `<div class="section ${!shade ? 'shade' : ''}"><h2>Notes:</h2>
+    ${e.timed.map((n, i) => `<div class="tnote"><span class="t">${esc(n.time.split(' ')[1] || n.time)}</span>
+      <span class="x">${esc(n.text)}</span><button data-act="delTimed" data-i="${i}" aria-label="Delete note">✕</button></div>`).join('')}
+    <button class="link" data-act="addTimed">Add timestamped note</button></div>`;
+  $main.innerHTML = h;
+}
+
+/* ---------- calendar ---------- */
+function moodColor(f) {
+  const lerp = (a, b, t) => a.map((x, i) => Math.round(x + (b[i] - x) * t));
+  const bad = [217, 83, 79], mid = [240, 173, 78], good = [92, 184, 92];
+  const c = f < 0.5 ? lerp(bad, mid, f * 2) : lerp(mid, good, (f - 0.5) * 2);
+  return `rgb(${c.join(',')})`;
+}
+function renderCalendar() {
+  if (!ui.month) { const d = parseYmd(ui.date); ui.month = [d.getFullYear(), d.getMonth()]; }
+  const [y, m] = ui.month;
+  const first = new Date(y, m, 1);
+  const days = new Date(y, m + 1, 0).getDate();
+  const offset = (first.getDay() + 6) % 7; // Monday first
+  const t = today();
+  const outlook = D.points.find(p => p.id === 'outlook');
+  const title = first.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  let h = `<div class="datebar"><button class="arrow" data-act="prevMonth">${ARROW_L}</button>
+    <button class="title" data-act="thisMonth">${title.charAt(0).toUpperCase() + title.slice(1)}</button>
+    <button class="arrow" data-act="nextMonth">${ARROW_R}</button></div><div class="calgrid">`;
+  for (let i = 0; i < 7; i++) {
+    const wd = new Date(2024, 0, 1 + i); // 1 Jan 2024 was a Monday
+    h += `<div class="wd">${wd.toLocaleDateString(undefined, { weekday: 'short' })}</div>`;
+  }
+  for (let i = 0; i < offset; i++) h += '<div></div>';
+  let logged = 0;
+  for (let n = 1; n <= days; n++) {
+    const ds = ymd(new Date(y, m, n));
+    const e = D.entries[ds];
+    if (e) logged++;
+    let dot = 'transparent';
+    if (e) {
+      const v = outlook ? parseInt(e.values[outlook.id]) : NaN;
+      dot = !isNaN(v) && outlook.options.length > 1 ? moodColor(v / (outlook.options.length - 1)) : 'var(--teal)';
+    }
+    const cls = ['day', ds === ui.date ? 'sel' : '', ds === t ? 'today' : '', ds > t ? 'future' : ''].join(' ');
+    h += `<button class="${cls}" ${ds > t ? 'disabled' : `data-act="pickDay" data-d="${ds}"`}><span>${n}</span><span class="dot" style="background:${dot}"></span></button>`;
+  }
+  h += `</div><div class="info">Days logged this month: ${logged}</div>`;
+  if (outlook && outlook.options.length) {
+    h += `<div class="info">Dot colour = overall outlook</div><div class="legend">` +
+      outlook.options.map((o, i) => `<span><i class="dot" style="background:${moodColor(outlook.options.length > 1 ? i / (outlook.options.length - 1) : 1)}"></i>${esc(o)}</span>`).join('') +
+      `<span><i class="dot" style="background:var(--teal)"></i>Other entries</span></div>`;
+  }
+  h += `<div class="hint">Tap a day to open its check-in.</div>`;
+  $main.innerHTML = h;
+}
+
+/* ---------- graph ---------- */
+const RANGES = [[7, '7 days'], [30, '30 days'], [90, '90 days'], [365, '1 year']];
+const yRange = p => p.type === 'scale' ? [0, Math.max(1, p.options.length - 1)] : p.type === 'number' ? [p.min, p.max] : [0, 1];
+function series(p, days) { return days.map(d => { const v = D.entries[d]?.values[p.id]; const n = parseFloat(v); return v == null || isNaN(n) ? null : n; }); }
+function stats(p, days) {
+  const vals = series(p, days).filter(v => v != null);
+  if (!vals.length) return null;
+  return { count: vals.length, avg: vals.reduce((a, b) => a + b, 0) / vals.length, min: Math.min(...vals), max: Math.max(...vals), vals };
+}
+function summary(p, s) {
+  if (!s) return 'no answers';
+  if (p.type === 'yesno') return `Yes on ${Math.round(s.avg * 100)}% of ${s.count} days`;
+  if (p.type === 'scale') return `avg ${s.avg.toFixed(1)} (${p.options[Math.round(s.avg)] || ''}), ${s.count} days`;
+  return `avg ${s.avg.toFixed(1)}${p.unit ? ' ' + p.unit : ''}, ${s.count} days`;
+}
+function valueColor(p, v) {
+  if (p.type === 'number') return 'var(--teal)';
+  const [lo, hi] = yRange(p);
+  return moodColor(Math.min(1, Math.max(0, (v - lo) / (hi - lo))));
+}
+function chartSvg(p, days) {
+  const W = Math.round(Math.min(Math.max(window.innerWidth - 16, 300), 900)), H = 230, L = 70, R = 8, T = 12, B = 12;
+  const [lo, hi] = yRange(p);
+  const labels = p.type === 'scale' ? [...p.options].reverse() : p.type === 'yesno' ? ['Yes', 'No'] : [fmtNum(hi), fmtNum((lo + hi) / 2), fmtNum(lo)];
+  const vals = series(p, days);
+  const n = days.length, slot = (W - L - R) / n;
+  const x = i => L + slot * i + slot / 2;
+  const y = v => T + (1 - (Math.min(hi, Math.max(lo, v)) - lo) / (hi - lo)) * (H - T - B);
+  let s = `<svg viewBox="0 0 ${W} ${H}">`;
+  labels.forEach((l, i) => {
+    const gy = T + (H - T - B) * i / Math.max(1, labels.length - 1);
+    s += `<line x1="${L}" x2="${W - R}" y1="${gy}" y2="${gy}" stroke="#E8E8E8" stroke-width="1"/>`;
+    s += `<text x="${L - 6}" y="${gy + 4}" text-anchor="end" font-size="10.5" fill="#555">${esc(l.length > 11 ? l.slice(0, 10) + '…' : l)}</text>`;
+  });
+  if (p.type === 'yesno') {
+    const bw = Math.min(slot * 0.7, 20);
+    vals.forEach((v, i) => {
+      if (v == null) return;
+      if (v >= 0.5) s += `<rect x="${x(i) - bw / 2}" y="${y(1)}" width="${bw}" height="${y(0) - y(1)}" fill="var(--good)" rx="1"/>`;
+      else s += `<rect x="${x(i) - bw / 2}" y="${y(0) - 4}" width="${bw}" height="4" fill="var(--bad)"/>`;
+    });
+  } else {
+    const pts = vals.map((v, i) => v == null ? null : [x(i), y(v)]).filter(Boolean);
+    if (pts.length > 1) s += `<polyline points="${pts.map(q => q.join(',')).join(' ')}" fill="none" stroke="rgba(56,22,107,.55)" stroke-width="2"/>`;
+    const r = n > 120 ? 2 : 3.5;
+    vals.forEach((v, i) => { if (v != null) s += `<circle cx="${x(i)}" cy="${y(v)}" r="${r}" fill="${valueColor(p, v)}"/>`; });
+  }
+  return s + '</svg>';
+}
+function renderGraph() {
+  const chartable = D.points.filter(p => p.type !== 'text');
+  if (!chartable.length) { $main.innerHTML = '<div class="info" style="padding:16px">No tracking points to chart yet.</div>'; return; }
+  let p = chartable.find(q => q.id === ui.graphPoint) || chartable.find(q => q.id === 'outlook') || chartable[0];
+  ui.graphPoint = p.id;
+  const nDays = RANGES[ui.range][0];
+  const days = []; for (let i = nDays - 1; i >= 0; i--) days.push(addDays(today(), -i));
+  const short = s => parseYmd(s).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+  const s = stats(p, days);
+  let h = `<div class="picker"><select id="graphPick">${chartable.map(q =>
+    `<option value="${esc(q.id)}" ${q.id === p.id ? 'selected' : ''}>${esc(q.label)}${q.archived ? ' (removed)' : ''}</option>`).join('')}</select></div>
+    <div style="margin-top:12px">${seg(RANGES.map(r => r[1]), ui.range, 'range', '')}</div>
+    <div class="chart">${chartSvg(p, days)}</div>
+    <div style="display:flex;padding:0 16px 0 78px;font-size:12px;color:#555"><span style="flex:1">${short(days[0])}</span><span>${short(days[days.length - 1])}</span></div>
+    <div class="section"><h2>Statistics</h2>
+    <div class="stat"><span>Days answered</span><span>${s ? s.count : 0} of ${nDays}</span></div>`;
+  if (s) {
+    if (p.type === 'yesno') {
+      const yes = s.vals.filter(v => v >= 0.5).length;
+      h += `<div class="stat"><span>Yes</span><span>${yes} days (${Math.round(yes * 100 / s.count)}%)</span></div>
+            <div class="stat"><span>No</span><span>${s.count - yes} days</span></div>`;
+    } else if (p.type === 'scale') {
+      h += `<div class="stat"><span>Average</span><span>${s.avg.toFixed(2)} → ${esc(p.options[Math.round(s.avg)] || '')}</span></div><div style="height:8px"></div>`;
+      p.options.forEach((o, i) => {
+        const c = s.vals.filter(v => Math.round(v) === i).length;
+        h += `<div class="dist"><span class="l">${esc(o)}</span><span class="b"><i style="width:${c * 100 / s.count}%;background:${valueColor(p, i)}"></i></span><span class="c">${c}</span></div>`;
+      });
+    } else {
+      const u = p.unit ? ' ' + esc(p.unit) : '';
+      h += `<div class="stat"><span>Average</span><span>${s.avg.toFixed(1)}${u}</span></div>
+            <div class="stat"><span>Lowest</span><span>${fmtNum(s.min)}${u}</span></div>
+            <div class="stat"><span>Highest</span><span>${fmtNum(s.max)}${u}</span></div>`;
+    }
+  }
+  h += `</div><div class="section"><h2>All tracking points, last ${RANGES[ui.range][1]}</h2>`;
+  for (const q of chartable.filter(q => !q.archived))
+    h += `<button class="ov" data-act="graphPoint" data-pid="${esc(q.id)}"><span class="l">${esc(q.label)}</span><span class="s">${esc(summary(q, stats(q, days)))}</span></button>`;
+  $main.innerHTML = h + '</div>';
+}
+
+/* ---------- data ---------- */
+function renderData() {
+  const keys = Object.keys(D.entries).sort();
+  $main.innerHTML = `<div class="section"><h2>Your data</h2>
+    <div class="info" style="color:var(--text)">Days logged: ${keys.length}<br>
+      ${keys.length ? `First entry: ${keys[0]}<br>` : ''}Active tracking points: ${D.points.filter(p => !p.archived).length}</div>
+    <div class="info">Everything is stored as one XML file inside this app on this device (the same format as the Android app,
+      so you can move data between them). Export it regularly: <b>deleting the app from the home screen deletes its data.</b></div>
+    <button class="btn primary" data-act="export">Export data (XML)</button>
+    <button class="btn outline" data-act="import">Import data from file…</button>
+    <button class="btn outline" data-act="manage">Manage tracking points</button>
+    <div class="hint" style="margin-top:8px">On iPhone, Export opens the share sheet: choose “Save to Files”.</div></div>`;
+}
+
+/* ---------- manage tracking points ---------- */
+function typeSummary(p) {
+  if (p.type === 'scale') return p.options.join(' · ');
+  if (p.type === 'yesno') return 'No · Yes';
+  if (p.type === 'number') return `Number ${fmtNum(p.min)}–${fmtNum(p.max)}${p.unit ? ' ' + p.unit : ''}`;
+  return 'Text';
+}
+function renderManage() {
+  let h = `<div class="backrow"><button data-act="closeManage" aria-label="Back">←</button>Tracking points</div>
+    <div class="info" style="padding:14px 16px">Add your own questions, edit or reorder them, or remove the ones you don't need.
+      Removing a point only hides it from the check-in, so its past answers stay in your data.</div>`;
+  for (const s of D.sections) {
+    const pts = D.points.filter(p => p.section === s.id && !p.archived);
+    h += `<div class="section"><h2>${esc(s.title)}</h2>`;
+    pts.forEach((p, i) => {
+      h += `<div class="prow"><div class="lab" data-act="editPoint" data-pid="${esc(p.id)}"><div>${esc(p.label)}</div><div>${esc(typeSummary(p))}</div></div>
+        <button class="ic" data-act="up" data-pid="${esc(p.id)}" ${i === 0 ? 'disabled' : ''} aria-label="Move up">▲</button>
+        <button class="ic" data-act="down" data-pid="${esc(p.id)}" ${i === pts.length - 1 ? 'disabled' : ''} aria-label="Move down">▼</button>
+        <button class="ic" data-act="editPoint" data-pid="${esc(p.id)}" aria-label="Edit">✎</button>
+        <button class="ic" data-act="archive" data-pid="${esc(p.id)}" aria-label="Remove">🗑</button></div>`;
+    });
+    if (!pts.length) h += `<div class="empty">Nothing here yet.</div>`;
+    h += `<button class="link" style="margin-left:4px;text-align:left" data-act="addPoint" data-sec="${esc(s.id)}">${s.id === 'meds' ? 'Add medication' : 'Add tracking point'}</button></div>`;
+  }
+  const removed = D.points.filter(p => p.archived);
+  if (removed.length) {
+    h += `<div class="section"><h2>Removed tracking points</h2>
+      <div class="info">Hidden from the check-in. Restore brings a point back; Delete erases it and all its past answers.</div>`;
+    for (const p of removed) {
+      const st = D.sections.find(s => s.id === p.section)?.title || p.section;
+      h += `<div class="prow"><div class="lab"><div style="color:var(--text2)">${esc(p.label)}</div><div>${esc(st)}</div></div>
+        <button class="ic" data-act="restore" data-pid="${esc(p.id)}" aria-label="Restore">↺</button>
+        <button class="ic red" data-act="deleteForever" data-pid="${esc(p.id)}" aria-label="Delete forever">🗑</button></div>`;
+    }
+    h += '</div>';
+  }
+  h += `<button class="small-btn" style="margin:16px 8px 24px" data-act="resetDefaults">Restore all built-in questions</button>`;
+  $main.innerHTML = h;
+}
+
+/* ---------- dialogs ---------- */
+function openDialog(title, bodyHtml, actions) {
+  $modal.innerHTML = `<div class="dlg" role="dialog"><h3>${esc(title)}</h3><div class="body">${bodyHtml}</div>
+    <div class="acts">${actions.map((a, i) => `<button data-dlg="${i}">${esc(a.label)}</button>`).join('')}</div></div>`;
+  $modal.classList.add('open');
+  $modal.querySelectorAll('[data-dlg]').forEach(b => b.onclick = () => { const r = actions[+b.dataset.dlg].run(); if (r !== false) closeDialog(); });
+  const first = $modal.querySelector('textarea, input[type=text]');
+  if (first) setTimeout(() => first.focus(), 50);
+}
+function closeDialog() { $modal.classList.remove('open'); $modal.innerHTML = ''; }
+$modal.addEventListener('click', e => { if (e.target === $modal) closeDialog(); });
+
+function textDialog(title, initial, confirm, onSave) {
+  openDialog(title, `<textarea id="dlgText">${esc(initial)}</textarea>`,
+    [{ label: 'Cancel', run: () => {} }, { label: confirm, run: () => onSave(document.getElementById('dlgText').value) }]);
+}
+function confirmDialog(title, msg, confirm, onOk) {
+  openDialog(title, `<p style="margin:0 0 4px;line-height:1.4">${esc(msg)}</p>`, [{ label: 'Cancel', run: () => {} }, { label: confirm, run: onOk }]);
+}
+
+function pointEditor(existing, sectionId) {
+  const isNew = !existing;
+  const p = existing ? clone(existing) : P('', sectionId, sectionId === 'meds' ? 'yesno' : 'scale', '', { options: FREQ.slice() });
+  const body = () => {
+    const med = p.section === 'meds';
+    return `<label class="f">${med ? 'Name and dose' : 'Question'}</label>
+      <input type="text" id="pLabel" value="${esc(p.label)}" placeholder="${med ? 'e.g. Vitamin D, 2000 IU (AM)' : 'e.g. Did you drink enough water?'}">
+      <label class="f">Section</label>
+      ${D.sections.map(s => `<label class="radio"><input type="radio" name="pSec" value="${esc(s.id)}" ${p.section === s.id ? 'checked' : ''}>${esc(s.title)}</label>`).join('')}
+      <label class="f">Answer type</label>
+      ${isNew ? Object.entries(TYPES).map(([k, t]) => `<label class="radio"><input type="radio" name="pType" value="${k}" ${p.type === k ? 'checked' : ''}>${t}</label>`).join('')
+              : `<div style="font-size:14px;padding:4px 0">${TYPES[p.type]} (can't be changed once created, so old answers stay valid)</div>`}
+      <div id="pScale" style="display:${p.type === 'scale' ? 'block' : 'none'}">
+        <label class="f">Options, one per line (lowest first)</label><textarea id="pOpts">${esc(p.options.join('\n'))}</textarea>
+        ${isNew ? '' : '<div class="hint" style="padding:4px 0">Answers are saved by position, so keep the same number and order of options.</div>'}
+      </div>
+      <div id="pNum" style="display:${p.type === 'number' ? 'block' : 'none'}">
+        <div class="row3"><div><label class="f">Min</label><input type="number" inputmode="decimal" id="pMin" value="${p.min}"></div>
+          <div><label class="f">Max</label><input type="number" inputmode="decimal" id="pMax" value="${p.max}"></div>
+          <div><label class="f">Step</label><input type="number" inputmode="decimal" id="pStep" value="${p.step}"></div></div>
+        <label class="f">Unit (optional, e.g. hrs, cups)</label><input type="text" id="pUnit" value="${esc(p.unit)}">
+      </div>
+      <div class="err" id="pErr"></div>`;
+  };
+  openDialog(isNew ? (sectionId === 'meds' ? 'Add medication' : 'Add tracking point') : 'Edit tracking point', body(), [
+    { label: 'Cancel', run: () => {} },
+    { label: 'Save', run: () => {
+      const err = m => { document.getElementById('pErr').textContent = m; return false; };
+      const label = document.getElementById('pLabel').value.trim();
+      const section = $modal.querySelector('input[name=pSec]:checked')?.value || p.section;
+      const type = isNew ? ($modal.querySelector('input[name=pType]:checked')?.value || p.type) : p.type;
+      if (!label) return err('Please enter a question or name.');
+      const opts = document.getElementById('pOpts').value.split('\n').map(s => s.trim()).filter(Boolean);
+      if (type === 'scale' && opts.length < 2) return err('A scale needs at least 2 options (one per line).');
+      const mn = parseFloat(document.getElementById('pMin').value.replace(',', '.'));
+      const mx = parseFloat(document.getElementById('pMax').value.replace(',', '.'));
+      const st = parseFloat(document.getElementById('pStep').value.replace(',', '.'));
+      if (type === 'number' && (isNaN(mn) || isNaN(mx) || isNaN(st) || mx <= mn || st <= 0))
+        return err('Check the numbers: maximum must be above minimum and step above 0.');
+      Object.assign(p, { label, section, type, options: type === 'scale' ? opts : [],
+        min: type === 'number' ? mn : 0, max: type === 'number' ? mx : 10, step: type === 'number' ? st : 1,
+        unit: type === 'number' ? document.getElementById('pUnit').value.trim() : '' });
+      if (isNew) { p.id = (section === 'meds' ? 'med_' : 'custom_') + Date.now().toString(36); D.points.push(p); }
+      else D.points = D.points.map(q => q.id === p.id ? p : q);
+      save(); render();
+    } },
+  ]);
+  // Show the right extra fields when the type or section changes.
+  $modal.querySelectorAll('input[name=pType]').forEach(r => r.onchange = () => {
+    document.getElementById('pScale').style.display = r.value === 'scale' ? 'block' : 'none';
+    document.getElementById('pNum').style.display = r.value === 'number' ? 'block' : 'none';
+  });
+}
+
+function toast(msg) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 2600);
+}
+
+/* ---------- import / export ---------- */
+async function exportData() {
+  const name = `scrmoods-${today()}.xml`;
+  const blob = new Blob([toXml(D)], { type: 'application/xml' });
+  const file = new File([blob], name, { type: 'application/xml' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: name }); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+document.getElementById('importFile').addEventListener('change', async ev => {
+  const f = ev.target.files[0]; ev.target.value = '';
+  if (!f) return;
+  const text = await f.text();
+  let data;
+  try { data = fromXml(text); } catch (e) { return toast('Import failed: ' + e.message); }
+  confirmDialog('Replace all data?',
+    `The file has ${Object.keys(data.entries).length} days. Importing replaces everything in the app (tracking points and all days). Export first if you want a copy of the current data.`,
+    'Import', () => { D = data; save(); render(); toast(`Imported ${Object.keys(D.entries).length} days`); });
+});
+
+/* ---------- events ---------- */
+function move(pid, dir) {
+  const p = D.points.find(q => q.id === pid);
+  const sib = D.points.filter(q => q.section === p.section && !q.archived);
+  const other = sib[sib.indexOf(p) + dir];
+  if (!other) return;
+  const a = D.points.indexOf(p), b = D.points.indexOf(other);
+  [D.points[a], D.points[b]] = [D.points[b], D.points[a]];
+}
+const snap = (p, v) => Math.min(p.max, Math.max(p.min, p.min + Math.round((v - p.min) / p.step) * p.step));
+const pt = id => D.points.find(p => p.id === id);
+
+document.addEventListener('click', ev => {
+  const nav = ev.target.closest('#nav button');
+  if (nav) { ui.tab = nav.dataset.tab; ui.manage = false; try { sessionStorage.setItem('scrmoods.tab', ui.tab); } catch (e) {} render(); window.scrollTo(0, 0); return; }
+  const el = ev.target.closest('[data-act]');
+  if (!el || $modal.contains(el)) return;
+  const act = el.dataset.act, pid = el.dataset.pid, d = ui.date;
+  switch (act) {
+    case 'prev': ui.date = addDays(d, -1); break;
+    case 'next': if (d < today()) ui.date = addDays(d, 1); break;
+    case 'todayDate': ui.date = today(); break;
+    case 'pick': {
+      const i = +el.dataset.i, cur = entry(d).values[pid];
+      setValue(d, pid, cur === String(i) ? null : i); break;
+    }
+    case 'clear': setValue(d, pid, null); break;
+    case 'minus': case 'plus': {
+      const p = pt(pid), cur = parseFloat(entry(d).values[pid]);
+      const base = isNaN(cur) ? (act === 'plus' ? p.min : p.min + p.step) : cur;
+      setValue(d, pid, fmtNum(snap(p, base + (act === 'plus' ? p.step : -p.step)))); break;
+    }
+    case 'addPoint': return pointEditor(null, el.dataset.sec);
+    case 'editPoint': return pointEditor(pt(pid));
+    case 'manage': ui.manage = true; window.scrollTo(0, 0); break;
+    case 'closeManage': ui.manage = false; window.scrollTo(0, 0); break;
+    case 'editNote': return textDialog("Today's Note", entry(d).note, 'Save', v => { updateEntry(d, e => e.note = v.trim()); render(); });
+    case 'addTimed': return textDialog('Timestamped note', '', 'Add', v => {
+      if (!v.trim()) return;
+      const n = new Date();
+      updateEntry(d, e => e.timed.push({ time: `${d} ${pad(n.getHours())}:${pad(n.getMinutes())}`, text: v.trim() })); render();
+    });
+    case 'delTimed': {
+      const i = +el.dataset.i;
+      return confirmDialog('Delete note?', entry(d).timed[i]?.text || '', 'Delete', () => { updateEntry(d, e => e.timed.splice(i, 1)); render(); });
+    }
+    case 'prevMonth': case 'nextMonth': {
+      const [y, m] = ui.month; const nd = new Date(y, m + (act === 'nextMonth' ? 1 : -1), 1);
+      ui.month = [nd.getFullYear(), nd.getMonth()]; break;
+    }
+    case 'thisMonth': { const n = new Date(); ui.month = [n.getFullYear(), n.getMonth()]; break; }
+    case 'pickDay': ui.date = el.dataset.d; ui.tab = 'checkin'; window.scrollTo(0, 0); break;
+    case 'range': ui.range = +el.dataset.i; break;
+    case 'graphPoint': ui.graphPoint = pid; window.scrollTo(0, 0); break;
+    case 'export': exportData(); return;
+    case 'import': document.getElementById('importFile').click(); return;
+    case 'up': move(pid, -1); save(); break;
+    case 'down': move(pid, 1); save(); break;
+    case 'archive': pt(pid).archived = true; save(); break;
+    case 'restore': pt(pid).archived = false; save(); break;
+    case 'deleteForever': {
+      const p = pt(pid);
+      return confirmDialog('Delete forever?', `"${p.label}" and every answer you gave for it will be erased. This can't be undone.`, 'Delete', () => {
+        D.points = D.points.filter(q => q.id !== pid);
+        for (const [k, e] of Object.entries(D.entries)) { delete e.values[pid]; if (entryEmpty(e)) delete D.entries[k]; }
+        save(); render();
+      });
+    }
+    case 'resetDefaults': return confirmDialog('Restore built-in questions?',
+      'Any removed or deleted built-in questions come back. Your own points and all answers are kept.', 'Restore', () => {
+        const ids = new Set(D.points.map(p => p.id));
+        for (const p of D.points) if (DEFAULT_POINTS.some(q => q.id === p.id)) p.archived = false;
+        for (const q of DEFAULT_POINTS) if (!ids.has(q.id)) D.points.push(clone(q));
+        save(); render();
+      });
+    default: return;
+  }
+  render();
+});
+
+// Slider: show the value while dragging, save when released.
+document.addEventListener('input', ev => {
+  if (ev.target.type === 'range') {
+    const span = document.getElementById('nv-' + ev.target.dataset.pid);
+    if (span) span.textContent = fmtNum(parseFloat(ev.target.value));
+  }
+});
+document.addEventListener('change', ev => {
+  const t = ev.target;
+  if (t.type === 'range') { setValue(ui.date, t.dataset.pid, fmtNum(snap(pt(t.dataset.pid), parseFloat(t.value)))); render(); }
+  else if (t.tagName === 'TEXTAREA' && t.dataset.pid && !$modal.contains(t)) setValue(ui.date, t.dataset.pid, t.value.trim() || null);
+  else if (t.id === 'graphPick') { ui.graphPoint = t.value; render(); }
+});
+// Text answers also save while typing (in case the app is closed without leaving the field).
+let typingTimer;
+document.addEventListener('keyup', ev => {
+  const t = ev.target;
+  if (t.tagName === 'TEXTAREA' && t.dataset.pid && !$modal.contains(t)) {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => setValue(ui.date, t.dataset.pid, t.value.trim() || null), 600);
+  }
+});
+// Coming back to the app on a new day: jump to today if you were on yesterday's "today".
+let lastToday = today();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && today() !== lastToday) {
+    if (ui.date === lastToday) ui.date = today();
+    lastToday = today(); render();
+  }
+});
+
+load();
+render();
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
+if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
