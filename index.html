@@ -150,9 +150,9 @@ input, textarea, select { font: inherit; color: inherit; }
 @keyframes qinB { from { opacity: 0; transform: translateX(-48px); } to { opacity: 1; transform: none; } }
 #quick .qk { font-size: 15px; font-style: italic; color: var(--acc); }
 #quick .qh { font-size: 26px; line-height: 34px; font-weight: 500; margin: 6px 0 24px; }
-#quick .qopt { display: block; width: 100%; min-height: 56px; margin-bottom: 10px; padding: 12px 20px; border-radius: 999px;
-  border: 1px solid var(--rule); background: var(--page); font-size: 18px; }
-#quick .qopt.on { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+#quick .qopt { display: block; width: 100%; min-height: 56px; margin-bottom: 10px; padding: 12px 20px; border-radius: 999px; font-size: 18px;
+  border: 1.5px solid color-mix(in srgb, var(--c) 55%, transparent); background: color-mix(in srgb, var(--c) 13%, var(--page)); }
+#quick .qopt.on { background: var(--c); border-color: var(--c); color: #fff; font-weight: 500; }
 #quick .qmrow { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
 #quick .qmrow button { flex: 0 1 54px; aspect-ratio: 1; border-radius: 50%; border: 1.5px solid; background: var(--page); font-size: 17px; }
 #quick .qmlab { display: flex; font-size: 12.5px; font-style: italic; color: var(--soft); }
@@ -609,8 +609,8 @@ function renderCheckin() {
   let h = pageHead(cap(dt.toLocaleDateString(undefined, { weekday: 'long' })),
     dt.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }),
     'prev', 'next', d >= t, d !== t ? '<button class="back" data-act="todayDate">Back to today</button>' : '');
-  h += `<button class="sumbtn quickbtn" data-act="quick"><span><b>Quick check-in</b><i>One question at a time, no distractions</i></span><span class="star">→</span></button>`;
   if (showQuote) h += quoteHtml(d);
+  h += `<button class="sumbtn quickbtn" data-act="quick"><span><b>Quick check-in</b><i>One question at a time, no distractions</i></span><span class="star">→</span></button>`;
   for (const s of D.sections) {
     if (s.hidden) continue;
     if (s.id === 'bipolar') { h += moodCard(s, e); continue; }
@@ -653,48 +653,57 @@ function stackLongQuestions() {
 /* ---------- quote of the day: same list and order as the Android app, one per day ---------- */
 const QUOTES = [
   ["A journey of a thousand miles begins with a single step.", "Lao Tzu"],
-  ["We suffer more often in imagination than in reality.", "Seneca"],
-  ["Adopt the pace of nature: her secret is patience.", "Ralph Waldo Emerson"],
-  ["Kiss your partner for six seconds, long enough for the affection to register.", null],
-  ["The best way out is always through.", "Robert Frost"],
-  ["Hope is the thing with feathers that perches in the soul.", "Emily Dickinson"],
-  ["I am not afraid of storms, for I am learning how to sail my ship.", "Louisa May Alcott"],
-  ["Don't forget to express gratitude.", null],
-  ["This too shall pass.", "Persian proverb"],
-  ["Very little is needed to make a happy life; it is all within yourself, in your way of thinking.", "Marcus Aurelius"],
   ["Fall seven times, stand up eight.", "Japanese proverb"],
-  ["Tell the people you care about that you love them.", null],
-  ["Men are disturbed not by things, but by the views which they take of things.", "Epictetus"],
-  ["Nothing is so strong as gentleness, nothing so gentle as real strength.", "Francis de Sales"],
-  ["Well begun is half done.", "Aristotle"],
-  ["Drink a glass of water and take three slow breaths.", null],
-  ["Gratitude is not only the greatest of virtues, but the parent of all the others.", "Cicero"],
-  ["There is no remedy for love but to love more.", "Henry David Thoreau"],
-  ["Write it on your heart that every day is the best day in the year.", "Ralph Waldo Emerson"],
-  ["Step outside for ten minutes. Daylight helps.", null],
-  ["The soul becomes dyed with the colour of its thoughts.", "Marcus Aurelius"],
-  ["The best time to plant a tree was twenty years ago. The second best time is now.", "Chinese proverb"],
-  ["Let us be grateful to people who make us happy; they are the charming gardeners who make our souls blossom.", "Marcel Proust"],
-  ["You don't have to finish everything today.", null],
-  ["Finish each day and be done with it. You have done what you could.", "Ralph Waldo Emerson"],
-  ["One kind word can warm three winter months.", "Japanese proverb"],
-  ["He who has a why to live can bear almost any how.", "Friedrich Nietzsche"],
-  ["Send a friend a message, just to say hi.", null],
-  ["Beyond a wholesome discipline, be gentle with yourself.", "Max Ehrmann"],
+  ["Keep your eyes on the stars, and your feet on the ground.", "Theodore Roosevelt"],
+  ["Kiss your partner for six seconds, long enough for the affection to register."],
   ["Do what you can, with what you have, where you are.", "Theodore Roosevelt"],
+  ["Hope is the thing with feathers that perches in the soul.", "Emily Dickinson"],
+  ["Optimism is the faith that leads to achievement.", "Helen Keller"],
+  ["Don't forget to express gratitude."],
+  ["Little by little, one travels far.", "Spanish proverb"],
+  ["The best way out is always through.", "Robert Frost"],
+  ["Well done is better than well said.", "Benjamin Franklin"],
+  ["Tell the people you care about that you love them."],
+  ["After rain comes sunshine.", "Proverb"],
+  ["Every expert was once a beginner.", "Saying"],
+  ["I am not afraid of storms, for I am learning how to sail my ship.", "Louisa May Alcott"],
+  ["Progress, not perfection."],
+  ["The sun himself is weak when he first rises, and gathers strength and courage as the day gets on.", "Charles Dickens"],
+  ["Rome wasn't built in a day.", "Proverb"],
+  ["This too shall pass.", "Persian proverb"],
+  ["Drink a glass of water and stretch for a minute."],
+  ["Where there's a will, there's a way.", "Proverb"],
+  ["Although the world is full of suffering, it is full also of the overcoming of it.", "Helen Keller"],
   ["Rest is not idleness.", "John Lubbock"],
-  ["Notice one small good thing today and write it down.", null],
-  ["Be kind, for everyone you meet is fighting a hard battle.", "Ian Maclaren"],
-  ["It is not that we have a short time to live, but that we waste a lot of it.", "Seneca"],
-  ["Nature does not hurry, yet everything is accomplished.", "Lao Tzu"],
-  ["Rest counts as progress.", null],
-  ["No man is free who is not master of himself.", "Epictetus"],
-  ["Simplicity, simplicity, simplicity!", "Henry David Thoreau"],
-  ["Waste no more time arguing about what a good man should be. Be one.", "Marcus Aurelius"],
-  ["A short walk is still a walk.", null],
-  ["If one advances confidently in the direction of his dreams, he will meet with a success unexpected in common hours.", "Henry David Thoreau"],
+  ["You've handled hard days before. You can handle this one."],
+  ["Every cloud has a silver lining.", "Proverb"],
+  ["Adopt the pace of nature: her secret is patience.", "Ralph Waldo Emerson"],
+  ["Write it on your heart that every day is the best day in the year.", "Ralph Waldo Emerson"],
+  ["Celebrate one small win today, however small."],
+  ["Laughter is the best medicine.", "Proverb"],
+  ["Slow and steady wins the race.", "Aesop"],
+  ["Be not afraid of going slowly; be afraid only of standing still.", "Chinese proverb"],
+  ["Step outside for five minutes of fresh air."],
+  ["Inch by inch, life's a cinch.", "Saying"],
+  ["A smooth sea never made a skilled sailor.", "English proverb"],
+  ["Big things have small beginnings.", "Proverb"],
+  ["Send a friend a message just to say hi."],
+  ["Bloom where you are planted.", "Saying"],
+  ["Every day may not be good, but there is something good in every day.", "Saying"],
+  ["Well begun is half done.", "Aristotle"],
+  ["Your feelings are valid, and they will pass."],
+  ["Patience is bitter, but its fruit is sweet.", "Proverb"],
+  ["The darkest hour is just before the dawn.", "Thomas Fuller"],
+  ["One today is worth two tomorrows.", "Benjamin Franklin"],
+  ["Done is better than perfect."],
+  ["Nothing great was ever achieved without enthusiasm.", "Ralph Waldo Emerson"],
+  ["Keep calm and carry on.", "British poster, 1939"],
+  ["Many hands make light work.", "Proverb"],
+  ["Put on a song you love and really listen to it."],
+  ["A good laugh and a long sleep are the best cures in the doctor's book.", "Irish proverb"],
+  ["The best is yet to be.", "Robert Browning"],
   ["Healing is a matter of time, but it is sometimes also a matter of opportunity.", "Hippocrates"],
-  ["Be as kind to yourself as you would be to a friend.", null],
+  ["Be as kind to yourself as you would be to a friend."],
 ];
 let showQuote = true;
 try { showQuote = localStorage.getItem('scrmoods.quote') !== 'off'; } catch (e) {}
@@ -1709,6 +1718,13 @@ function celebrate(date, remember) {
 
 /* ---------- quick check-in: one question at a time, ending with the note and the good night (same as Android) ---------- */
 let quick = null;
+/* 0 = bad (red), 0.5 = in between (amber), 1 = good (green); same colours as Android */
+function answerColor(g) {
+  const mix = (a, b, t) => a.map((x, i) => Math.round(x + (b[i] - x) * t));
+  const bad = [201, 88, 75], mid = [217, 160, 64], good = [95, 158, 85];
+  const c = g < .5 ? mix(bad, mid, g * 2) : mix(mid, good, (g - .5) * 2);
+  return `rgb(${c.join(',')})`;
+}
 function quickSteps() {
   const steps = [];
   for (const s of D.sections) {
@@ -1761,7 +1777,11 @@ function showQuick() {
     b = `<div class="qk">${esc(st.section)}</div><div class="qh">${esc(p.label)}</div>`;
     if (p.type === 'scale' || p.type === 'yesno') {
       const opts = p.type === 'yesno' ? [[1, 'Yes'], [0, 'No']] : p.options.map((o, k) => [k, o]);
-      b += opts.map(([k, o]) => `<button class="qopt ${v != null && +v === k ? 'on' : ''}" data-q="pick" data-v="${k}">${esc(o)}</button>`).join('');
+      // red for the bad end, green for the good end (following the question's "Which is better?")
+      b += opts.map(([k, o]) => {
+        const g = goodness(p, k), c = g == null ? 'var(--acc)' : answerColor(g);
+        return `<button class="qopt ${v != null && +v === k ? 'on' : ''}" style="--c:${c}" data-q="pick" data-v="${k}">${esc(o)}</button>`;
+      }).join('');
     } else if (p.type === 'number') {
       const prev = entry(addDays(date, -1)).values[p.id];
       const start = v != null ? +v : prev != null ? +prev : snap(p, (p.min + p.max) / 2);
