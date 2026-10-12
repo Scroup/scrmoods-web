@@ -68,12 +68,11 @@ input, textarea, select { font: inherit; color: inherit; }
 .seg button { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 5px; border-radius: 999px; border: 1px solid var(--rule);
   background: var(--page); font-size: 14px; white-space: nowrap; overflow: hidden; text-align: center; }
 .seg button.on { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
-.yn { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
-.yn .q { margin: 0; flex: 1; }
-.yn .seg { width: 116px; flex: none; }
-.yn .seg button { min-height: 40px; }
-.yn.stack { flex-direction: column; align-items: stretch; gap: 8px; }
-.yn.stack .seg { align-self: flex-end; }
+.yn .q { margin: 16px 0 10px; }
+/* a faint line between questions, so it's clear which answers belong to which question */
+.qb + .qb { border-top: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); margin-top: 18px; }
+.qb > .q:first-child, .qb .num { margin-top: 16px; } .qb .q { margin-bottom: 10px; }
+.qb .num .head .q { margin: 0; }
 
 /* journal sections sit on rounded pages */
 .card { background: var(--page); border: 1px solid var(--rule); border-radius: 20px; margin: 12px 10px 0; padding: 0 14px 16px; }
@@ -134,6 +133,40 @@ input, textarea, select { font: inherit; color: inherit; }
 @keyframes wIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
 #main.intro > * { animation: rise .75s cubic-bezier(.16, 1, .3, 1) both; animation-delay: var(--d, 0ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(90px); } to { opacity: 1; transform: none; } }
+.quickbtn { width: calc(100% - 20px); margin: 10px 10px 0; border-radius: 20px; }
+#quick { position: fixed; inset: 0; z-index: 40; background: var(--paper); display: flex; flex-direction: column;
+  padding: calc(4px + var(--safe-top)) 0 calc(8px + var(--safe-bottom)); }
+#quick .qtop { display: flex; align-items: center; gap: 8px; padding: 0 8px 0 4px; }
+#quick .qx { width: 44px; height: 44px; font-size: 18px; color: var(--soft); }
+#quick .qbar { flex: 1; height: 6px; border-radius: 3px; background: var(--rule); overflow: hidden; }
+#quick .qbar i { display: block; height: 100%; background: var(--acc); border-radius: 3px; transition: width .4s ease; }
+#quick .qskip { font-size: 14px; font-style: italic; color: var(--soft); padding: 8px 10px; border-radius: 999px; min-width: 52px; }
+#quick .qcount { text-align: center; font-size: 12.5px; font-style: italic; color: var(--faint); }
+#quick .qbody { flex: 1; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; padding: 20px 24px; }
+#quick .qbody > div { margin: auto 0; }
+#quick .qbody.fwd > div { animation: qinF .42s cubic-bezier(.16, 1, .3, 1) both; }
+#quick .qbody.back > div { animation: qinB .42s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes qinF { from { opacity: 0; transform: translateX(48px); } to { opacity: 1; transform: none; } }
+@keyframes qinB { from { opacity: 0; transform: translateX(-48px); } to { opacity: 1; transform: none; } }
+#quick .qk { font-size: 15px; font-style: italic; color: var(--acc); }
+#quick .qh { font-size: 26px; line-height: 34px; font-weight: 500; margin: 6px 0 24px; }
+#quick .qopt { display: block; width: 100%; min-height: 56px; margin-bottom: 10px; padding: 12px 20px; border-radius: 999px;
+  border: 1px solid var(--rule); background: var(--page); font-size: 18px; }
+#quick .qopt.on { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+#quick .qmrow { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
+#quick .qmrow button { flex: 0 1 54px; aspect-ratio: 1; border-radius: 50%; border: 1.5px solid; background: var(--page); font-size: 17px; }
+#quick .qmlab { display: flex; font-size: 12.5px; font-style: italic; color: var(--soft); }
+#quick .qmlab span { flex: 1; } #quick .qmlab span:nth-child(2) { text-align: center; } #quick .qmlab span:last-child { text-align: right; }
+#quick .qmdesc { min-height: 120px; padding-top: 18px; text-align: center; }
+#quick .qmdesc b { display: block; font-size: 19px; font-weight: 500; }
+#quick .qmdesc i { display: block; margin-top: 4px; font-size: 14.5px; line-height: 20px; color: var(--soft); }
+#quick .qnum { text-align: center; } #quick .qnum b { font-size: 52px; font-weight: 500; color: var(--acc); } #quick .qnum span { font-size: 20px; font-style: italic; color: var(--soft); }
+#quick .qctrl { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+#quick .qctrl input { flex: 1; accent-color: var(--acc); height: 32px; }
+#quick .qctrl .rbtn { margin: 0; font-size: 20px; background: var(--page); }
+#quick textarea { width: 100%; min-height: 150px; border: 1px solid var(--rule); border-radius: 16px; background: var(--page); padding: 12px 14px; font-size: 16px; line-height: 23px; }
+#quick .qnext { display: block; width: 100%; min-height: 52px; margin-top: 20px; border-radius: 999px; background: var(--acc); color: var(--on-acc); font-size: 17px; }
+#quick .qbottom { padding: 0 24px; min-height: 44px; }
 #sparkles { position: fixed; inset: 0; z-index: 45; pointer-events: none; overflow: hidden; }
 #sparkles span { position: fixed; display: block; will-change: transform, opacity; }
 #sparkles svg { display: block; width: 100%; height: 100%; }
@@ -517,7 +550,7 @@ const today = () => ymd(new Date());
 const ui = { tab: 'checkin', date: today(), manage: false, month: null, graphPoint: null, range: 1 };
 try { const t = sessionStorage.getItem('scrmoods.tab'); if (t) ui.tab = t; } catch (e) {}
 
-function afterRender() { stackLongQuestions(); fitPills(); }
+function afterRender() { fitPills(); }
 window.addEventListener('resize', () => afterRender());
 if (document.fonts) document.fonts.ready.then(() => afterRender());
 
@@ -576,6 +609,7 @@ function renderCheckin() {
   let h = pageHead(cap(dt.toLocaleDateString(undefined, { weekday: 'long' })),
     dt.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }),
     'prev', 'next', d >= t, d !== t ? '<button class="back" data-act="todayDate">Back to today</button>' : '');
+  h += `<button class="sumbtn quickbtn" data-act="quick"><span><b>Quick check-in</b><i>One question at a time, no distractions</i></span><span class="star">→</span></button>`;
   if (showQuote) h += quoteHtml(d);
   for (const s of D.sections) {
     if (s.hidden) continue;
@@ -583,7 +617,7 @@ function renderCheckin() {
     const pts = D.points.filter(p => p.section === s.id && !p.archived);
     if (!pts.length && s.id !== 'custom' && s.id !== 'meds') continue;
     h += `<div class="section card"><h2>${esc(s.title)}</h2>`;
-    for (const p of pts) h += pointInput(p, e.values[p.id]);
+    for (const p of pts) h += `<div class="qb">${pointInput(p, e.values[p.id])}</div>`;
     if (s.id === 'custom') h += `<div><button class="link" data-act="addPoint" data-sec="custom">+ Add custom tracking point</button></div>`;
     if (s.id === 'meds') h += `<div><button class="link" data-act="addPoint" data-sec="meds">+ Add medication</button>
       <button class="link" style="margin-left:0" data-act="manage">Edit medications</button></div>`;
@@ -1347,9 +1381,10 @@ document.addEventListener('click', ev => {
       clearTimeout(noteTimer);
       const v = document.getElementById('noteArea')?.value;
       if (v != null) updateEntry(d, e => e.note = v.trim());   // save right away
-      celebrate(d, true);
+      if (gn.finished !== d) celebrate(d, true);                // the good night only comes once a day
       break;
     }
+    case 'quick': openQuick(d); return;
     case 'previewGoodNight': celebrate(today(), false); return;
     case 'toggleQuote': showQuote = !showQuote; try { localStorage.setItem('scrmoods.quote', showQuote ? 'on' : 'off'); } catch (e) {} break;
     case 'summary': { const n = RANGES[ui.range][0], ds = []; for (let i = n - 1; i >= 0; i--) ds.push(addDays(today(), -i)); openSummary(ds, n === 365 ? 'year' : `${n} days`); return; }
@@ -1470,7 +1505,7 @@ const STAR_PATH = (() => {
 })();
 function popButton(p) {
   if (!sparklesOn || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-  const b = $main.querySelector(p.sel);
+  const b = p.el || $main.querySelector(p.sel);
   if (!b || !b.animate) return;
   b.animate([
     { transform: 'scale(1)' }, { transform: 'scale(.84)', offset: .17 }, { transform: 'scale(1.08)', offset: .5 },
@@ -1670,6 +1705,120 @@ function celebrate(date, remember) {
   };
   el.addEventListener('click', ev => { ev.stopPropagation(); close(); });
   setTimeout(close, 13700);
+}
+
+/* ---------- quick check-in: one question at a time, ending with the note and the good night (same as Android) ---------- */
+let quick = null;
+function quickSteps() {
+  const steps = [];
+  for (const s of D.sections) {
+    if (s.hidden) continue;
+    if (s.id === 'bipolar') { if (D.points.some(p => p.id === 'bipolar_mood')) steps.push({ kind: 'mood', section: s.title }); continue; }
+    for (const p of D.points) if (p.section === s.id && !p.archived) steps.push({ kind: 'point', p, section: s.title });
+  }
+  steps.push({ kind: 'note' });
+  return steps;
+}
+function stepDone(st, e) {
+  if (st.kind === 'mood') return e.values.bipolar_mood != null;
+  if (st.kind === 'note') return !!e.note.trim();
+  const v = e.values[st.p.id]; return v != null && v !== '';
+}
+function openQuick(date) {
+  const steps = quickSteps(), e = entry(date);
+  let i = steps.findIndex(st => !stepDone(st, e)); if (i < 0) i = steps.length - 1;
+  quick = { date, steps, i, fwd: true, busy: false };
+  const el = document.createElement('div'); el.id = 'quick'; document.body.appendChild(el);
+  document.body.style.overflow = 'hidden';
+  el.addEventListener('click', quickClick);
+  el.addEventListener('input', quickInput);
+  showQuick();
+}
+function closeQuick() {
+  document.getElementById('quick')?.remove(); document.body.style.overflow = ''; quick = null; render();
+}
+function quickGo(to) {
+  quick.fwd = to >= quick.i; quick.i = Math.max(0, Math.min(quick.steps.length - 1, to)); quick.busy = false; showQuick();
+}
+function showQuick() {
+  const el = document.getElementById('quick'); if (!el || !quick) return;
+  const { steps, i, date } = quick, st = steps[i], e = entry(date);
+  let b = '';
+  if (st.kind === 'mood') {
+    const v = e.values.bipolar_mood != null ? Math.round(+e.values.bipolar_mood) : null;
+    const circle = n => { const c = moodZone(n), on = n === v;
+      return `<button data-q="mood" data-v="${n}" style="border-color:${on ? c : `color-mix(in srgb, ${c} 55%, transparent)`};background:${on ? c : 'var(--page)'};${on ? 'color:#fff;font-weight:600' : ''}">${n}</button>`; };
+    b = `<div class="qk">${esc(st.section)}</div><div class="qh">Where is your mood today?</div>
+      <div class="qmrow">${[0, 1, 2, 3, 4, 5].map(circle).join('')}</div><div class="qmrow">${[6, 7, 8, 9, 10].map(circle).join('')}</div>
+      <div class="qmlab"><span>0 depression</span><span>5 balanced</span><span>10 mania</span></div>
+      <div class="qmdesc">${v == null ? '' : `<b style="color:${moodZone(v)}">${v} · ${esc(MOOD[v][0])}</b><i>${esc(MOOD[v][1])}</i>`}</div>`;
+  } else if (st.kind === 'note') {
+    b = `<div class="qk">Today's note</div><div class="qh">Anything you'd like to remember about today?</div>
+      <textarea id="qnote" placeholder="Write about your day…">${esc(e.note)}</textarea>
+      <button class="qnext" data-q="finish">${gn.finished === date ? 'Save and close' : 'Finish the day&nbsp; ☾'}</button>`;
+  } else {
+    const p = st.p, v = e.values[p.id];
+    b = `<div class="qk">${esc(st.section)}</div><div class="qh">${esc(p.label)}</div>`;
+    if (p.type === 'scale' || p.type === 'yesno') {
+      const opts = p.type === 'yesno' ? [[1, 'Yes'], [0, 'No']] : p.options.map((o, k) => [k, o]);
+      b += opts.map(([k, o]) => `<button class="qopt ${v != null && +v === k ? 'on' : ''}" data-q="pick" data-v="${k}">${esc(o)}</button>`).join('');
+    } else if (p.type === 'number') {
+      const prev = entry(addDays(date, -1)).values[p.id];
+      const start = v != null ? +v : prev != null ? +prev : snap(p, (p.min + p.max) / 2);
+      quick.num = start;
+      b += `<div class="qnum"><b id="qnv">${fmtNum(start)}</b>${p.unit ? `<span> ${esc(p.unit)}</span>` : ''}</div>
+        <div class="qctrl"><button class="rbtn" data-q="minus">−</button>
+        <input type="range" id="qrange" min="${p.min}" max="${p.max}" step="${p.step}" value="${start}">
+        <button class="rbtn" data-q="plus">+</button></div>
+        <button class="qnext" data-q="next">Next</button>`;
+    } else {
+      b += `<textarea id="qtext">${esc(v || '')}</textarea><button class="qnext" data-q="next">Next</button>`;
+    }
+  }
+  el.innerHTML = `<div class="qtop"><button class="qx" data-q="close" aria-label="Close">✕</button>
+      <div class="qbar"><i style="width:${(i + 1) / steps.length * 100}%"></i></div>
+      ${st.kind === 'note' ? '<span style="width:52px"></span>' : '<button class="qskip" data-q="skip">Skip</button>'}</div>
+    <div class="qcount">${i + 1} of ${steps.length}</div>
+    <div class="qbody ${quick.fwd ? 'fwd' : 'back'}"><div>${b}</div></div>
+    <div class="qbottom">${i > 0 ? '<button class="link" data-q="prev" style="margin-left:-12px">‹ Previous</button>' : ''}</div>`;
+}
+function quickInput(ev) {
+  if (ev.target.id === 'qrange') { quick.num = parseFloat(ev.target.value); document.getElementById('qnv').textContent = fmtNum(quick.num); }
+}
+function quickClick(ev) {
+  const t = ev.target.closest('[data-q]'); if (!t || !quick) return;
+  const { steps, i, date } = quick, st = steps[i], act = t.dataset.q;
+  if (act === 'close') return closeQuick();
+  if (act === 'skip') return quickGo(i + 1);
+  if (act === 'prev') return quickGo(i - 1);
+  if (act === 'pick') {
+    if (quick.busy) return; quick.busy = true;
+    setValue(date, st.p.id, t.dataset.v);
+    t.parentNode.querySelectorAll('.qopt').forEach(o => o.classList.toggle('on', o === t));
+    popButton({ el: t, stars: true });
+    setTimeout(() => quickGo(i + 1), 420);
+  } else if (act === 'mood') {
+    const n = +t.dataset.v;
+    updateEntry(date, e => { e.values.bipolar_mood = String(n); if (e.values.bipolar_mixed !== '1') delete e.values.bipolar_mood2; });
+    showQuick();                                    // redraw to show the choice and its description
+    const nb = document.querySelector(`#quick [data-q="mood"][data-v="${n}"]`);
+    document.querySelector('#quick .qbody').className = 'qbody';
+    popButton({ el: nb, stars: true });
+    if (!quick.busy) { quick.busy = true; setTimeout(() => quick && quickGo(quick.i + 1), 900); }
+  } else if (act === 'minus' || act === 'plus') {
+    const p = st.p, r = document.getElementById('qrange');
+    quick.num = snap(p, quick.num + (act === 'plus' ? p.step : -p.step));
+    r.value = quick.num; document.getElementById('qnv').textContent = fmtNum(quick.num);
+  } else if (act === 'next') {
+    if (st.p.type === 'number') setValue(date, st.p.id, fmtNum(snap(st.p, quick.num)));
+    else setValue(date, st.p.id, document.getElementById('qtext').value.trim() || null);
+    quickGo(i + 1);
+  } else if (act === 'finish') {
+    const note = document.getElementById('qnote').value;
+    updateEntry(date, e => e.note = note.trim());
+    closeQuick();
+    if (gn.on && gn.finished !== date) celebrate(date, true);
+  }
 }
 
 /* Opening the app: a short welcome, then the header and cards swoosh up from below (same as Android). */
