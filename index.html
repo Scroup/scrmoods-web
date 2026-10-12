@@ -118,6 +118,19 @@ input, textarea, select { font: inherit; color: inherit; }
 .shint { text-align: center; font-size: 13px; font-style: italic; color: var(--faint); }
 @keyframes sfade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .sbody { animation: none; } }
+/* good night celebration */
+#goodnight { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 0 32px;
+  background: rgba(42, 28, 23, .28); opacity: 0; transition: opacity .7s ease; cursor: pointer; user-select: none; }
+#goodnight.in { opacity: 1; }
+#goodnight canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#goodnight .gcard { position: relative; max-width: 380px; width: 100%; background: var(--page); border-radius: 26px; padding: 28px 26px; text-align: center;
+  transform: scale(.92); transition: transform .7s cubic-bezier(.2, .9, .3, 1.2); box-shadow: 0 10px 40px rgba(0, 0, 0, .12); }
+#goodnight.in .gcard { transform: scale(1); }
+#goodnight .moon { font-size: 42px; line-height: 1.1; color: var(--acc); }
+#goodnight .gh { font-size: 34px; font-weight: 500; margin-top: 4px; }
+#goodnight .gs { font-size: 15px; font-style: italic; color: var(--acc); margin-top: 6px; }
+#goodnight .gw { font-size: 17px; line-height: 25px; margin-top: 14px; }
+#goodnight .gt { font-size: 13px; font-style: italic; color: var(--faint); margin-top: 18px; }
 
 /* fixed Trends charts */
 .tcard { margin: 12px 16px 0; padding: 12px 0 10px; background: var(--page); border: 1px solid var(--rule); border-radius: 16px; }
@@ -442,6 +455,7 @@ function updateEntry(date, fn) {
   const e = clone(entry(date)); fn(e);
   if (entryEmpty(e)) delete D.entries[date]; else D.entries[date] = e;
   save();
+  goodNightCheck(date);
 }
 function setValue(date, pid, v) { updateEntry(date, e => { if (v == null || v === '') delete e.values[pid]; else e.values[pid] = String(v); }); }
 
@@ -539,6 +553,7 @@ const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 
 function renderCheckin() {
   const t = today(), d = ui.date, e = entry(d);
+  if (d === t && !dayComplete(e)) gn.unfinished = d;
   const dt = parseYmd(d);
   let h = pageHead(cap(dt.toLocaleDateString(undefined, { weekday: 'long' })),
     dt.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }),
@@ -1062,7 +1077,14 @@ function renderData() {
         <span class="switch ${b.hidden ? '' : 'on'}"></span></button>` : ''; })()}
       <button class="switchrow" data-act="toggleQuote" role="switch" aria-checked="${showQuote}">
         <span class="t"><b>Quote of the day</b><i>A quote or gentle reminder at the top of the journal, a new one each day.</i></span>
-        <span class="switch ${showQuote ? 'on' : ''}"></span></button></div>
+        <span class="switch ${showQuote ? 'on' : ''}"></span></button>
+      <button class="switchrow" data-act="toggleGoodNight" role="switch" aria-checked="${gn.on}">
+        <span class="t"><b>Good night celebration</b><i>When today's questions and note are done: confetti, a good-night wish and a short lullaby.</i></span>
+        <span class="switch ${gn.on ? 'on' : ''}"></span></button>
+      ${gn.on ? `<button class="switchrow" data-act="toggleMelody" role="switch" aria-checked="${gn.melody}">
+        <span class="t"><b>Play the lullaby</b><i>Uses your media volume. On iPhone, the silent switch mutes it.</i></span>
+        <span class="switch ${gn.melody ? 'on' : ''}"></span></button>
+      <div><button class="link" data-act="previewGoodNight">Preview the celebration</button></div>` : ''}</div>
     <div class="section"><h2>Your journal</h2>
     <div class="count">${keys.length} ${keys.length === 1 ? 'day' : 'days'} written</div>
     ${keys.length ? `<div style="font-style:italic;color:var(--soft)">since ${keys[0]}</div>` : ''}
@@ -1291,6 +1313,9 @@ document.addEventListener('click', ev => {
     case 'range': ui.range = +el.dataset.i; break;
     case 'graphPoint': ui.graphPoint = pid; window.scrollTo(0, 0); break;
     case 'theme': applyTheme(el.dataset.id); break;
+    case 'toggleGoodNight': gn.on = !gn.on; try { localStorage.setItem('scrmoods.goodnight', gn.on ? 'on' : 'off'); } catch (e) {} break;
+    case 'toggleMelody': gn.melody = !gn.melody; try { localStorage.setItem('scrmoods.goodnight.melody', gn.melody ? 'on' : 'off'); } catch (e) {} break;
+    case 'previewGoodNight': celebrate(today(), false); return;
     case 'toggleQuote': showQuote = !showQuote; try { localStorage.setItem('scrmoods.quote', showQuote ? 'on' : 'off'); } catch (e) {} break;
     case 'summary': { const n = RANGES[ui.range][0], ds = []; for (let i = n - 1; i >= 0; i--) ds.push(addDays(today(), -i)); openSummary(ds, n === 365 ? 'year' : `${n} days`); return; }
     case 'mood': {
@@ -1362,6 +1387,7 @@ document.addEventListener('keyup', ev => {
 let noteTimer;
 document.addEventListener('input', ev => {
   if (ev.target.id !== 'noteArea') return;
+  gn.lastNote = Date.now();
   const d = ui.date, v = ev.target.value;
   clearTimeout(noteTimer);
   noteTimer = setTimeout(() => updateEntry(d, e => e.note = v.trim()), 500);
@@ -1377,6 +1403,176 @@ document.addEventListener('visibilitychange', () => {
     lastToday = today(); render();
   }
 });
+
+/* ---------- good night: confetti, a lullaby and a wish once today's journal is complete (same as Android) ---------- */
+const gn = { on: true, melody: true, unfinished: null, lastNote: 0, timer: null };
+try {
+  gn.on = localStorage.getItem('scrmoods.goodnight') !== 'off';
+  gn.melody = localStorage.getItem('scrmoods.goodnight.melody') !== 'off';
+} catch (e) {}
+const gnDone = () => { try { return localStorage.getItem('scrmoods.goodnight.last'); } catch (e) { return null; } };
+
+/* Every visible question answered and the note written. The mixed switch and second mood number are optional. */
+function dayComplete(e) {
+  if (!e.note || !e.note.trim()) return false;
+  for (const s of D.sections) {
+    if (s.hidden) continue;
+    for (const p of D.points) {
+      if (p.section !== s.id || p.archived || p.id === 'bipolar_mood2' || p.id === 'bipolar_mixed') continue;
+      const v = e.values[p.id];
+      if (v == null || v === '') return false;
+    }
+  }
+  return true;
+}
+function goodNightCheck(date) {
+  clearTimeout(gn.timer);
+  if (date !== today()) return;
+  if (!dayComplete(entry(date))) { gn.unfinished = date; return; }
+  if (!gn.on || gn.unfinished !== date || gnDone() === date) return;
+  const go = () => {
+    const idle = Date.now() - gn.lastNote;               // wait until you've stopped writing for a moment
+    if (idle < 5000) { gn.timer = setTimeout(go, 5000 - idle); return; }
+    if (dayComplete(entry(date)) && gnDone() !== date) celebrate(date, true);
+  };
+  gn.timer = setTimeout(go, 1500);
+}
+
+const WISHES = [
+  'Today is written down. You can let it rest now.',
+  'Thank you for checking in with yourself today.',
+  "Whatever today was, it's safely kept. Sleep softly.",
+  'You showed up for yourself today. Rest well.',
+  'Tomorrow is a fresh page. Sweet dreams.',
+  'Breathe out slowly. The day is done.',
+  "Be as gentle with yourself tonight as you'd be with a friend.",
+];
+function wishFor(day) {
+  const [y, m, dd] = day.split('-').map(Number);
+  const epochDay = Math.round(Date.UTC(y, m - 1, dd) / 86400000);
+  return WISHES[((epochDay % WISHES.length) + WISHES.length) % WISHES.length];
+}
+
+/* The lullaby, synthesised here (no sound files): a music-box melody over soft chords. */
+let audioCtx = null, lullabyBuf = null;
+function unlockAudio() {
+  // iPhone only allows sound after a tap, so the sound system is woken on your first touch.
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const b = audioCtx.createBuffer(1, 1, 22050), src = audioCtx.createBufferSource();
+    src.buffer = b; src.connect(audioCtx.destination); src.start(0);
+  } catch (e) {}
+}
+['pointerdown', 'touchend', 'keydown'].forEach(t => document.addEventListener(t, unlockAudio, { passive: true }));
+function renderLullaby(rate) {
+  const BEAT = 0.42;
+  // [start beat, midi, length in beats, loudness, pad]
+  const N = [
+    [0, 67, 1, .55], [1, 72, 1, .55], [2, 76, 1, .55], [3, 79, 1.5, .6], [4.5, 81, .5, .45], [5, 79, 1, .5], [6, 76, 1, .5], [7, 74, 2, .55],
+    [9, 76, 1, .5], [10, 72, 1, .5], [11, 74, 1, .5], [12, 72, 4, .6],
+    [0, 48, 4, .22, 1], [0, 55, 4, .16, 1], [4, 45, 3, .22, 1], [4, 52, 3, .16, 1], [7, 41, 2, .22, 1], [7, 57, 2, .14, 1],
+    [9, 43, 3, .22, 1], [9, 50, 3, .16, 1], [12, 48, 4, .22, 1], [12, 55, 4, .16, 1], [12, 64, 4, .12, 1],
+  ];
+  const total = Math.floor(rate * (16 * BEAT + 2.2)), out = new Float64Array(total);
+  for (const [st, midi, len, gain, pad] of N) {
+    const f = 440 * Math.pow(2, (midi - 69) / 12), start = Math.floor(st * BEAT * rate);
+    const tau = pad ? 2.4 : 1.0, attack = pad ? 0.09 : 0.006, held = len * BEAT;
+    const length = Math.floor((held + tau * 2.5) * rate);
+    for (let i = 0; i < length; i++) {
+      const idx = start + i; if (idx >= total) break;
+      const t = i / rate;
+      let env = (1 - Math.exp(-t / attack)) * Math.exp(-t / tau);
+      if (t > held) env *= Math.exp(-(t - held) / 0.5);
+      const w = 2 * Math.PI * f * t;
+      out[idx] += (Math.sin(w) + 0.28 * Math.sin(2 * w) * Math.exp(-t / 0.35) + 0.08 * Math.sin(3 * w) * Math.exp(-t / 0.15)) * env * gain;
+    }
+  }
+  const d = Math.floor(0.31 * rate);
+  for (let i = d; i < total; i++) out[i] += out[i - d] * 0.27;
+  let peak = 1e-9; for (const v of out) peak = Math.max(peak, Math.abs(v));
+  const fade = Math.floor(0.6 * rate), res = new Float32Array(total);
+  for (let i = 0; i < total; i++) res[i] = out[i] / peak * 0.42 * (i > total - fade ? (total - i) / fade : 1);
+  return res;
+}
+function playLullaby() {
+  try {
+    unlockAudio();
+    if (!audioCtx) return;
+    if (!lullabyBuf) {
+      const rate = 22050, data = renderLullaby(rate);
+      lullabyBuf = audioCtx.createBuffer(1, data.length, rate);
+      lullabyBuf.getChannelData(0).set(data);
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = lullabyBuf; src.connect(audioCtx.destination); src.start();
+  } catch (e) {}
+}
+
+function celebrate(date, remember) {
+  if (remember) try { localStorage.setItem('scrmoods.goodnight.last', date); } catch (e) {}
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); // closes the keyboard
+  if (gn.melody) playLullaby();
+  document.getElementById('goodnight')?.remove();
+  const el = document.createElement('div');
+  el.id = 'goodnight';
+  el.innerHTML = `<canvas></canvas><div class="gcard"><div class="moon">☾</div><div class="gh">Good night</div>
+    <div class="gs">Today's journal is complete.</div><div class="gw">${esc(wishFor(date))}</div><div class="gt">Tap anywhere to close</div></div>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('in'));
+
+  const cv = el.querySelector('canvas'), ctx = cv.getContext('2d'), dpr = window.devicePixelRatio || 1;
+  const css = getComputedStyle(document.documentElement);
+  const colors = [css.getPropertyValue('--acc').trim(), css.getPropertyValue('--wash').trim(), '#E8B04A', '#F0C987', '#E88B7A', '#F2B8B0', '#9DBE8F', '#C9A6D9', '#FFF3D6'];
+  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let seed = 0; for (const c of date) seed = (seed * 31 + c.charCodeAt(0)) | 0;
+  const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  const pieces = Array.from({ length: still ? 0 : 120 }, () => ({
+    x: rnd(), delay: rnd() * 4.5, speed: .11 + rnd() * .13, sway: .015 + rnd() * .03, swayRate: 1.2 + rnd() * 1.6,
+    rot: rnd() * 360, spin: -160 + rnd() * 320, flip: 2 + rnd() * 4, color: colors[Math.floor(rnd() * colors.length)],
+    w: 14 + rnd() * 14, h: 8 + rnd() * 8, phase: rnd() * 6.28, round: rnd() < .25,
+  }));
+  let running = true;
+  const t0 = performance.now();
+  function frame(now) {
+    if (!running) return;
+    const W = cv.clientWidth, H = cv.clientHeight;
+    if (cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    const t = (now - t0) / 1000;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    // a soft glow that breathes behind the card
+    const R = Math.min(W, H) * .75, g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, R);
+    const glow = still ? .4 : .35 + .15 * Math.sin(t * 1.6);
+    g.addColorStop(0, `rgba(255,231,184,${glow})`); g.addColorStop(1, 'rgba(255,231,184,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    for (const p of pieces) {
+      const life = t - p.delay; if (life < 0) continue;
+      const y = (-.04 + p.speed * life) * H; if (y > H + 40) continue;
+      const x = (p.x + Math.sin(life * p.swayRate + p.phase) * p.sway) * W;
+      const twinkle = .5 + .5 * Math.sin(life * 6.5 + p.phase);    // gentle, about once a second
+      ctx.globalAlpha = .45 + .55 * twinkle;
+      ctx.fillStyle = p.color;
+      const w = p.w / 2.2, h = p.h / 2.2;
+      if (p.round) { ctx.beginPath(); ctx.arc(x, y, h * .6, 0, Math.PI * 2); ctx.fill(); }
+      else {
+        const fw = w * Math.max(.15, Math.abs(Math.cos(life * p.flip + p.phase)));
+        ctx.save(); ctx.translate(x, y); ctx.rotate((p.rot + p.spin * life) * Math.PI / 180); ctx.fillRect(-fw / 2, -h / 2, fw, h); ctx.restore();
+      }
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  let closed = false;
+  const close = () => {
+    if (closed) return; closed = true;
+    el.classList.remove('in');
+    setTimeout(() => { running = false; el.remove(); }, 900);
+  };
+  el.addEventListener('click', ev => { ev.stopPropagation(); close(); });
+  setTimeout(close, 10700);
+}
 
 load();
 render();
