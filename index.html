@@ -92,11 +92,29 @@ input, textarea, select { font: inherit; color: inherit; }
 .theme .nm { display: block; font-size: 13.5px; margin: 6px 0 0 2px; font-style: italic; }
 .theme.on .nm { font-style: normal; font-weight: 500; }
 
+/* fixed Trends charts */
+.tcard { margin: 12px 16px 0; padding: 12px 0 10px; background: var(--page); border: 1px solid var(--rule); border-radius: 16px; }
+.tcard .tt { font-size: 18px; font-weight: 500; padding: 0 14px 6px; }
+.tcard svg { width: 100%; height: auto; display: block; }
+.tcard .ends { display: flex; padding: 0 14px 0 70px; font-size: 12px; font-style: italic; color: var(--soft); }
+.legend2 { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 6px 14px 0; font-size: 12px; color: var(--soft); }
+.legend2 span { display: inline-flex; align-items: center; gap: 5px; }
+.legend2 i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.legend2 i.ln { width: 4px; background: var(--acc); }
+.tnote2 { padding: 8px 14px 0; font-size: 13px; font-style: italic; color: var(--soft); line-height: 18px; }
+
 /* mood scale */
-.mstate { display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 14px; border-radius: 16px; background: var(--paper); border: 1px solid var(--rule); }
-.mstate .mnum { width: 52px; flex: none; text-align: center; font-size: 40px; font-weight: 500; line-height: 1; }
-.mstate b { display: block; font-size: 17px; font-weight: 500; }
-.mstate i { display: block; font-size: 13.5px; line-height: 18px; color: var(--soft); margin-top: 2px; }
+.mstate { display: flex; height: 196px; border-radius: 16px; overflow: hidden; background: var(--paper); border: 1px solid var(--rule); }
+.mstate .mempty { margin: auto; padding: 20px; text-align: center; font-size: 14px; font-style: italic; color: var(--soft); line-height: 19px; }
+.mhalf { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 12px 18px; }
+.mstate.two .mhalf { padding: 12px 10px; }
+.mstate.two .mhalf + .mhalf { border-left: 1px solid var(--rule); }
+.mhalf .mnum { font-size: 42px; line-height: 46px; font-weight: 500; }
+.mhalf b { font-size: 18px; line-height: 23px; font-weight: 500; }
+.mhalf i { font-size: 13.5px; line-height: 18px; color: var(--soft); margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.mstate.two .mnum { font-size: 34px; line-height: 38px; }
+.mstate.two b { font-size: 14px; line-height: 18px; }
+.mstate.two i { font-size: 12px; line-height: 16px; -webkit-line-clamp: 5; }
 .mdots { display: flex; gap: 3px; margin-top: 12px; }
 .mdots button { flex: 1; aspect-ratio: 1; border-radius: 50%; border: 1px solid; font-size: 12.5px; padding: 0; color: var(--ink); }
 .mlabels { display: flex; margin-top: 6px; font-size: 12px; font-style: italic; color: var(--soft); }
@@ -269,6 +287,7 @@ const P = (id, section, type, label, extra = {}) =>
   Object.assign({ id, section, type, label, options: [], min: 0, max: 10, step: 1, unit: '', archived: false, reminders: [], better: type === 'yesno' ? 'higher' : 'none' }, extra);
 const DEFAULT_POINTS = [
   P('bipolar_mood', 'bipolar', 'number', 'Mood scale', { min: 0, max: 10, step: 1, better: 'middle' }),
+  P('bipolar_mood2', 'bipolar', 'number', 'Mood scale, second number on mixed days', { min: 0, max: 10, step: 1, better: 'none' }),
   P('bipolar_mixed', 'bipolar', 'yesno', 'Mixed features', { better: 'none' }),
   P('outlook', 'daily', 'scale', 'How was your overall outlook today?', { options: ['Negative', 'Neutral', 'Positive'], better: 'higher' }),
   P('productive', 'daily', 'scale', 'How productive were you today?', { options: FREQ, better: 'higher' }),
@@ -369,7 +388,7 @@ function fromXml(text) {
     const timed = [...e.getElementsByTagName('timednote')].map(t => ({ time: t.getAttribute('time') || '', text: t.textContent }));
     entries[date] = { values, note, timed };
   }
-  for (const id of ['bipolar_mixed', 'bipolar_mood']) if (!points.some(p => p.id === id)) points.unshift(clone(DEFAULT_POINTS.find(p => p.id === id)));
+  for (const id of ['bipolar_mixed', 'bipolar_mood2', 'bipolar_mood']) if (!points.some(p => p.id === id)) points.unshift(clone(DEFAULT_POINTS.find(p => p.id === id)));
   return { sections, points, entries };
 }
 
@@ -550,25 +569,28 @@ const MOOD = [
 ];
 const moodZone = v => v <= 1 ? '#94504A' : v <= 3 ? '#CF8A5A' : v <= 6 ? '#8DA47A' : v <= 8 ? '#D5AE58' : '#C6645A';
 function moodCard(sec, e) {
-  const raw = e.values.bipolar_mood, v = raw == null ? null : Math.max(0, Math.min(10, Math.round(parseFloat(raw))));
+  const num = x => { const n = parseFloat(x); return isNaN(n) ? null : Math.max(0, Math.min(10, Math.round(n))); };
   const mixed = e.values.bipolar_mixed === '1';
-  const tone = v == null ? null : moodZone(v);
-  let h = `<div class="section card"><h2>${esc(sec.title)}</h2><div class="q">Where is your mood today?</div>`;
-  h += v == null
-    ? `<div class="mstate"><span class="hint" style="padding:0">Tap a number below: 0 is severe depression, 5 balanced, 10 mania.</span></div>`
-    : `<div class="mstate" style="background:color-mix(in srgb, ${tone} 20%, transparent);border-color:color-mix(in srgb, ${tone} 55%, transparent)">
-        <span class="mnum" style="color:${tone}">${v}</span><span><b>${MOOD[v][0]}</b><i>${MOOD[v][1]}</i></span></div>`;
-  h += '<div class="mdots">';
+  const a = num(e.values.bipolar_mood), b = mixed ? num(e.values.bipolar_mood2) : null;
+  const shown = [a, b].filter(v => v != null).sort((x, y) => x - y);
+  const panel = v => `<div class="mhalf" style="background:color-mix(in srgb, ${moodZone(v)} 20%, transparent)">
+      <span class="mnum" style="color:${moodZone(v)}">${v}</span><b>${MOOD[v][0]}</b><i>${MOOD[v][1]}</i></div>`;
+  let h = `<div class="section card"><h2>${esc(sec.title)}</h2>
+    <div class="q">${mixed ? 'Pick two numbers: how low and how high you feel' : 'Where is your mood today?'}</div>
+    <div class="mstate ${shown.length === 2 ? 'two' : ''}">${shown.length ? shown.map(panel).join('')
+      : '<span class="mempty">Tap a number below: 0 is severe depression, 5 balanced, 10 mania.</span>'}</div><div class="mdots">`;
+  const lo = shown[0], hi = shown[shown.length - 1];
   for (let n = 0; n <= 10; n++) {
-    const c = moodZone(n), sel = v === n, inRange = v != null && ((v < 5 && n >= v && n <= 5) || (v > 5 && n >= 5 && n <= v));
+    const c = moodZone(n), sel = n === a || n === b;
+    const inRange = lo == null ? false : b != null ? n >= lo && n <= hi : (lo < 5 && n >= lo && n <= 5) || (lo > 5 && n >= 5 && n <= lo);
     const bg = sel ? c : inRange ? `color-mix(in srgb, ${c} 25%, transparent)` : 'var(--paper)';
     h += `<button data-act="mood" data-n="${n}" style="background:${bg};border-color:${sel ? c : `color-mix(in srgb, ${c} 45%, transparent)`};${sel ? 'color:#fff;font-weight:600' : ''}">${n}</button>`;
   }
   h += `</div><div class="mlabels"><span>Depression</span><span>Balanced</span><span>Mania</span></div>
-    <div class="mmixed"><button data-act="mixed" class="${mixed ? 'on' : ''}">${mixed ? '✓ ' : ''}Mixed features</button><span>low and high at the same time</span></div>`;
-  if (v != null && (v <= 1 || v >= 9)) h += `<div class="msupport">${v <= 1
-    ? "If you're thinking about suicide, please reach out now: call a crisis line or emergency services, or tell someone you trust. You don't have to carry this alone."
-    : 'This is a lot. Consider contacting your doctor or someone you trust today.'}</div>`;
+    <div class="mmixed"><button data-act="mixed" class="${mixed ? 'on' : ''}">${mixed ? '✓ ' : ''}Mixed features</button>
+      <span>${mixed ? 'pick a low and a high number' : 'low and high at the same time'}</span></div>`;
+  if (shown.some(v => v <= 1)) h += `<div class="msupport">If you're thinking about suicide, please reach out now: call a crisis line or emergency services, or tell someone you trust. You don't have to carry this alone.</div>`;
+  else if (shown.some(v => v >= 9)) h += `<div class="msupport">This is a lot. Consider contacting your doctor or someone you trust today.</div>`;
   return h + '</div>';
 }
 
@@ -680,8 +702,59 @@ function chartSvg(p, days) {
   }
   return s + '</svg>';
 }
+/* ---------- fixed Trends charts: mood trend and sleep pattern ---------- */
+const shortDate = s => parseYmd(s).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+const ends = days => `<div class="ends"><span style="flex:1">${shortDate(days[0])}</span><span>${shortDate(days[days.length - 1])}</span></div>`;
+const chartW = () => Math.round(Math.min(Math.max(window.innerWidth - 34, 280), 900));
+function yLabels(L, T, B, H, labels) {
+  return labels.map((l, i) => `<text x="${L - 6}" y="${T + (H - T - B) * i / (labels.length - 1) + 4}" text-anchor="end" font-size="10.5" font-style="italic" style="fill:var(--soft)">${esc(l)}</text>`).join('');
+}
+function moodTrendSvg(days) {
+  const W = chartW(), H = 230, L = 70, R = 8, T = 10, B = 10, n = days.length, slot = (W - L - R) / n;
+  const x = i => L + slot * i + slot / 2, y = v => T + (1 - Math.max(0, Math.min(10, v)) / 10) * (H - T - B);
+  let s = `<svg viewBox="0 0 ${W} ${H}">`;
+  [[0, 1.5, 0], [1.5, 3.5, 2], [3.5, 6.5, 5], [6.5, 8.5, 7], [8.5, 10, 10]].forEach(([lo, hi, z]) =>
+    s += `<rect x="${L}" y="${y(hi)}" width="${W - L - R}" height="${y(lo) - y(hi)}" fill="${moodZone(z)}" fill-opacity=".16"/>`);
+  s += `<line x1="${L}" x2="${W - R}" y1="${y(5)}" y2="${y(5)}" style="stroke:var(--rule)"/>` + yLabels(L, T, B, H, ['10 Mania', '5 Balanced', '0 Depression']);
+  const vals = days.map(d => { const e = D.entries[d]?.values || {}; const a = parseFloat(e.bipolar_mood);
+    const b = e.bipolar_mixed === '1' ? parseFloat(e.bipolar_mood2) : NaN; return [isNaN(a) ? null : a, isNaN(b) ? null : b]; });
+  vals.forEach(([a, b], i) => { if (a != null && b != null) s += `<line x1="${x(i)}" x2="${x(i)}" y1="${y(a)}" y2="${y(b)}" stroke-width="3" stroke-linecap="round" style="stroke:var(--acc);stroke-opacity:.7"/>`; });
+  const pts = vals.map(([a], i) => a == null ? null : `${x(i)},${y(a)}`).filter(Boolean);
+  if (pts.length > 1) s += `<polyline points="${pts.join(' ')}" fill="none" stroke-width="1.6" style="stroke:var(--ink);stroke-opacity:.55"/>`;
+  const r = n > 120 ? 2.2 : 3.6;
+  vals.forEach(([a, b], i) => { for (const v of [a, b]) if (v != null) s += `<circle cx="${x(i)}" cy="${y(v)}" r="${r}" fill="${moodZone(Math.round(v))}"/>`; });
+  return s + '</svg>';
+}
+function moodLegend(days) {
+  const items = [[moodZone(10), 'Mania'], [moodZone(7), 'Hypomania'], [moodZone(5), 'Balanced'], [moodZone(2), 'Mild to moderate'], [moodZone(0), 'Severe']];
+  let h = '<div class="legend2">' + items.map(([c, l]) => `<span><i style="background:${c}"></i>${l}</span>`).join('') + '<span><i class="ln"></i>Mixed</span></div>';
+  const vals = days.map(d => D.entries[d]?.values || {}).filter(e => e.bipolar_mood != null);
+  if (!vals.length) return h + '<div class="tnote2" style="color:var(--faint)">No mood scale answers in this period yet.</div>';
+  const mixed = vals.filter(e => e.bipolar_mixed === '1' && e.bipolar_mood2 != null).length;
+  const bal = vals.filter(e => { const v = Math.round(parseFloat(e.bipolar_mood)); return v >= 4 && v <= 6 && !(e.bipolar_mixed === '1' && e.bipolar_mood2 != null); }).length;
+  return h + `<div class="tnote2">Balanced on ${bal} of ${vals.length} days${mixed ? `, mixed on ${mixed}` : ''}</div>`;
+}
+function sleepSvg(p, days) {
+  const vals = series(p, days), known = vals.filter(v => v != null);
+  const maxV = Math.max(10, Math.ceil(Math.max(0, ...known) / 2) * 2), avg = known.length ? known.reduce((a, b) => a + b, 0) / known.length : null;
+  const W = chartW(), H = 200, L = 70, R = 8, T = 10, B = 10, n = days.length, slot = (W - L - R) / n;
+  const y = v => T + (1 - Math.min(1, v / maxV)) * (H - T - B), grid = [maxV, maxV * 3 / 4, maxV / 2, maxV / 4, 0];
+  let s = `<svg viewBox="0 0 ${W} ${H}">` + grid.map(g => `<line x1="${L}" x2="${W - R}" y1="${y(g)}" y2="${y(g)}" style="stroke:var(--rule)"/>`).join('')
+    + yLabels(L, T, B, H, grid.map(g => fmtNum(g) + ' h'));
+  const bw = Math.min(22, Math.max(1, slot * 0.68));
+  vals.forEach((v, i) => { if (v > 0) s += `<rect x="${L + slot * i + slot / 2 - bw / 2}" y="${y(v)}" width="${bw}" height="${y(0) - y(v)}" rx="${Math.min(bw / 2, 3)}" style="fill:var(--acc);fill-opacity:.78"/>`; });
+  if (avg != null) s += `<line x1="${L}" x2="${W - R}" y1="${y(avg)}" y2="${y(avg)}" stroke-width="1.4" stroke-dasharray="8 5" style="stroke:var(--ink);stroke-opacity:.6"/>`;
+  return s + '</svg>';
+}
+function sleepNote(p, days) {
+  const known = series(p, days).filter(v => v != null);
+  if (!known.length) return '<div class="tnote2" style="color:var(--faint)">No sleep answers in this period yet.</div>';
+  const avg = known.reduce((a, b) => a + b, 0) / known.length;
+  return `<div class="tnote2">Average ${avg.toFixed(1)} ${esc(p.unit || 'hrs')} (dashed line), shortest ${fmtNum(Math.min(...known))}, longest ${fmtNum(Math.max(...known))}, ${known.length} nights</div>`;
+}
+
 function renderGraph() {
-  const chartable = D.points.filter(p => p.type !== 'text');
+  const chartable = D.points.filter(p => p.type !== 'text' && p.id !== 'bipolar_mood2');
   if (!chartable.length) { $main.innerHTML = '<div class="info" style="padding:16px">No tracking points to chart yet.</div>'; return; }
   let p = chartable.find(q => q.id === ui.graphPoint) || chartable.find(q => q.id === 'outlook') || chartable[0];
   ui.graphPoint = p.id;
@@ -689,11 +762,15 @@ function renderGraph() {
   const days = []; for (let i = nDays - 1; i >= 0; i--) days.push(addDays(today(), -i));
   const short = s => parseYmd(s).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
   const s = stats(p, days);
-  let h = `<div class="picker"><div class="ptitle">${esc(p.label)}${p.archived ? ' (removed)' : ''}</div>
+  const moodOn = D.sections.find(x => x.id === 'bipolar')?.hidden === false;
+  const sleepP = D.points.find(q => q.id === 'sleep_hours' && !q.archived);
+  let h = `<div class="rangeseg" style="margin:12px 16px 2px">${seg(RANGES.map(r => r[1]), ui.range, 'range', '')}</div>`;
+  if (moodOn) h += `<div class="tcard"><div class="tt">Mood trend</div>${moodTrendSvg(days)}${ends(days)}${moodLegend(days)}</div>`;
+  if (sleepP) h += `<div class="tcard"><div class="tt">Sleep pattern</div>${sleepSvg(sleepP, days)}${ends(days)}${sleepNote(sleepP, days)}</div>`;
+  h += `<div class="section"><h2>Any tracking point</h2></div><div class="picker" style="margin-top:10px"><div class="ptitle">${esc(p.label)}${p.archived ? ' (removed)' : ''}</div>
     <div class="sub">Tap to look at another tracking point</div><select id="graphPick" aria-label="Tracking point">${chartable.map(q =>
     `<option value="${esc(q.id)}" ${q.id === p.id ? 'selected' : ''}>${esc(q.label)}${q.archived ? ' (removed)' : ''}</option>`).join('')}</select></div>
-    <div class="rangeseg">${seg(RANGES.map(r => r[1]), ui.range, 'range', '')}</div>
-    <div class="chart">${chartSvg(p, days)}
+    <div class="chart" style="margin-top:12px">${chartSvg(p, days)}
       <div class="ends"><span style="flex:1">${short(days[0])}</span><span>${short(days[days.length - 1])}</span></div></div>
     <div class="section"><h2>In numbers</h2><div style="height:6px"></div>
     <div class="stat"><span>Days answered</span><span>${s ? s.count : 0} of ${nDays}</span></div>`;
@@ -998,8 +1075,22 @@ document.addEventListener('click', ev => {
     case 'range': ui.range = +el.dataset.i; break;
     case 'graphPoint': ui.graphPoint = pid; window.scrollTo(0, 0); break;
     case 'theme': applyTheme(el.dataset.id); break;
-    case 'mood': { const cur = entry(d).values.bipolar_mood; setValue(d, 'bipolar_mood', cur === el.dataset.n ? null : el.dataset.n); break; }
-    case 'mixed': setValue(d, 'bipolar_mixed', entry(d).values.bipolar_mixed === '1' ? null : '1'); break;
+    case 'mood': {
+      const ev = entry(d).values, n = +el.dataset.n, mixedOn = ev.bipolar_mixed === '1';
+      const a = ev.bipolar_mood != null ? Math.round(+ev.bipolar_mood) : null, b = mixedOn && ev.bipolar_mood2 != null ? Math.round(+ev.bipolar_mood2) : null;
+      let na = a, nb = b;
+      if (!mixedOn) { na = a === n ? null : n; nb = null; }
+      else if (n === a) { na = b; nb = null; }       // remove the first; the second becomes the main one
+      else if (n === b) { nb = null; }
+      else if (a == null) { na = n; }
+      else { nb = n; }                              // set (or replace) the second number
+      updateEntry(d, e => {
+        if (na == null) delete e.values.bipolar_mood; else e.values.bipolar_mood = String(na);
+        if (nb == null) delete e.values.bipolar_mood2; else e.values.bipolar_mood2 = String(nb);
+      });
+      break;
+    }
+    case 'mixed': updateEntry(d, e => { if (e.values.bipolar_mixed === '1') { delete e.values.bipolar_mixed; delete e.values.bipolar_mood2; } else e.values.bipolar_mixed = '1'; }); break;
     case 'toggleSection': { const sec = D.sections.find(x => x.id === el.dataset.id); sec.hidden = !sec.hidden; save(); break; }
     case 'export': exportData(); return;
     case 'import': document.getElementById('importFile').click(); return;
