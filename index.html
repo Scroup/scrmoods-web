@@ -122,6 +122,9 @@ input, textarea, select { font: inherit; color: inherit; }
 .finish { display: block; width: 100%; margin: 4px 0 10px; padding: 13px 0; border-radius: 999px; background: var(--acc); color: var(--on-acc);
   font-size: 16px; font-weight: 500; border: 1px solid var(--acc); }
 .finish.done { background: transparent; color: var(--acc); border-color: var(--rule); font-style: italic; }
+#sparkles { position: fixed; inset: 0; z-index: 45; pointer-events: none; overflow: hidden; }
+#sparkles span { position: fixed; display: block; will-change: transform, opacity; }
+#sparkles svg { display: block; width: 100%; height: 100%; }
 #goodnight { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 0 32px;
   background: rgba(42, 28, 23, .28); opacity: 0; transition: opacity .7s ease; cursor: pointer; user-select: none; }
 #goodnight.in { opacity: 1; }
@@ -1081,6 +1084,9 @@ function renderData() {
       <button class="switchrow" data-act="toggleHaptics" role="switch" aria-checked="${hapticsOn}">
         <span class="t"><b>Vibrate on tap</b><i>A soft click of vibration when you tap buttons and answers. On iPhone this needs iOS 18 or newer.</i></span>
         <span class="switch ${hapticsOn ? 'on' : ''}"></span></button>
+      <button class="switchrow" data-act="toggleSparkles" role="switch" aria-checked="${sparklesOn}">
+        <span class="t"><b>Stars when answering</b><i>Answer buttons squish when tapped and pop out little stars.</i></span>
+        <span class="switch ${sparklesOn ? 'on' : ''}"></span></button>
       <button class="switchrow" data-act="toggleGoodNight" role="switch" aria-checked="${gn.on}">
         <span class="t"><b>Good night celebration</b><i>A “Finish the day” button under today's note: confetti, a good-night wish and a short lullaby.</i></span>
         <span class="switch ${gn.on ? 'on' : ''}"></span></button>
@@ -1285,6 +1291,7 @@ document.addEventListener('click', ev => {
     case 'todayDate': ui.date = today(); break;
     case 'pick': {
       const i = +el.dataset.i, cur = entry(d).values[pid];
+      pendingPop = { sel: `[data-act="pick"][data-pid="${CSS.escape(pid)}"][data-i="${i}"]`, stars: cur !== String(i) };
       setValue(d, pid, cur === String(i) ? null : i); break;
     }
     case 'clear': setValue(d, pid, null); break;
@@ -1317,6 +1324,7 @@ document.addEventListener('click', ev => {
     case 'graphPoint': ui.graphPoint = pid; window.scrollTo(0, 0); break;
     case 'theme': applyTheme(el.dataset.id); break;
     case 'toggleHaptics': hapticsOn = !hapticsOn; try { localStorage.setItem('scrmoods.haptics', hapticsOn ? 'on' : 'off'); } catch (e) {} haptic(); break;
+    case 'toggleSparkles': sparklesOn = !sparklesOn; try { localStorage.setItem('scrmoods.sparkles', sparklesOn ? 'on' : 'off'); } catch (e) {} break;
     case 'toggleGoodNight': gn.on = !gn.on; try { localStorage.setItem('scrmoods.goodnight', gn.on ? 'on' : 'off'); } catch (e) {} break;
     case 'toggleMelody': gn.melody = !gn.melody; try { localStorage.setItem('scrmoods.goodnight.melody', gn.melody ? 'on' : 'off'); } catch (e) {} break;
     case 'finishDay': {
@@ -1338,13 +1346,14 @@ document.addEventListener('click', ev => {
       else if (n === b) { nb = null; }
       else if (a == null) { na = n; }
       else { nb = n; }                              // set (or replace) the second number
+      pendingPop = { sel: `[data-act="mood"][data-n="${n}"]`, stars: n === na || n === nb };
       updateEntry(d, e => {
         if (na == null) delete e.values.bipolar_mood; else e.values.bipolar_mood = String(na);
         if (nb == null) delete e.values.bipolar_mood2; else e.values.bipolar_mood2 = String(nb);
       });
       break;
     }
-    case 'mixed': updateEntry(d, e => { if (e.values.bipolar_mixed === '1') { delete e.values.bipolar_mixed; delete e.values.bipolar_mood2; } else e.values.bipolar_mixed = '1'; }); break;
+    case 'mixed': pendingPop = { sel: '[data-act="mixed"]', stars: entry(d).values.bipolar_mixed !== '1' }; updateEntry(d, e => { if (e.values.bipolar_mixed === '1') { delete e.values.bipolar_mixed; delete e.values.bipolar_mood2; } else e.values.bipolar_mixed = '1'; }); break;
     case 'toggleSection': { const sec = D.sections.find(x => x.id === el.dataset.id); sec.hidden = !sec.hidden; save(); break; }
     case 'export': exportData(); return;
     case 'import': document.getElementById('importFile').click(); return;
@@ -1370,6 +1379,7 @@ document.addEventListener('click', ev => {
     default: return;
   }
   render();
+  if (pendingPop) { popButton(pendingPop); pendingPop = null; }
 });
 
 // Slider: show the value while dragging, save when released.
@@ -1430,6 +1440,52 @@ function haptic() {
   } catch (e) {}
 }
 document.addEventListener('click', ev => { if (ev.target.closest && ev.target.closest('button')) haptic(); }, true);
+
+/* Answer buttons squish, spring back and pop little stars, so filling in feels a bit like a game (same as Android). */
+let sparklesOn = true, pendingPop = null;
+try { sparklesOn = localStorage.getItem('scrmoods.sparkles') !== 'off'; } catch (e) {}
+const STAR_PATH = (() => {
+  let d = '';
+  for (let i = 0; i < 10; i++) {
+    const r = i % 2 ? 0.45 : 1, a = -Math.PI / 2 + i * Math.PI / 5;
+    d += (i ? 'L' : 'M') + (Math.cos(a) * r).toFixed(3) + ' ' + (Math.sin(a) * r).toFixed(3);
+  }
+  return d + 'Z';
+})();
+function popButton(p) {
+  if (!sparklesOn || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  const b = $main.querySelector(p.sel);
+  if (!b || !b.animate) return;
+  b.animate([
+    { transform: 'scale(1)' }, { transform: 'scale(.84)', offset: .17 }, { transform: 'scale(1.08)', offset: .5 },
+    { transform: 'scale(.98)', offset: .78 }, { transform: 'scale(1)' },
+  ], { duration: 440, easing: 'ease-out' });
+  if (!p.stars) return;
+  const r = b.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, reach = Math.min(r.width, r.height) / 2;
+  const main = getComputedStyle(b).backgroundColor;
+  const colors = [main, main, '#E8A93A', '#E8A93A', main];
+  let layer = document.getElementById('sparkles');
+  if (!layer) { layer = document.createElement('div'); layer.id = 'sparkles'; document.body.appendChild(layer); }
+  const n = 9, start = Math.random() * 6.28;
+  for (let i = 0; i < n; i++) {
+    const ang = start + i * 2 * Math.PI / n + (Math.random() - .5) * .5;
+    const dist = reach * .7 + 38 * (.75 + Math.random() * .6), d0 = reach * .7;
+    const size = 14 * (.8 + Math.random() * .5), dot = i % 3 === 2, spin = (Math.random() - .5) * 540;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const el = document.createElement('span');
+    const w = dot ? size * .45 : size;
+    el.style.cssText = `left:${cx - w / 2}px;top:${cy - w / 2}px;width:${w}px;height:${w}px;` + (dot ? `border-radius:50%;background:${color}` : '');
+    if (!dot) el.innerHTML = `<svg viewBox="-1 -1 2 2"><path d="${STAR_PATH}" fill="${color}"/></svg>`;
+    layer.appendChild(el);
+    const at = (k, sc, rot) => `translate(${Math.cos(ang) * k}px, ${Math.sin(ang) * k}px) rotate(${rot}deg) scale(${sc})`;
+    el.animate([
+      { transform: at(d0, .2, 0), opacity: 1 },
+      { transform: at(d0 + (dist - d0) * .5, 1.1, spin * .3), opacity: 1, offset: .2 },
+      { transform: at(d0 + (dist - d0) * .85, .95, spin * .7), opacity: 1, offset: .55 },
+      { transform: at(dist, .5, spin), opacity: 0 },
+    ], { duration: 720, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => el.remove();
+  }
+}
 
 const gn = { on: true, melody: true, finished: null };
 try {
