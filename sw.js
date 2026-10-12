@@ -1,7 +1,8 @@
 // Offline support: serve the app from the cache, refresh the cache in the background.
 // Bump VERSION when files change so phones pick up the new version on the next launch.
-const VERSION = 'scrmoods-v1';
-const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png'];
+const VERSION = 'scrmoods-v6';
+const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
+  './lora_regular.woff', './lora_medium.woff', './lora_italic.woff', './lora_medium_italic.woff'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
