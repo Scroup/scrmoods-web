@@ -84,12 +84,13 @@ input, textarea, select { font: inherit; color: inherit; }
 .card .rbtn { background: var(--paper); }
 .jhead { padding-left: 24px; }
 .themes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
-.theme { border-radius: 16px; padding: 8px; text-align: left; border: 1px solid; }
-.theme.on { border-width: 2px; }
+.theme { border-radius: 16px; padding: 7px; text-align: left; border: 1px solid; min-width: 0; }
+.theme.on { box-shadow: inset 0 0 0 1px var(--acc); }
 .theme .mini { border-radius: 10px; padding: 8px; border: 1px solid; }
 .theme .mini i { display: block; height: 5px; border-radius: 3px; margin-bottom: 5px; }
-.theme .mini b { display: inline-block; width: 22px; height: 10px; border-radius: 5px; margin: 3px 4px 0 0; border: 1px solid transparent; }
-.theme .nm { display: block; font-size: 13.5px; margin: 6px 0 0 2px; font-style: italic; }
+.theme .mini .pills { display: flex; gap: 4px; margin-top: 3px; }
+.theme .mini b { flex: 1; height: 10px; border-radius: 5px; border: 1px solid transparent; }
+.theme .nm { display: block; font-size: 12px; margin: 6px 0 0; font-style: italic; text-align: center; white-space: nowrap; overflow: hidden; }
 .theme.on .nm { font-style: normal; font-weight: 500; }
 
 /* quote of the day */
@@ -448,15 +449,14 @@ function setValue(date, pid, v) { updateEntry(date, e => { if (v == null || v ==
 const THEMES = [
   { id: 'rosewood', name: 'Rosewood', paper: '#F3E1DC', page: '#FFF8F5', ink: '#3B2A25', soft: '#8A6B63', faint: '#C2A49B', rule: '#EBCFC6', acc: '#C0584A', wash: '#F9DCD3' },
   { id: 'peach', name: 'Peach', paper: '#FCE3CF', page: '#FFF8F1', ink: '#43291C', soft: '#93684F', faint: '#CFA588', rule: '#F3D0B5', acc: '#DB6E35', wash: '#FFE0CB' },
-  { id: 'butter', name: 'Butter', paper: '#FAEDC4', page: '#FFFBEC', ink: '#3F3215', soft: '#85714A', faint: '#C4AE7A', rule: '#EEDDA8', acc: '#B57E0E', wash: '#FBEAB6' },
+  { id: 'sepia', name: 'Sepia', paper: '#EADFCF', page: '#FBF6EE', ink: '#4F3933', soft: '#85695A', faint: '#BCA893', rule: '#E0D2BF', acc: '#945B46', wash: '#F0E0D0' },
   { id: 'matcha', name: 'Matcha', paper: '#E3EDD8', page: '#F9FCF4', ink: '#26331F', soft: '#5F7351', faint: '#A2B393', rule: '#CFDDBF', acc: '#5C8A3E', wash: '#DDEDCC' },
   { id: 'lavender', name: 'Lavender', paper: '#ECE3F4', page: '#FCF9FF', ink: '#33263F', soft: '#77648A', faint: '#B4A5C4', rule: '#DED0EC', acc: '#8A5BB8', wash: '#EBDCF7' },
   { id: 'berry', name: 'Berry', paper: '#F7DFE8', page: '#FFF7FA', ink: '#3D2030', soft: '#8F5F74', faint: '#C99AAD', rule: '#EFC9D7', acc: '#C24A7C', wash: '#FBD9E6' },
-  { id: 'sepia', name: 'Sepia', paper: '#EADCC6', page: '#FAF4EA', ink: '#4A3428', soft: '#85695A', faint: '#BCA48C', rule: '#DECDB4', acc: '#8E5A3C', wash: '#EFDCC5' },
   { id: 'night', name: 'Night', paper: '#221A17', page: '#2E2420', ink: '#F1E4DC', soft: '#BCA79C', faint: '#7E6B62', rule: '#44362F', acc: '#E39A7E', wash: '#4A3129', onAcc: '#2A1C17', dark: true },
 ];
 let theme = THEMES[0];
-const OLD_THEMES = { honey: 'butter', sage: 'matcha', cocoa: 'sepia', blush: 'berry' };
+const OLD_THEMES = { honey: 'sepia', butter: 'sepia', sage: 'matcha', cocoa: 'sepia', blush: 'berry' };
 function applyTheme(id) {
   id = OLD_THEMES[id] || id;
   theme = THEMES.find(t => t.id === id) || THEMES[0];
@@ -1054,7 +1054,7 @@ function renderData() {
   const keys = Object.keys(D.entries).sort();
   $main.innerHTML = `<div class="section"><h2>Appearance</h2><div class="themes">${THEMES.map(t => `
       <button class="theme ${t.id === theme.id ? 'on' : ''}" data-act="theme" data-id="${t.id}" style="background:${t.paper};border-color:${t.id === theme.id ? t.acc : t.rule};color:${t.ink}">
-        <span class="mini" style="display:block;background:${t.page};border-color:${t.rule}"><i style="width:80%;background:${t.ink};opacity:.75"></i><i style="width:55%;background:${t.soft};opacity:.6"></i><b style="background:${t.acc}"></b><b style="background:${t.paper};border-color:${t.rule}"></b></span>
+        <span class="mini" style="display:block;background:${t.page};border-color:${t.rule}"><i style="width:80%;background:${t.ink};opacity:.75"></i><i style="width:55%;background:${t.soft};opacity:.6"></i><span class="pills"><b style="background:${t.acc}"></b><b style="background:${t.paper};border-color:${t.rule}"></b></span></span>
         <span class="nm">${t.name}</span></button>`).join('')}</div></div>
     <div class="section"><h2>Journal sections</h2>${(() => { const b = D.sections.find(x => x.id === 'bipolar'); return b ? `
       <button class="switchrow" data-act="toggleSection" data-id="bipolar" role="switch" aria-checked="${!b.hidden}">
