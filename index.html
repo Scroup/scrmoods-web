@@ -92,6 +92,12 @@ input, textarea, select { font: inherit; color: inherit; }
 .theme .nm { display: block; font-size: 13.5px; margin: 6px 0 0 2px; font-style: italic; }
 .theme.on .nm { font-style: normal; font-weight: 500; }
 
+/* quote of the day */
+.quote { display: flex; padding: 10px 24px 4px 18px; }
+.quote .qm { width: 26px; flex: none; font-size: 46px; line-height: 46px; color: color-mix(in srgb, var(--acc) 55%, transparent); }
+.quote p { margin: 6px 0 0; font-size: 16px; line-height: 23px; font-style: italic; }
+.quote .qa { display: block; margin-top: 4px; font-size: 13px; font-style: italic; color: var(--acc); }
+
 /* summary */
 .sumbtn { display: flex; align-items: center; width: calc(100% - 32px); margin: 12px 16px 0; padding: 14px 18px; border-radius: 16px; background: var(--acc); color: #fff; text-align: left; }
 .sumbtn > span:first-child { flex: 1; } .sumbtn b { display: block; font-size: 18px; font-weight: 500; } .sumbtn i { font-size: 13.5px; opacity: .85; }
@@ -531,6 +537,7 @@ function renderCheckin() {
   let h = pageHead(cap(dt.toLocaleDateString(undefined, { weekday: 'long' })),
     dt.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }),
     'prev', 'next', d >= t, d !== t ? '<button class="back" data-act="todayDate">Back to today</button>' : '');
+  if (showQuote) h += quoteHtml(d);
   for (const s of D.sections) {
     if (s.hidden) continue;
     if (s.id === 'bipolar') { h += moodCard(s, e); continue; }
@@ -571,6 +578,64 @@ function stackLongQuestions() {
     const q = yn.querySelector('.q');
     if (q.getBoundingClientRect().height > 21 * 2 + 4) yn.classList.add('stack');
   });
+}
+
+/* ---------- quote of the day: same list and order as the Android app, one per day ---------- */
+const QUOTES = [
+  ["A journey of a thousand miles begins with a single step.", "Lao Tzu"],
+  ["We suffer more often in imagination than in reality.", "Seneca"],
+  ["Adopt the pace of nature: her secret is patience.", "Ralph Waldo Emerson"],
+  ["Kiss your partner for six seconds, long enough for the affection to register.", null],
+  ["The best way out is always through.", "Robert Frost"],
+  ["Hope is the thing with feathers that perches in the soul.", "Emily Dickinson"],
+  ["I am not afraid of storms, for I am learning how to sail my ship.", "Louisa May Alcott"],
+  ["Don't forget to express gratitude.", null],
+  ["This too shall pass.", "Persian proverb"],
+  ["Very little is needed to make a happy life; it is all within yourself, in your way of thinking.", "Marcus Aurelius"],
+  ["Fall seven times, stand up eight.", "Japanese proverb"],
+  ["Tell the people you care about that you love them.", null],
+  ["Men are disturbed not by things, but by the views which they take of things.", "Epictetus"],
+  ["Nothing is so strong as gentleness, nothing so gentle as real strength.", "Francis de Sales"],
+  ["Well begun is half done.", "Aristotle"],
+  ["Drink a glass of water and take three slow breaths.", null],
+  ["Gratitude is not only the greatest of virtues, but the parent of all the others.", "Cicero"],
+  ["There is no remedy for love but to love more.", "Henry David Thoreau"],
+  ["Write it on your heart that every day is the best day in the year.", "Ralph Waldo Emerson"],
+  ["Step outside for ten minutes. Daylight helps.", null],
+  ["The soul becomes dyed with the colour of its thoughts.", "Marcus Aurelius"],
+  ["The best time to plant a tree was twenty years ago. The second best time is now.", "Chinese proverb"],
+  ["Let us be grateful to people who make us happy; they are the charming gardeners who make our souls blossom.", "Marcel Proust"],
+  ["You don't have to finish everything today.", null],
+  ["Finish each day and be done with it. You have done what you could.", "Ralph Waldo Emerson"],
+  ["One kind word can warm three winter months.", "Japanese proverb"],
+  ["He who has a why to live can bear almost any how.", "Friedrich Nietzsche"],
+  ["Send a friend a message, just to say hi.", null],
+  ["Beyond a wholesome discipline, be gentle with yourself.", "Max Ehrmann"],
+  ["Do what you can, with what you have, where you are.", "Theodore Roosevelt"],
+  ["Rest is not idleness.", "John Lubbock"],
+  ["Notice one small good thing today and write it down.", null],
+  ["Be kind, for everyone you meet is fighting a hard battle.", "Ian Maclaren"],
+  ["It is not that we have a short time to live, but that we waste a lot of it.", "Seneca"],
+  ["Nature does not hurry, yet everything is accomplished.", "Lao Tzu"],
+  ["Rest counts as progress.", null],
+  ["No man is free who is not master of himself.", "Epictetus"],
+  ["Simplicity, simplicity, simplicity!", "Henry David Thoreau"],
+  ["Waste no more time arguing about what a good man should be. Be one.", "Marcus Aurelius"],
+  ["A short walk is still a walk.", null],
+  ["If one advances confidently in the direction of his dreams, he will meet with a success unexpected in common hours.", "Henry David Thoreau"],
+  ["Healing is a matter of time, but it is sometimes also a matter of opportunity.", "Hippocrates"],
+  ["Be as kind to yourself as you would be to a friend.", null],
+];
+let showQuote = true;
+try { showQuote = localStorage.getItem('scrmoods.quote') !== 'off'; } catch (e) {}
+function quoteFor(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  const epochDay = Math.round(Date.UTC(y, m - 1, d) / 86400000);
+  return QUOTES[((epochDay % QUOTES.length) + QUOTES.length) % QUOTES.length];
+}
+function quoteHtml(day) {
+  const [t, a] = quoteFor(day);
+  return `<div class="quote"><span class="qm">“</span><div><p>${esc(t)}</p><span class="qa">${a ? esc(a) : 'A reminder for today'}</span></div></div>`;
 }
 
 /* ---------- mood scale: 0 severe depression, 5 balanced, 10 mania ---------- */
@@ -988,7 +1053,10 @@ function renderData() {
     <div class="section"><h2>Journal sections</h2>${(() => { const b = D.sections.find(x => x.id === 'bipolar'); return b ? `
       <button class="switchrow" data-act="toggleSection" data-id="bipolar" role="switch" aria-checked="${!b.hidden}">
         <span class="t"><b>Mood scale</b><i>Track depression and mania from 0 to 10 at the top of the journal. Hiding it keeps your past answers.</i></span>
-        <span class="switch ${b.hidden ? '' : 'on'}"></span></button>` : ''; })()}</div>
+        <span class="switch ${b.hidden ? '' : 'on'}"></span></button>` : ''; })()}
+      <button class="switchrow" data-act="toggleQuote" role="switch" aria-checked="${showQuote}">
+        <span class="t"><b>Quote of the day</b><i>A quote or gentle reminder at the top of the journal, a new one each day.</i></span>
+        <span class="switch ${showQuote ? 'on' : ''}"></span></button></div>
     <div class="section"><h2>Your journal</h2>
     <div class="count">${keys.length} ${keys.length === 1 ? 'day' : 'days'} written</div>
     ${keys.length ? `<div style="font-style:italic;color:var(--soft)">since ${keys[0]}</div>` : ''}
@@ -1217,6 +1285,7 @@ document.addEventListener('click', ev => {
     case 'range': ui.range = +el.dataset.i; break;
     case 'graphPoint': ui.graphPoint = pid; window.scrollTo(0, 0); break;
     case 'theme': applyTheme(el.dataset.id); break;
+    case 'toggleQuote': showQuote = !showQuote; try { localStorage.setItem('scrmoods.quote', showQuote ? 'on' : 'off'); } catch (e) {} break;
     case 'summary': { const n = RANGES[ui.range][0], ds = []; for (let i = n - 1; i >= 0; i--) ds.push(addDays(today(), -i)); openSummary(ds, n === 365 ? 'year' : `${n} days`); return; }
     case 'mood': {
       const ev = entry(d).values, n = +el.dataset.n, mixedOn = ev.bipolar_mixed === '1';
