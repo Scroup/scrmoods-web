@@ -119,6 +119,9 @@ input, textarea, select { font: inherit; color: inherit; }
 @keyframes sfade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .sbody { animation: none; } }
 /* good night celebration */
+.finish { display: block; width: 100%; margin: 4px 0 10px; padding: 13px 0; border-radius: 999px; background: var(--acc); color: var(--on-acc);
+  font-size: 16px; font-weight: 500; border: 1px solid var(--acc); }
+.finish.done { background: transparent; color: var(--acc); border-color: var(--rule); font-style: italic; }
 #goodnight { position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 0 32px;
   background: rgba(42, 28, 23, .28); opacity: 0; transition: opacity .7s ease; cursor: pointer; user-select: none; }
 #goodnight.in { opacity: 1; }
@@ -455,7 +458,6 @@ function updateEntry(date, fn) {
   const e = clone(entry(date)); fn(e);
   if (entryEmpty(e)) delete D.entries[date]; else D.entries[date] = e;
   save();
-  goodNightCheck(date);
 }
 function setValue(date, pid, v) { updateEntry(date, e => { if (v == null || v === '') delete e.values[pid]; else e.values[pid] = String(v); }); }
 
@@ -553,7 +555,6 @@ const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 
 function renderCheckin() {
   const t = today(), d = ui.date, e = entry(d);
-  if (d === t && !dayComplete(e)) gn.unfinished = d;
   const dt = parseYmd(d);
   let h = pageHead(cap(dt.toLocaleDateString(undefined, { weekday: 'long' })),
     dt.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }),
@@ -572,11 +573,8 @@ function renderCheckin() {
     h += '</div>';
   }
   h += `<div class="section card" style="padding-bottom:6px"><h2>Today's note</h2>
-    <textarea class="ruled" id="noteArea" placeholder="Write about your day…">${esc(e.note)}</textarea></div>`;
-  h += `<div class="section card"><h2>Through the day</h2>
-    ${e.timed.map((n, i) => `<div class="tnote"><span class="t">${esc(n.time.split(' ')[1] || n.time)}</span>
-      <span class="x">${esc(n.text)}</span><button data-act="delTimed" data-i="${i}" aria-label="Delete note">✕</button></div>`).join('')}
-    <div><button class="link" data-act="addTimed">+ Add a timestamped note</button></div></div>`;
+    <textarea class="ruled" id="noteArea" placeholder="Write about your day…">${esc(e.note)}</textarea>
+    ${gn.on ? `<button class="finish ${gn.finished === d ? 'done' : ''}" data-act="finishDay">${gn.finished === d ? 'Day finished&nbsp; ✓' : 'Finish the day&nbsp; ☾'}</button>` : ''}</div>`;
   $main.innerHTML = h + '<div style="height:28px"></div>';
 }
 
@@ -1079,7 +1077,7 @@ function renderData() {
         <span class="t"><b>Quote of the day</b><i>A quote or gentle reminder at the top of the journal, a new one each day.</i></span>
         <span class="switch ${showQuote ? 'on' : ''}"></span></button>
       <button class="switchrow" data-act="toggleGoodNight" role="switch" aria-checked="${gn.on}">
-        <span class="t"><b>Good night celebration</b><i>When today's questions and note are done: confetti, a good-night wish and a short lullaby.</i></span>
+        <span class="t"><b>Good night celebration</b><i>A “Finish the day” button under today's note: confetti, a good-night wish and a short lullaby.</i></span>
         <span class="switch ${gn.on ? 'on' : ''}"></span></button>
       ${gn.on ? `<button class="switchrow" data-act="toggleMelody" role="switch" aria-checked="${gn.melody}">
         <span class="t"><b>Play the lullaby</b><i>Uses your media volume. On iPhone, the silent switch mutes it.</i></span>
@@ -1315,6 +1313,13 @@ document.addEventListener('click', ev => {
     case 'theme': applyTheme(el.dataset.id); break;
     case 'toggleGoodNight': gn.on = !gn.on; try { localStorage.setItem('scrmoods.goodnight', gn.on ? 'on' : 'off'); } catch (e) {} break;
     case 'toggleMelody': gn.melody = !gn.melody; try { localStorage.setItem('scrmoods.goodnight.melody', gn.melody ? 'on' : 'off'); } catch (e) {} break;
+    case 'finishDay': {
+      clearTimeout(noteTimer);
+      const v = document.getElementById('noteArea')?.value;
+      if (v != null) updateEntry(d, e => e.note = v.trim());   // save right away
+      celebrate(d, true);
+      break;
+    }
     case 'previewGoodNight': celebrate(today(), false); return;
     case 'toggleQuote': showQuote = !showQuote; try { localStorage.setItem('scrmoods.quote', showQuote ? 'on' : 'off'); } catch (e) {} break;
     case 'summary': { const n = RANGES[ui.range][0], ds = []; for (let i = n - 1; i >= 0; i--) ds.push(addDays(today(), -i)); openSummary(ds, n === 365 ? 'year' : `${n} days`); return; }
@@ -1387,7 +1392,6 @@ document.addEventListener('keyup', ev => {
 let noteTimer;
 document.addEventListener('input', ev => {
   if (ev.target.id !== 'noteArea') return;
-  gn.lastNote = Date.now();
   const d = ui.date, v = ev.target.value;
   clearTimeout(noteTimer);
   noteTimer = setTimeout(() => updateEntry(d, e => e.note = v.trim()), 500);
@@ -1404,13 +1408,13 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-/* ---------- good night: confetti, a lullaby and a wish once today's journal is complete (same as Android) ---------- */
-const gn = { on: true, melody: true, unfinished: null, lastNote: 0, timer: null };
+/* ---------- good night: "Finish the day" brings confetti, a lullaby and a wish (same as Android) ---------- */
+const gn = { on: true, melody: true, finished: null };
 try {
   gn.on = localStorage.getItem('scrmoods.goodnight') !== 'off';
   gn.melody = localStorage.getItem('scrmoods.goodnight.melody') !== 'off';
+  gn.finished = localStorage.getItem('scrmoods.goodnight.last');
 } catch (e) {}
-const gnDone = () => { try { return localStorage.getItem('scrmoods.goodnight.last'); } catch (e) { return null; } };
 
 /* Every visible question answered and the note written. The mixed switch and second mood number are optional. */
 function dayComplete(e) {
@@ -1425,19 +1429,6 @@ function dayComplete(e) {
   }
   return true;
 }
-function goodNightCheck(date) {
-  clearTimeout(gn.timer);
-  if (date !== today()) return;
-  if (!dayComplete(entry(date))) { gn.unfinished = date; return; }
-  if (!gn.on || gn.unfinished !== date || gnDone() === date) return;
-  const go = () => {
-    const idle = Date.now() - gn.lastNote;               // wait until you've stopped writing for a moment
-    if (idle < 5000) { gn.timer = setTimeout(go, 5000 - idle); return; }
-    if (dayComplete(entry(date)) && gnDone() !== date) celebrate(date, true);
-  };
-  gn.timer = setTimeout(go, 1500);
-}
-
 const WISHES = [
   'Today is written down. You can let it rest now.',
   'Thank you for checking in with yourself today.',
@@ -1510,14 +1501,14 @@ function playLullaby() {
 }
 
 function celebrate(date, remember) {
-  if (remember) try { localStorage.setItem('scrmoods.goodnight.last', date); } catch (e) {}
+  if (remember) { gn.finished = date; try { localStorage.setItem('scrmoods.goodnight.last', date); } catch (e) {} }
   if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); // closes the keyboard
   if (gn.melody) playLullaby();
   document.getElementById('goodnight')?.remove();
   const el = document.createElement('div');
   el.id = 'goodnight';
   el.innerHTML = `<canvas></canvas><div class="gcard"><div class="moon">☾</div><div class="gh">Good night</div>
-    <div class="gs">Today's journal is complete.</div><div class="gw">${esc(wishFor(date))}</div><div class="gt">Tap anywhere to close</div></div>`;
+    <div class="gs">${dayComplete(entry(date)) ? "Today's journal is complete." : 'Today is saved.'}</div><div class="gw">${esc(wishFor(date))}</div><div class="gt">Tap anywhere to close</div></div>`;
   document.body.appendChild(el);
   requestAnimationFrame(() => el.classList.add('in'));
 
