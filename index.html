@@ -122,6 +122,18 @@ input, textarea, select { font: inherit; color: inherit; }
 .finish { display: block; width: 100%; margin: 4px 0 10px; padding: 13px 0; border-radius: 999px; background: var(--acc); color: var(--on-acc);
   font-size: 16px; font-weight: 500; border: 1px solid var(--acc); }
 .finish.done { background: transparent; color: var(--acc); border-color: var(--rule); font-style: italic; }
+/* opening: a short welcome, then the journal rises into place */
+#welcome { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; text-align: center;
+  padding: 0 32px; background: var(--paper); pointer-events: none; transition: opacity .48s ease; }
+#welcome .wrap { transition: transform .5s ease; }
+#welcome.out { opacity: 0; } #welcome.out .wrap { transform: translateY(-30px); }
+#welcome .w { animation: wIn .45s cubic-bezier(.16, 1, .3, 1) both; }
+#welcome .orn { color: var(--acc); font-size: 18px; }
+#welcome .wh { font-size: 34px; font-weight: 500; margin-top: 6px; }
+#welcome .ws { font-size: 16px; line-height: 22px; font-style: italic; color: var(--soft); margin-top: 8px; }
+@keyframes wIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+#main.intro > * { animation: rise .75s cubic-bezier(.16, 1, .3, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(90px); } to { opacity: 1; transform: none; } }
 #sparkles { position: fixed; inset: 0; z-index: 45; pointer-events: none; overflow: hidden; }
 #sparkles span { position: fixed; display: block; will-change: transform, opacity; }
 #sparkles svg { display: block; width: 100%; height: 100%; }
@@ -1084,6 +1096,9 @@ function renderData() {
       <button class="switchrow" data-act="toggleHaptics" role="switch" aria-checked="${hapticsOn}">
         <span class="t"><b>Vibrate on tap</b><i>A soft click of vibration when you tap buttons and answers. On iPhone this needs iOS 18 or newer.</i></span>
         <span class="switch ${hapticsOn ? 'on' : ''}"></span></button>
+      <button class="switchrow" data-act="toggleWelcome" role="switch" aria-checked="${welcomeOn}">
+        <span class="t"><b>Welcome when opening</b><i>A short greeting, then the journal rises into place.</i></span>
+        <span class="switch ${welcomeOn ? 'on' : ''}"></span></button>
       <button class="switchrow" data-act="toggleSparkles" role="switch" aria-checked="${sparklesOn}">
         <span class="t"><b>Stars when answering</b><i>Answer buttons squish when tapped and pop out little stars.</i></span>
         <span class="switch ${sparklesOn ? 'on' : ''}"></span></button>
@@ -1324,6 +1339,7 @@ document.addEventListener('click', ev => {
     case 'graphPoint': ui.graphPoint = pid; window.scrollTo(0, 0); break;
     case 'theme': applyTheme(el.dataset.id); break;
     case 'toggleHaptics': hapticsOn = !hapticsOn; try { localStorage.setItem('scrmoods.haptics', hapticsOn ? 'on' : 'off'); } catch (e) {} haptic(); break;
+    case 'toggleWelcome': welcomeOn = !welcomeOn; try { localStorage.setItem('scrmoods.welcome', welcomeOn ? 'on' : 'off'); } catch (e) {} break;
     case 'toggleSparkles': sparklesOn = !sparklesOn; try { localStorage.setItem('scrmoods.sparkles', sparklesOn ? 'on' : 'off'); } catch (e) {} break;
     case 'toggleGoodNight': gn.on = !gn.on; try { localStorage.setItem('scrmoods.goodnight', gn.on ? 'on' : 'off'); } catch (e) {} break;
     case 'toggleMelody': gn.melody = !gn.melody; try { localStorage.setItem('scrmoods.goodnight.melody', gn.melody ? 'on' : 'off'); } catch (e) {} break;
@@ -1656,8 +1672,33 @@ function celebrate(date, remember) {
   setTimeout(close, 13700);
 }
 
+/* Opening the app: a short welcome, then the header and cards swoosh up from below (same as Android). */
+let welcomeOn = true;
+try { welcomeOn = localStorage.getItem('scrmoods.welcome') !== 'off'; } catch (e) {}
+function greeting() {
+  const h = new Date().getHours();
+  return h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 17 ? 'Good afternoon' : h >= 17 && h < 23 ? 'Good evening' : 'Hello, night owl';
+}
+function playIntro() {
+  if (!welcomeOn || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  const RISE = 950, STEP = 85;
+  const el = document.createElement('div');
+  el.id = 'welcome';
+  el.innerHTML = `<div class="wrap"><div class="w"><div class="orn">✦</div><div class="wh">${greeting()}</div>
+    <div class="ws">Welcome back. Let's see how today is going.</div></div></div>`;
+  document.body.appendChild(el);
+  [...$main.children].forEach((c, i) => c.style.setProperty('--d', (RISE + i * STEP) + 'ms'));
+  $main.classList.add('intro');
+  setTimeout(() => el.classList.add('out'), RISE - 80);
+  setTimeout(() => el.remove(), RISE + 520);
+  const end = () => $main.classList.remove('intro');
+  setTimeout(end, RISE + 20 * STEP + 800);
+  document.addEventListener('click', end, { once: true, capture: true }); // tapping early just shows everything
+}
+
 load();
 render();
+playIntro();
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
