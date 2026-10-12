@@ -92,6 +92,26 @@ input, textarea, select { font: inherit; color: inherit; }
 .theme .nm { display: block; font-size: 13.5px; margin: 6px 0 0 2px; font-style: italic; }
 .theme.on .nm { font-style: normal; font-weight: 500; }
 
+/* summary */
+.sumbtn { display: flex; align-items: center; width: calc(100% - 32px); margin: 12px 16px 0; padding: 14px 18px; border-radius: 16px; background: var(--acc); color: #fff; text-align: left; }
+.sumbtn > span:first-child { flex: 1; } .sumbtn b { display: block; font-size: 18px; font-weight: 500; } .sumbtn i { font-size: 13.5px; opacity: .85; }
+.sumbtn .star { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.18); display: grid; place-items: center; }
+#summary { position: fixed; inset: 0; z-index: 70; display: flex; flex-direction: column; padding: calc(16px + var(--safe-top)) 24px calc(28px + var(--safe-bottom)); background: var(--page); cursor: pointer; user-select: none; }
+#summary.sum-good { background: color-mix(in srgb, var(--good) 28%, var(--page)); }
+#summary.sum-care { background: color-mix(in srgb, var(--bad) 24%, var(--page)); }
+#summary.sum-mood { background: var(--wash); }
+.sbars { display: flex; gap: 4px; } .sbars i { flex: 1; height: 3px; border-radius: 2px; background: color-mix(in srgb, var(--ink) 15%, transparent); }
+.sbars i.on { background: color-mix(in srgb, var(--ink) 70%, transparent); }
+.stop { display: flex; align-items: center; margin-top: 4px; } .stop span { flex: 1; font-size: 14px; font-style: italic; color: var(--acc); }
+.sclose { width: 44px; height: 44px; font-size: 18px; color: var(--soft); }
+.sbody { flex: 1; display: flex; flex-direction: column; justify-content: center; animation: sfade .35s ease; }
+.sk { font-size: 17px; font-style: italic; color: var(--acc); }
+.sh { font-size: 32px; line-height: 39px; font-weight: 500; margin: 10px 0 18px; }
+.sbody p { margin: 0 0 10px; font-size: 17px; line-height: 25px; } .sbody p.soft { font-style: italic; color: var(--soft); }
+.shint { text-align: center; font-size: 13px; font-style: italic; color: var(--faint); }
+@keyframes sfade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sbody { animation: none; } }
+
 /* fixed Trends charts */
 .tcard { margin: 12px 16px 0; padding: 12px 0 10px; background: var(--page); border: 1px solid var(--rule); border-radius: 16px; }
 .tcard .tt { font-size: 18px; font-weight: 500; padding: 0 14px 6px; }
@@ -702,6 +722,126 @@ function chartSvg(p, days) {
   }
   return s + '</svg>';
 }
+/* ---------- Summary: a plain-words retrospective, story style (same logic as the Android app) ---------- */
+function buildSummary(days, label) {
+  const prev = days.map(d => addDays(d, -days.length));
+  const v = (pid, day) => { const x = D.entries[day]?.values?.[pid]; const n = parseFloat(x); return x == null || isNaN(n) ? null : n; };
+  const vals = (p, ds) => ds.map(d => v(p.id, d)).filter(x => x != null);
+  const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
+  const fmtDay = d => parseYmd(d).toLocaleDateString(undefined, { day: 'numeric', month: 'long' });
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  const q = p => `“${p.label.replace(/:$/, '')}”`;
+  const active = D.points.filter(p => !p.archived && !D.sections.find(s => s.id === p.section)?.hidden);
+  const pages = [];
+  const logged = days.filter(d => D.entries[d]);
+  if (!logged.length) return [{ k: `Your last ${label}`, h: 'Nothing written yet in this period', b: ['Check in for a few days and your summary will start to take shape.'], t: 'neutral' }];
+  let run = 0, best = 0; for (const d of days) { if (D.entries[d]) { run++; best = Math.max(best, run); } else run = 0; }
+  const notes = days.reduce((n, d) => n + (D.entries[d] ? (D.entries[d].note ? 1 : 0) + D.entries[d].timed.length : 0), 0);
+  pages.push({ k: `Your last ${label}`, h: `You checked in on ${logged.length} of ${days.length} days`, t: 'neutral',
+    b: [best >= 3 ? `Your longest run was ${best} days in a row.` : null, notes ? `You wrote ${plural(notes, 'note', 'notes')} along the way.` : null,
+        logged.length === days.length ? 'Not a single day missed.' : null].filter(Boolean) });
+
+  const outlook = active.find(p => p.id === 'outlook' && p.type === 'scale' && vals(p, days).length);
+  const moodP = active.find(p => p.id === 'bipolar_mood' && vals(p, days).length);
+  const target = outlook || moodP, targetName = outlook ? 'your outlook' : 'your mood';
+  const gOn = day => { if (!target) return null; const x = v(target.id, day); return x == null ? null : goodness(target, x); };
+
+  if (outlook) {
+    const cur = vals(outlook, days), counts = outlook.options.map((_, i) => cur.filter(x => Math.round(x) === i).length);
+    const top = counts.indexOf(Math.max(...counts));
+    const split = outlook.options.map((o, i) => [o, counts[i]]).reverse().filter(([, c]) => c).map(([o, c]) => `${o.toLowerCase()} on ${plural(c, 'day', 'days')}`).join(', ');
+    const b = [`You felt ${split}.`];
+    const pv = vals(outlook, prev);
+    if (pv.length >= 3) { const diff = avg(cur.map(x => goodness(outlook, x))) - avg(pv.map(x => goodness(outlook, x)));
+      b.push(diff >= 0.08 ? `That's brighter than the ${label} before.` : diff <= -0.08 ? `A bit heavier than the ${label} before. That happens.` : `Much the same as the ${label} before.`); }
+    const g = avg(cur.map(x => goodness(outlook, x)));
+    pages.push({ k: 'Your outlook', h: `Mostly ${outlook.options[top]}`, b, t: g >= 0.6 ? 'good' : g <= 0.4 ? 'care' : 'mood' });
+  }
+  if (moodP) {
+    const cur = days.map(d => v('bipolar_mood', d)).filter(x => x != null);
+    const isBal = d => { const x = v('bipolar_mood', d); return x != null && Math.round(x) >= 4 && Math.round(x) <= 6 && v('bipolar_mixed', d) !== 1; };
+    const bal = days.filter(isBal).length, mixedDays = days.filter(d => v('bipolar_mixed', d) === 1).length;
+    const both = [...cur, ...days.filter(d => v('bipolar_mixed', d) === 1).map(d => v('bipolar_mood2', d)).filter(x => x != null)];
+    const lo = Math.round(Math.min(...both)), hi = Math.round(Math.max(...both));
+    const b = [lo === hi ? `Every answer sat at ${lo}, ${MOOD[lo][0].toLowerCase()}.` : `Your range went from ${lo} (${MOOD[lo][0].toLowerCase()}) to ${hi} (${MOOD[hi][0].toLowerCase()}).`];
+    if (mixedDays) b.push(`${mixedDays} ${mixedDays === 1 ? 'day was' : 'days were'} mixed, low and high at once.`);
+    const pv = prev.map(d => v('bipolar_mood', d)).filter(x => x != null);
+    if (pv.length >= 3) { const c = bal / cur.length, p = prev.filter(isBal).length / pv.length;
+      if (c - p >= 0.1) b.push(`More balanced days than the ${label} before.`); else if (p - c >= 0.1) b.push(`Fewer balanced days than the ${label} before. Worth keeping an eye on.`); }
+    pages.push({ k: 'Your mood scale', h: `Balanced on ${bal} of ${cur.length} days`, b, t: bal / cur.length >= 0.6 ? 'good' : 'mood' });
+  }
+  const sleep = active.find(p => p.id === 'sleep_hours');
+  if (sleep) {
+    const nights = days.map(d => [d, v(sleep.id, d)]).filter(([, x]) => x != null);
+    if (nights.length) {
+      const a = avg(nights.map(n => n[1]));
+      const longest = nights.reduce((m, n) => n[1] > m[1] ? n : m), shortest = nights.reduce((m, n) => n[1] < m[1] ? n : m);
+      const b = [`Your longest night was ${fmtNum(longest[1])} h on ${fmtDay(longest[0])}, the shortest ${fmtNum(shortest[1])} h.`];
+      const pv = vals(sleep, prev);
+      if (pv.length >= 3) { const diff = a - avg(pv); b.push(Math.abs(diff) >= 0.3 ? `About ${Math.abs(diff).toFixed(1)} h ${diff > 0 ? 'more' : 'less'} a night than the ${label} before.` : `About the same as the ${label} before.`); }
+      pages.push({ k: 'Your sleep', h: `${a.toFixed(1)} hours a night`, b, t: a >= 7 ? 'good' : a < 6 ? 'care' : 'mood' });
+    }
+  }
+  const judged = active.filter(p => p.type !== 'text' && p.better && p.better !== 'none' && p.id !== 'bipolar_mood' && p.id !== 'outlook' && p.section !== 'bipolar')
+    .map(p => { const cur = vals(p, days); return cur.length < 2 ? null : [p, cur, goodness(p, avg(cur))]; }).filter(x => x && x[2] != null);
+  const describe = (p, cur) => p.type === 'yesno' ? `${q(p)} Yes on ${cur.filter(x => x >= 0.5).length} of ${cur.length} days`
+    : p.type === 'scale' ? `${q(p)} mostly ${(p.options[Math.round(avg(cur))] || '').toLowerCase()}` : `${q(p)} ${avg(cur).toFixed(1)}${p.unit ? ' ' + p.unit : ''} on average`;
+  const wins = judged.filter(j => j[2] >= 0.6).sort((a, b) => b[2] - a[2]).slice(0, 4);
+  if (wins.length) pages.push({ k: 'What went well', h: wins.length === 1 ? 'One thing that held up' : `${wins.length} things that held up`, b: wins.map(j => describe(j[0], j[1])), t: 'good' });
+  const care = judged.filter(j => j[2] <= 0.4).sort((a, b) => a[2] - b[2]).slice(0, 3);
+  if (care.length) pages.push({ k: 'Worth some extra care', h: care.length === 1 ? 'One thing to be gentle with' : `${care.length} things to be gentle with`, b: [...care.map(j => describe(j[0], j[1])), 'Small steps count.'], t: 'care', soft: 'Small steps count.' });
+  if (target) {
+    const found = [];
+    for (const p of active.filter(p => p.type === 'yesno' && p.section !== 'bipolar')) {
+      const yes = days.filter(d => v(p.id, d) === 1).map(gOn).filter(x => x != null), no = days.filter(d => v(p.id, d) === 0).map(gOn).filter(x => x != null);
+      if (yes.length < 3 || no.length < 3) continue;
+      const diff = avg(yes) - avg(no); if (Math.abs(diff) < 0.12) continue;
+      found.push([diff, diff > 0 ? `On days you answered yes to ${q(p)}, ${targetName} was noticeably better.` : `On days you answered yes to ${q(p)}, ${targetName} tended to be lower.`]);
+    }
+    if (sleep) {
+      const long = days.filter(d => (v(sleep.id, d) ?? -1) >= 7).map(gOn).filter(x => x != null), short = days.filter(d => (v(sleep.id, d) ?? 99) < 7).map(gOn).filter(x => x != null);
+      if (long.length >= 3 && short.length >= 3) { const diff = avg(long) - avg(short);
+        if (Math.abs(diff) >= 0.12) found.push([diff, diff > 0 ? `After 7 or more hours of sleep, ${targetName} was better.` : `Interestingly, ${targetName} wasn't better after longer nights.`]); }
+    }
+    const picked = found.sort((a, b) => Math.abs(b[0]) - Math.abs(a[0])).slice(0, 3);
+    if (picked.length) pages.push({ k: 'Patterns worth noticing', h: 'What goes with your better days', b: [...picked.map(x => x[1]), 'These are patterns in your answers, not proof of cause.'], t: 'mood', soft: 'These are patterns in your answers, not proof of cause.' });
+    const scored = days.map(d => [d, gOn(d)]).filter(([, g]) => g != null);
+    const bestG = scored.length ? Math.max(...scored.map(x => x[1])) : null;
+    if (bestG != null && bestG >= 0.6) {
+      const cands = scored.filter(x => x[1] === bestG).map(x => x[0]);
+      const day = cands.find(d => D.entries[d]?.note) || cands[cands.length - 1];
+      const note = (D.entries[day]?.note || '').trim();
+      pages.push({ k: 'Your brightest day', h: fmtDay(day), t: 'good',
+        b: [note ? `You wrote: “${note.length > 160 ? note.slice(0, 157).trim() + '…' : note}”` : outlook ? `Your outlook that day: ${display(outlook, String(Math.round(v('outlook', day))))}.` : 'One of your steadiest days.'] });
+    }
+  }
+  pages.push({ k: `That's your ${label}`, h: 'Thank you for showing up for yourself', b: ['Every check-in adds to the picture. See you tomorrow.'], t: 'neutral' });
+  return pages;
+}
+let sumState = null;
+function openSummary(days, label) { sumState = { pages: buildSummary(days, label), i: 0 }; showSummary(); }
+function showSummary() {
+  let el = document.getElementById('summary');
+  if (!sumState) { el?.remove(); document.body.style.overflow = ''; return; }
+  if (!el) { el = document.createElement('div'); el.id = 'summary'; document.body.appendChild(el); document.body.style.overflow = 'hidden'; }
+  const p = sumState.pages[sumState.i], last = sumState.i === sumState.pages.length - 1;
+  el.className = 'sum-' + p.t;
+  el.innerHTML = `<div class="sbars">${sumState.pages.map((_, i) => `<i class="${i <= sumState.i ? 'on' : ''}"></i>`).join('')}</div>
+    <div class="stop"><span>scrmoods summary</span><button class="sclose" aria-label="Close summary">✕</button></div>
+    <div class="sbody"><div class="sk">${esc(p.k)}</div><div class="sh">${esc(p.h)}</div>
+      ${p.b.map(l => `<p class="${l === p.soft ? 'soft' : ''}">${esc(l)}</p>`).join('')}</div>
+    <div class="shint">${last ? 'Tap to close' : 'Tap to continue'}</div>`;
+}
+document.addEventListener('click', ev => {
+  const el = document.getElementById('summary');
+  if (!el || !el.contains(ev.target)) return;
+  ev.stopPropagation();
+  if (ev.target.closest('.sclose')) { sumState = null; return showSummary(); }
+  if (ev.clientX < window.innerWidth / 3) { if (sumState.i > 0) sumState.i--; }
+  else if (sumState.i < sumState.pages.length - 1) sumState.i++; else sumState = null;
+  showSummary();
+}, true);
+
 /* ---------- fixed Trends charts: mood trend and sleep pattern ---------- */
 const shortDate = s => parseYmd(s).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 const ends = days => `<div class="ends"><span style="flex:1">${shortDate(days[0])}</span><span>${shortDate(days[days.length - 1])}</span></div>`;
@@ -764,7 +904,9 @@ function renderGraph() {
   const s = stats(p, days);
   const moodOn = D.sections.find(x => x.id === 'bipolar')?.hidden === false;
   const sleepP = D.points.find(q => q.id === 'sleep_hours' && !q.archived);
-  let h = `<div class="rangeseg" style="margin:12px 16px 2px">${seg(RANGES.map(r => r[1]), ui.range, 'range', '')}</div>`;
+  const periodLabel = nDays === 365 ? 'year' : `${nDays} days`;
+  let h = `<div class="rangeseg" style="margin:12px 16px 2px">${seg(RANGES.map(r => r[1]), ui.range, 'range', '')}</div>
+    <button class="sumbtn" data-act="summary"><span><b>Summary</b><i>How your last ${periodLabel} went, in words</i></span><span class="star">✦</span></button>`;
   if (moodOn) h += `<div class="tcard"><div class="tt">Mood trend</div>${moodTrendSvg(days)}${ends(days)}${moodLegend(days)}</div>`;
   if (sleepP) h += `<div class="tcard"><div class="tt">Sleep pattern</div>${sleepSvg(sleepP, days)}${ends(days)}${sleepNote(sleepP, days)}</div>`;
   h += `<div class="section"><h2>Any tracking point</h2></div><div class="picker" style="margin-top:10px"><div class="ptitle">${esc(p.label)}${p.archived ? ' (removed)' : ''}</div>
@@ -1075,6 +1217,7 @@ document.addEventListener('click', ev => {
     case 'range': ui.range = +el.dataset.i; break;
     case 'graphPoint': ui.graphPoint = pid; window.scrollTo(0, 0); break;
     case 'theme': applyTheme(el.dataset.id); break;
+    case 'summary': { const n = RANGES[ui.range][0], ds = []; for (let i = n - 1; i >= 0; i--) ds.push(addDays(today(), -i)); openSummary(ds, n === 365 ? 'year' : `${n} days`); return; }
     case 'mood': {
       const ev = entry(d).values, n = +el.dataset.n, mixedOn = ev.bipolar_mixed === '1';
       const a = ev.bipolar_mood != null ? Math.round(+ev.bipolar_mood) : null, b = mixedOn && ev.bipolar_mood2 != null ? Math.round(+ev.bipolar_mood2) : null;
