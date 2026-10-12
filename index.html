@@ -133,6 +133,8 @@ input, textarea, select { font: inherit; color: inherit; }
 #goodnight .gh { font-size: 34px; font-weight: 500; margin-top: 4px; }
 #goodnight .gs { font-size: 15px; font-style: italic; color: var(--acc); margin-top: 6px; }
 #goodnight .gw { font-size: 17px; line-height: 25px; margin-top: 14px; }
+#goodnight .genc { font-size: 15.5px; line-height: 22px; font-style: italic; color: var(--acc); margin-top: 14px; }
+#goodnight .genc .rest { opacity: 0; }
 #goodnight .gt { font-size: 13px; font-style: italic; color: var(--faint); margin-top: 18px; }
 
 /* fixed Trends charts */
@@ -1076,6 +1078,9 @@ function renderData() {
       <button class="switchrow" data-act="toggleQuote" role="switch" aria-checked="${showQuote}">
         <span class="t"><b>Quote of the day</b><i>A quote or gentle reminder at the top of the journal, a new one each day.</i></span>
         <span class="switch ${showQuote ? 'on' : ''}"></span></button>
+      <button class="switchrow" data-act="toggleHaptics" role="switch" aria-checked="${hapticsOn}">
+        <span class="t"><b>Vibrate on tap</b><i>A soft click of vibration when you tap buttons and answers. On iPhone this needs iOS 18 or newer.</i></span>
+        <span class="switch ${hapticsOn ? 'on' : ''}"></span></button>
       <button class="switchrow" data-act="toggleGoodNight" role="switch" aria-checked="${gn.on}">
         <span class="t"><b>Good night celebration</b><i>A “Finish the day” button under today's note: confetti, a good-night wish and a short lullaby.</i></span>
         <span class="switch ${gn.on ? 'on' : ''}"></span></button>
@@ -1311,6 +1316,7 @@ document.addEventListener('click', ev => {
     case 'range': ui.range = +el.dataset.i; break;
     case 'graphPoint': ui.graphPoint = pid; window.scrollTo(0, 0); break;
     case 'theme': applyTheme(el.dataset.id); break;
+    case 'toggleHaptics': hapticsOn = !hapticsOn; try { localStorage.setItem('scrmoods.haptics', hapticsOn ? 'on' : 'off'); } catch (e) {} haptic(); break;
     case 'toggleGoodNight': gn.on = !gn.on; try { localStorage.setItem('scrmoods.goodnight', gn.on ? 'on' : 'off'); } catch (e) {} break;
     case 'toggleMelody': gn.melody = !gn.melody; try { localStorage.setItem('scrmoods.goodnight.melody', gn.melody ? 'on' : 'off'); } catch (e) {} break;
     case 'finishDay': {
@@ -1409,6 +1415,22 @@ document.addEventListener('visibilitychange', () => {
 });
 
 /* ---------- good night: "Finish the day" brings confetti, a lullaby and a wish (same as Android) ---------- */
+/* Vibrate on tap: Android browsers use the vibration API; on iPhone (iOS 18+) toggling a hidden
+   system switch gives a light tap, since Safari has no vibration API. */
+let hapticsOn = true;
+try { hapticsOn = localStorage.getItem('scrmoods.haptics') !== 'off'; } catch (e) {}
+function haptic() {
+  if (!hapticsOn) return;
+  try {
+    if (navigator.vibrate) { navigator.vibrate(10); return; }
+    const label = document.createElement('label'), input = document.createElement('input');
+    label.ariaHidden = 'true'; label.style.display = 'none';
+    input.type = 'checkbox'; input.setAttribute('switch', '');
+    label.appendChild(input); document.head.appendChild(label); label.click(); label.remove();
+  } catch (e) {}
+}
+document.addEventListener('click', ev => { if (ev.target.closest && ev.target.closest('button')) haptic(); }, true);
+
 const gn = { on: true, melody: true, finished: null };
 try {
   gn.on = localStorage.getItem('scrmoods.goodnight') !== 'off';
@@ -1505,12 +1527,25 @@ function celebrate(date, remember) {
   if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); // closes the keyboard
   if (gn.melody) playLullaby();
   document.getElementById('goodnight')?.remove();
+  const days = Object.values(D.entries).filter(e => !entryEmpty(e)).length;
+  const encLine = `You've filled in your journal on ${days} ${days === 1 ? 'day' : 'days'}. Keep it up, you're doing great.`;
   const el = document.createElement('div');
   el.id = 'goodnight';
   el.innerHTML = `<canvas></canvas><div class="gcard"><div class="moon">☾</div><div class="gh">Good night</div>
-    <div class="gs">${dayComplete(entry(date)) ? "Today's journal is complete." : 'Today is saved.'}</div><div class="gw">${esc(wishFor(date))}</div><div class="gt">Tap anywhere to close</div></div>`;
+    <div class="gs">${dayComplete(entry(date)) ? "Today's journal is complete." : 'Today is saved.'}</div><div class="gw">${esc(wishFor(date))}</div>
+    <div class="genc"><span class="typed"></span><span class="rest">${esc(encLine)}</span></div><div class="gt">Tap anywhere to close</div></div>`;
   document.body.appendChild(el);
   requestAnimationFrame(() => el.classList.add('in'));
+  // the encouragement types itself out a few seconds after the card appears
+  const typed = el.querySelector('.typed'), rest = el.querySelector('.rest');
+  let shown = 0;
+  const typeNext = () => {
+    if (!el.isConnected || shown >= encLine.length) return;
+    shown++;
+    typed.textContent = encLine.slice(0, shown); rest.textContent = encLine.slice(shown);
+    setTimeout(typeNext, /[.,]/.test(encLine[shown - 1]) ? 260 : 38);
+  };
+  setTimeout(typeNext, 2600);
 
   const cv = el.querySelector('canvas'), ctx = cv.getContext('2d'), dpr = window.devicePixelRatio || 1;
   const css = getComputedStyle(document.documentElement);
@@ -1562,7 +1597,7 @@ function celebrate(date, remember) {
     setTimeout(() => { running = false; el.remove(); }, 900);
   };
   el.addEventListener('click', ev => { ev.stopPropagation(); close(); });
-  setTimeout(close, 10700);
+  setTimeout(close, 13700);
 }
 
 load();
