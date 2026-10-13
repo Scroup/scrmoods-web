@@ -132,7 +132,7 @@ h2.hl::after { content: ""; flex: 1 0 24px; height: 1px; background: var(--rule)
 .fxrow.on .sym { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
 .fxrow .nm { flex: 1; min-width: 0; }
 .fxrow .nm b { display: block; font-weight: 500; }
-.fxrow .nm i { display: block; font-size: 12.5px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fxrow .nm i { display: block; font-size: 12.5px; line-height: 16px; color: var(--soft); }
 .fxrow input { width: 46%; max-width: 220px; min-width: 0; text-align: right; border: 1px solid transparent; border-radius: 12px; background: transparent; padding: 8px 10px; font-size: 22px; font-weight: 500; }
 .fxrow input:focus { outline: none; border-color: var(--acc); background: var(--paper); }
 .fxrow.on input { background: var(--wash); }
@@ -141,6 +141,37 @@ h2.hl::after { content: ""; flex: 1 0 24px; height: 1px; background: var(--rule)
 .chips button { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); font-size: 14px; }
 .chips button.add { color: var(--acc); font-style: italic; }
 .addsel { width: 100%; margin-top: 12px; }
+
+/* учёт расходов */
+.cats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.cats button { padding: 8px 13px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); font-size: 14px; }
+.cats button.on { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+.sprow { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+.sprow .seg { flex: none; } .sprow .seg button { padding: 4px 12px; }
+.sprow input[type=date] { flex: 1; min-width: 0; min-height: 36px; padding: 4px 10px; font-size: 14px; }
+.fix { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 14px; padding: 14px 18px; border-radius: 999px; background: var(--acc); color: var(--on-acc); font-size: 17px; font-weight: 500; }
+.fix i { font-weight: 400; font-size: 14px; opacity: .85; }
+.fix:disabled { opacity: .45; }
+.mhead { display: flex; align-items: center; gap: 8px; padding-top: 12px; }
+.mhead .t { flex: 1; font-size: 19px; font-style: italic; color: var(--acc); }
+.mhead .rbtn { width: 34px; height: 34px; margin: 0; background: var(--paper); } .mhead .rbtn svg { width: 18px; height: 18px; }
+.spbig { font-size: 36px; line-height: 42px; font-weight: 500; margin-top: 6px; }
+.spbig small { font-size: 20px; color: var(--soft); font-weight: 400; }
+.speq { font-size: 14px; font-style: italic; color: var(--soft); }
+.cmp { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 13.5px; color: var(--soft); }
+.cmp b { color: var(--ink); font-weight: 500; }
+.cmp .up { color: var(--danger); } .cmp .down { color: var(--good); }
+.catbar { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 7px 0; }
+.catbar .cn { font-size: 15px; } .catbar .cv { font-size: 15px; font-weight: 500; text-align: right; }
+.catbar .cb { grid-column: 1 / -1; height: 7px; border-radius: 4px; background: var(--paper); overflow: hidden; }
+.catbar .cb i { display: block; height: 100%; border-radius: 4px; background: var(--acc); }
+.catbar .cp { font-size: 12.5px; font-style: italic; color: var(--soft); font-weight: 400; margin-left: 6px; }
+.dayh { font-size: 13.5px; font-style: italic; color: var(--soft); margin: 14px 0 2px; display: flex; justify-content: space-between; }
+.sp { display: flex; align-items: center; gap: 12px; width: 100%; padding: 9px 0; text-align: left; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
+.sp .ci { width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--wash); color: var(--acc); display: grid; place-items: center; font-size: 15px; font-weight: 500; }
+.sp .m { flex: 1; min-width: 0; } .sp .m b { display: block; font-weight: 500; font-size: 15px; }
+.sp .m i { display: block; font-size: 13px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp .v { text-align: right; flex: none; } .sp .v b { display: block; font-weight: 500; } .sp .v i { font-size: 12px; color: var(--soft); }
 
 /* настройки */
 .themes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
@@ -249,6 +280,7 @@ applyTheme(store.get('theme', 'rosewood'));
 /* ---------- даты и числа ---------- */
 const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 const MONTHS_G = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const MONTHS_P = ['январе', 'феврале', 'марте', 'апреле', 'мае', 'июне', 'июле', 'августе', 'сентябре', 'октябре', 'ноябре', 'декабре'];
 const MONTHS_S = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
 const WD = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
@@ -346,6 +378,19 @@ async function loadFx(want) {
   } catch (e) { fxErr = e.message; }
 }
 let fxList = store.get('fxList', ['GEL', 'USD', 'RUB', 'EUR']);
+
+/* ---------- личные расходы: история ---------- */
+const CATS = [
+  { id: 'food', n: 'Продукты', s: 'П' }, { id: 'cafe', n: 'Кафе', s: 'К' }, { id: 'transport', n: 'Транспорт', s: 'Т' },
+  { id: 'home', n: 'Дом', s: 'Д' }, { id: 'shop', n: 'Покупки', s: 'П' }, { id: 'health', n: 'Здоровье', s: 'З' },
+  { id: 'fun', n: 'Досуг', s: 'Д' }, { id: 'other', n: 'Другое', s: '·' }
+];
+const catOf = id => CATS.find(c => c.id === id) || CATS[CATS.length - 1];
+let spends = store.get('spend', []);            // { id, date, ts, amt, cur, k (₾ за 1), gel, cat, note }
+const saveSpends = () => store.set('spend', spends);
+const newId = () => 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+let spCat = store.get('spCat', 'food'), spNote = '', spDate = null;
+let spY = ymd(today())[0], spM = ymd(today())[1];
 let fxBase = store.get('fxBase', { c: 'USD', v: 100 });
 const fxRate = c => c === 'GEL' ? 1 : (fx && fx.r[c]) || null;      // лари за 1 единицу
 const fxFmt = (x, c) => { const n = Math.abs(x) >= 1000 || ['RUB', 'AMD', 'KZT'].includes(c) && Math.abs(x) >= 100 ? 0 : 2; return x.toLocaleString('ru-RU', { minimumFractionDigits: n, maximumFractionDigits: n }); };
@@ -463,10 +508,12 @@ function renderSettings() {
       <label class="setrow"><span class="l">Ставка налога, %<i>1% — малый бизнес, 20% — обычный ИП</i></span>
         <input class="in num" id="taxIn" type="number" inputmode="decimal" step="0.1" min="0" value="${taxRate}"></label></div>
     <div class="section" style="--d:80ms"><h2 class="hl">Данные</h2>
-      <p class="hint" style="margin:6px 0 8px">Записи хранятся только на этом устройстве. Время от времени сохраняйте копию.</p>
-      <button class="btn primary" data-act="export">Сохранить в CSV</button>
+      <p class="hint" style="margin:6px 0 8px">Приходы и расходы хранятся только на этом устройстве. Время от времени сохраняйте копию.</p>
+      <button class="btn primary" data-act="export">Сохранить приходы в CSV</button>
+      <button class="btn primary" data-act="exportsp">Сохранить расходы в CSV</button>
       <button class="btn outline" data-act="import">Загрузить из CSV</button>
-      <button class="btn quiet" data-act="wipe">Удалить все записи</button>
+      <p class="hint" style="margin:0 0 6px;text-align:center">приходы или расходы — приложение поймёт само</p>
+      <button class="btn quiet" data-act="wipe">Удалить все приходы</button>
       <div id="wipeBox"></div>
     </div>
     <p class="hint" style="margin:20px 24px">Курс берётся с nbg.gov.ge — официальный курс доллара, действующий на дату прихода. В выходные действует курс последнего рабочего дня.</p>`;
@@ -477,10 +524,11 @@ function renderSpend() {
   const stale = fx && fx.date !== now;
   const sub = fx && !stale ? `по курсу НБГ на ${longDate(fx.valid || now)}` : fxErr ? 'курс не загрузился' : 'загружаю курсы НБГ…';
   const baseK = fxRate(fxBase.c);
-  const rows = fxList.map(c => {
+  const rowsHtml = fxList.map(c => {
     const k = fxRate(c), on = c === fxBase.c;
-    const val = on ? fxBase.v : baseK && k ? fxBase.v * baseK / k : null;
-    const note = c === 'GEL' ? 'лари' : k ? (k < 0.1 ? `${(k * 100).toFixed(4).replace('.', ',')} ₾ за 100` : `${k.toFixed(4).replace('.', ',')} ₾`) : 'курса нет';
+    const bv = fxNum(fxBase.v);
+    const val = on ? fxBase.v : baseK && k && isFinite(bv) ? bv * baseK / k : null;
+    const note = c === 'GEL' ? 'лари' : k ? (k < 0.1 ? `<span style="white-space:nowrap">${(k * 100).toFixed(2).replace('.', ',')} ₾ за 100</span><br><span style="white-space:nowrap">(1 ₾ = ${money(1 / k)} ${CUR[c].s})</span>` : `${k.toFixed(4).replace('.', ',')} ₾`) : 'курса нет';
     return `<div class="fxrow ${on ? 'on' : ''}" data-c="${c}">
       <span class="sym">${CUR[c].s}</span>
       <span class="nm"><b>${c}</b><i>${note}</i></span>
@@ -489,20 +537,87 @@ function renderSpend() {
     </div>`;
   }).join('');
   const others = Object.keys(CUR).filter(c => !fxList.includes(c));
+  const d = spDate || now;
+
+  // статистика за выбранный месяц
+  const key = `${spY}-${String(spM).padStart(2, '0')}`;
+  const pm = spM === 1 ? [spY - 1, 12] : [spY, spM - 1];
+  const prevKey = `${pm[0]}-${String(pm[1]).padStart(2, '0')}`;
+  const list = spends.filter(x => x.date.startsWith(key)).sort((x, y) => y.date.localeCompare(x.date) || y.ts - x.ts);
+  const total = r2(list.reduce((t, x) => t + x.gel, 0));
+  const prevTotal = r2(spends.filter(x => x.date.startsWith(prevKey)).reduce((t, x) => t + x.gel, 0));
+  const isNowM = key === now.slice(0, 7);
+  const daysIn = new Date(spY, spM, 0).getDate(), daysGone = isNowM ? ymd(now)[2] : daysIn;
+  const perDay = total / Math.max(daysGone, 1);
+  const eq = ['USD', 'EUR', 'RUB'].filter(c => fxRate(c)).map(c => `${fxFmt(total / fxRate(c), c)} ${CUR[c].s}`).join(' · ');
+  const byCat = CATS.map(c => ({ c, v: r2(list.filter(x => (x.cat || 'other') === c.id).reduce((t, x) => t + x.gel, 0)) })).filter(x => x.v > 0).sort((x, y) => y.v - x.v);
+  const maxCat = byCat.length ? byCat[0].v : 1;
+  // столбики по дням
+  const perD = Array.from({ length: daysIn }, (_, i) => list.filter(x => ymd(x.date)[2] === i + 1).reduce((t, x) => t + x.gel, 0));
+  const W = 340, H = 80, mx = Math.max(...perD, 1), bw = (W - 4) / daysIn;
+  const dayBars = perD.map((v, i) => { const h = v ? Math.max(2, (H - 18) * v / mx) : 0; return h ? `<rect x="${2 + i * bw + 1}" y="${H - 14 - h}" width="${Math.max(bw - 2, 2)}" height="${h}" rx="2" fill="${isNowM && i + 1 === ymd(now)[2] ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 45%, var(--page))'}"/>` : ''; }).join('')
+    + [1, 10, 20, daysIn].map(n => `<text x="${2 + (n - 1) * bw + bw / 2}" y="${H - 2}" text-anchor="middle" font-size="10" font-style="italic" fill="var(--soft)">${n}</text>`).join('')
+    + `<line x1="0" x2="${W}" y1="${H - 14}" y2="${H - 14}" stroke="var(--rule)"/>`;
+  // история по дням
+  const days = [...new Set(list.map(x => x.date))];
+  const hist = days.map(dd => {
+    const items = list.filter(x => x.date === dd), sum = r2(items.reduce((t, x) => t + x.gel, 0));
+    const label = dd === now ? 'Сегодня' : dd === shift(now, -1) ? 'Вчера' : `${ymd(dd)[2]} ${MONTHS_G[ymd(dd)[1] - 1]}, ${WDL[new Date(...ymd(dd).map((v, i) => i === 1 ? v - 1 : v)).getDay()]}`;
+    return `<div class="dayh"><span>${label}</span><span class="num">${money(sum)} ₾</span></div>` + items.map(x => {
+      const c = catOf(x.cat);
+      return `<button class="sp" data-act="spopen" data-id="${x.id}"><span class="ci">${c.s}</span>
+        <span class="m"><b>${c.n}</b><i>${x.note ? esc(x.note) : '&nbsp;'}</i></span>
+        <span class="v"><b class="num">${money(x.gel)} ₾</b>${x.cur !== 'GEL' ? `<i class="num">${fxFmt(x.amt, x.cur)} ${CUR[x.cur] ? CUR[x.cur].s : x.cur}</i>` : ''}</span></button>`;
+    }).join('');
+  }).join('');
+  const diff = prevTotal ? (total - prevTotal) / prevTotal * 100 : null;
+
   $main.innerHTML = `
     <div class="jhead" style="--d:0ms"><div class="t"><div class="big">Личные расходы</div><div class="sub">${sub}</div></div></div>
-    <div class="card fx" style="--d:40ms">${rows}
-      <div class="chips">${[10, 50, 100, 1000].map(v => `<button data-act="fxset" data-v="${v}">${v.toLocaleString('ru-RU')} <span class="cs">${CUR[fxBase.c].s}</span></button>`).join('')}</div>
-      ${others.length ? `<select class="in addsel" id="fxAdd"><option value="">+ добавить валюту</option>${others.map(c => `<option value="${c}">${c} · ${CUR[c].n}</option>`).join('')}</select>` : ''}
+    <div class="card fx" style="--d:40ms">${rowsHtml}
+      <div class="chips">${[1, 5, 10, 50, 100].map(v => `<button data-act="fxset" data-v="${v}">${v.toLocaleString('ru-RU')} <span class="cs">${CUR[fxBase.c].s}</span></button>`).join('')}</div>
+      <div class="cats">${CATS.map(c => `<button data-act="spcat" data-id="${c.id}" class="${spCat === c.id ? 'on' : ''}">${c.n}</button>`).join('')}</div>
+      <input class="in" id="spNote" type="text" maxlength="80" placeholder="на что (необязательно)" value="${esc(spNote)}" style="margin-top:10px">
+      <div class="sprow"><div class="seg small"><button data-act="spday" data-n="0" class="${d === now ? 'on' : ''}">Сегодня</button><button data-act="spday" data-n="-1" class="${d === shift(now, -1) ? 'on' : ''}">Вчера</button></div>
+        <input class="in" id="spDateIn" type="date" max="${now}" value="${d}" aria-label="Дата расхода"></div>
+      <button class="fix" data-act="spsave" id="spSave"><span>Зафиксировать расход</span><i id="spSum"></i></button>
+      ${others.length ? `<select class="in addsel" id="fxAdd"><option value="">+ добавить валюту в конвертер</option>${others.map(c => `<option value="${c}">${c} · ${CUR[c].n}</option>`).join('')}</select>` : ''}
     </div>
     ${fxErr ? `<p class="hint" style="margin:12px 24px;color:var(--danger)">Курс НБГ не загрузился: ${esc(fxErr)}.${fx ? ` Показан курс на ${longDate(fx.valid || fx.date)}.` : ''}</p>` : ''}
-    <p class="hint" style="margin:12px 24px">Впишите сумму в любой строке — остальные пересчитаются через лари по официальному курсу НБГ. Это для прикидки: в обменниках и банках курс будет немного другим.</p>`;
+
+    <div class="card" style="--d:80ms">
+      <div class="mhead"><span class="t">${MONTHS[spM - 1]}${spY !== ymd(now)[0] ? ' ' + spY : ''}</span>
+        <button class="rbtn" data-act="spprev" aria-label="Предыдущий месяц">${arrow(0)}</button>
+        <button class="rbtn" data-act="spnext" aria-label="Следующий месяц" ${isNowM ? 'disabled' : ''}>${arrow(1)}</button></div>
+      <div class="spbig num">${money(total)} <small>₾</small></div>
+      ${total && eq ? `<div class="speq num">≈ ${eq} <span style="opacity:.8">по сегодняшнему курсу</span></div>` : ''}
+      <div class="cmp">
+        <span>в среднем <b class="num">${money(perDay)} ₾</b> в день</span>
+        ${list.length ? `<span><b class="num">${list.length}</b> ${plural(list.length, 'трата', 'траты', 'трат')}</span>` : ''}
+        ${diff != null ? `<span>в ${MONTHS_P[pm[1] - 1]} <b class="num">${money(prevTotal)} ₾</b> <span class="${diff > 0 ? 'up' : 'down'}">${diff > 0 ? '+' : '−'}${money(Math.abs(diff), 0)}%</span></span>` : ''}
+      </div>
+      ${list.length ? `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;margin-top:12px" role="img" aria-label="Расходы по дням">${dayBars}</svg>` : ''}
+      ${byCat.length ? `<h2 class="hl" style="margin-top:18px">По категориям</h2>${byCat.map(x => `<div class="catbar"><span class="cn">${x.c.n}<span class="cp">${money(x.v / total * 100, 0)}%</span></span><span class="cv num">${money(x.v)} ₾</span>
+        <span class="cb"><i style="width:${x.v / maxCat * 100}%"></i></span></div>`).join('')}` : ''}
+      ${list.length ? `<h2 class="hl" style="margin-top:18px">История</h2>${hist}` : `<div class="empty">${isNowM ? 'В этом месяце расходов пока нет.<br>Впишите сумму выше и нажмите «Зафиксировать расход».' : 'В этом месяце расходов нет.'}</div>`}
+    </div>
+    <p class="hint" style="margin:12px 24px">Расход сохраняется в лари по курсу НБГ на момент записи. Конвертер — для прикидки: в обменниках курс будет немного другим.</p>`;
   for (const c of fxList) {
     const inp = $('#fx' + c);
     inp.oninput = () => { fxBase = { c, v: inp.value }; store.set('fxBase', fxBase); updateSpend(c); };
   }
+  $('#spNote').oninput = e => { spNote = e.target.value; };
+  $('#spDateIn').onchange = e => { spDate = e.target.value || null; render(); };
   const add = $('#fxAdd');
   if (add) add.onchange = () => { if (add.value) { fxList.push(add.value); store.set('fxList', fxList); loadFx(fxList).then(() => tab === 'spend' && render()); render(); } };
+  spSum();
+}
+// подпись на кнопке: сколько это в лари
+function spSum() {
+  const el = $('#spSum'); if (!el) return;
+  const v = fxNum(fxBase.v), k = fxRate(fxBase.c);
+  el.textContent = v > 0 && k ? (fxBase.c === 'GEL' ? `${money(v)} ₾` : `${money(r2(v * k))} ₾`) : '';
+  $('#spSave').disabled = !(v > 0 && k);
 }
 function updateSpend(src) {
   const v = fxNum(fxBase.v), k0 = fxRate(fxBase.c);
@@ -513,6 +628,7 @@ function updateSpend(src) {
     const k = fxRate(c);
     $('#fx' + c).value = isFinite(v) && k0 && k ? fxFmt(v * k0 / k, c) : '';
   }
+  spSum();
 }
 
 function render(anim) {
@@ -594,6 +710,20 @@ function preview() {
     : autoErr ? `Курс НБГ${on} не загрузился (${esc(autoErr)}). Посмотрите его на сайте — ${chk} — и впишите в поле «Курс».`
     : edit.date ? `загружаю курс НБГ${on}…` : 'выберите дату';
 }
+function openSpend(x) {
+  const c = catOf(x.cat);
+  $modal.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="st">
+    <div class="dh"><b id="st">${c.n}</b><button class="x" data-act="close" aria-label="Закрыть">✕</button></div>
+    <div class="preview" style="margin-top:8px"><div class="pv num">${money(x.gel)} ₾</div>
+      <div class="ps">${x.cur !== 'GEL' ? `${fxFmt(x.amt, x.cur)} ${CUR[x.cur] ? CUR[x.cur].s : x.cur} по курсу ${x.k.toFixed(4).replace('.', ',')} ₾ · ` : ''}${dayWord(x.date)}</div></div>
+    <div class="cats">${CATS.map(k => `<button data-act="spsetcat" data-id="${k.id}" class="${(x.cat || 'other') === k.id ? 'on' : ''}">${k.n}</button>`).join('')}</div>
+    <input class="in" id="spEditNote" type="text" maxlength="80" placeholder="на что" value="${esc(x.note || '')}" style="margin-top:10px">
+    <button class="btn primary" data-act="spupd" data-id="${x.id}" style="margin-top:14px">Сохранить</button>
+    <button class="btn quiet" data-act="spdel" data-id="${x.id}">Удалить расход</button><div id="delBox"></div>
+  </div>`;
+  edit = { spend: x.id, cat: x.cat || 'other' };
+  $modal.classList.add('open');
+}
 function closeModal() { $modal.classList.remove('open'); $modal.innerHTML = ''; edit = null; }
 
 /* ---------- CSV ---------- */
@@ -609,6 +739,7 @@ function toCsv() {
 function fromCsv(text) {
   let added = 0;
   const lines = text.replace(/^﻿/, '').split(/\r?\n/);
+  if (/Категория/.test(lines[0] || '')) return spendFromCsv(lines);
   const withCur = /Валюта/.test(lines[0] || '');
   for (const ln of lines.slice(1)) {
     if (!ln.trim()) continue;
@@ -626,8 +757,35 @@ function fromCsv(text) {
   }
   return added;
 }
-async function exportCsv() {
-  const name = `scrmoney-${now}.csv`, blob = new Blob([toCsv()], { type: 'text/csv;charset=utf-8' });
+function spendCsv() {
+  const head = 'Дата;Сумма;Валюта;Курс;GEL;Категория;Комментарий';
+  const lines = [...spends].sort((a, b) => a.date.localeCompare(b.date) || a.ts - b.ts).map(x => {
+    const [y, m, d] = x.date.split('-');
+    return [`${d}.${m}.${y}`, x.amt.toFixed(2).replace('.', ','), x.cur, x.k.toFixed(6).replace('.', ','), x.gel.toFixed(2).replace('.', ','),
+      catOf(x.cat).n, '"' + (x.note || '').replace(/"/g, '""') + '"'].join(';');
+  });
+  return '﻿' + [head, ...lines].join('\r\n');
+}
+function spendFromCsv(lines) {
+  let added = 0;
+  for (const ln of lines.slice(1)) {
+    if (!ln.trim()) continue;
+    const c = (ln.match(/("([^"]|"")*"|[^;]*)(;|$)/g) || []).map(s => s.replace(/;$/, '').replace(/^"|"$/g, '').replace(/""/g, '"'));
+    const [d, m, y] = (c[0] || '').split('.'); if (!y) continue;
+    const date = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`, num = v => parseFloat((v || '').replace(/\s/g, '').replace(',', '.'));
+    const amt = num(c[1]), k = num(c[3]) || 1, gel = num(c[4]);
+    if (!(amt > 0) || !(gel >= 0)) continue;
+    const cat = (CATS.find(x => x.n === c[5]) || CATS[CATS.length - 1]).id, note = c[6] || '';
+    if (spends.some(x => x.date === date && x.amt === amt && x.cur === c[2] && (x.note || '') === note)) continue;
+    spends.push({ id: newId(), date, ts: Date.now() + added, amt, cur: c[2] || 'GEL', k, gel, cat, note });
+    added++;
+  }
+  saveSpends();
+  return added;
+}
+async function exportCsv(kind) {
+  const sp = kind === 'spend';
+  const name = `scrmoney-${sp ? 'rashody' : 'prihody'}-${now}.csv`, blob = new Blob([sp ? spendCsv() : toCsv()], { type: 'text/csv;charset=utf-8' });
   try {
     const file = new File([blob], name, { type: 'text/csv' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return; }
@@ -673,6 +831,28 @@ document.addEventListener('click', e => {
     case 'delyes': rows = rows.filter(r => r.id !== edit.id); save(); closeModal(); render(); toast('Приход удалён'); break;
     case 'fxset': fxBase = { c: fxBase.c, v: el.dataset.v }; store.set('fxBase', fxBase); render(); break;
     case 'fxrm': fxList = fxList.filter(c => c !== el.dataset.c); if (fxBase.c === el.dataset.c) fxBase = { c: fxList[0], v: fxBase.v }; store.set('fxList', fxList); store.set('fxBase', fxBase); render(); break;
+    case 'spcat': spCat = el.dataset.id; store.set('spCat', spCat); document.querySelectorAll('[data-act=spcat]').forEach(b => b.classList.toggle('on', b === el)); break;
+    case 'spday': spDate = shift(now, +el.dataset.n); render(); break;
+    case 'spprev': if (--spM < 1) { spM = 12; spY--; } render(); break;
+    case 'spnext': if (++spM > 12) { spM = 1; spY++; } render(); break;
+    case 'spsave': {
+      const v = fxNum(fxBase.v), c = fxBase.c, k = fxRate(c);
+      if (!(v > 0)) { toast('Впишите сумму'); break; }
+      if (!k) { toast('Нет курса для ' + c); break; }
+      const date = spDate || now;
+      const x = { id: newId(), date, ts: Date.now(), amt: r2(v), cur: c, k, gel: r2(v * k), cat: spCat, note: spNote.trim() };
+      spends.push(x); saveSpends();
+      fxBase = { c, v: '' }; store.set('fxBase', fxBase); spNote = ''; spDate = null;
+      [spY, spM] = ymd(date);
+      render(); toast(`Записано: ${money(x.gel)} ₾ · ${catOf(x.cat).n}`);
+      break;
+    }
+    case 'spopen': openSpend(spends.find(x => x.id === el.dataset.id)); break;
+    case 'spsetcat': edit.cat = el.dataset.id; document.querySelectorAll('[data-act=spsetcat]').forEach(b => b.classList.toggle('on', b === el)); break;
+    case 'spupd': { const x = spends.find(y => y.id === el.dataset.id); x.cat = edit.cat; x.note = $('#spEditNote').value.trim(); saveSpends(); closeModal(); render(); toast('Сохранено'); break; }
+    case 'spdel': $('#delBox').innerHTML = `<div class="confirm">Удалить этот расход?<div class="row"><button class="btn outline" data-act="delno">Нет</button><button class="btn primary" data-act="spdelyes" data-id="${el.dataset.id}">Удалить</button></div></div>`; break;
+    case 'spdelyes': spends = spends.filter(x => x.id !== el.dataset.id); saveSpends(); closeModal(); render(); toast('Расход удалён'); break;
+    case 'exportsp': exportCsv('spend'); break;
     case 'theme': applyTheme(el.dataset.id); render(); break;
     case 'export': exportCsv(); break;
     case 'import': $('#importFile').click(); break;
