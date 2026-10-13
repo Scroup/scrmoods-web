@@ -167,6 +167,43 @@ input, textarea, select { font: inherit; color: inherit; }
 #quick textarea { width: 100%; min-height: 150px; border: 1px solid var(--rule); border-radius: 16px; background: var(--page); padding: 12px 14px; font-size: 16px; line-height: 23px; }
 #quick .qnext { display: block; width: 100%; min-height: 52px; margin-top: 20px; border-radius: 999px; background: var(--acc); color: var(--on-acc); font-size: 17px; }
 #quick .qbottom { padding: 0 24px; min-height: 44px; }
+.qb .medrow { padding-top: 14px; }
+.medrow { display: flex; align-items: center; gap: 8px; padding-top: 2px; }
+.medrow .mt { flex: 1; min-width: 0; } .medrow .q { margin: 0; }
+.medrow .msub { font-size: 13px; font-style: italic; color: var(--acc); margin-top: 2px; }
+.pills { display: flex; gap: 2px; flex-shrink: 0; }
+.pill { width: 38px; height: 38px; padding: 0; border: 0; background: none; border-radius: 50%; }
+.pills.many .pill { width: 30px; height: 30px; }
+.pill svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.pill .po { fill: none; stroke: var(--faint); stroke-width: 1.6; }
+.pill.on .po { stroke: var(--acc); }
+.pill .pa { fill: var(--acc); } .pill .pb { fill: color-mix(in srgb, var(--acc) 38%, var(--page)); }
+.pill .ps { stroke: #fff; stroke-opacity: .7; stroke-width: 1.9; stroke-linecap: round; fill: none; }
+.qpills { display: flex; justify-content: center; margin: 4px 0 0; }
+.qpills .pill { width: 60px; height: 60px; margin: 0 4px; } .qpills .pills.many .pill { width: 46px; height: 46px; }
+.qpcount { text-align: center; font-style: italic; color: var(--soft); margin-top: 12px; }
+.headsup { padding: 14px 10px 4px 18px; background: color-mix(in srgb, var(--acc) 10%, var(--page)); }
+.headsup.urgent { background: color-mix(in srgb, #C98378 22%, var(--page)); }
+.headsup .hk { font-size: 13px; font-style: italic; color: var(--acc); }
+.headsup .ht { font-size: 19px; font-weight: 500; margin-top: 2px; }
+.headsup .hb { font-size: 15px; line-height: 21px; margin-top: 6px; }
+.headsup .ha { font-size: 14px; line-height: 20px; font-style: italic; color: var(--soft); margin-top: 6px; }
+.headsup .hbtns { display: flex; justify-content: flex-end; gap: 4px; }
+.dayhint { padding: 8px 24px 0; font-size: 13px; font-style: italic; color: var(--faint); }
+.wtop { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.wtop .n { font-size: 30px; font-weight: 500; color: var(--acc); } .wtop .of { font-size: 16px; font-style: italic; color: var(--soft); }
+.wsub { font-size: 13.5px; font-style: italic; color: var(--soft); }
+.cups { display: flex; gap: 4px; margin-top: 10px; }
+.cup { flex: 1 1 0; min-width: 0; max-width: 28px; padding: 0; border-radius: 8px; background: none; border: 0; }
+.cup svg { width: 100%; height: auto; aspect-ratio: 28 / 34; display: block; overflow: visible; }
+.cup .o { fill: none; stroke: var(--faint); stroke-width: 1.7; stroke-linejoin: round; stroke-linecap: round; }
+.cup.on .o { stroke: var(--acc); }
+.cup .w { fill: var(--acc); opacity: .85; } .cup.extra .w { opacity: .5; }
+.cup .s { stroke: var(--on-acc); stroke-width: 1.6; stroke-linecap: round; opacity: .75; fill: none; }
+.cup .f { fill: var(--on-acc); opacity: .9; } .cup .s.f2 { stroke-width: 1.3; opacity: .9; }
+.wmsg { margin-top: 10px; font-size: 13.5px; font-style: italic; color: var(--soft); } .wmsg.ok { color: var(--acc); }
+.goalrow { display: flex; align-items: center; gap: 8px; padding: 10px 0 4px; } .goalrow .t { flex: 1; } .goalrow .t b { display: block; font-weight: 400; font-size: 16px; } .goalrow .t i { font-size: 13px; color: var(--soft); }
+.wweight { width: 160px; margin-top: 8px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 12px; background: var(--page); font-size: 16px; }
 #sparkles { position: fixed; inset: 0; z-index: 45; pointer-events: none; overflow: hidden; }
 #sparkles span { position: fixed; display: block; will-change: transform, opacity; }
 #sparkles svg { display: block; width: 100%; height: 100%; }
@@ -364,7 +401,7 @@ input, textarea, select { font: inherit; color: inherit; }
    Russian translation (same dictionary as the Android app). Your own
    questions have no translation, so they always show as you wrote them.
    ===================================================================== */
-const RU = /*RU_DICT*/{"map": {"Mood scale": "Шкала настроения", "Daily Check-in": "Ежедневная отметка", "Health and Self Care": "Здоровье и забота о себе", "Mental and Social Stimulation": "Общение и занятия", "Custom tracking points": "Мои вопросы", "Medications/Supplements (check off those you took today)": "Лекарства и добавки (отметьте принятые сегодня)", "Mood scale, second number on mixed days": "Шкала настроения, второе число в смешанные дни", "Mixed features": "Смешанное состояние", "How was your overall outlook today?": "Какой у вас сегодня общий настрой?", "How productive were you today?": "Насколько продуктивным был день?", "How motivated did you feel today?": "Насколько вы были мотивированы?", "Did you feel lonely today?": "Чувствовали ли вы себя одиноко?", "Did you feel depressed or hopeless today?": "Было ли подавленное или безнадёжное настроение?", "Did you feel anxious today?": "Чувствовали ли вы тревогу?", "Last night's sleep": "Сон прошлой ночью", "Did you have a restful night's sleep?": "Вы хорошо выспались?", "Have you met your nutrition needs today?": "Вы сегодня нормально питались?", "Did you spend time outside?": "Вы бывали на улице?", "Did you exercise today?": "Вы занимались спортом?", "Did you tend to your personal hygiene today?": "Вы позаботились о личной гигиене?", "Did you spend quality time engaging with friends or family?": "Вы провели время с друзьями или семьёй?", "Did you practice any kind of mindfulness or meditation?": "Вы практиковали осознанность или медитацию?", "Did you have talk therapy today?": "У вас была сессия с психотерапевтом?", "Did you accomplish any household chores or tasks?": "Вы сделали какие-то домашние дела?", "News and media exposure:": "Новости и СМИ:", "Social media exposure:": "Соцсети:", "Negative": "Негативный", "Neutral": "Нейтральный", "Positive": "Позитивный", "Not at all": "Совсем нет", "Somewhat": "Немного", "Fairly": "Довольно", "Very": "Очень", "Low": "Мало", "Medium": "Средне", "High": "Много", "hrs": "ч", "Yes": "Да", "No": "Нет", "Scale (choose one option)": "Шкала (один вариант)", "Yes / No": "Да / Нет", "Number (slider)": "Число (ползунок)", "Text": "Текст", "Yes is good": "Хорошо — «да»", "No is good": "Хорошо — «нет»", "Neither": "Ни то ни другое", "Later options are better": "Лучше варианты ниже по списку", "Earlier options are better": "Лучше варианты выше по списку", "Higher is better": "Чем больше, тем лучше", "Lower is better": "Чем меньше, тем лучше", "Journal": "Дневник", "Calendar": "Календарь", "Trends": "Тренды", "Settings": "Настройки", "Rosewood": "Роза", "Peach": "Персик", "Sepia": "Сепия", "Matcha": "Матча", "Lavender": "Лаванда", "Berry": "Ягода", "Night": "Ночь", "7 days": "7 дней", "30 days": "30 дней", "90 days": "90 дней", "1 year": "1 год", "year": "год", "month": "месяц", "more": "больше", "less": "меньше", "Severe depression": "Тяжёлая депрессия", "Mild to moderate depression": "Лёгкая или умеренная депрессия", "Balanced": "Баланс", "Hypomania": "Гипомания", "Mania": "Мания", "Depression": "Депрессия", "Mild to moderate": "Лёгкая/умеренная", "Severe": "Тяжёлая", "Mixed": "Смешанное", "Constant thoughts of suicide, feeling there is no way out, barely able to move. Everything feels bleak and permanent.": "Постоянные мысли о самоубийстве, ощущение, что выхода нет, трудно даже двигаться. Всё кажется мрачным и бесконечным.", "Hopelessness and guilt, thoughts of suicide, very little movement. Doing anything feels impossible.": "Безнадёжность и вина, мысли о самоубийстве, почти нет сил двигаться. Любое дело кажется невозможным.", "Slowed thinking, little appetite, wanting to be alone. Sleeping too much or too little; everything is a struggle.": "Мысли замедлены, мало аппетита, хочется быть одному. Сон слишком долгий или слишком короткий; всё даётся с трудом.", "Anxious or panicky, hard to concentrate, poor memory. Routine gives some comfort.": "Тревога или паника, трудно сосредоточиться, плохая память. Привычный распорядок немного помогает.", "Pulling back a little from people, concentration slightly below usual, a bit restless.": "Чуть отдаляетесь от людей, внимание немного ниже обычного, лёгкое беспокойство.", "Mood in balance, no signs of depression or mania.": "Настроение в равновесии, нет признаков депрессии или мании.", "Good self-esteem, optimistic and sociable, clear decisions, getting things done on a little less sleep.": "Хорошая самооценка, оптимизм и общительность, ясные решения, дела делаются даже при чуть меньшем сне.", "Very productive, doing everything to excess (calls, writing, smoking, caffeine), charming and talkative.": "Очень продуктивно, всего с избытком (звонки, записи, курение, кофеин), обаяние и разговорчивость.", "Inflated self-esteem, racing thoughts and fast speech, juggling many tasks without finishing them.": "Завышенная самооценка, скачут мысли и быстрая речь, много дел одновременно, но ничего не доводится до конца.", "Losing touch with reality, hard to follow, no sleep, suspicious or vindictive, reckless behaviour.": "Теряется связь с реальностью, за вами трудно уследить, нет сна, подозрительность или мстительность, безрассудные поступки.", "Complete loss of judgement, extreme spending, grandiose or religious beliefs, hallucinations.": "Полная потеря здравого смысла, огромные траты, идеи величия или религиозные идеи, галлюцинации.", "Today is written down. You can let it rest now.": "День записан. Теперь его можно отпустить.", "Thank you for checking in with yourself today.": "Спасибо, что уделили себе внимание сегодня.", "Whatever today was, it's safely kept. Sleep softly.": "Каким бы ни был этот день, он бережно сохранён. Спите сладко.", "You showed up for yourself today. Rest well.": "Сегодня вы позаботились о себе. Хорошего отдыха.", "Tomorrow is a fresh page. Sweet dreams.": "Завтра — чистая страница. Сладких снов.", "Breathe out slowly. The day is done.": "Медленно выдохните. День позади.", "Be as gentle with yourself tonight as you'd be with a friend.": "Будьте сегодня так же бережны к себе, как к другу.", "A journey of a thousand miles begins with a single step.": "Путь в тысячу ли начинается с первого шага.", "Lao Tzu": "Лао-цзы", "Fall seven times, stand up eight.": "Упади семь раз, поднимись восемь.", "Japanese proverb": "Японская пословица", "Keep your eyes on the stars, and your feet on the ground.": "Смотрите на звёзды, но крепко стойте на земле.", "Theodore Roosevelt": "Теодор Рузвельт", "Kiss your partner for six seconds, long enough for the affection to register.": "Поцелуйте любимого человека шесть секунд — достаточно долго, чтобы нежность ощутилась.", "Do what you can, with what you have, where you are.": "Делайте что можете, с тем, что у вас есть, там, где вы сейчас.", "Hope is the thing with feathers that perches in the soul.": "Надежда — это пёрышко, что живёт в душе.", "Emily Dickinson": "Эмили Дикинсон", "Optimism is the faith that leads to achievement.": "Оптимизм — это вера, которая ведёт к достижениям.", "Helen Keller": "Хелен Келлер", "Don't forget to express gratitude.": "Не забудьте сказать спасибо.", "Little by little, one travels far.": "Шаг за шагом можно уйти далеко.", "Spanish proverb": "Испанская пословица", "The best way out is always through.": "Лучший выход — всегда пройти насквозь.", "Robert Frost": "Роберт Фрост", "Well done is better than well said.": "Хорошо сделать лучше, чем хорошо сказать.", "Benjamin Franklin": "Бенджамин Франклин", "Tell the people you care about that you love them.": "Скажите близким, что вы их любите.", "After rain comes sunshine.": "После дождя всегда выходит солнце.", "Proverb": "Пословица", "Every expert was once a beginner.": "Каждый мастер когда-то был новичком.", "Saying": "Поговорка", "I am not afraid of storms, for I am learning how to sail my ship.": "Я не боюсь бурь, потому что учусь управлять своим кораблём.", "Louisa May Alcott": "Луиза Мэй Олкотт", "Progress, not perfection.": "Прогресс, а не совершенство.", "The sun himself is weak when he first rises, and gathers strength and courage as the day gets on.": "Даже солнце слабо, когда только встаёт, и набирается сил и смелости к середине дня.", "Charles Dickens": "Чарльз Диккенс", "Rome wasn't built in a day.": "Москва не сразу строилась.", "This too shall pass.": "И это пройдёт.", "Persian proverb": "Персидская пословица", "Drink a glass of water and stretch for a minute.": "Выпейте стакан воды и потянитесь минутку.", "Where there's a will, there's a way.": "Где есть желание, там найдётся и путь.", "Although the world is full of suffering, it is full also of the overcoming of it.": "Хотя мир полон страданий, он полон и их преодоления.", "Rest is not idleness.": "Отдых — это не безделье.", "John Lubbock": "Джон Леббок", "You've handled hard days before. You can handle this one.": "Вы уже справлялись с трудными днями. Справитесь и с этим.", "Every cloud has a silver lining.": "Нет худа без добра.", "Adopt the pace of nature: her secret is patience.": "Живите в ритме природы: её секрет — терпение.", "Ralph Waldo Emerson": "Ральф Уолдо Эмерсон", "Write it on your heart that every day is the best day in the year.": "Запишите в своём сердце, что каждый день — лучший в году.", "Celebrate one small win today, however small.": "Отметьте сегодня одну маленькую победу, даже самую крошечную.", "Laughter is the best medicine.": "Смех — лучшее лекарство.", "Slow and steady wins the race.": "Тише едешь — дальше будешь.", "Aesop": "Эзоп", "Be not afraid of going slowly; be afraid only of standing still.": "Не бойтесь идти медленно, бойтесь стоять на месте.", "Chinese proverb": "Китайская пословица", "Step outside for five minutes of fresh air.": "Выйдите на пять минут подышать свежим воздухом.", "Inch by inch, life's a cinch.": "Понемногу — и всё по силам.", "A smooth sea never made a skilled sailor.": "Спокойное море не сделает моряка умелым.", "English proverb": "Английская пословица", "Big things have small beginnings.": "Большое начинается с малого.", "Send a friend a message just to say hi.": "Напишите другу просто чтобы сказать «привет».", "Bloom where you are planted.": "Цветите там, где вас посадили.", "Every day may not be good, but there is something good in every day.": "Не каждый день хорош, но в каждом дне есть что-то хорошее.", "Well begun is half done.": "Хорошее начало — половина дела.", "Aristotle": "Аристотель", "Your feelings are valid, and they will pass.": "Ваши чувства важны, и они пройдут.", "Patience is bitter, but its fruit is sweet.": "Терпение горько, но плод его сладок.", "The darkest hour is just before the dawn.": "Самый тёмный час — перед рассветом.", "Thomas Fuller": "Томас Фуллер", "One today is worth two tomorrows.": "Одно «сегодня» стоит двух «завтра».", "Done is better than perfect.": "Сделанное лучше идеального.", "Nothing great was ever achieved without enthusiasm.": "Ничто великое не достигалось без воодушевления.", "Keep calm and carry on.": "Сохраняйте спокойствие и продолжайте.", "British poster, 1939": "Британский плакат, 1939", "Many hands make light work.": "Вместе и работа спорится.", "Put on a song you love and really listen to it.": "Включите любимую песню и по-настоящему её послушайте.", "A good laugh and a long sleep are the best cures in the doctor's book.": "Хороший смех и долгий сон — лучшие лекарства в докторской книге.", "Irish proverb": "Ирландская пословица", "The best is yet to be.": "Лучшее ещё впереди.", "Robert Browning": "Роберт Браунинг", "Healing is a matter of time, but it is sometimes also a matter of opportunity.": "Исцеление — дело времени, но иногда и дело возможности.", "Hippocrates": "Гиппократ", "Be as kind to yourself as you would be to a friend.": "Будьте к себе так же добры, как к другу.", "Previous month": "Предыдущий месяц", "Next month": "Следующий месяц", "Days logged this month: {0}": "Дней с отметками в этом месяце: {0}", "Dot colour = overall outlook": "Цвет точки — общий настрой", "Other entries": "Другие записи", "Tap a day to open its check-in.": "Нажмите на день, чтобы открыть его запись.", "Back to today": "Вернуться к сегодня", "Previous day": "Предыдущий день", "Next day": "Следующий день", "A reminder for today": "Напоминание на сегодня", "+ Add custom tracking point": "+ Добавить свой вопрос", "+ Add medication": "+ Добавить лекарство", "Edit medications": "Изменить лекарства", "Today's note": "Заметка дня", "not set": "не указано", "Clear": "Очистить", "Write about your day…": "Напишите о своём дне…", "Day finished": "День завершён", "Finish the day": "Завершить день", "Pick two numbers: how low and how high you feel": "Выберите два числа: насколько низко и насколько высоко", "Where is your mood today?": "Какое у вас сегодня настроение?", "Tap a number below: 0 is severe depression, 5 balanced, 10 mania.": "Нажмите на число ниже: 0 — тяжёлая депрессия, 5 — баланс, 10 — мания.", "pick a low and a high number": "выберите низкое и высокое число", "low and high at the same time": "и спад, и подъём одновременно", "If you're thinking about suicide, please reach out now: call a crisis line or emergency services, or tell someone you trust. You don't have to carry this alone.": "Если вы думаете о самоубийстве, пожалуйста, обратитесь за помощью прямо сейчас: позвоните на линию помощи или в экстренные службы либо расскажите тому, кому доверяете. Вам не нужно справляться с этим в одиночку.", "This is a lot. Consider contacting your doctor or someone you trust today.": "Это много. Подумайте о том, чтобы сегодня связаться с врачом или близким человеком.", "Exported": "Сохранено", "Export failed: {0}": "Не удалось сохранить: {0}", "Language": "Язык", "Appearance": "Оформление", "Journal sections": "Разделы дневника", "Track depression and mania from 0 to 10 at the top of the journal. Hiding it keeps your past answers.": "Отмечайте депрессию и манию от 0 до 10 вверху дневника. Если скрыть шкалу, прошлые ответы сохранятся.", "Quote of the day": "Цитата дня", "A quote or gentle reminder at the top of the journal, a new one each day.": "Цитата или мягкое напоминание вверху дневника, каждый день новое.", "Vibrate on tap": "Вибрация при нажатии", "A soft click of vibration when you tap buttons and answers.": "Лёгкий отклик вибрацией при нажатии на кнопки и ответы.", "Welcome when opening": "Приветствие при открытии", "A short greeting, then the journal rises into place.": "Короткое приветствие, затем дневник плавно появляется.", "Stars when answering": "Звёздочки при ответе", "Answer buttons squish when tapped and pop out little stars.": "Кнопки ответов пружинят при нажатии и рассыпают звёздочки.", "Good night celebration": "Пожелание спокойной ночи", "A “Finish the day” button under today's note: confetti, a good-night wish and a short lullaby.": "Кнопка «Завершить день» под заметкой дня: конфетти, пожелание спокойной ночи и короткая колыбельная.", "Play the lullaby": "Играть колыбельную", "Uses your media volume.": "Громкость как у медиа.", "Preview the celebration": "Посмотреть, как это выглядит", "Your journal": "Ваш дневник", "{0} {1} written": "Записано: {0} {1}", "since {0}": "с {0}", "{0} tracking points in use": "Вопросов в дневнике: {0}", "Everything is stored in a single XML file on this phone:": "Всё хранится в одном XML-файле на этом телефоне:", "Export it to save a backup or to open it on your computer for statistics. Each answer is saved with its number and its readable text, e.g. {0}.": "Сохраните его как резервную копию или откройте на компьютере для статистики. Каждый ответ хранится числом и текстом, например {0}.", "Export data (XML)": "Сохранить данные (XML)", "Import data from file…": "Загрузить данные из файла…", "Manage tracking points": "Настроить вопросы", "Tip: export regularly. Uninstalling the app deletes its data on the phone.": "Совет: регулярно сохраняйте данные. При удалении приложения они стираются с телефона.", "Replace all data?": "Заменить все данные?", "Importing replaces everything in the app (tracking points and all days) with the contents of the file. Export first if you want to keep a copy of the current data.": "Загрузка заменит всё в приложении (вопросы и все дни) содержимым файла. Сначала сохраните текущие данные, если хотите оставить копию.", "Import": "Загрузить", "Imported {0} {1}": "Загружено: {0} {1}", "Import failed: {0}": "Не удалось загрузить: {0}", "Good night": "Спокойной ночи", "Today's journal is complete.": "Дневник за сегодня заполнен.", "Today is saved.": "Сегодняшний день сохранён.", "Tap anywhere to close": "Нажмите в любом месте, чтобы закрыть", "You've filled in your journal on {0} {1}. Keep it up, you're doing great.": "Вы вели дневник уже {0} {1}. Так держать, у вас отлично получается.", "Good morning": "Доброе утро", "Good afternoon": "Добрый день", "Good evening": "Добрый вечер", "Hello, night owl": "Привет, полуночник", "Welcome back. Let's see how today is going.": "С возвращением. Давайте посмотрим, как проходит день.", "no answers": "нет ответов", "Yes on {0}% of {1} {2}": "«Да» в {0}% ответов ({1} {2})", "avg {0} ({1}), {2} {3}": "в среднем {0} ({1}), {2} {3}", "avg {0}, {1} {2}": "в среднем {0}, {1} {2}", "No tracking points to chart yet.": "Пока нет вопросов для графика.", "Mood trend": "Настроение", "Sleep pattern": "Сон", "Any tracking point": "Любой вопрос", "(removed)": "(удалён)", "Tap to look at another tracking point": "Нажмите, чтобы выбрать другой вопрос", "In numbers": "В цифрах", "{0} of {1}": "{0} из {1}", "Days answered": "Дней с ответом", "Average": "Среднее", "Lowest": "Минимум", "Highest": "Максимум", "Everything, last {0}": "Всё за {0}", "Green is going well, red needs attention. Each square is a day (or a few days averaged).": "Зелёное — всё хорошо, красное — требует внимания. Каждый квадрат — день (или среднее за несколько дней).", "Green is going well, red needs attention. Each square is a day.": "Зелёное — всё хорошо, красное — требует внимания. Каждый квадрат — день.", "no answers yet": "пока нет ответов", "Needs attention": "Требует внимания", "No mood scale answers in this period yet.": "За этот период пока нет отметок настроения.", "Balanced on {0} of {1} days": "Баланс в {0} из {1} дн.", ", mixed on {0}": ", смешанных: {0}", "{0} h": "{0} ч", "No sleep answers in this period yet.": "За этот период пока нет данных о сне.", "Average {0} {1} (dashed line), shortest {2}, longest {3}, {4} {5}": "В среднем {0} {1} (пунктир), самый короткий {2}, самый долгий {3}, {4} {5}", "Notifications are off, so reminders can't appear. You can turn them on in Settings → Apps → scrmoods.": "Уведомления выключены, поэтому напоминания не появятся. Их можно включить в Настройках → Приложения → scrmoods.", "Notifications are off for scrmoods. Turn them on in Settings to get reminders.": "Уведомления для scrmoods выключены. Включите их в настройках, чтобы получать напоминания.", "Problem loading data": "Не удалось загрузить данные", "OK": "ОК", "Could not read saved data ({0}). A copy was kept; starting fresh.": "Не удалось прочитать сохранённые данные ({0}). Копия сохранена, начинаем с чистого листа.", "Back": "Назад", "Tracking points": "Вопросы", "Add your own questions, edit or reorder them, or remove the ones you don't need. Removing a point only hides it from the check-in, so its past answers stay in your data.": "Добавляйте свои вопросы, меняйте их порядок и текст или убирайте ненужные. Убранный вопрос просто скрывается из дневника, а прошлые ответы остаются в данных.", "Move up": "Выше", "Move down": "Ниже", "Edit": "Изменить", "Remove": "Убрать", "Nothing here yet.": "Пока ничего нет.", "+ Add tracking point": "+ Добавить вопрос", "Removed tracking points": "Убранные вопросы", "Hidden from the check-in. Restore brings a point back; Delete erases it and all its past answers.": "Скрыты из дневника. «Вернуть» возвращает вопрос, «Удалить» стирает его вместе со всеми прошлыми ответами.", "Restore": "Вернуть", "Delete forever": "Удалить навсегда", "Restore all built-in questions": "Вернуть все встроенные вопросы", "Delete forever?": "Удалить навсегда?", "“{0}” and every answer you gave for it will be erased. This can't be undone.": "«{0}» и все ваши ответы на него будут стёрты. Это нельзя отменить.", "Delete": "Удалить", "Restore built-in questions?": "Вернуть встроенные вопросы?", "Any removed or deleted built-in questions come back. Your own points and all answers are kept.": "Все убранные или удалённые встроенные вопросы вернутся. Ваши вопросы и все ответы сохранятся.", "Number {0}–{1}": "Число {0}–{1}", "Please enter a question or name.": "Введите вопрос или название.", "A scale needs at least 2 options (one per line).": "Для шкалы нужно минимум 2 варианта (по одному в строке).", "Check the numbers: maximum must be above minimum and step above 0.": "Проверьте числа: максимум должен быть больше минимума, а шаг — больше 0.", "Edit tracking point": "Изменить вопрос", "Add medication": "Добавить лекарство", "Add tracking point": "Добавить вопрос", "Name and dose": "Название и доза", "Question": "Вопрос", "e.g. Vitamin D, 2000 IU (AM)": "например, Витамин D, 2000 МЕ (утром)", "e.g. Did you drink enough water?": "например, Вы пили достаточно воды?", "Section": "Раздел", "Answer type": "Тип ответа", "{0} (can't be changed once created, so old answers stay valid)": "{0} (нельзя изменить после создания, чтобы прошлые ответы оставались верными)", "Options, one per line (lowest first)": "Варианты, по одному в строке (сначала самый низкий)", "Answers are saved by position, so keep the same number and order of options.": "Ответы хранятся по номеру варианта, поэтому сохраняйте их количество и порядок.", "Min": "Мин.", "Max": "Макс.", "Step": "Шаг", "Unit (optional, e.g. hrs, cups)": "Единица (необязательно, например ч, чашки)", "Which is better?": "Что лучше?", "Used to colour Trends green when it's going well and red when it needs attention.": "Нужно, чтобы в «Трендах» хорошее было зелёным, а требующее внимания — красным.", "Remind me": "Напоминать", "A notification at each time, every day. Tap Taken in it to tick this off.": "Уведомление в каждое время, каждый день. Нажмите в нём «Принято», чтобы отметить.", "A notification at each time, every day.": "Уведомление в каждое время, каждый день.", "Remove reminder": "Убрать напоминание", "+ Add a time": "+ Добавить время", "Save": "Сохранить", "Cancel": "Отмена", "Close": "Закрыть", "Skip": "Пропустить", "Previous": "Назад", "0 depression": "0 депрессия", "5 balanced": "5 баланс", "10 mania": "10 мания", "Next": "Дальше", "Anything you'd like to remember about today?": "Что хочется запомнить об этом дне?", "Save and close": "Сохранить и закрыть", "Quick check-in": "Быстрая отметка", "One question at a time, no distractions": "По одному вопросу, без отвлечений", "Quick note": "Быстрая заметка", "How are you right now?": "Как вы прямо сейчас?", "Added to today's note": "Добавлено в заметку дня", "A feeling, a thought, what just happened. It goes into today's note.": "Чувство, мысль, то, что только что произошло. Это попадёт в заметку дня.", "Right now I feel…": "Сейчас я чувствую…", "Save to today": "Сохранить", "Medication reminders": "Напоминания о лекарствах", "Reminders to take your medications and supplements": "Напоминания принять лекарства и добавки", "Time to take your medication": "Пора принять лекарство", "Taken": "Принято", "Snooze {0} min": "Отложить на {0} мин", "Reminder at {0}": "Напоминание в {0}", "Reminders at {0} and {1}": "Напоминания в {0} и {1}", "“{0}”": "«{0}»", "Your last {0}": "{0}", "Nothing written yet in this period": "За этот период пока нет записей", "Check in for a few days and your summary will start to take shape.": "Отмечайтесь несколько дней — и итоги начнут складываться.", "You checked in on {0} of {1} days": "Вы отметились в {0} из {1} дней", "Your longest run was {0} {1} in a row.": "Самая длинная серия — {0} {1} подряд.", "You wrote {0} {1} along the way.": "Вы написали {0} {1}.", "Not a single day missed.": "Ни одного пропущенного дня.", "your outlook": "настрой", "your mood": "настроение", "{0} on {1} {2}": "{0} — {1} {2}", "You felt {0}.": "Ваш настрой: {0}.", "That's brighter than the {0} before.": "Светлее, чем за {0}.", "A bit heavier than the {0} before. That happens.": "Чуть тяжелее, чем за {0}. Так бывает.", "Your outlook": "Ваш настрой", "Mostly {0}": "Чаще всего: {0}", "Every answer sat at {0}, {1}.": "Все ответы были на {0} — {1}.", "Your range went from {0} ({1}) to {2} ({3}).": "Ваш диапазон — от {0} ({1}) до {2} ({3}).", "{0} {1} mixed, low and high at once.": "{0} {1} — смешанные: спад и подъём одновременно.", "More balanced days than the {0} before.": "Больше дней в балансе, чем за {0}.", "Fewer balanced days than the {0} before. Worth keeping an eye on.": "Меньше дней в балансе, чем за {0}. Стоит понаблюдать.", "Your mood scale": "Шкала настроения", "Your longest night was {0} h on {1}, the shortest {2} h.": "Самая долгая ночь — {0} ч ({1}), самая короткая — {2} ч.", "About {0} h {1} a night than the {2} before.": "Примерно на {0} ч за ночь {1}, чем за {2}.", "About the same as the {0} before.": "Примерно так же, как за {0}.", "Your sleep": "Ваш сон", "{0} hours a night": "{0} ч за ночь", "{0} Yes on {1} of {2} days": "{0}: «да» в {1} из {2} дн.", "{0} mostly {1}": "{0}: чаще всего {1}", "{0} {1} on average": "{0}: в среднем {1}", "What went well": "Что получалось", "One thing that held up": "Одно, что держалось", "{0} things that held up": "Что держалось: {0}", "Worth some extra care": "Стоит уделить внимание", "One thing to be gentle with": "Одно, к чему стоит отнестись бережно", "{0} things to be gentle with": "К чему отнестись бережно: {0}", "Small steps count.": "Маленькие шаги тоже считаются.", "On days you answered yes to {0}, {1} was noticeably better.": "В дни, когда вы отвечали «да» на {0}, {1} — заметно лучше.", "On days you answered yes to {0}, {1} tended to be lower.": "В дни, когда вы отвечали «да» на {0}, {1} — обычно ниже.", "After 7 or more hours of sleep, {0} was better.": "После 7 и более часов сна {0} — лучше.", "Interestingly, {0} wasn't better after longer nights.": "Интересно, что после долгих ночей {0} не лучше.", "Patterns worth noticing": "Закономерности", "What goes with your better days": "Что сопутствует хорошим дням", "These are patterns in your answers, not proof of cause.": "Это закономерности в ваших ответах, а не доказательство причины.", "You wrote: “{0}”": "Вы написали: «{0}»", "Your outlook that day: {0}.": "Ваш настрой в тот день: {0}.", "One of your steadiest days.": "Один из самых ровных дней.", "Your brightest day": "Ваш самый светлый день", "That's your {0}": "Итоги: {0}", "Thank you for showing up for yourself": "Спасибо, что заботитесь о себе", "Every check-in adds to the picture. See you tomorrow.": "Каждая отметка дополняет картину. До завтра!", "Much the same as the {0} before.": "Примерно так же, как за {0}.", "scrmoods summary": "итоги scrmoods", "Close summary": "Закрыть итоги", "Tap to continue": "Нажмите, чтобы продолжить", "Tap to close": "Нажмите, чтобы закрыть", "Summary": "Итоги", "How your last {0} went, in words": "Итоги за {0} простыми словами", "The download looks incomplete.": "Похоже, файл скачался не полностью.", "Allow scrmoods to install updates, then tap Install again.": "Разрешите scrmoods устанавливать обновления, затем снова нажмите «Установить».", "App updates": "Обновления", "Installed: build {0}": "Установлена сборка {0}", "New versions come from the app's GitHub page.": "Новые версии приходят со страницы приложения на GitHub.", "Checking…": "Проверяем…", "Couldn't read the latest build number. You can still download it.": "Не удалось узнать номер последней сборки. Её всё равно можно скачать.", "A new version is ready: build {0}.": "Доступна новая версия: сборка {0}.", "You have the latest version.": "У вас последняя версия.", "Downloading… {0}%": "Скачиваем… {0}%", "Downloaded. The installer should open; tap Update there.": "Скачано. Откроется установщик — нажмите в нём «Обновить».", "Something went wrong: {0}": "Что-то пошло не так: {0}", "Install": "Установить", "Download and install": "Скачать и установить", "Check for updates": "Проверить обновления", "Download it anyway": "Всё равно скачать", "Open the release page": "Открыть страницу релиза", "Less": "Меньше", "More": "Больше", "Tracking point": "Вопрос", "A soft click of vibration when you tap buttons and answers. On iPhone this needs iOS 18 or newer.": "Лёгкий отклик вибрацией при нажатии на кнопки и ответы. На iPhone нужна iOS 18 или новее.", "Uses your media volume. On iPhone, the silent switch mutes it.": "Громкость как у медиа. На iPhone беззвучный режим её выключает.", "Everything is stored as one XML file inside this app on this device, in the same format as the Android app, so you can move your data between them.": "Всё хранится одним XML-файлом внутри приложения на этом устройстве, в том же формате, что и в Android-версии, поэтому данные можно переносить между ними.", "Removing the app from the home screen deletes its data": "Удаление приложения с экрана «Домой» стирает его данные", ", so export regularly.": ", поэтому регулярно сохраняйте их.", "On iPhone, Export opens the share sheet: choose “Save to Files”.": "На iPhone «Сохранить» открывает меню «Поделиться»: выберите «Сохранить в Файлы».", "The file has {0} {1}. Importing replaces everything in the app (tracking points and all days). Export first if you want a copy of the current data.": "В файле {0} {1}. Загрузка заменит всё в приложении (вопросы и все дни). Сначала сохраните текущие данные, если хотите оставить копию.", "Timestamped note": "Заметка со временем", "Add": "Добавить", "Delete note?": "Удалить заметку?", "Saved data could not be read; a copy was kept. Starting fresh.": "Не удалось прочитать сохранённые данные; копия сохранена. Начинаем с чистого листа.", "Could not save! Storage may be full: export your data.": "Не удалось сохранить! Возможно, память заполнена: сохраните свои данные."}, "plurals": {"days": "день|дня|дней", "notes": "заметку|заметки|заметок", "nights": "ночь|ночи|ночей"}}/*END_RU_DICT*/;
+const RU = /*RU_DICT*/{"map": {"Mood scale": "Шкала настроения", "Daily Check-in": "Ежедневная отметка", "Health and Self Care": "Здоровье и забота о себе", "Mental and Social Stimulation": "Общение и занятия", "Custom tracking points": "Мои вопросы", "Medications/Supplements (check off those you took today)": "Лекарства и добавки (отметьте принятые сегодня)", "Mood scale, second number on mixed days": "Шкала настроения, второе число в смешанные дни", "Mixed features": "Смешанное состояние", "How was your overall outlook today?": "Какой у вас сегодня общий настрой?", "How productive were you today?": "Насколько продуктивным был день?", "How motivated did you feel today?": "Насколько вы были мотивированы?", "Did you feel lonely today?": "Чувствовали ли вы себя одиноко?", "Did you feel depressed or hopeless today?": "Было ли подавленное или безнадёжное настроение?", "Did you feel anxious today?": "Чувствовали ли вы тревогу?", "Last night's sleep": "Сон прошлой ночью", "Did you have a restful night's sleep?": "Вы хорошо выспались?", "Have you met your nutrition needs today?": "Вы сегодня нормально питались?", "Did you spend time outside?": "Вы бывали на улице?", "Did you exercise today?": "Вы занимались спортом?", "Did you tend to your personal hygiene today?": "Вы позаботились о личной гигиене?", "Did you spend quality time engaging with friends or family?": "Вы провели время с друзьями или семьёй?", "Did you practice any kind of mindfulness or meditation?": "Вы практиковали осознанность или медитацию?", "Did you have talk therapy today?": "У вас была сессия с психотерапевтом?", "Did you accomplish any household chores or tasks?": "Вы сделали какие-то домашние дела?", "News and media exposure:": "Новости и СМИ:", "Social media exposure:": "Соцсети:", "Negative": "Негативный", "Neutral": "Нейтральный", "Positive": "Позитивный", "Not at all": "Совсем нет", "Somewhat": "Немного", "Fairly": "Довольно", "Very": "Очень", "Low": "Мало", "Medium": "Средне", "High": "Много", "hrs": "ч", "Yes": "Да", "No": "Нет", "Scale (choose one option)": "Шкала (один вариант)", "Yes / No": "Да / Нет", "Number (slider)": "Число (ползунок)", "Text": "Текст", "Yes is good": "Хорошо — «да»", "No is good": "Хорошо — «нет»", "Neither": "Ни то ни другое", "Later options are better": "Лучше варианты ниже по списку", "Earlier options are better": "Лучше варианты выше по списку", "Higher is better": "Чем больше, тем лучше", "Lower is better": "Чем меньше, тем лучше", "Journal": "Дневник", "Calendar": "Календарь", "Trends": "Тренды", "Settings": "Настройки", "Rosewood": "Роза", "Peach": "Персик", "Sepia": "Сепия", "Matcha": "Матча", "Lavender": "Лаванда", "Berry": "Ягода", "Night": "Ночь", "7 days": "7 дней", "30 days": "30 дней", "90 days": "90 дней", "1 year": "1 год", "year": "год", "month": "месяц", "more": "больше", "less": "меньше", "Severe depression": "Тяжёлая депрессия", "Mild to moderate depression": "Лёгкая или умеренная депрессия", "Balanced": "Баланс", "Hypomania": "Гипомания", "Mania": "Мания", "Depression": "Депрессия", "Mild to moderate": "Лёгкая/умеренная", "Severe": "Тяжёлая", "Mixed": "Смешанное", "Constant thoughts of suicide, feeling there is no way out, barely able to move. Everything feels bleak and permanent.": "Постоянные мысли о самоубийстве, ощущение, что выхода нет, трудно даже двигаться. Всё кажется мрачным и бесконечным.", "Hopelessness and guilt, thoughts of suicide, very little movement. Doing anything feels impossible.": "Безнадёжность и вина, мысли о самоубийстве, почти нет сил двигаться. Любое дело кажется невозможным.", "Slowed thinking, little appetite, wanting to be alone. Sleeping too much or too little; everything is a struggle.": "Мысли замедлены, мало аппетита, хочется быть одному. Сон слишком долгий или слишком короткий; всё даётся с трудом.", "Anxious or panicky, hard to concentrate, poor memory. Routine gives some comfort.": "Тревога или паника, трудно сосредоточиться, плохая память. Привычный распорядок немного помогает.", "Pulling back a little from people, concentration slightly below usual, a bit restless.": "Чуть отдаляетесь от людей, внимание немного ниже обычного, лёгкое беспокойство.", "Mood in balance, no signs of depression or mania.": "Настроение в равновесии, нет признаков депрессии или мании.", "Good self-esteem, optimistic and sociable, clear decisions, getting things done on a little less sleep.": "Хорошая самооценка, оптимизм и общительность, ясные решения, дела делаются даже при чуть меньшем сне.", "Very productive, doing everything to excess (calls, writing, smoking, caffeine), charming and talkative.": "Очень продуктивно, всего с избытком (звонки, записи, курение, кофеин), обаяние и разговорчивость.", "Inflated self-esteem, racing thoughts and fast speech, juggling many tasks without finishing them.": "Завышенная самооценка, скачут мысли и быстрая речь, много дел одновременно, но ничего не доводится до конца.", "Losing touch with reality, hard to follow, no sleep, suspicious or vindictive, reckless behaviour.": "Теряется связь с реальностью, за вами трудно уследить, нет сна, подозрительность или мстительность, безрассудные поступки.", "Complete loss of judgement, extreme spending, grandiose or religious beliefs, hallucinations.": "Полная потеря здравого смысла, огромные траты, идеи величия или религиозные идеи, галлюцинации.", "Today is written down. You can let it rest now.": "День записан. Теперь его можно отпустить.", "Thank you for checking in with yourself today.": "Спасибо, что уделили себе внимание сегодня.", "Whatever today was, it's safely kept. Sleep softly.": "Каким бы ни был этот день, он бережно сохранён. Спите сладко.", "You showed up for yourself today. Rest well.": "Сегодня вы позаботились о себе. Хорошего отдыха.", "Tomorrow is a fresh page. Sweet dreams.": "Завтра — чистая страница. Сладких снов.", "Breathe out slowly. The day is done.": "Медленно выдохните. День позади.", "Be as gentle with yourself tonight as you'd be with a friend.": "Будьте сегодня так же бережны к себе, как к другу.", "A journey of a thousand miles begins with a single step.": "Путь в тысячу ли начинается с первого шага.", "Lao Tzu": "Лао-цзы", "Fall seven times, stand up eight.": "Упади семь раз, поднимись восемь.", "Japanese proverb": "Японская пословица", "Keep your eyes on the stars, and your feet on the ground.": "Смотрите на звёзды, но крепко стойте на земле.", "Theodore Roosevelt": "Теодор Рузвельт", "Kiss your partner for six seconds, long enough for the affection to register.": "Поцелуйте любимого человека шесть секунд — достаточно долго, чтобы нежность ощутилась.", "Do what you can, with what you have, where you are.": "Делайте что можете, с тем, что у вас есть, там, где вы сейчас.", "Hope is the thing with feathers that perches in the soul.": "Надежда — это пёрышко, что живёт в душе.", "Emily Dickinson": "Эмили Дикинсон", "Optimism is the faith that leads to achievement.": "Оптимизм — это вера, которая ведёт к достижениям.", "Helen Keller": "Хелен Келлер", "Don't forget to express gratitude.": "Не забудьте сказать спасибо.", "Little by little, one travels far.": "Шаг за шагом можно уйти далеко.", "Spanish proverb": "Испанская пословица", "The best way out is always through.": "Лучший выход — всегда пройти насквозь.", "Robert Frost": "Роберт Фрост", "Well done is better than well said.": "Хорошо сделать лучше, чем хорошо сказать.", "Benjamin Franklin": "Бенджамин Франклин", "Tell the people you care about that you love them.": "Скажите близким, что вы их любите.", "After rain comes sunshine.": "После дождя всегда выходит солнце.", "Proverb": "Пословица", "Every expert was once a beginner.": "Каждый мастер когда-то был новичком.", "Saying": "Поговорка", "I am not afraid of storms, for I am learning how to sail my ship.": "Я не боюсь бурь, потому что учусь управлять своим кораблём.", "Louisa May Alcott": "Луиза Мэй Олкотт", "Progress, not perfection.": "Прогресс, а не совершенство.", "The sun himself is weak when he first rises, and gathers strength and courage as the day gets on.": "Даже солнце слабо, когда только встаёт, и набирается сил и смелости к середине дня.", "Charles Dickens": "Чарльз Диккенс", "Rome wasn't built in a day.": "Москва не сразу строилась.", "This too shall pass.": "И это пройдёт.", "Persian proverb": "Персидская пословица", "Drink a glass of water and stretch for a minute.": "Выпейте стакан воды и потянитесь минутку.", "Where there's a will, there's a way.": "Где есть желание, там найдётся и путь.", "Although the world is full of suffering, it is full also of the overcoming of it.": "Хотя мир полон страданий, он полон и их преодоления.", "Rest is not idleness.": "Отдых — это не безделье.", "John Lubbock": "Джон Леббок", "You've handled hard days before. You can handle this one.": "Вы уже справлялись с трудными днями. Справитесь и с этим.", "Every cloud has a silver lining.": "Нет худа без добра.", "Adopt the pace of nature: her secret is patience.": "Живите в ритме природы: её секрет — терпение.", "Ralph Waldo Emerson": "Ральф Уолдо Эмерсон", "Write it on your heart that every day is the best day in the year.": "Запишите в своём сердце, что каждый день — лучший в году.", "Celebrate one small win today, however small.": "Отметьте сегодня одну маленькую победу, даже самую крошечную.", "Laughter is the best medicine.": "Смех — лучшее лекарство.", "Slow and steady wins the race.": "Тише едешь — дальше будешь.", "Aesop": "Эзоп", "Be not afraid of going slowly; be afraid only of standing still.": "Не бойтесь идти медленно, бойтесь стоять на месте.", "Chinese proverb": "Китайская пословица", "Step outside for five minutes of fresh air.": "Выйдите на пять минут подышать свежим воздухом.", "Inch by inch, life's a cinch.": "Понемногу — и всё по силам.", "A smooth sea never made a skilled sailor.": "Спокойное море не сделает моряка умелым.", "English proverb": "Английская пословица", "Big things have small beginnings.": "Большое начинается с малого.", "Send a friend a message just to say hi.": "Напишите другу просто чтобы сказать «привет».", "Bloom where you are planted.": "Цветите там, где вас посадили.", "Every day may not be good, but there is something good in every day.": "Не каждый день хорош, но в каждом дне есть что-то хорошее.", "Well begun is half done.": "Хорошее начало — половина дела.", "Aristotle": "Аристотель", "Your feelings are valid, and they will pass.": "Ваши чувства важны, и они пройдут.", "Patience is bitter, but its fruit is sweet.": "Терпение горько, но плод его сладок.", "The darkest hour is just before the dawn.": "Самый тёмный час — перед рассветом.", "Thomas Fuller": "Томас Фуллер", "One today is worth two tomorrows.": "Одно «сегодня» стоит двух «завтра».", "Done is better than perfect.": "Сделанное лучше идеального.", "Nothing great was ever achieved without enthusiasm.": "Ничто великое не достигалось без воодушевления.", "Keep calm and carry on.": "Сохраняйте спокойствие и продолжайте.", "British poster, 1939": "Британский плакат, 1939", "Many hands make light work.": "Вместе и работа спорится.", "Put on a song you love and really listen to it.": "Включите любимую песню и по-настоящему её послушайте.", "A good laugh and a long sleep are the best cures in the doctor's book.": "Хороший смех и долгий сон — лучшие лекарства в докторской книге.", "Irish proverb": "Ирландская пословица", "The best is yet to be.": "Лучшее ещё впереди.", "Robert Browning": "Роберт Браунинг", "Healing is a matter of time, but it is sometimes also a matter of opportunity.": "Исцеление — дело времени, но иногда и дело возможности.", "Hippocrates": "Гиппократ", "Be as kind to yourself as you would be to a friend.": "Будьте к себе так же добры, как к другу.", "Previous month": "Предыдущий месяц", "Next month": "Следующий месяц", "Days logged this month: {0}": "Дней с отметками в этом месяце: {0}", "Dot colour = overall outlook": "Цвет точки — общий настрой", "Other entries": "Другие записи", "Tap a day to open its check-in.": "Нажмите на день, чтобы открыть его запись.", "Back to today": "Вернуться к сегодня", "Previous day": "Предыдущий день", "Next day": "Следующий день", "A reminder for today": "Напоминание на сегодня", "+ Add custom tracking point": "+ Добавить свой вопрос", "+ Add medication": "+ Добавить лекарство", "Edit medications": "Изменить лекарства", "Today's note": "Заметка дня", "not set": "не указано", "Clear": "Очистить", "Write about your day…": "Напишите о своём дне…", "Day finished": "День завершён", "Finish the day": "Завершить день", "Pick two numbers: how low and how high you feel": "Выберите два числа: насколько низко и насколько высоко", "Where is your mood today?": "Какое у вас сегодня настроение?", "Tap a number below: 0 is severe depression, 5 balanced, 10 mania.": "Нажмите на число ниже: 0 — тяжёлая депрессия, 5 — баланс, 10 — мания.", "pick a low and a high number": "выберите низкое и высокое число", "low and high at the same time": "и спад, и подъём одновременно", "If you're thinking about suicide, please reach out now: call a crisis line or emergency services, or tell someone you trust. You don't have to carry this alone.": "Если вы думаете о самоубийстве, пожалуйста, обратитесь за помощью прямо сейчас: позвоните на линию помощи или в экстренные службы либо расскажите тому, кому доверяете. Вам не нужно справляться с этим в одиночку.", "This is a lot. Consider contacting your doctor or someone you trust today.": "Это много. Подумайте о том, чтобы сегодня связаться с врачом или близким человеком.", "Exported": "Сохранено", "Export failed: {0}": "Не удалось сохранить: {0}", "Language": "Язык", "Appearance": "Оформление", "Journal sections": "Разделы дневника", "Track depression and mania from 0 to 10 at the top of the journal. Hiding it keeps your past answers.": "Отмечайте депрессию и манию от 0 до 10 вверху дневника. Если скрыть шкалу, прошлые ответы сохранятся.", "Quote of the day": "Цитата дня", "A quote or gentle reminder at the top of the journal, a new one each day.": "Цитата или мягкое напоминание вверху дневника, каждый день новое.", "Vibrate on tap": "Вибрация при нажатии", "A soft click of vibration when you tap buttons and answers.": "Лёгкий отклик вибрацией при нажатии на кнопки и ответы.", "Welcome when opening": "Приветствие при открытии", "A short greeting, then the journal rises into place.": "Короткое приветствие, затем дневник плавно появляется.", "Stars when answering": "Звёздочки при ответе", "Answer buttons squish when tapped and pop out little stars.": "Кнопки ответов пружинят при нажатии и рассыпают звёздочки.", "Good night celebration": "Пожелание спокойной ночи", "A “Finish the day” button under today's note: confetti, a good-night wish and a short lullaby.": "Кнопка «Завершить день» под заметкой дня: конфетти, пожелание спокойной ночи и короткая колыбельная.", "Play the lullaby": "Играть колыбельную", "Uses your media volume.": "Громкость как у медиа.", "Preview the celebration": "Посмотреть, как это выглядит", "Your journal": "Ваш дневник", "{0} {1} written": "Записано: {0} {1}", "since {0}": "с {0}", "{0} tracking points in use": "Вопросов в дневнике: {0}", "Everything is stored in a single XML file on this phone:": "Всё хранится в одном XML-файле на этом телефоне:", "Export it to save a backup or to open it on your computer for statistics. Each answer is saved with its number and its readable text, e.g. {0}.": "Сохраните его как резервную копию или откройте на компьютере для статистики. Каждый ответ хранится числом и текстом, например {0}.", "Export data (XML)": "Сохранить данные (XML)", "Import data from file…": "Загрузить данные из файла…", "Manage tracking points": "Настроить вопросы", "Tip: export regularly. Uninstalling the app deletes its data on the phone.": "Совет: регулярно сохраняйте данные. При удалении приложения они стираются с телефона.", "Replace all data?": "Заменить все данные?", "Importing replaces everything in the app (tracking points and all days) with the contents of the file. Export first if you want to keep a copy of the current data.": "Загрузка заменит всё в приложении (вопросы и все дни) содержимым файла. Сначала сохраните текущие данные, если хотите оставить копию.", "Import": "Загрузить", "Imported {0} {1}": "Загружено: {0} {1}", "Import failed: {0}": "Не удалось загрузить: {0}", "Good night": "Спокойной ночи", "Today's journal is complete.": "Дневник за сегодня заполнен.", "Today is saved.": "Сегодняшний день сохранён.", "Tap anywhere to close": "Нажмите в любом месте, чтобы закрыть", "You've filled in your journal on {0} {1}. Keep it up, you're doing great.": "Вы вели дневник уже {0} {1}. Так держать, у вас отлично получается.", "Good morning": "Доброе утро", "Good afternoon": "Добрый день", "Good evening": "Добрый вечер", "Hello, night owl": "Привет, полуночник", "Welcome back. Let's see how today is going.": "С возвращением. Давайте посмотрим, как проходит день.", "no answers": "нет ответов", "Yes on {0}% of {1} {2}": "«Да» в {0}% ответов ({1} {2})", "avg {0} ({1}), {2} {3}": "в среднем {0} ({1}), {2} {3}", "avg {0}, {1} {2}": "в среднем {0}, {1} {2}", "No tracking points to chart yet.": "Пока нет вопросов для графика.", "Mood trend": "Настроение", "Sleep pattern": "Сон", "Any tracking point": "Любой вопрос", "(removed)": "(удалён)", "Tap to look at another tracking point": "Нажмите, чтобы выбрать другой вопрос", "In numbers": "В цифрах", "{0} of {1}": "{0} из {1}", "Days answered": "Дней с ответом", "Average": "Среднее", "Lowest": "Минимум", "Highest": "Максимум", "Everything, last {0}": "Всё за {0}", "Green is going well, red needs attention. Each square is a day (or a few days averaged).": "Зелёное — всё хорошо, красное — требует внимания. Каждый квадрат — день (или среднее за несколько дней).", "Green is going well, red needs attention. Each square is a day.": "Зелёное — всё хорошо, красное — требует внимания. Каждый квадрат — день.", "no answers yet": "пока нет ответов", "Needs attention": "Требует внимания", "No mood scale answers in this period yet.": "За этот период пока нет отметок настроения.", "Balanced on {0} of {1} days": "Баланс в {0} из {1} дн.", ", mixed on {0}": ", смешанных: {0}", "{0} h": "{0} ч", "No sleep answers in this period yet.": "За этот период пока нет данных о сне.", "Average {0} {1} (dashed line), shortest {2}, longest {3}, {4} {5}": "В среднем {0} {1} (пунктир), самый короткий {2}, самый долгий {3}, {4} {5}", "Notifications are off, so reminders can't appear. You can turn them on in Settings → Apps → scrmoods.": "Уведомления выключены, поэтому напоминания не появятся. Их можно включить в Настройках → Приложения → scrmoods.", "Notifications are off for scrmoods. Turn them on in Settings to get reminders.": "Уведомления для scrmoods выключены. Включите их в настройках, чтобы получать напоминания.", "Problem loading data": "Не удалось загрузить данные", "OK": "ОК", "Could not read saved data ({0}). A copy was kept; starting fresh.": "Не удалось прочитать сохранённые данные ({0}). Копия сохранена, начинаем с чистого листа.", "Back": "Назад", "Tracking points": "Вопросы", "Add your own questions, edit or reorder them, or remove the ones you don't need. Removing a point only hides it from the check-in, so its past answers stay in your data.": "Добавляйте свои вопросы, меняйте их порядок и текст или убирайте ненужные. Убранный вопрос просто скрывается из дневника, а прошлые ответы остаются в данных.", "Move up": "Выше", "Move down": "Ниже", "Edit": "Изменить", "Remove": "Убрать", "Nothing here yet.": "Пока ничего нет.", "+ Add tracking point": "+ Добавить вопрос", "Removed tracking points": "Убранные вопросы", "Hidden from the check-in. Restore brings a point back; Delete erases it and all its past answers.": "Скрыты из дневника. «Вернуть» возвращает вопрос, «Удалить» стирает его вместе со всеми прошлыми ответами.", "Restore": "Вернуть", "Delete forever": "Удалить навсегда", "Restore all built-in questions": "Вернуть все встроенные вопросы", "Delete forever?": "Удалить навсегда?", "“{0}” and every answer you gave for it will be erased. This can't be undone.": "«{0}» и все ваши ответы на него будут стёрты. Это нельзя отменить.", "Delete": "Удалить", "Restore built-in questions?": "Вернуть встроенные вопросы?", "Any removed or deleted built-in questions come back. Your own points and all answers are kept.": "Все убранные или удалённые встроенные вопросы вернутся. Ваши вопросы и все ответы сохранятся.", "Number {0}–{1}": "Число {0}–{1}", "Please enter a question or name.": "Введите вопрос или название.", "A scale needs at least 2 options (one per line).": "Для шкалы нужно минимум 2 варианта (по одному в строке).", "Check the numbers: maximum must be above minimum and step above 0.": "Проверьте числа: максимум должен быть больше минимума, а шаг — больше 0.", "Edit tracking point": "Изменить вопрос", "Add medication": "Добавить лекарство", "Add tracking point": "Добавить вопрос", "Name and dose": "Название и доза", "Question": "Вопрос", "e.g. Vitamin D, 2000 IU (AM)": "например, Витамин D, 2000 МЕ (утром)", "e.g. Did you drink enough water?": "например, Вы пили достаточно воды?", "Section": "Раздел", "Answer type": "Тип ответа", "{0} (can't be changed once created, so old answers stay valid)": "{0} (нельзя изменить после создания, чтобы прошлые ответы оставались верными)", "Options, one per line (lowest first)": "Варианты, по одному в строке (сначала самый низкий)", "Answers are saved by position, so keep the same number and order of options.": "Ответы хранятся по номеру варианта, поэтому сохраняйте их количество и порядок.", "Min": "Мин.", "Max": "Макс.", "Step": "Шаг", "Unit (optional, e.g. hrs, cups)": "Единица (необязательно, например ч, чашки)", "Which is better?": "Что лучше?", "Used to colour Trends green when it's going well and red when it needs attention.": "Нужно, чтобы в «Трендах» хорошее было зелёным, а требующее внимания — красным.", "Remind me": "Напоминать", "A notification at each time, every day. Tap Taken in it to tick this off.": "Уведомление в каждое время, каждый день. Нажмите в нём «Принято», чтобы отметить.", "A notification at each time, every day.": "Уведомление в каждое время, каждый день.", "Remove reminder": "Убрать напоминание", "+ Add a time": "+ Добавить время", "Save": "Сохранить", "Cancel": "Отмена", "Close": "Закрыть", "Skip": "Пропустить", "Previous": "Назад", "0 depression": "0 депрессия", "5 balanced": "5 баланс", "10 mania": "10 мания", "Next": "Дальше", "Anything you'd like to remember about today?": "Что хочется запомнить об этом дне?", "Save and close": "Сохранить и закрыть", "Quick check-in": "Быстрая отметка", "One question at a time, no distractions": "По одному вопросу, без отвлечений", "Quick note": "Быстрая заметка", "How are you right now?": "Как вы прямо сейчас?", "Added to today's note": "Добавлено в заметку дня", "A feeling, a thought, what just happened. It goes into today's note.": "Чувство, мысль, то, что только что произошло. Это попадёт в заметку дня.", "Right now I feel…": "Сейчас я чувствую…", "Save to today": "Сохранить", "Medication reminders": "Напоминания о лекарствах", "Reminders to take your medications and supplements": "Напоминания принять лекарства и добавки", "Time to take your medication": "Пора принять лекарство", "Taken": "Принято", "Snooze {0} min": "Отложить на {0} мин", "Reminder at {0}": "Напоминание в {0}", "Reminders at {0} and {1}": "Напоминания в {0} и {1}", "“{0}”": "«{0}»", "Your last {0}": "{0}", "Nothing written yet in this period": "За этот период пока нет записей", "Check in for a few days and your summary will start to take shape.": "Отмечайтесь несколько дней — и итоги начнут складываться.", "You checked in on {0} of {1} days": "Вы отметились в {0} из {1} дней", "Your longest run was {0} {1} in a row.": "Самая длинная серия — {0} {1} подряд.", "You wrote {0} {1} along the way.": "Вы написали {0} {1}.", "Not a single day missed.": "Ни одного пропущенного дня.", "your outlook": "настрой", "your mood": "настроение", "{0} on {1} {2}": "{0} — {1} {2}", "You felt {0}.": "Ваш настрой: {0}.", "That's brighter than the {0} before.": "Светлее, чем за {0}.", "A bit heavier than the {0} before. That happens.": "Чуть тяжелее, чем за {0}. Так бывает.", "Your outlook": "Ваш настрой", "Mostly {0}": "Чаще всего: {0}", "Every answer sat at {0}, {1}.": "Все ответы были на {0} — {1}.", "Your range went from {0} ({1}) to {2} ({3}).": "Ваш диапазон — от {0} ({1}) до {2} ({3}).", "{0} {1} mixed, low and high at once.": "{0} {1} — смешанные: спад и подъём одновременно.", "More balanced days than the {0} before.": "Больше дней в балансе, чем за {0}.", "Fewer balanced days than the {0} before. Worth keeping an eye on.": "Меньше дней в балансе, чем за {0}. Стоит понаблюдать.", "Your mood scale": "Шкала настроения", "Your longest night was {0} h on {1}, the shortest {2} h.": "Самая долгая ночь — {0} ч ({1}), самая короткая — {2} ч.", "About {0} h {1} a night than the {2} before.": "Примерно на {0} ч за ночь {1}, чем за {2}.", "About the same as the {0} before.": "Примерно так же, как за {0}.", "Your sleep": "Ваш сон", "{0} hours a night": "{0} ч за ночь", "{0} Yes on {1} of {2} days": "{0}: «да» в {1} из {2} дн.", "{0} mostly {1}": "{0}: чаще всего {1}", "{0} {1} on average": "{0}: в среднем {1}", "What went well": "Что получалось", "One thing that held up": "Одно, что держалось", "{0} things that held up": "Что держалось: {0}", "Worth some extra care": "Стоит уделить внимание", "One thing to be gentle with": "Одно, к чему стоит отнестись бережно", "{0} things to be gentle with": "К чему отнестись бережно: {0}", "Small steps count.": "Маленькие шаги тоже считаются.", "On days you answered yes to {0}, {1} was noticeably better.": "В дни, когда вы отвечали «да» на {0}, {1} — заметно лучше.", "On days you answered yes to {0}, {1} tended to be lower.": "В дни, когда вы отвечали «да» на {0}, {1} — обычно ниже.", "After 7 or more hours of sleep, {0} was better.": "После 7 и более часов сна {0} — лучше.", "Interestingly, {0} wasn't better after longer nights.": "Интересно, что после долгих ночей {0} не лучше.", "Patterns worth noticing": "Закономерности", "What goes with your better days": "Что сопутствует хорошим дням", "These are patterns in your answers, not proof of cause.": "Это закономерности в ваших ответах, а не доказательство причины.", "You wrote: “{0}”": "Вы написали: «{0}»", "Your outlook that day: {0}.": "Ваш настрой в тот день: {0}.", "One of your steadiest days.": "Один из самых ровных дней.", "Your brightest day": "Ваш самый светлый день", "That's your {0}": "Итоги: {0}", "Thank you for showing up for yourself": "Спасибо, что заботитесь о себе", "Every check-in adds to the picture. See you tomorrow.": "Каждая отметка дополняет картину. До завтра!", "Much the same as the {0} before.": "Примерно так же, как за {0}.", "scrmoods summary": "итоги scrmoods", "Close summary": "Закрыть итоги", "Tap to continue": "Нажмите, чтобы продолжить", "Tap to close": "Нажмите, чтобы закрыть", "Summary": "Итоги", "How your last {0} went, in words": "Итоги за {0} простыми словами", "The download looks incomplete.": "Похоже, файл скачался не полностью.", "Allow scrmoods to install updates, then tap Install again.": "Разрешите scrmoods устанавливать обновления, затем снова нажмите «Установить».", "App updates": "Обновления", "Installed: build {0}": "Установлена сборка {0}", "New versions come from the app's GitHub page.": "Новые версии приходят со страницы приложения на GitHub.", "Checking…": "Проверяем…", "Couldn't read the latest build number. You can still download it.": "Не удалось узнать номер последней сборки. Её всё равно можно скачать.", "A new version is ready: build {0}.": "Доступна новая версия: сборка {0}.", "You have the latest version.": "У вас последняя версия.", "Downloading… {0}%": "Скачиваем… {0}%", "Downloaded. The installer should open; tap Update there.": "Скачано. Откроется установщик — нажмите в нём «Обновить».", "Something went wrong: {0}": "Что-то пошло не так: {0}", "Install": "Установить", "Download and install": "Скачать и установить", "Check for updates": "Проверить обновления", "Download it anyway": "Всё равно скачать", "Open the release page": "Открыть страницу релиза", "Less": "Меньше", "More": "Больше", "Tracking point": "Вопрос", "A soft click of vibration when you tap buttons and answers. On iPhone this needs iOS 18 or newer.": "Лёгкий отклик вибрацией при нажатии на кнопки и ответы. На iPhone нужна iOS 18 или новее.", "Uses your media volume. On iPhone, the silent switch mutes it.": "Громкость как у медиа. На iPhone беззвучный режим её выключает.", "Everything is stored as one XML file inside this app on this device, in the same format as the Android app, so you can move your data between them.": "Всё хранится одним XML-файлом внутри приложения на этом устройстве, в том же формате, что и в Android-версии, поэтому данные можно переносить между ними.", "Removing the app from the home screen deletes its data": "Удаление приложения с экрана «Домой» стирает его данные", ", so export regularly.": ", поэтому регулярно сохраняйте их.", "On iPhone, Export opens the share sheet: choose “Save to Files”.": "На iPhone «Сохранить» открывает меню «Поделиться»: выберите «Сохранить в Файлы».", "The file has {0} {1}. Importing replaces everything in the app (tracking points and all days). Export first if you want a copy of the current data.": "В файле {0} {1}. Загрузка заменит всё в приложении (вопросы и все дни). Сначала сохраните текущие данные, если хотите оставить копию.", "Timestamped note": "Заметка со временем", "Add": "Добавить", "Delete note?": "Удалить заметку?", "Saved data could not be read; a copy was kept. Starting fresh.": "Не удалось прочитать сохранённые данные; копия сохранена. Начинаем с чистого листа.", "Could not save! Storage may be full: export your data.": "Не удалось сохранить! Возможно, память заполнена: сохраните свои данные.", "Water": "Вода", "cups": "стак.", "Water tracker": "Трекер воды", "Tap a cup for every glass (200 ml) you drink. During the day it sits at the top of the journal.": "Отмечайте каждый выпитый стакан (200 мл). Днём трекер стоит вверху дневника.", "Daily goal": "Норма в день", "Your weight, kg": "Ваш вес, кг", "Suggested: about {0} {1} ({2} L) a day.": "Рекомендуется: около {0} {1} ({2} л) в день.", "Use {0} {1} as my goal": "Сделать нормой {0} {1}", "A rule of thumb: about 30 ml per kg of body weight, counting all drinks. Heat and exercise mean more. If you take lithium or have heart or kidney problems, ask your doctor how much is right for you.": "Примерное правило: около 30 мл на кг веса в день, считая все напитки. В жару и при нагрузке нужно больше. Если вы принимаете литий или есть проблемы с сердцем или почками, спросите врача, сколько вам пить.", "{0} L": "{0} л", "{0} L of {1} L": "{0} л из {1} л", "Cup {0}": "Стакан {0}", "Goal reached. Well done!": "Норма выполнена. Отлично!", "Tap a cup each time you drink a glass (200 ml).": "Нажимайте на стакан каждый раз, когда выпиваете стакан воды (200 мл).", "{0} more to go.": "Осталось {0}.", "Quick check-in opens at {0}:00. For now: water and medications.": "Быстрая отметка откроется в {0}:00. А пока — вода и лекарства.", "No water logged in this period yet.": "За этот период вода пока не отмечена.", "Average {0} {1} ({2} L) a day. Goal (dashed line) reached on {3} of {4} days.": "В среднем {0} {1} ({2} л) в день. Норма (пунктир) выполнена в {3} из {4} дн.", "On days you reached your water goal, {0} was better.": "В дни, когда вы выпивали норму воды, {0} — лучше.", "On days you reached your water goal, {0} wasn't better.": "В дни, когда вы выпивали норму воды, {0} — не лучше.", "Little touches": "Приятные мелочи", "a strong link": "сильная связь", "a clear link": "заметная связь", "a slight link": "слабая связь", "On days you reached your water goal, {0} was better ({1}).": "В дни, когда вы выпивали норму воды, {0} — лучше ({1}).", "On days you reached your water goal, {0} was lower ({1}).": "В дни, когда вы выпивали норму воды, {0} — ниже ({1}).", "After longer nights, {0} was better ({1}).": "После более долгого сна {0} — лучше ({1}).", "After longer nights, {0} was lower ({1}).": "После более долгого сна {0} — ниже ({1}).", "On days you answered yes to {0}, {1} was better ({2}).": "В дни, когда вы ответили «да» на {0}, {1} — лучше ({2}).", "On days you answered yes to {0}, {1} was lower ({2}).": "В дни, когда вы ответили «да» на {0}, {1} — ниже ({2}).", "When {0} was higher, {1} was better ({2}).": "Когда показатель {0} был выше, {1} — лучше ({2}).", "When {0} was higher, {1} was lower ({2}).": "Когда показатель {0} был выше, {1} — ниже ({2}).", "Aim for 7 or more hours: a regular bedtime helps.": "Старайтесь спать 7 часов и больше: помогает ложиться в одно и то же время.", "This goes against the usual direction, so it may be a coincidence or something else going on those days.": "Это противоречит обычному направлению, так что это может быть совпадением или в эти дни происходило что-то ещё.", "Keep reaching your water goal ({0}).": "Продолжайте выпивать свою норму ({0}).", "Keep taking it as prescribed.": "Продолжайте принимать, как назначено.", "Even a short walk counts.": "Даже короткая прогулка считается.", "A few minutes outside may help.": "Несколько минут на улице могут помочь.", "Time with people you like seems to help.": "Время с приятными вам людьми, похоже, помогает.", "A few minutes a day is enough.": "Достаточно нескольких минут в день.", "Protect your sleep: a calm evening routine helps.": "Берегите сон: помогает спокойный вечерний ритуал.", "Regular meals seem to help.": "Регулярное питание, похоже, помогает.", "Small self-care steps matter.": "Маленькие шаги заботы о себе важны.", "Small tasks done seem to lift the day.": "Сделанные мелкие дела, похоже, поднимают день.", "Therapy days seem to help.": "Дни терапии, похоже, помогают.", "Try a little less screen time and see how it feels.": "Попробуйте чуть меньше времени за экраном и посмотрите, как будет.", "Worth trying to keep it lower.": "Стоит попробовать держать это пониже.", "Worth keeping up.": "Стоит продолжать.", "Several high days this week": "Несколько подъёмов на этой неделе", "Your mood scale was at 8 or above on {0} {1} in the last week.": "За последнюю неделю настроение было на 8 и выше {0} {1}.", "High stretches can build up quickly. Consider contacting your doctor, and protect your sleep.": "Подъёмы могут быстро нарастать. Подумайте о том, чтобы связаться с врачом, и берегите сон.", "A heavy week": "Тяжёлая неделя", "Your mood scale was at 2 or below on {0} {1} in the last week.": "За последнюю неделю настроение было на 2 и ниже {0} {1}.", "You don't have to carry this alone: consider reaching out to your doctor or someone you trust.": "Не обязательно справляться с этим в одиночку: обратитесь к врачу или к тому, кому доверяете.", "Low water, harder days": "Мало воды — тяжелее дни", "This week you drank about {0} a day against a goal of {1}, and your days were harder than usual.": "На этой неделе вы пили в среднем {0} в день при норме {1}, и дни были тяжелее обычного.", "Try to reach your goal: keep a glass in sight and refill it after each cup.": "Постарайтесь выпивать норму: держите стакан на виду и наполняйте его снова после каждого.", "In your own data, days with enough water were better days.": "По вашим же записям, дни, когда воды хватало, были лучше.", "Short nights, harder days": "Короткие ночи — тяжелее дни", "This week you slept about {0} h a night, and your days were harder.": "На этой неделе вы спали около {0} ч за ночь, и дни были тяжелее.", "Try a calm, regular bedtime. Sleeping much less than usual can also be an early sign of a mood shift.": "Попробуйте спокойно ложиться в одно и то же время. Гораздо меньший сон, чем обычно, также может быть ранним признаком смены настроения.", "Missed medications": "Пропущенные лекарства", "{0} was marked as not taken on {1} {2} this week.": "«{0}» не принято {1} {2} на этой неделе.", "If it's hard to keep up, reminders can help, and so can talking to your doctor.": "Если трудно не забывать, помогут напоминания, а также разговор с врачом.", "A pattern to watch": "Закономерность, за которой стоит следить", "This week it's been on the harder side most days.": "На этой неделе большую часть дней было на «тяжёлой» стороне.", "Worth keeping an eye on.": "Стоит понаблюдать.", "A gentle heads-up": "Бережное напоминание", "{0} things to look after this week": "{0} пункта, на которые стоит обратить внимание", "{0}: {1}": "{0}: {1}", "Got it": "Понятно", "Open the summary": "Открыть итоги", "Based on your last 30 days.": "По данным за последние 30 дней.", "Water today": "Вода сегодня", "+1 cup · {0} of {1}": "+1 стакан · {0} из {1}", "Add a cup of water": "Добавить стакан воды", "{0} of {1} taken": "Принято {0} из {1}", "Once a day": "Раз в день", "{0} times a day": "Раз в день: {0}", "How many times a day?": "Сколько раз в день?", "A pill for each time. Tap them through the day as you take them.": "По таблетке на каждый приём. Отмечайте их в течение дня, когда принимаете.", "Dose {0}": "Приём {0}", "On days you took every dose of {0}, {1} was better ({2}).": "В дни, когда вы приняли {0} все разы, {1} — лучше ({2}).", "On days you took every dose of {0}, {1} was lower ({2}).": "В дни, когда вы приняли {0} все разы, {1} — ниже ({2}).", "{0} wasn't fully taken on {1} {2} this week.": "«{0}» принято не полностью {1} {2} на этой неделе.", "{0} every dose on {1} of {2} days": "{0}: все приёмы в {1} из {2} дн.", "doses": "приём."}, "plurals": {"days": "день|дня|дней", "notes": "заметку|заметки|заметок", "nights": "ночь|ночи|ночей", "cups": "стакан|стакана|стаканов"}}/*END_RU_DICT*/;
 const LANGS = [['en', 'English'], ['ru', 'Русский']];
 let lang = 'en';
 try { lang = localStorage.getItem('scrmoods.lang') || ((navigator.language || '').toLowerCase().startsWith('ru') ? 'ru' : 'en'); } catch (e) {}
@@ -395,6 +432,7 @@ const DEFAULT_SECTIONS = [
   { id: 'bipolar', title: 'Mood scale' },
   { id: 'daily', title: 'Daily Check-in' },
   { id: 'health', title: 'Health and Self Care' },
+  { id: 'water', title: 'Water' },
   { id: 'social', title: 'Mental and Social Stimulation' },
   { id: 'custom', title: 'Custom tracking points' },
   { id: 'meds', title: 'Medications/Supplements (check off those you took today)' },
@@ -423,7 +461,16 @@ const DEFAULT_POINTS = [
   P('chores', 'social', 'yesno', 'Did you accomplish any household chores or tasks?'),
   P('news_media', 'social', 'scale', 'News and media exposure:', { options: LEVEL, better: 'lower' }),
   P('social_media', 'social', 'scale', 'Social media exposure:', { options: LEVEL, better: 'lower' }),
+  P('water_cups', 'water', 'number', 'Water', { min: 0, max: 8, step: 1, unit: 'cups', better: 'higher' }),
 ];
+/* Water: cups of 200 ml. The daily goal in cups is kept as the point's maximum (same as Android). */
+const WATER_ID = 'water_cups', ML_PER_CUP = 200;
+const waterPoint = () => D.points.find(p => p.id === WATER_ID && !p.archived);
+const goalCups = p => Math.max(1, Math.round(p.max));
+const litres = cups => (cups * ML_PER_CUP / 1000).toFixed(1);
+const recommendedCups = kg => Math.min(20, Math.max(4, Math.round(kg * 30 / ML_PER_CUP)));
+const EVENING_HOUR = 20;
+const isDaytime = d => d === today() && new Date().getHours() < EVENING_HOUR;
 const clone = o => JSON.parse(JSON.stringify(o));
 const defaults = () => ({ sections: clone(DEFAULT_SECTIONS), points: clone(DEFAULT_POINTS), entries: {} });
 
@@ -505,6 +552,7 @@ function fromXml(text) {
     entries[date] = { values, note, timed };
   }
   for (const id of ['bipolar_mixed', 'bipolar_mood2', 'bipolar_mood']) if (!points.some(p => p.id === id)) points.unshift(clone(DEFAULT_POINTS.find(p => p.id === id)));
+  if (!points.some(p => p.id === 'water_cups')) points.push(clone(DEFAULT_POINTS.find(p => p.id === 'water_cups')));
   return { sections, points, entries };
 }
 
@@ -600,7 +648,33 @@ function seg(options, selected, act, pid, multiRow = true) {
     `<button class="${selected === i ? 'on' : ''}" data-act="${act}" data-pid="${esc(pid)}" data-i="${i}">${esc(tr(o))}</button>`).join('')}</div>`).join('');
 }
 
+/* Medications can be taken several times a day (e.g. magnesium with each meal). Once a day: yes/no ("1"/"0").
+   Several times: a number from 0 to the doses a day. Both show as a row of little pills to tap. */
+const isPillMed = p => !!p && p.section === 'meds' && (p.type === 'yesno' || p.type === 'number');
+const doses = p => p.type === 'number' ? Math.min(12, Math.max(1, Math.round(p.max))) : 1;
+const dosesTaken = v => { const n = parseInt(String(v ?? '').replace(',', '.')); return isNaN(n) || n < 0 ? 0 : n; };
+const doseValue = (taken, n) => n <= 1 ? (taken >= 1 ? '1' : '0') : String(Math.max(0, Math.min(n, taken)));
+const withDoses = (p, n) => Object.assign(p, n <= 1 ? { type: 'yesno', min: 0, max: 10, step: 1, unit: '', better: 'higher' }
+  : { type: 'number', min: 0, max: n, step: 1, unit: 'doses', better: 'higher' });
+/* Keeps old answers meaning the same when the doses a day change: "all taken" stays all taken. */
+const remapDose = (v, from, to) => { const t = dosesTaken(v); return t >= from ? doseValue(to, to) : doseValue(Math.max(0, Math.min(t, to - 1)), to); };
+// a little two-tone capsule, tilted
+const pillSvg = on => `<svg viewBox="0 0 32 32" aria-hidden="true"><g transform="rotate(-35 16 16)">${on
+  ? '<path class="pa" d="M16 9.95H8.29a6.05 6.05 0 0 0 0 12.1H16Z"/><path class="pb" d="M16 9.95h7.71a6.05 6.05 0 0 1 0 12.1H16Z"/><path class="ps" d="M8.6 12.6H13"/>' : ''}
+  <rect class="po" x="2.24" y="9.95" width="27.52" height="12.1" rx="6.05"/><path class="po" d="M16 9.95v12.1"/></g></svg>`;
+function pills(p, v, act = 'pill') {
+  const n = doses(p), taken = Math.min(n, dosesTaken(v));
+  let h = '';
+  for (let i = 0; i < n; i++) h += `<button class="pill ${i < taken ? 'on' : ''}" ${act === 'pill' ? 'data-act' : 'data-q'}="${act}" data-pid="${esc(p.id)}" data-n="${i}" aria-label="${tr('Dose {0}', i + 1)}">${pillSvg(i < taken)}</button>`;
+  return `<div class="pills ${n > 4 ? 'many' : ''}">${h}</div>`;
+}
+function medRow(p, v) {
+  const n = doses(p), taken = Math.min(n, dosesTaken(v));
+  const sub = [n > 1 ? tr('{0} of {1} taken', taken, n) : v === '1' ? tr('Taken') : null].filter(Boolean).join(' · ');
+  return `<div class="medrow"><div class="mt"><div class="q">${esc(tr(p.label))}</div>${sub ? `<div class="msub">${sub}</div>` : ''}</div>${pills(p, v)}</div>`;
+}
 function pointInput(p, v) {
+  if (isPillMed(p)) return medRow(p, v);
   const sel = v == null ? null : parseInt(v);
   if (p.type === 'scale') return `<div class="q">${esc(tr(p.label))}</div>${seg(p.options, sel, 'pick', p.id)}`;
   if (p.type === 'yesno') return `<div class="yn"><div class="q">${esc(tr(p.label))}</div>${seg(['No', 'Yes'], sel, 'pick', p.id)}</div>`;
@@ -635,10 +709,17 @@ function renderCheckin() {
     dt.toLocaleDateString(LOC(), { day: 'numeric', month: 'long', year: 'numeric' }).replace(/\s*г\.$/, ''),
     'prev', 'next', d >= t, d !== t ? `<button class="back" data-act="todayDate">${tr('Back to today')}</button>` : '');
   if (showQuote) h += quoteHtml(d);
-  h += `<button class="sumbtn quickbtn" data-act="quick"><span><b>${tr('Quick check-in')}</b><i>${tr('One question at a time, no distractions')}</i></span><span class="star">→</span></button>`;
-  for (const s of D.sections) {
+  // During the day (today, before 20:00) water and medications come first, and the quick check-in waits for the evening.
+  const daytime = isDaytime(d);
+  if (daytime) h += `<div class="dayhint">${tr('Quick check-in opens at {0}:00. For now: water and medications.', EVENING_HOUR)}</div>`;
+  if (d === t) h += headsUpHtml(false);   // something that has been off for about a week
+  if (!daytime) h += `<button class="sumbtn quickbtn" data-act="quick"><span><b>${tr('Quick check-in')}</b><i>${tr('One question at a time, no distractions')}</i></span><span class="star">→</span></button>`;
+  const first = { water: 0, meds: 1 };
+  const sections = daytime ? [...D.sections].sort((a, b) => (first[a.id] ?? 2) - (first[b.id] ?? 2)) : D.sections;
+  for (const s of sections) {
     if (s.hidden) continue;
     if (s.id === 'bipolar') { h += moodCard(s, e); continue; }
+    if (s.id === 'water') { h += waterCard(s, e); continue; }
     const pts = D.points.filter(p => p.section === s.id && !p.archived);
     if (!pts.length && s.id !== 'custom' && s.id !== 'meds') continue;
     h += `<div class="section card"><h2>${esc(tr(s.title))}</h2>`;
@@ -653,6 +734,33 @@ function renderCheckin() {
     ${gn.on ? `<button class="finish ${gn.finished === d ? 'done' : ''}" data-act="finishDay">${gn.finished === d ? tr('Day finished') + '&nbsp; ✓' : tr('Finish the day') + '&nbsp; ☾'}</button>` : ''}</div>`;
   $main.innerHTML = h + '<div style="height:28px"></div>';
 }
+
+/* The water card: tap an empty cup to fill up to it, tap the last full cup to take it back; + goes past the goal. */
+// a little water drop; when drunk, filled with a shine and a happy face
+const DROP = 'M14 2C17 7 24 14 24 22C24 27.5 19.5 32 14 32C8.5 32 4 27.5 4 22C4 14 11 7 14 2Z';
+const cupSvg = full => `<svg viewBox="0 0 28 34" aria-hidden="true">${full ? `<path class="w" d="${DROP}"/><path class="s" d="M8.2 17Q8.6 13.5 10.8 10.8"/>
+  <circle class="f" cx="11" cy="22.5" r="1.15"/><circle class="f" cx="17" cy="22.5" r="1.15"/><path class="s f2" d="M11.8 25.6Q14 27.8 16.2 25.6"/>` : ''}<path class="o" d="${DROP}"/></svg>`;
+function waterCard(s, e) {
+  const p = waterPoint(); if (!p) return '';
+  const drunk = Math.round(parseFloat(e.values[p.id]) || 0), goal = goalCups(p), count = Math.max(goal, drunk);
+  let cups = '';
+  for (let i = 0; i < count; i++) cups += `<button class="cup ${i < drunk ? 'on' : ''} ${i >= goal ? 'extra' : ''}" data-act="cup" data-n="${i}" aria-label="${tr('Cup {0}', i + 1)}">${cupSvg(i < drunk)}</button>`;
+  const msg = drunk >= goal ? tr('Goal reached. Well done!') : drunk === 0 ? tr('Tap a cup each time you drink a glass (200 ml).')
+    : tr('{0} more to go.', `${goal - drunk} ${trp(goal - drunk, 'cup', 'cups')}`);
+  return `<div class="section card"><h2>${esc(tr(s.title))}</h2>
+    <div class="wtop"><div style="flex:1"><div><span class="n">${drunk}</span><span class="of"> / ${goal} ${trp(goal, 'cup', 'cups')}</span></div>
+      <div class="wsub">${tr('{0} L of {1} L', litres(drunk), litres(goal))}</div></div>
+      <button class="rbtn" style="font-size:20px" data-act="waterMinus" aria-label="${tr('Less')}" ${drunk ? '' : 'disabled'}>−</button>
+      <button class="rbtn" style="font-size:20px" data-act="waterPlus" aria-label="${tr('More')}">+</button></div>
+    <div class="cups">${cups}</div><div class="wmsg ${drunk >= goal ? 'ok' : ''}">${msg}</div></div>`;
+}
+// Switch to the evening layout at 20:00 even if the app stays open (unless you're typing).
+let lastDaytime = null;
+setInterval(() => {
+  const dt = isDaytime(ui.date);
+  if (lastDaytime !== null && dt !== lastDaytime && ui.tab === 'checkin' && !ui.manage && !document.activeElement?.matches?.('textarea, input')) render();
+  lastDaytime = dt;
+}, 60000);
 
 /* Answer pills stay on one line: shrink a row's text a little if any label doesn't fit. */
 function fitPills() {
@@ -899,6 +1007,11 @@ function periodPhrase(label, prev) {
   return isNaN(n) ? `${prev ? 'предыдущий' : 'последний'} ${tr(label)}` : `${prev ? 'предыдущие' : 'последние'} ${n} ${trp(n, 'day', 'days')}`;
 }
 function buildSummary(days, label) {
+  const hu = headsUpPage(days[days.length - 1]);
+  const pages_ = buildSummaryPages(days, label);
+  return hu && pages_.length > 1 ? [hu, ...pages_] : pages_;
+}
+function buildSummaryPages(days, label) {
   const prev = days.map(d => addDays(d, -days.length));
   const lastP = periodPhrase(label, false), prevP = periodPhrase(label, true);
   const v = (pid, day) => { const x = D.entries[day]?.values?.[pid]; const n = parseFloat(x); return x == null || isNaN(n) ? null : n; };
@@ -962,7 +1075,8 @@ function buildSummary(days, label) {
   }
   const judged = active.filter(p => p.type !== 'text' && p.better && p.better !== 'none' && p.id !== 'bipolar_mood' && p.id !== 'outlook' && p.section !== 'bipolar')
     .map(p => { const cur = vals(p, days); return cur.length < 2 ? null : [p, cur, goodness(p, avg(cur))]; }).filter(x => x && x[2] != null);
-  const describe = (p, cur) => p.type === 'yesno' ? tr('{0} Yes on {1} of {2} days', q(p), cur.filter(x => x >= 0.5).length, cur.length)
+  const describe = (p, cur) => isPillMed(p) && p.type === 'number' ? tr('{0} every dose on {1} of {2} days', q(p), cur.filter(x => x >= p.max).length, cur.length)
+    : p.type === 'yesno' ? tr('{0} Yes on {1} of {2} days', q(p), cur.filter(x => x >= 0.5).length, cur.length)
     : p.type === 'scale' ? tr('{0} mostly {1}', q(p), tr(p.options[Math.round(avg(cur))] || '').toLowerCase())
     : tr('{0} {1} on average', q(p), avg(cur).toFixed(1) + (p.unit ? ' ' + tr(p.unit) : ''));
   const wins = judged.filter(j => j[2] >= 0.6).sort((a, b) => b[2] - a[2]).slice(0, 4);
@@ -971,21 +1085,12 @@ function buildSummary(days, label) {
   const small = tr('Small steps count.');
   if (care.length) pages.push({ k: tr('Worth some extra care'), h: care.length === 1 ? tr('One thing to be gentle with') : tr('{0} things to be gentle with', care.length), b: [...care.map(j => describe(j[0], j[1])), small], t: 'care', soft: small });
   if (target) {
-    const found = [];
-    for (const p of active.filter(p => p.type === 'yesno' && p.section !== 'bipolar')) {
-      const yes = days.filter(d => v(p.id, d) === 1).map(gOn).filter(x => x != null), no = days.filter(d => v(p.id, d) === 0).map(gOn).filter(x => x != null);
-      if (yes.length < 3 || no.length < 3) continue;
-      const diff = avg(yes) - avg(no); if (Math.abs(diff) < 0.12) continue;
-      found.push([diff, diff > 0 ? tr('On days you answered yes to {0}, {1} was noticeably better.', q(p), targetName) : tr('On days you answered yes to {0}, {1} tended to be lower.', q(p), targetName)]);
-    }
-    if (sleep) {
-      const long = days.filter(d => (v(sleep.id, d) ?? -1) >= 7).map(gOn).filter(x => x != null), short = days.filter(d => (v(sleep.id, d) ?? 99) < 7).map(gOn).filter(x => x != null);
-      if (long.length >= 3 && short.length >= 3) { const diff = avg(long) - avg(short);
-        if (Math.abs(diff) >= 0.12) found.push([diff, diff > 0 ? tr('After 7 or more hours of sleep, {0} was better.', targetName) : tr("Interestingly, {0} wasn't better after longer nights.", targetName)]); }
-    }
-    const picked = found.sort((a, b) => Math.abs(b[0]) - Math.abs(a[0])).slice(0, 3);
-    const notProof = tr('These are patterns in your answers, not proof of cause.');
-    if (picked.length) pages.push({ k: tr('Patterns worth noticing'), h: tr('What goes with your better days'), b: [...picked.map(x => x[1]), notProof], t: 'mood', soft: notProof });
+    // Patterns: which trackers go with better or harder days. Short periods borrow the last 30 days.
+    const win = days.length >= 30 ? days : Array.from({ length: 30 }, (_, i) => addDays(days[days.length - 1], i - 29));
+    const found = Insights.findings(win, 3);
+    const notProof = tr('These are patterns in your answers, not proof of cause.'), based = tr('Based on your last 30 days.');
+    if (found.length) pages.push({ k: tr('Patterns worth noticing'), h: tr('What goes with your better days'), t: 'mood', soft: [notProof, based],
+      b: [...found.map(f => f.sentence + (f.advice ? ' ' + f.advice : '')), ...(win !== days ? [based] : []), notProof] });
     const scored = days.map(d => [d, gOn(d)]).filter(([, g]) => g != null);
     const bestG = scored.length ? Math.max(...scored.map(x => x[1])) : null;
     if (bestG != null && bestG >= 0.6) {
@@ -1011,7 +1116,7 @@ function showSummary() {
   el.innerHTML = `<div class="sbars">${sumState.pages.map((_, i) => `<i class="${i <= sumState.i ? 'on' : ''}"></i>`).join('')}</div>
     <div class="stop"><span>${tr('scrmoods summary')}</span><button class="sclose" aria-label="${tr('Close summary')}">✕</button></div>
     <div class="sbody"><div class="sk">${esc(p.k)}</div><div class="sh">${esc(p.h)}</div>
-      ${p.b.map(l => `<p class="${l === p.soft ? 'soft' : ''}">${esc(l)}</p>`).join('')}</div>
+      ${p.b.map(l => `<p class="${(Array.isArray(p.soft) ? p.soft.includes(l) : l === p.soft) ? 'soft' : ''}">${esc(l)}</p>`).join('')}</div>
     <div class="shint">${last ? tr('Tap to close') : tr('Tap to continue')}</div>`;
 }
 document.addEventListener('click', ev => {
@@ -1075,6 +1180,184 @@ function sleepNote(p, days) {
   return `<div class="tnote2">${tr('Average {0} {1} (dashed line), shortest {2}, longest {3}, {4} {5}', avg.toFixed(1), esc(tr(p.unit || 'hrs')), fmtNum(Math.min(...known)), fmtNum(Math.max(...known)), known.length, trp(known.length, 'night', 'nights'))}</div>`;
 }
 
+/* Cups a day as bars, the goal as a dashed line; days that reached the goal in full colour. */
+function waterSvg(p, days) {
+  const vals = series(p, days), known = vals.filter(v => v != null), goal = goalCups(p);
+  const maxV = Math.ceil(Math.max(goal + 2, ...known) / 2) * 2;
+  const W = chartW(), H = 170, L = 70, R = 8, T = 10, B = 10, n = days.length, slot = (W - L - R) / n;
+  const y = v => T + (1 - Math.min(1, v / maxV)) * (H - T - B), grid = [maxV, maxV / 2, 0];
+  let s = `<svg viewBox="0 0 ${W} ${H}">` + grid.map(g => `<line x1="${L}" x2="${W - R}" y1="${y(g)}" y2="${y(g)}" style="stroke:var(--rule)"/>`).join('')
+    + yLabels(L, T, B, H, grid.map(g => `${fmtNum(g)} ${trp(g, 'cup', 'cups')}`));
+  const bw = Math.min(22, Math.max(1, slot * 0.68));
+  vals.forEach((v, i) => { if (v > 0) s += `<rect x="${L + slot * i + slot / 2 - bw / 2}" y="${y(v)}" width="${bw}" height="${y(0) - y(v)}" rx="${Math.min(bw / 2, 3)}" style="fill:var(--acc);fill-opacity:${v >= goal ? .85 : .4}"/>`; });
+  s += `<line x1="${L}" x2="${W - R}" y1="${y(goal)}" y2="${y(goal)}" stroke-width="1.4" stroke-dasharray="8 5" style="stroke:var(--ink);stroke-opacity:.6"/>`;
+  return s + '</svg>';
+}
+function waterNote(p, days) {
+  const known = series(p, days).filter(v => v != null), goal = goalCups(p);
+  if (!known.length) return `<div class="tnote2" style="color:var(--faint)">${tr('No water logged in this period yet.')}</div>`;
+  const avg = known.reduce((a, b) => a + b, 0) / known.length;
+  let h = `<div class="tnote2">${tr('Average {0} {1} ({2} L) a day. Goal (dashed line) reached on {3} of {4} days.', avg.toFixed(1), trp(Math.round(avg), 'cup', 'cups'), litres(avg), known.filter(v => v >= goal).length, known.length)}</div>`;
+  // how water went with your days (at least the last 30 days, so there's enough to compare)
+  const win = days.length >= 30 ? days : Array.from({ length: 30 }, (_, i) => addDays(days[days.length - 1], i - 29));
+  const f = Insights.findings(win, 20).find(x => x.p.id === WATER_ID);
+  if (f) h += `<div class="tnote2" style="color:var(--ink);font-style:normal">${esc(f.sentence + (f.advice ? ' ' + f.advice : ''))}</div>`;
+  return h;
+}
+/* Insights: which trackers go together with better or harder days, and what has been off for a whole week.
+   Same logic as Insights.kt in the Android app. */
+const Insights = (() => {
+  const moodLike = new Set(['outlook', 'productive', 'motivated', 'lonely', 'depressed', 'anxious']);
+  const val = (pid, d) => { const x = parseFloat(String(D.entries[d]?.values?.[pid] ?? '').replace(',', '.')); return isNaN(x) ? null : x; };
+  const visible = () => D.points.filter(p => !p.archived && !D.sections.find(s => s.id === p.section)?.hidden);
+  const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
+  const title = p => tr(p.label).replace(/:$/, '');
+  const quoted = p => tr('“{0}”', title(p));
+  const cupsText = n => `${n} ${trp(n, 'cup', 'cups')}`;
+  function target(days) {
+    const enough = p => days.filter(d => val(p.id, d) != null).length >= 5, v = visible();
+    const o = v.find(p => p.id === 'outlook' && p.type === 'scale' && enough(p)); if (o) return { p: o, name: tr('your outlook') };
+    const m = v.find(p => p.id === 'bipolar_mood' && enough(p)); if (m) return { p: m, name: tr('your mood') };
+    return null;
+  }
+  const gOn = (t, d) => { const x = val(t.p.id, d); return x == null ? null : goodness(t.p, x); };
+  function pearson(xs, ys) {
+    const n = xs.length; if (n < 3) return null;
+    const mx = avg(xs), my = avg(ys); let sxy = 0, sxx = 0, syy = 0;
+    for (let i = 0; i < n; i++) { const dx = xs[i] - mx, dy = ys[i] - my; sxy += dx * dy; sxx += dx * dx; syy += dy * dy; }
+    return sxx < 1e-9 || syy < 1e-9 ? null : sxy / Math.sqrt(sxx * syy);
+  }
+  const isHigh = (p, x, median, allAtTop) => p.type === 'yesno' ? x >= 0.5 : p.id === WATER_ID || isPillMed(p) ? x >= p.max : allAtTop ? x >= median : x > median;
+  const strength = r => Math.abs(r) >= 0.6 ? tr('a strong link') : Math.abs(r) >= 0.45 ? tr('a clear link') : tr('a slight link');
+  function sentence(p, better, r, t) {
+    const s = strength(r);
+    if (p.id === WATER_ID) return better ? tr('On days you reached your water goal, {0} was better ({1}).', t.name, s) : tr('On days you reached your water goal, {0} was lower ({1}).', t.name, s);
+    if (p.id === 'sleep_hours') return better ? tr('After longer nights, {0} was better ({1}).', t.name, s) : tr('After longer nights, {0} was lower ({1}).', t.name, s);
+    if (isPillMed(p) && p.type === 'number') return better ? tr('On days you took every dose of {0}, {1} was better ({2}).', quoted(p), t.name, s) : tr('On days you took every dose of {0}, {1} was lower ({2}).', quoted(p), t.name, s);
+    if (p.type === 'yesno') return better ? tr('On days you answered yes to {0}, {1} was better ({2}).', quoted(p), t.name, s) : tr('On days you answered yes to {0}, {1} was lower ({2}).', quoted(p), t.name, s);
+    return better ? tr('When {0} was higher, {1} was better ({2}).', quoted(p), t.name, s) : tr('When {0} was higher, {1} was lower ({2}).', quoted(p), t.name, s);
+  }
+  function advice(p, better) {
+    const usual = p.better === 'higher' ? better : p.better === 'lower' ? !better : null;
+    if (p.id === 'sleep_hours') return better ? tr('Aim for 7 or more hours: a regular bedtime helps.') : null;
+    if (usual == null) return null;
+    if (!usual) return tr('This goes against the usual direction, so it may be a coincidence or something else going on those days.');
+    if (p.id === WATER_ID) return tr('Keep reaching your water goal ({0}).', cupsText(goalCups(p)));
+    if (p.section === 'meds') return tr('Keep taking it as prescribed.');
+    const tips = { exercise: 'Even a short walk counts.', outside: 'A few minutes outside may help.', friends_family: 'Time with people you like seems to help.',
+      mindfulness: 'A few minutes a day is enough.', restful_sleep: 'Protect your sleep: a calm evening routine helps.', nutrition: 'Regular meals seem to help.',
+      hygiene: 'Small self-care steps matter.', chores: 'Small tasks done seem to lift the day.', therapy: 'Therapy days seem to help.',
+      social_media: 'Try a little less screen time and see how it feels.', news_media: 'Try a little less screen time and see how it feels.' };
+    if (tips[p.id]) return tr(tips[p.id]);
+    return p.better === 'lower' ? tr('Worth trying to keep it lower.') : tr('Worth keeping up.');
+  }
+  /* Links between trackers and your days over `days`, strongest first. */
+  function findings(days, max = 4) {
+    const t = target(days); if (!t) return [];
+    const g = {}; for (const d of days) { const x = gOn(t, d); if (x != null) g[d] = x; }
+    const out = [];
+    for (const p of visible()) {
+      if (p.id === t.p.id || p.type === 'text' || p.section === 'bipolar' || moodLike.has(p.id)) continue;
+      const pairs = days.map(d => [val(p.id, d), g[d]]).filter(([x, y]) => x != null && y != null);
+      if (pairs.length < 7) continue;
+      const r = pearson(pairs.map(x => x[0]), pairs.map(x => x[1])); if (r == null) continue;
+      const sorted = pairs.map(x => x[0]).sort((a, b) => a - b), median = sorted[Math.floor(sorted.length / 2)];
+      const allAtTop = !pairs.some(x => x[0] > median);
+      const hi = pairs.filter(x => isHigh(p, x[0], median, allAtTop)).map(x => x[1]), lo = pairs.filter(x => !isHigh(p, x[0], median, allAtTop)).map(x => x[1]);
+      if (hi.length < 3 || lo.length < 3) continue;
+      const diff = avg(hi) - avg(lo);
+      if (Math.abs(r) < 0.3 || Math.abs(diff) < 0.15 || (r > 0) !== (diff > 0)) continue;
+      out.push({ p, r, diff, n: pairs.length, sentence: sentence(p, diff > 0, r, t), advice: advice(p, diff > 0) });
+    }
+    return out.sort((a, b) => Math.abs(b.r) * Math.sqrt(b.n) - Math.abs(a.r) * Math.sqrt(a.n)).slice(0, max);
+  }
+  /* Things that have been off in the 7 days up to `today`, most important first. */
+  function alerts(today) {
+    const week = [], month = [];
+    for (let i = 6; i >= 0; i--) week.push(addDays(today, -i));
+    for (let i = 29; i >= 0; i--) month.push(addDays(today, -i));
+    const v = visible(), t = target(month);
+    const weekG = t ? week.map(d => gOn(t, d)).filter(x => x != null) : [];
+    const harder = weekG.length >= 3 && avg(weekG) <= 0.45;
+    const out = [];
+    if (v.some(p => p.id === 'bipolar_mood')) {
+      const high = week.filter(d => (val('bipolar_mood', d) ?? 0) >= 8 || (val('bipolar_mixed', d) === 1 && (val('bipolar_mood2', d) ?? 0) >= 8)).length;
+      const low = week.filter(d => (val('bipolar_mood', d) ?? 99) <= 2).length;
+      if (high >= 3) out.push({ id: 'mood_high', urgent: true, title: tr('Several high days this week'),
+        body: tr('Your mood scale was at 8 or above on {0} {1} in the last week.', high, trp(high, 'day', 'days')),
+        advice: tr('High stretches can build up quickly. Consider contacting your doctor, and protect your sleep.') });
+      if (low >= 3) out.push({ id: 'mood_low', urgent: true, title: tr('A heavy week'),
+        body: tr('Your mood scale was at 2 or below on {0} {1} in the last week.', low, trp(low, 'day', 'days')),
+        advice: tr("You don't have to carry this alone: consider reaching out to your doctor or someone you trust.") });
+    }
+    const found = findings(month, 20);
+    const water = v.find(p => p.id === WATER_ID);
+    if (water && harder) {
+      const cups = week.map(d => val(water.id, d)).filter(x => x != null), under = cups.filter(c => c < water.max).length;
+      if (cups.length >= 4 && under >= Math.max(4, cups.length - 1)) {
+        const a = avg(cups), linked = found.find(f => f.p.id === WATER_ID && f.diff > 0);
+        out.push({ id: 'water_low', title: tr('Low water, harder days'),
+          body: tr('This week you drank about {0} a day against a goal of {1}, and your days were harder than usual.', `${fmtNum(a)} ${trp(Math.round(a), 'cup', 'cups')}`, cupsText(goalCups(water))),
+          advice: tr('Try to reach your goal: keep a glass in sight and refill it after each cup.') + (linked ? ' ' + tr('In your own data, days with enough water were better days.') : '') });
+      }
+    }
+    const sleep = v.find(p => p.id === 'sleep_hours');
+    if (sleep && harder) {
+      const nights = week.map(d => val(sleep.id, d)).filter(x => x != null);
+      if (nights.length >= 4 && avg(nights) < 6) out.push({ id: 'sleep_low', title: tr('Short nights, harder days'),
+        body: tr('This week you slept about {0} h a night, and your days were harder.', avg(nights).toFixed(1)),
+        advice: tr('Try a calm, regular bedtime. Sleeping much less than usual can also be an early sign of a mood shift.') });
+    }
+    // medications not (fully) taken: on finished days you checked in, since you started logging the medication
+    const missed = v.filter(isPillMed).map(p => {
+      const first = Object.keys(D.entries).filter(k => D.entries[k]?.values?.[p.id] != null).sort()[0];
+      return [p, week.filter(d => d < today && first && d >= first && Object.keys(D.entries[d]?.values || {}).length)
+        .filter(d => Math.floor(val(p.id, d) ?? 0) < doses(p)).length];
+    }).filter(x => x[1] >= 3);
+    if (missed.length) out.push({ id: 'meds_missed', title: tr('Missed medications'),
+      body: missed.map(([p, n]) => tr("{0} wasn't fully taken on {1} {2} this week.", title(p), n, trp(n, 'day', 'days'))).join(' '),
+      advice: tr("If it's hard to keep up, reminders can help, and so can talking to your doctor.") });
+    if (harder) {
+      const strong = found.find(f => Math.abs(f.r) >= 0.45 && f.p.id !== WATER_ID && f.p.id !== 'sleep_hours' && f.p.section !== 'meds');
+      if (strong) {
+        const p = strong.p, xs = month.map(d => val(p.id, d)).filter(x => x != null).sort((a, b) => a - b);
+        if (xs.length) {
+          const median = xs[Math.floor(xs.length / 2)], allAtTop = !xs.some(x => x > median);
+          const weekX = week.map(d => val(p.id, d)).filter(x => x != null);
+          const wrong = weekX.filter(x => isHigh(p, x, median, allAtTop) !== (strong.diff > 0)).length;
+          if (weekX.length >= 4 && wrong >= weekX.length - 1) out.push({ id: 'pattern_' + p.id, title: tr('A pattern to watch'),
+            body: strong.sentence + ' ' + tr("This week it's been on the harder side most days."), advice: strong.advice || tr('Worth keeping an eye on.') });
+        }
+      }
+    }
+    return out.sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0)).slice(0, 3);
+  }
+  /* The first alert you haven't put away with "Got it" (hidden for a week). */
+  function current(today_ = today()) {
+    let put = {}; try { put = JSON.parse(localStorage.getItem('scrmoods.alerts') || '{}'); } catch (e) {}
+    const t = parseYmd(today_).getTime();
+    return alerts(today_).find(a => !put[a.id] || (t - parseYmd(put[a.id]).getTime()) / 864e5 >= 7) || null;
+  }
+  function dismiss(id) {
+    let put = {}; try { put = JSON.parse(localStorage.getItem('scrmoods.alerts') || '{}'); } catch (e) {}
+    put[id] = today(); try { localStorage.setItem('scrmoods.alerts', JSON.stringify(put)); } catch (e) {}
+  }
+  return { findings, alerts, current, dismiss };
+})();
+/* The heads-up card on today's page and in Trends. */
+function headsUpHtml(more) {
+  const a = Insights.current(); if (!a) return '';
+  return `<div class="card headsup ${a.urgent ? 'urgent' : ''}"><div class="hk">${tr('A gentle heads-up')}</div><div class="ht">${esc(a.title)}</div>
+    <div class="hb">${esc(a.body)}</div><div class="ha">${esc(a.advice)}</div>
+    <div class="hbtns">${more ? `<button class="link" data-act="summary">${tr('Open the summary')}</button>` : ''}<button class="link" data-act="gotIt" data-id="${esc(a.id)}">${tr('Got it')}</button></div></div>`;
+}
+/* The heads-up page that opens the summary, or null. */
+function headsUpPage(today_) {
+  const al = Insights.alerts(today_); if (!al.length) return null;
+  return { k: tr('A gentle heads-up'), h: al.length === 1 ? al[0].title : tr('{0} things to look after this week', al.length), t: 'care',
+    b: al.flatMap(a => [al.length > 1 ? tr('{0}: {1}', a.title, a.body) : a.body, a.advice]) };
+}
+
 function renderGraph() {
   const chartable = D.points.filter(p => p.type !== 'text' && p.id !== 'bipolar_mood2');
   if (!chartable.length) { $main.innerHTML = `<div class="info" style="padding:16px">${tr('No tracking points to chart yet.')}</div>`; return; }
@@ -1084,13 +1367,15 @@ function renderGraph() {
   const days = []; for (let i = nDays - 1; i >= 0; i--) days.push(addDays(today(), -i));
   const short = s => parseYmd(s).toLocaleDateString(LOC(), { day: 'numeric', month: 'short' });
   const s = stats(p, days);
-  const moodOn = D.sections.find(x => x.id === 'bipolar')?.hidden === false;
+  const moodOn = D.sections.some(x => x.id === 'bipolar' && !x.hidden);
   const sleepP = D.points.find(q => q.id === 'sleep_hours' && !q.archived);
   const periodLabel = nDays === 365 ? 'year' : `${nDays} days`;
   let h = `<div class="rangeseg" style="margin:12px 16px 2px">${seg(RANGES.map(r => r[1]), ui.range, 'range', '')}</div>
-    <button class="sumbtn" data-act="summary"><span><b>${tr('Summary')}</b><i>${tr('How your last {0} went, in words', periodPhrase(periodLabel, false))}</i></span><span class="star">✦</span></button>`;
+    <button class="sumbtn" data-act="summary"><span><b>${tr('Summary')}</b><i>${tr('How your last {0} went, in words', periodPhrase(periodLabel, false))}</i></span><span class="star">✦</span></button>` + headsUpHtml(true);
   if (moodOn) h += `<div class="tcard"><div class="tt">${tr('Mood trend')}</div>${moodTrendSvg(days)}${ends(days)}${moodLegend(days)}</div>`;
   if (sleepP) h += `<div class="tcard"><div class="tt">${tr('Sleep pattern')}</div>${sleepSvg(sleepP, days)}${ends(days)}${sleepNote(sleepP, days)}</div>`;
+  const waterP = waterPoint(), waterOn = !D.sections.find(x => x.id === 'water')?.hidden;
+  if (waterP && waterOn) h += `<div class="tcard"><div class="tt">${tr('Water')}</div>${waterSvg(waterP, days)}${ends(days)}${waterNote(waterP, days)}</div>`;
   h += `<div class="section"><h2>${tr('Any tracking point')}</h2></div><div class="picker" style="margin-top:10px"><div class="ptitle">${esc(tr(p.label))}${p.archived ? ' ' + tr('(removed)') : ''}</div>
     <div class="sub">${tr('Tap to look at another tracking point')}</div><select id="graphPick" aria-label="${tr('Tracking point')}">${chartable.map(q =>
     `<option value="${esc(q.id)}" ${q.id === p.id ? 'selected' : ''}>${esc(tr(q.label))}${q.archived ? ' ' + tr('(removed)') : ''}</option>`).join('')}</select></div>
@@ -1191,6 +1476,7 @@ function renderData() {
         <span class="t"><b>${tr('Play the lullaby')}</b><i>${tr('Uses your media volume. On iPhone, the silent switch mutes it.')}</i></span>
         <span class="switch ${gn.melody ? 'on' : ''}"></span></button>
       <div><button class="link" data-act="previewGoodNight">${tr('Preview the celebration')}</button></div>` : ''}</div>
+    ${waterSettings()}
     <div class="section"><h2>${tr('Your journal')}</h2>
     <div class="count">${tr('{0} {1} written', keys.length, trp(keys.length, 'day', 'days'))}</div>
     ${keys.length ? `<div style="font-style:italic;color:var(--soft)">${tr('since {0}', keys[0])}</div>` : ''}
@@ -1204,8 +1490,37 @@ function renderData() {
     <div class="hint" style="padding:6px 0">${tr('On iPhone, Export opens the share sheet: choose “Save to Files”.')}</div></div>`;
 }
 
+/* Settings → Water: the switch, the daily goal and a weight-based suggestion. */
+function waterSettings() {
+  const s = D.sections.find(x => x.id === 'water'), p = waterPoint();
+  if (!s || !p) return '';
+  let h = `<div class="section"><h2>${tr('Water')}</h2>
+    <button class="switchrow" data-act="toggleSection" data-id="water" role="switch" aria-checked="${!s.hidden}">
+      <span class="t"><b>${tr('Water tracker')}</b><i>${tr('Tap a cup for every glass (200 ml) you drink. During the day it sits at the top of the journal.')}</i></span>
+      <span class="switch ${s.hidden ? '' : 'on'}"></span></button>`;
+  if (!s.hidden) {
+    const goal = goalCups(p);
+    let weight = ''; try { weight = localStorage.getItem('scrmoods.weight') || ''; } catch (e) {}
+    const kg = parseFloat(weight.replace(',', '.'));
+    h += `<div class="goalrow"><span class="t"><b>${tr('Daily goal')}</b><i>${goal} ${trp(goal, 'cup', 'cups')} · ${tr('{0} L', litres(goal))}</i></span>
+        <button class="rbtn" style="font-size:20px" data-act="goalMinus" aria-label="${tr('Less')}" ${goal > 1 ? '' : 'disabled'}>−</button>
+        <button class="rbtn" style="font-size:20px" data-act="goalPlus" aria-label="${tr('More')}">+</button></div>
+      <label class="f" for="waterWeight">${tr('Your weight, kg')}</label>
+      <input class="wweight" id="waterWeight" type="number" inputmode="decimal" min="25" max="250" value="${esc(weight)}">`;
+    if (kg >= 25 && kg <= 250) {
+      const rec = recommendedCups(kg);
+      h += `<div style="margin-top:8px">${tr('Suggested: about {0} {1} ({2} L) a day.', rec, trp(rec, 'cup', 'cups'), litres(rec))}</div>`;
+      if (rec !== goal) h += `<div><button class="link" data-act="waterUseRec" data-n="${rec}">${tr('Use {0} {1} as my goal', rec, trp(rec, 'cup', 'cups'))}</button></div>`;
+    }
+    h += `<div class="hint" style="padding:6px 0 0">${tr('A rule of thumb: about 30 ml per kg of body weight, counting all drinks. Heat and exercise mean more. If you take lithium or have heart or kidney problems, ask your doctor how much is right for you.')}</div>`;
+  }
+  return h + '</div>';
+}
+
 /* ---------- manage tracking points ---------- */
+const timesADay = n => n === 1 ? tr('Once a day') : tr('{0} times a day', n);
 function typeSummary(p) {
+  if (isPillMed(p)) return timesADay(doses(p));
   if (p.type === 'scale') return p.options.map(o => tr(o)).join(' · ');
   if (p.type === 'yesno') return tr('No') + ' · ' + tr('Yes');
   if (p.type === 'number') return tr('Number {0}–{1}', fmtNum(p.min), fmtNum(p.max)) + (p.unit ? ' ' + tr(p.unit) : '');
@@ -1215,7 +1530,7 @@ function renderManage() {
   let h = `<div class="backrow"><button data-act="closeManage" aria-label="${tr('Back')}">←</button>${tr('Tracking points')}</div>
     <div class="info" style="font-style:italic">${tr("Add your own questions, edit or reorder them, or remove the ones you don't need. Removing a point only hides it from the check-in, so its past answers stay in your data.")}</div>`;
   for (const s of D.sections) {
-    if (s.id === 'bipolar') continue; // switched on/off in Settings
+    if (s.id === 'bipolar' || s.id === 'water') continue; // switched on/off in Settings
     const pts = D.points.filter(p => p.section === s.id && !p.archived);
     h += `<div class="section"><h2>${esc(tr(s.title))}</h2>`;
     pts.forEach((p, i) => {
@@ -1228,7 +1543,7 @@ function renderManage() {
     if (!pts.length) h += `<div class="empty">${tr('Nothing here yet.')}</div>`;
     h += `<div><button class="link" data-act="addPoint" data-sec="${esc(s.id)}">${s.id === 'meds' ? tr('+ Add medication') : tr('+ Add tracking point')}</button></div></div>`;
   }
-  const removed = D.points.filter(p => p.archived && p.section !== 'bipolar');
+  const removed = D.points.filter(p => p.archived && p.section !== 'bipolar' && p.section !== 'water');
   if (removed.length) {
     h += `<div class="section"><h2>${tr('Removed tracking points')}</h2>
       <div class="info">${tr('Hidden from the check-in. Restore brings a point back; Delete erases it and all its past answers.')}</div>`;
@@ -1275,12 +1590,22 @@ function pointEditor(existing, sectionId) {
   const p = existing ? clone(existing) : P('', sectionId, sectionId === 'meds' ? 'yesno' : 'scale', '', { options: FREQ.map(o => tr(o)) });
   // built-in questions show in the app's language; left unchanged, they keep their original wording
   const orig = existing ? clone(existing) : null;
+  // medications are set up by how many times a day they're taken (a pill for each), not by answer type
+  const canPill = sec => sec === 'meds' && (isNew || isPillMed(orig));
+  let nDoses = orig && isPillMed(orig) ? doses(orig) : 1;
+  const doseBox = () => `<div class="goalrow" style="padding:6px 0 0"><span class="t"><b>${timesADay(nDoses)}</b></span>
+      <button class="rbtn" style="font-size:20px" data-dose="-1" ${nDoses > 1 ? '' : 'disabled'}>−</button>
+      <button class="rbtn" style="font-size:20px" data-dose="1" ${nDoses < 12 ? '' : 'disabled'}>+</button></div>
+    <div class="pills" style="margin-top:6px">${Array.from({ length: nDoses }, () => `<span class="pill on" style="width:26px;height:26px;display:inline-block">${pillSvg(true)}</span>`).join('')}</div>
+    <div class="hint" style="padding:4px 0 0">${tr('A pill for each time. Tap them through the day as you take them.')}</div>`;
   const body = () => {
-    const med = p.section === 'meds';
+    const med = p.section === 'meds', pill = canPill(p.section);
     return `<label class="f">${med ? tr('Name and dose') : tr('Question')}</label>
       <input type="text" id="pLabel" value="${esc(tr(p.label))}" placeholder="${med ? tr('e.g. Vitamin D, 2000 IU (AM)') : tr('e.g. Did you drink enough water?')}">
       <label class="f">${tr('Section')}</label>
-      ${D.sections.filter(s => s.id !== 'bipolar').map(s => `<label class="radio"><input type="radio" name="pSec" value="${esc(s.id)}" ${p.section === s.id ? 'checked' : ''}>${esc(tr(s.title))}</label>`).join('')}
+      ${D.sections.filter(s => s.id !== 'bipolar' && s.id !== 'water').map(s => `<label class="radio"><input type="radio" name="pSec" value="${esc(s.id)}" ${p.section === s.id ? 'checked' : ''}>${esc(tr(s.title))}</label>`).join('')}
+      <div id="pDoses" style="display:${pill ? 'block' : 'none'}"><label class="f">${tr('How many times a day?')}</label><div id="pDoseBox">${doseBox()}</div></div>
+      <div id="pGeneric" style="display:${pill ? 'none' : 'block'}">
       <label class="f">${tr('Answer type')}</label>
       ${isNew ? Object.entries(TYPES).map(([k, t]) => `<label class="radio"><input type="radio" name="pType" value="${k}" ${p.type === k ? 'checked' : ''}>${tr(t)}</label>`).join('')
               : `<div style="font-size:14px;padding:4px 0">${tr("{0} (can't be changed once created, so old answers stay valid)", tr(TYPES[p.type]))}</div>`}
@@ -1296,7 +1621,7 @@ function pointEditor(existing, sectionId) {
           <div><label class="f">${tr('Max')}</label><input type="number" inputmode="decimal" id="pMax" value="${p.max}"></div>
           <div><label class="f">${tr('Step')}</label><input type="number" inputmode="decimal" id="pStep" value="${p.step}"></div></div>
         <label class="f">${tr('Unit (optional, e.g. hrs, cups)')}</label><input type="text" id="pUnit" value="${esc(tr(p.unit))}">
-      </div>
+      </div></div>
       <div class="err" id="pErr"></div>`;
   };
   openDialog(isNew ? (sectionId === 'meds' ? tr('Add medication') : tr('Add tracking point')) : tr('Edit tracking point'), body(), [
@@ -1306,6 +1631,16 @@ function pointEditor(existing, sectionId) {
       let label = document.getElementById('pLabel').value.trim();
       if (orig && label === tr(orig.label)) label = orig.label;
       const section = $modal.querySelector('input[name=pSec]:checked')?.value || p.section;
+      if (canPill(section)) {
+        if (!label) return err(tr('Please enter a question or name.'));
+        const before = orig && isPillMed(orig) ? doses(orig) : null;
+        Object.assign(p, { label, section, options: [] }); withDoses(p, nDoses);
+        // keep old answers meaning the same: "all taken" stays all taken
+        if (before != null && before !== nDoses) for (const e of Object.values(D.entries)) if (e.values[p.id] != null) e.values[p.id] = remapDose(e.values[p.id], before, nDoses);
+        if (isNew) { p.id = 'med_' + Date.now().toString(36); D.points.push(p); }
+        else D.points = D.points.map(q => q.id === p.id ? p : q);
+        save(); render(); return;
+      }
       const type = isNew ? ($modal.querySelector('input[name=pType]:checked')?.value || p.type) : p.type;
       if (!label) return err(tr('Please enter a question or name.'));
       const opts = document.getElementById('pOpts').value.split('\n').map(s => s.trim()).filter(Boolean)
@@ -1325,6 +1660,16 @@ function pointEditor(existing, sectionId) {
       save(); render();
     } },
   ]);
+  $modal.querySelector('#pDoses').addEventListener('click', ev => {
+    const b = ev.target.closest('[data-dose]'); if (!b) return;
+    nDoses = Math.max(1, Math.min(12, nDoses + +b.dataset.dose)); haptic();
+    document.getElementById('pDoseBox').innerHTML = doseBox();
+  });
+  $modal.querySelectorAll('input[name=pSec]').forEach(r => r.onchange = () => {
+    const pill = canPill(r.value);
+    document.getElementById('pDoses').style.display = pill ? 'block' : 'none';
+    document.getElementById('pGeneric').style.display = pill ? 'none' : 'block';
+  });
   // Show the right extra fields when the type or section changes.
   $modal.querySelectorAll('input[name=pType]').forEach(r => r.onchange = () => {
     document.getElementById('pScale').style.display = r.value === 'scale' ? 'block' : 'none';
@@ -1396,6 +1741,24 @@ document.addEventListener('click', ev => {
       setValue(d, pid, cur === String(i) ? null : i); break;
     }
     case 'clear': setValue(d, pid, null); break;
+    case 'pill': {
+      const p = D.points.find(q => q.id === pid); if (!p) return;
+      const n = doses(p), cur = Math.min(n, dosesTaken(entry(d).values[pid])), i = +el.dataset.n, next = i + 1 === cur ? i : i + 1;
+      pendingPop = { sel: `[data-act="pill"][data-pid="${CSS.escape(pid)}"][data-n="${i}"]`, stars: next > cur, color: 'acc' };
+      setValue(d, pid, doseValue(next, n)); break;
+    }
+    case 'cup': case 'waterMinus': case 'waterPlus': {
+      const p = waterPoint(); if (!p) return;
+      const cur = Math.round(parseFloat(entry(d).values[p.id]) || 0);
+      let n = cur;
+      if (act === 'cup') { const i = +el.dataset.n; n = i + 1 === cur ? i : i + 1; pendingPop = { sel: `[data-act="cup"][data-n="${i}"]`, stars: n > cur, color: 'acc' }; }
+      else n = Math.max(0, cur + (act === 'waterPlus' ? 1 : -1));
+      if (act === 'waterPlus') pendingPop = { sel: `[data-act="cup"][data-n="${n - 1}"]`, stars: true, color: 'acc' };
+      setValue(d, p.id, n > 0 ? n : null);
+      break;
+    }
+    case 'goalMinus': case 'goalPlus': { const p = waterPoint(); if (!p) return; p.max = Math.min(30, Math.max(1, goalCups(p) + (act === 'goalPlus' ? 1 : -1))); save(); break; }
+    case 'waterUseRec': { const p = waterPoint(); if (!p) return; p.max = +el.dataset.n; save(); break; }
     case 'minus': case 'plus': {
       const p = pt(pid), cur = parseFloat(entry(d).values[pid]);
       const base = isNaN(cur) ? (act === 'plus' ? p.min : p.min + p.step) : cur;
@@ -1437,6 +1800,7 @@ document.addEventListener('click', ev => {
       break;
     }
     case 'quick': openQuick(d); return;
+    case 'gotIt': haptic(); Insights.dismiss(el.dataset.id); break;
     case 'lang': { const L = LANGS[+el.dataset.i]; if (L) setLang(L[0]); break; }
     case 'previewGoodNight': celebrate(today(), false); return;
     case 'toggleQuote': showQuote = !showQuote; try { localStorage.setItem('scrmoods.quote', showQuote ? 'on' : 'off'); } catch (e) {} break;
@@ -1498,6 +1862,7 @@ document.addEventListener('change', ev => {
   if (t.type === 'range') { setValue(ui.date, t.dataset.pid, fmtNum(snap(pt(t.dataset.pid), parseFloat(t.value)))); render(); }
   else if (t.tagName === 'TEXTAREA' && t.dataset.pid && !$modal.contains(t)) setValue(ui.date, t.dataset.pid, t.value.trim() || null);
   else if (t.id === 'graphPick') { ui.graphPoint = t.value; render(); }
+  else if (t.id === 'waterWeight') { try { localStorage.setItem('scrmoods.weight', t.value); } catch (e) {} render(); }
 });
 // Text answers also save while typing (in case the app is closed without leaving the field).
 let typingTimer;
@@ -1566,7 +1931,7 @@ function popButton(p) {
   ], { duration: 440, easing: 'ease-out' });
   if (!p.stars) return;
   const r = b.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, reach = Math.min(r.width, r.height) / 2;
-  const main = getComputedStyle(b).backgroundColor;
+  const main = p.color === 'acc' ? getComputedStyle(document.documentElement).getPropertyValue('--acc').trim() : getComputedStyle(b).backgroundColor;
   const colors = [main, main, '#E8A93A', '#E8A93A', main];
   let layer = document.getElementById('sparkles');
   if (!layer) { layer = document.createElement('div'); layer.id = 'sparkles'; document.body.appendChild(layer); }
@@ -1817,7 +2182,8 @@ function showQuick() {
       <textarea id="qnote" placeholder="${tr('Write about your day…')}">${esc(e.note)}</textarea>
       <button class="qnext" data-q="finish">${gn.finished === date ? tr('Save and close') : tr('Finish the day') + '&nbsp; ☾'}</button>`;
   } else {
-    const p = st.p, v = e.values[p.id];
+    const p = st.p.id === WATER_ID ? Object.assign({}, st.p, { max: Math.max(st.p.max * 2, 12) }) : st.p, v = e.values[p.id];
+    quick.np = p;
     b = `<div class="qk">${esc(tr(st.section))}</div><div class="qh">${esc(tr(p.label))}</div>`;
     if (p.type === 'scale' || p.type === 'yesno') {
       const opts = p.type === 'yesno' ? [[1, 'Yes'], [0, 'No']] : p.options.map((o, k) => [k, o]);
@@ -1826,9 +2192,13 @@ function showQuick() {
         const g = goodness(p, k), c = g == null ? 'var(--acc)' : answerColor(g);
         return `<button class="qopt ${v != null && +v === k ? 'on' : ''}" style="--c:${c}" data-q="pick" data-v="${k}">${esc(tr(o))}</button>`;
       }).join('');
+    } else if (isPillMed(p)) {
+      // a medication taken several times a day: a big pill for each dose
+      b += `<div class="qpills">${pills(p, v, 'qpill')}</div><div class="qpcount">${tr('{0} of {1} taken', Math.min(doses(p), dosesTaken(v)), doses(p))}</div>
+        <button class="qnext" data-q="pnext">${tr('Next')}</button>`;
     } else if (p.type === 'number') {
       const prev = entry(addDays(date, -1)).values[p.id];
-      const start = v != null ? +v : prev != null ? +prev : snap(p, (p.min + p.max) / 2);
+      const start = v != null ? +v : p.id === WATER_ID ? 0 : prev != null ? +prev : snap(p, (p.min + p.max) / 2);
       quick.num = start;
       b += `<div class="qnum"><b id="qnv">${fmtNum(start)}</b>${p.unit ? `<span> ${esc(tr(p.unit))}</span>` : ''}</div>
         <div class="qctrl"><button class="rbtn" data-q="minus">−</button>
@@ -1870,11 +2240,20 @@ function quickClick(ev) {
     popButton({ el: nb, stars: true });
     if (!quick.busy) { quick.busy = true; setTimeout(() => quick && quickGo(quick.i + 1), 900); }
   } else if (act === 'minus' || act === 'plus') {
-    const p = st.p, r = document.getElementById('qrange');
+    const p = quick.np || st.p, r = document.getElementById('qrange');
     quick.num = snap(p, quick.num + (act === 'plus' ? p.step : -p.step));
     r.value = quick.num; document.getElementById('qnv').textContent = fmtNum(quick.num);
+  } else if (act === 'qpill') {
+    const p = st.p, n = doses(p), cur = Math.min(n, dosesTaken(entry(date).values[p.id])), k = +t.dataset.n, next = k + 1 === cur ? k : k + 1;
+    const v = doseValue(next, n); setValue(date, p.id, v);
+    const box = t.closest('.qpills'); box.innerHTML = pills(p, v, 'qpill');
+    box.nextElementSibling.textContent = tr('{0} of {1} taken', next, n);
+    if (next > cur) popButton({ el: box.querySelector(`[data-n="${k}"]`), stars: true, color: 'acc' });
+  } else if (act === 'pnext') {
+    if (entry(date).values[st.p.id] == null) setValue(date, st.p.id, doseValue(0, doses(st.p)));
+    quickGo(i + 1);
   } else if (act === 'next') {
-    if (st.p.type === 'number') setValue(date, st.p.id, fmtNum(snap(st.p, quick.num)));
+    if (st.p.type === 'number') setValue(date, st.p.id, fmtNum(snap(quick.np || st.p, quick.num)));
     else setValue(date, st.p.id, document.getElementById('qtext').value.trim() || null);
     quickGo(i + 1);
   } else if (act === 'finish') {
