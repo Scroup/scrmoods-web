@@ -232,7 +232,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const plural = (n, a, b, c) => { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? a : m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20) ? b : c; };
 
 /* ---------- курс Национального банка Грузии ---------- */
-const NBG = d => `https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ru/json/?currencies=USD&date=${d}`;
+const NBG = d => `https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/en/json/?currencies=USD&date=${d}`;
 let rates = store.get('rates', {});            // дата -> { rate, valid }
 const pending = {};
 function getRate(date) {
