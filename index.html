@@ -348,10 +348,10 @@ input, textarea, select { font: inherit; color: inherit; }
 <main id="main"></main>
 
 <nav id="nav">
-  <button data-tab="checkin"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"/></svg></span>Journal</button>
-  <button data-tab="calendar"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 11H7v2h2zm4 0h-2v2h2zm4 0h-2v2h2zm2-7h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14z"/></svg></span>Calendar</button>
-  <button data-tab="graph"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 11h4v9H4zM10 4h4v16h-4zM16 8h4v12h-4z"/></svg></span>Trends</button>
-  <button data-tab="data"><span class="ic"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.48.48 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></span>Settings</button>
+  <button data-tab="checkin"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8z"/></svg></span><span data-k="Journal">Journal</span></button>
+  <button data-tab="calendar"><span class="ic"><svg viewBox="0 0 24 24"><path d="M9 11H7v2h2zm4 0h-2v2h2zm4 0h-2v2h2zm2-7h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14z"/></svg></span><span data-k="Calendar">Calendar</span></button>
+  <button data-tab="graph"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 11h4v9H4zM10 4h4v16h-4zM16 8h4v12h-4z"/></svg></span><span data-k="Trends">Trends</span></button>
+  <button data-tab="data"><span class="ic"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.48.48 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></span><span data-k="Settings">Settings</span></button>
 </nav>
 
 <div id="modal"></div>
@@ -359,6 +359,29 @@ input, textarea, select { font: inherit; color: inherit; }
 
 <script>
 'use strict';
+/* =====================================================================
+   Language: English is written in the code and doubles as the key for its
+   Russian translation (same dictionary as the Android app). Your own
+   questions have no translation, so they always show as you wrote them.
+   ===================================================================== */
+const RU = /*RU_DICT*/{"map": {"Mood scale": "Шкала настроения", "Daily Check-in": "Ежедневная отметка", "Health and Self Care": "Здоровье и забота о себе", "Mental and Social Stimulation": "Общение и занятия", "Custom tracking points": "Мои вопросы", "Medications/Supplements (check off those you took today)": "Лекарства и добавки (отметьте принятые сегодня)", "Mood scale, second number on mixed days": "Шкала настроения, второе число в смешанные дни", "Mixed features": "Смешанное состояние", "How was your overall outlook today?": "Какой у вас сегодня общий настрой?", "How productive were you today?": "Насколько продуктивным был день?", "How motivated did you feel today?": "Насколько вы были мотивированы?", "Did you feel lonely today?": "Чувствовали ли вы себя одиноко?", "Did you feel depressed or hopeless today?": "Было ли подавленное или безнадёжное настроение?", "Did you feel anxious today?": "Чувствовали ли вы тревогу?", "Last night's sleep": "Сон прошлой ночью", "Did you have a restful night's sleep?": "Вы хорошо выспались?", "Have you met your nutrition needs today?": "Вы сегодня нормально питались?", "Did you spend time outside?": "Вы бывали на улице?", "Did you exercise today?": "Вы занимались спортом?", "Did you tend to your personal hygiene today?": "Вы позаботились о личной гигиене?", "Did you spend quality time engaging with friends or family?": "Вы провели время с друзьями или семьёй?", "Did you practice any kind of mindfulness or meditation?": "Вы практиковали осознанность или медитацию?", "Did you have talk therapy today?": "У вас была сессия с психотерапевтом?", "Did you accomplish any household chores or tasks?": "Вы сделали какие-то домашние дела?", "News and media exposure:": "Новости и СМИ:", "Social media exposure:": "Соцсети:", "Negative": "Негативный", "Neutral": "Нейтральный", "Positive": "Позитивный", "Not at all": "Совсем нет", "Somewhat": "Немного", "Fairly": "Довольно", "Very": "Очень", "Low": "Мало", "Medium": "Средне", "High": "Много", "hrs": "ч", "Yes": "Да", "No": "Нет", "Scale (choose one option)": "Шкала (один вариант)", "Yes / No": "Да / Нет", "Number (slider)": "Число (ползунок)", "Text": "Текст", "Yes is good": "Хорошо — «да»", "No is good": "Хорошо — «нет»", "Neither": "Ни то ни другое", "Later options are better": "Лучше варианты ниже по списку", "Earlier options are better": "Лучше варианты выше по списку", "Higher is better": "Чем больше, тем лучше", "Lower is better": "Чем меньше, тем лучше", "Journal": "Дневник", "Calendar": "Календарь", "Trends": "Тренды", "Settings": "Настройки", "Rosewood": "Роза", "Peach": "Персик", "Sepia": "Сепия", "Matcha": "Матча", "Lavender": "Лаванда", "Berry": "Ягода", "Night": "Ночь", "7 days": "7 дней", "30 days": "30 дней", "90 days": "90 дней", "1 year": "1 год", "year": "год", "month": "месяц", "more": "больше", "less": "меньше", "Severe depression": "Тяжёлая депрессия", "Mild to moderate depression": "Лёгкая или умеренная депрессия", "Balanced": "Баланс", "Hypomania": "Гипомания", "Mania": "Мания", "Depression": "Депрессия", "Mild to moderate": "Лёгкая/умеренная", "Severe": "Тяжёлая", "Mixed": "Смешанное", "Constant thoughts of suicide, feeling there is no way out, barely able to move. Everything feels bleak and permanent.": "Постоянные мысли о самоубийстве, ощущение, что выхода нет, трудно даже двигаться. Всё кажется мрачным и бесконечным.", "Hopelessness and guilt, thoughts of suicide, very little movement. Doing anything feels impossible.": "Безнадёжность и вина, мысли о самоубийстве, почти нет сил двигаться. Любое дело кажется невозможным.", "Slowed thinking, little appetite, wanting to be alone. Sleeping too much or too little; everything is a struggle.": "Мысли замедлены, мало аппетита, хочется быть одному. Сон слишком долгий или слишком короткий; всё даётся с трудом.", "Anxious or panicky, hard to concentrate, poor memory. Routine gives some comfort.": "Тревога или паника, трудно сосредоточиться, плохая память. Привычный распорядок немного помогает.", "Pulling back a little from people, concentration slightly below usual, a bit restless.": "Чуть отдаляетесь от людей, внимание немного ниже обычного, лёгкое беспокойство.", "Mood in balance, no signs of depression or mania.": "Настроение в равновесии, нет признаков депрессии или мании.", "Good self-esteem, optimistic and sociable, clear decisions, getting things done on a little less sleep.": "Хорошая самооценка, оптимизм и общительность, ясные решения, дела делаются даже при чуть меньшем сне.", "Very productive, doing everything to excess (calls, writing, smoking, caffeine), charming and talkative.": "Очень продуктивно, всего с избытком (звонки, записи, курение, кофеин), обаяние и разговорчивость.", "Inflated self-esteem, racing thoughts and fast speech, juggling many tasks without finishing them.": "Завышенная самооценка, скачут мысли и быстрая речь, много дел одновременно, но ничего не доводится до конца.", "Losing touch with reality, hard to follow, no sleep, suspicious or vindictive, reckless behaviour.": "Теряется связь с реальностью, за вами трудно уследить, нет сна, подозрительность или мстительность, безрассудные поступки.", "Complete loss of judgement, extreme spending, grandiose or religious beliefs, hallucinations.": "Полная потеря здравого смысла, огромные траты, идеи величия или религиозные идеи, галлюцинации.", "Today is written down. You can let it rest now.": "День записан. Теперь его можно отпустить.", "Thank you for checking in with yourself today.": "Спасибо, что уделили себе внимание сегодня.", "Whatever today was, it's safely kept. Sleep softly.": "Каким бы ни был этот день, он бережно сохранён. Спите сладко.", "You showed up for yourself today. Rest well.": "Сегодня вы позаботились о себе. Хорошего отдыха.", "Tomorrow is a fresh page. Sweet dreams.": "Завтра — чистая страница. Сладких снов.", "Breathe out slowly. The day is done.": "Медленно выдохните. День позади.", "Be as gentle with yourself tonight as you'd be with a friend.": "Будьте сегодня так же бережны к себе, как к другу.", "A journey of a thousand miles begins with a single step.": "Путь в тысячу ли начинается с первого шага.", "Lao Tzu": "Лао-цзы", "Fall seven times, stand up eight.": "Упади семь раз, поднимись восемь.", "Japanese proverb": "Японская пословица", "Keep your eyes on the stars, and your feet on the ground.": "Смотрите на звёзды, но крепко стойте на земле.", "Theodore Roosevelt": "Теодор Рузвельт", "Kiss your partner for six seconds, long enough for the affection to register.": "Поцелуйте любимого человека шесть секунд — достаточно долго, чтобы нежность ощутилась.", "Do what you can, with what you have, where you are.": "Делайте что можете, с тем, что у вас есть, там, где вы сейчас.", "Hope is the thing with feathers that perches in the soul.": "Надежда — это пёрышко, что живёт в душе.", "Emily Dickinson": "Эмили Дикинсон", "Optimism is the faith that leads to achievement.": "Оптимизм — это вера, которая ведёт к достижениям.", "Helen Keller": "Хелен Келлер", "Don't forget to express gratitude.": "Не забудьте сказать спасибо.", "Little by little, one travels far.": "Шаг за шагом можно уйти далеко.", "Spanish proverb": "Испанская пословица", "The best way out is always through.": "Лучший выход — всегда пройти насквозь.", "Robert Frost": "Роберт Фрост", "Well done is better than well said.": "Хорошо сделать лучше, чем хорошо сказать.", "Benjamin Franklin": "Бенджамин Франклин", "Tell the people you care about that you love them.": "Скажите близким, что вы их любите.", "After rain comes sunshine.": "После дождя всегда выходит солнце.", "Proverb": "Пословица", "Every expert was once a beginner.": "Каждый мастер когда-то был новичком.", "Saying": "Поговорка", "I am not afraid of storms, for I am learning how to sail my ship.": "Я не боюсь бурь, потому что учусь управлять своим кораблём.", "Louisa May Alcott": "Луиза Мэй Олкотт", "Progress, not perfection.": "Прогресс, а не совершенство.", "The sun himself is weak when he first rises, and gathers strength and courage as the day gets on.": "Даже солнце слабо, когда только встаёт, и набирается сил и смелости к середине дня.", "Charles Dickens": "Чарльз Диккенс", "Rome wasn't built in a day.": "Москва не сразу строилась.", "This too shall pass.": "И это пройдёт.", "Persian proverb": "Персидская пословица", "Drink a glass of water and stretch for a minute.": "Выпейте стакан воды и потянитесь минутку.", "Where there's a will, there's a way.": "Где есть желание, там найдётся и путь.", "Although the world is full of suffering, it is full also of the overcoming of it.": "Хотя мир полон страданий, он полон и их преодоления.", "Rest is not idleness.": "Отдых — это не безделье.", "John Lubbock": "Джон Леббок", "You've handled hard days before. You can handle this one.": "Вы уже справлялись с трудными днями. Справитесь и с этим.", "Every cloud has a silver lining.": "Нет худа без добра.", "Adopt the pace of nature: her secret is patience.": "Живите в ритме природы: её секрет — терпение.", "Ralph Waldo Emerson": "Ральф Уолдо Эмерсон", "Write it on your heart that every day is the best day in the year.": "Запишите в своём сердце, что каждый день — лучший в году.", "Celebrate one small win today, however small.": "Отметьте сегодня одну маленькую победу, даже самую крошечную.", "Laughter is the best medicine.": "Смех — лучшее лекарство.", "Slow and steady wins the race.": "Тише едешь — дальше будешь.", "Aesop": "Эзоп", "Be not afraid of going slowly; be afraid only of standing still.": "Не бойтесь идти медленно, бойтесь стоять на месте.", "Chinese proverb": "Китайская пословица", "Step outside for five minutes of fresh air.": "Выйдите на пять минут подышать свежим воздухом.", "Inch by inch, life's a cinch.": "Понемногу — и всё по силам.", "A smooth sea never made a skilled sailor.": "Спокойное море не сделает моряка умелым.", "English proverb": "Английская пословица", "Big things have small beginnings.": "Большое начинается с малого.", "Send a friend a message just to say hi.": "Напишите другу просто чтобы сказать «привет».", "Bloom where you are planted.": "Цветите там, где вас посадили.", "Every day may not be good, but there is something good in every day.": "Не каждый день хорош, но в каждом дне есть что-то хорошее.", "Well begun is half done.": "Хорошее начало — половина дела.", "Aristotle": "Аристотель", "Your feelings are valid, and they will pass.": "Ваши чувства важны, и они пройдут.", "Patience is bitter, but its fruit is sweet.": "Терпение горько, но плод его сладок.", "The darkest hour is just before the dawn.": "Самый тёмный час — перед рассветом.", "Thomas Fuller": "Томас Фуллер", "One today is worth two tomorrows.": "Одно «сегодня» стоит двух «завтра».", "Done is better than perfect.": "Сделанное лучше идеального.", "Nothing great was ever achieved without enthusiasm.": "Ничто великое не достигалось без воодушевления.", "Keep calm and carry on.": "Сохраняйте спокойствие и продолжайте.", "British poster, 1939": "Британский плакат, 1939", "Many hands make light work.": "Вместе и работа спорится.", "Put on a song you love and really listen to it.": "Включите любимую песню и по-настоящему её послушайте.", "A good laugh and a long sleep are the best cures in the doctor's book.": "Хороший смех и долгий сон — лучшие лекарства в докторской книге.", "Irish proverb": "Ирландская пословица", "The best is yet to be.": "Лучшее ещё впереди.", "Robert Browning": "Роберт Браунинг", "Healing is a matter of time, but it is sometimes also a matter of opportunity.": "Исцеление — дело времени, но иногда и дело возможности.", "Hippocrates": "Гиппократ", "Be as kind to yourself as you would be to a friend.": "Будьте к себе так же добры, как к другу.", "Previous month": "Предыдущий месяц", "Next month": "Следующий месяц", "Days logged this month: {0}": "Дней с отметками в этом месяце: {0}", "Dot colour = overall outlook": "Цвет точки — общий настрой", "Other entries": "Другие записи", "Tap a day to open its check-in.": "Нажмите на день, чтобы открыть его запись.", "Back to today": "Вернуться к сегодня", "Previous day": "Предыдущий день", "Next day": "Следующий день", "A reminder for today": "Напоминание на сегодня", "+ Add custom tracking point": "+ Добавить свой вопрос", "+ Add medication": "+ Добавить лекарство", "Edit medications": "Изменить лекарства", "Today's note": "Заметка дня", "not set": "не указано", "Clear": "Очистить", "Write about your day…": "Напишите о своём дне…", "Day finished": "День завершён", "Finish the day": "Завершить день", "Pick two numbers: how low and how high you feel": "Выберите два числа: насколько низко и насколько высоко", "Where is your mood today?": "Какое у вас сегодня настроение?", "Tap a number below: 0 is severe depression, 5 balanced, 10 mania.": "Нажмите на число ниже: 0 — тяжёлая депрессия, 5 — баланс, 10 — мания.", "pick a low and a high number": "выберите низкое и высокое число", "low and high at the same time": "и спад, и подъём одновременно", "If you're thinking about suicide, please reach out now: call a crisis line or emergency services, or tell someone you trust. You don't have to carry this alone.": "Если вы думаете о самоубийстве, пожалуйста, обратитесь за помощью прямо сейчас: позвоните на линию помощи или в экстренные службы либо расскажите тому, кому доверяете. Вам не нужно справляться с этим в одиночку.", "This is a lot. Consider contacting your doctor or someone you trust today.": "Это много. Подумайте о том, чтобы сегодня связаться с врачом или близким человеком.", "Exported": "Сохранено", "Export failed: {0}": "Не удалось сохранить: {0}", "Language": "Язык", "Appearance": "Оформление", "Journal sections": "Разделы дневника", "Track depression and mania from 0 to 10 at the top of the journal. Hiding it keeps your past answers.": "Отмечайте депрессию и манию от 0 до 10 вверху дневника. Если скрыть шкалу, прошлые ответы сохранятся.", "Quote of the day": "Цитата дня", "A quote or gentle reminder at the top of the journal, a new one each day.": "Цитата или мягкое напоминание вверху дневника, каждый день новое.", "Vibrate on tap": "Вибрация при нажатии", "A soft click of vibration when you tap buttons and answers.": "Лёгкий отклик вибрацией при нажатии на кнопки и ответы.", "Welcome when opening": "Приветствие при открытии", "A short greeting, then the journal rises into place.": "Короткое приветствие, затем дневник плавно появляется.", "Stars when answering": "Звёздочки при ответе", "Answer buttons squish when tapped and pop out little stars.": "Кнопки ответов пружинят при нажатии и рассыпают звёздочки.", "Good night celebration": "Пожелание спокойной ночи", "A “Finish the day” button under today's note: confetti, a good-night wish and a short lullaby.": "Кнопка «Завершить день» под заметкой дня: конфетти, пожелание спокойной ночи и короткая колыбельная.", "Play the lullaby": "Играть колыбельную", "Uses your media volume.": "Громкость как у медиа.", "Preview the celebration": "Посмотреть, как это выглядит", "Your journal": "Ваш дневник", "{0} {1} written": "Записано: {0} {1}", "since {0}": "с {0}", "{0} tracking points in use": "Вопросов в дневнике: {0}", "Everything is stored in a single XML file on this phone:": "Всё хранится в одном XML-файле на этом телефоне:", "Export it to save a backup or to open it on your computer for statistics. Each answer is saved with its number and its readable text, e.g. {0}.": "Сохраните его как резервную копию или откройте на компьютере для статистики. Каждый ответ хранится числом и текстом, например {0}.", "Export data (XML)": "Сохранить данные (XML)", "Import data from file…": "Загрузить данные из файла…", "Manage tracking points": "Настроить вопросы", "Tip: export regularly. Uninstalling the app deletes its data on the phone.": "Совет: регулярно сохраняйте данные. При удалении приложения они стираются с телефона.", "Replace all data?": "Заменить все данные?", "Importing replaces everything in the app (tracking points and all days) with the contents of the file. Export first if you want to keep a copy of the current data.": "Загрузка заменит всё в приложении (вопросы и все дни) содержимым файла. Сначала сохраните текущие данные, если хотите оставить копию.", "Import": "Загрузить", "Imported {0} {1}": "Загружено: {0} {1}", "Import failed: {0}": "Не удалось загрузить: {0}", "Good night": "Спокойной ночи", "Today's journal is complete.": "Дневник за сегодня заполнен.", "Today is saved.": "Сегодняшний день сохранён.", "Tap anywhere to close": "Нажмите в любом месте, чтобы закрыть", "You've filled in your journal on {0} {1}. Keep it up, you're doing great.": "Вы вели дневник уже {0} {1}. Так держать, у вас отлично получается.", "Good morning": "Доброе утро", "Good afternoon": "Добрый день", "Good evening": "Добрый вечер", "Hello, night owl": "Привет, полуночник", "Welcome back. Let's see how today is going.": "С возвращением. Давайте посмотрим, как проходит день.", "no answers": "нет ответов", "Yes on {0}% of {1} {2}": "«Да» в {0}% ответов ({1} {2})", "avg {0} ({1}), {2} {3}": "в среднем {0} ({1}), {2} {3}", "avg {0}, {1} {2}": "в среднем {0}, {1} {2}", "No tracking points to chart yet.": "Пока нет вопросов для графика.", "Mood trend": "Настроение", "Sleep pattern": "Сон", "Any tracking point": "Любой вопрос", "(removed)": "(удалён)", "Tap to look at another tracking point": "Нажмите, чтобы выбрать другой вопрос", "In numbers": "В цифрах", "{0} of {1}": "{0} из {1}", "Days answered": "Дней с ответом", "Average": "Среднее", "Lowest": "Минимум", "Highest": "Максимум", "Everything, last {0}": "Всё за {0}", "Green is going well, red needs attention. Each square is a day (or a few days averaged).": "Зелёное — всё хорошо, красное — требует внимания. Каждый квадрат — день (или среднее за несколько дней).", "Green is going well, red needs attention. Each square is a day.": "Зелёное — всё хорошо, красное — требует внимания. Каждый квадрат — день.", "no answers yet": "пока нет ответов", "Needs attention": "Требует внимания", "No mood scale answers in this period yet.": "За этот период пока нет отметок настроения.", "Balanced on {0} of {1} days": "Баланс в {0} из {1} дн.", ", mixed on {0}": ", смешанных: {0}", "{0} h": "{0} ч", "No sleep answers in this period yet.": "За этот период пока нет данных о сне.", "Average {0} {1} (dashed line), shortest {2}, longest {3}, {4} {5}": "В среднем {0} {1} (пунктир), самый короткий {2}, самый долгий {3}, {4} {5}", "Notifications are off, so reminders can't appear. You can turn them on in Settings → Apps → scrmoods.": "Уведомления выключены, поэтому напоминания не появятся. Их можно включить в Настройках → Приложения → scrmoods.", "Notifications are off for scrmoods. Turn them on in Settings to get reminders.": "Уведомления для scrmoods выключены. Включите их в настройках, чтобы получать напоминания.", "Problem loading data": "Не удалось загрузить данные", "OK": "ОК", "Could not read saved data ({0}). A copy was kept; starting fresh.": "Не удалось прочитать сохранённые данные ({0}). Копия сохранена, начинаем с чистого листа.", "Back": "Назад", "Tracking points": "Вопросы", "Add your own questions, edit or reorder them, or remove the ones you don't need. Removing a point only hides it from the check-in, so its past answers stay in your data.": "Добавляйте свои вопросы, меняйте их порядок и текст или убирайте ненужные. Убранный вопрос просто скрывается из дневника, а прошлые ответы остаются в данных.", "Move up": "Выше", "Move down": "Ниже", "Edit": "Изменить", "Remove": "Убрать", "Nothing here yet.": "Пока ничего нет.", "+ Add tracking point": "+ Добавить вопрос", "Removed tracking points": "Убранные вопросы", "Hidden from the check-in. Restore brings a point back; Delete erases it and all its past answers.": "Скрыты из дневника. «Вернуть» возвращает вопрос, «Удалить» стирает его вместе со всеми прошлыми ответами.", "Restore": "Вернуть", "Delete forever": "Удалить навсегда", "Restore all built-in questions": "Вернуть все встроенные вопросы", "Delete forever?": "Удалить навсегда?", "“{0}” and every answer you gave for it will be erased. This can't be undone.": "«{0}» и все ваши ответы на него будут стёрты. Это нельзя отменить.", "Delete": "Удалить", "Restore built-in questions?": "Вернуть встроенные вопросы?", "Any removed or deleted built-in questions come back. Your own points and all answers are kept.": "Все убранные или удалённые встроенные вопросы вернутся. Ваши вопросы и все ответы сохранятся.", "Number {0}–{1}": "Число {0}–{1}", "Please enter a question or name.": "Введите вопрос или название.", "A scale needs at least 2 options (one per line).": "Для шкалы нужно минимум 2 варианта (по одному в строке).", "Check the numbers: maximum must be above minimum and step above 0.": "Проверьте числа: максимум должен быть больше минимума, а шаг — больше 0.", "Edit tracking point": "Изменить вопрос", "Add medication": "Добавить лекарство", "Add tracking point": "Добавить вопрос", "Name and dose": "Название и доза", "Question": "Вопрос", "e.g. Vitamin D, 2000 IU (AM)": "например, Витамин D, 2000 МЕ (утром)", "e.g. Did you drink enough water?": "например, Вы пили достаточно воды?", "Section": "Раздел", "Answer type": "Тип ответа", "{0} (can't be changed once created, so old answers stay valid)": "{0} (нельзя изменить после создания, чтобы прошлые ответы оставались верными)", "Options, one per line (lowest first)": "Варианты, по одному в строке (сначала самый низкий)", "Answers are saved by position, so keep the same number and order of options.": "Ответы хранятся по номеру варианта, поэтому сохраняйте их количество и порядок.", "Min": "Мин.", "Max": "Макс.", "Step": "Шаг", "Unit (optional, e.g. hrs, cups)": "Единица (необязательно, например ч, чашки)", "Which is better?": "Что лучше?", "Used to colour Trends green when it's going well and red when it needs attention.": "Нужно, чтобы в «Трендах» хорошее было зелёным, а требующее внимания — красным.", "Remind me": "Напоминать", "A notification at each time, every day. Tap Taken in it to tick this off.": "Уведомление в каждое время, каждый день. Нажмите в нём «Принято», чтобы отметить.", "A notification at each time, every day.": "Уведомление в каждое время, каждый день.", "Remove reminder": "Убрать напоминание", "+ Add a time": "+ Добавить время", "Save": "Сохранить", "Cancel": "Отмена", "Close": "Закрыть", "Skip": "Пропустить", "Previous": "Назад", "0 depression": "0 депрессия", "5 balanced": "5 баланс", "10 mania": "10 мания", "Next": "Дальше", "Anything you'd like to remember about today?": "Что хочется запомнить об этом дне?", "Save and close": "Сохранить и закрыть", "Quick check-in": "Быстрая отметка", "One question at a time, no distractions": "По одному вопросу, без отвлечений", "Quick note": "Быстрая заметка", "How are you right now?": "Как вы прямо сейчас?", "Added to today's note": "Добавлено в заметку дня", "A feeling, a thought, what just happened. It goes into today's note.": "Чувство, мысль, то, что только что произошло. Это попадёт в заметку дня.", "Right now I feel…": "Сейчас я чувствую…", "Save to today": "Сохранить", "Medication reminders": "Напоминания о лекарствах", "Reminders to take your medications and supplements": "Напоминания принять лекарства и добавки", "Time to take your medication": "Пора принять лекарство", "Taken": "Принято", "Snooze {0} min": "Отложить на {0} мин", "Reminder at {0}": "Напоминание в {0}", "Reminders at {0} and {1}": "Напоминания в {0} и {1}", "“{0}”": "«{0}»", "Your last {0}": "{0}", "Nothing written yet in this period": "За этот период пока нет записей", "Check in for a few days and your summary will start to take shape.": "Отмечайтесь несколько дней — и итоги начнут складываться.", "You checked in on {0} of {1} days": "Вы отметились в {0} из {1} дней", "Your longest run was {0} {1} in a row.": "Самая длинная серия — {0} {1} подряд.", "You wrote {0} {1} along the way.": "Вы написали {0} {1}.", "Not a single day missed.": "Ни одного пропущенного дня.", "your outlook": "настрой", "your mood": "настроение", "{0} on {1} {2}": "{0} — {1} {2}", "You felt {0}.": "Ваш настрой: {0}.", "That's brighter than the {0} before.": "Светлее, чем за {0}.", "A bit heavier than the {0} before. That happens.": "Чуть тяжелее, чем за {0}. Так бывает.", "Your outlook": "Ваш настрой", "Mostly {0}": "Чаще всего: {0}", "Every answer sat at {0}, {1}.": "Все ответы были на {0} — {1}.", "Your range went from {0} ({1}) to {2} ({3}).": "Ваш диапазон — от {0} ({1}) до {2} ({3}).", "{0} {1} mixed, low and high at once.": "{0} {1} — смешанные: спад и подъём одновременно.", "More balanced days than the {0} before.": "Больше дней в балансе, чем за {0}.", "Fewer balanced days than the {0} before. Worth keeping an eye on.": "Меньше дней в балансе, чем за {0}. Стоит понаблюдать.", "Your mood scale": "Шкала настроения", "Your longest night was {0} h on {1}, the shortest {2} h.": "Самая долгая ночь — {0} ч ({1}), самая короткая — {2} ч.", "About {0} h {1} a night than the {2} before.": "Примерно на {0} ч за ночь {1}, чем за {2}.", "About the same as the {0} before.": "Примерно так же, как за {0}.", "Your sleep": "Ваш сон", "{0} hours a night": "{0} ч за ночь", "{0} Yes on {1} of {2} days": "{0}: «да» в {1} из {2} дн.", "{0} mostly {1}": "{0}: чаще всего {1}", "{0} {1} on average": "{0}: в среднем {1}", "What went well": "Что получалось", "One thing that held up": "Одно, что держалось", "{0} things that held up": "Что держалось: {0}", "Worth some extra care": "Стоит уделить внимание", "One thing to be gentle with": "Одно, к чему стоит отнестись бережно", "{0} things to be gentle with": "К чему отнестись бережно: {0}", "Small steps count.": "Маленькие шаги тоже считаются.", "On days you answered yes to {0}, {1} was noticeably better.": "В дни, когда вы отвечали «да» на {0}, {1} — заметно лучше.", "On days you answered yes to {0}, {1} tended to be lower.": "В дни, когда вы отвечали «да» на {0}, {1} — обычно ниже.", "After 7 or more hours of sleep, {0} was better.": "После 7 и более часов сна {0} — лучше.", "Interestingly, {0} wasn't better after longer nights.": "Интересно, что после долгих ночей {0} не лучше.", "Patterns worth noticing": "Закономерности", "What goes with your better days": "Что сопутствует хорошим дням", "These are patterns in your answers, not proof of cause.": "Это закономерности в ваших ответах, а не доказательство причины.", "You wrote: “{0}”": "Вы написали: «{0}»", "Your outlook that day: {0}.": "Ваш настрой в тот день: {0}.", "One of your steadiest days.": "Один из самых ровных дней.", "Your brightest day": "Ваш самый светлый день", "That's your {0}": "Итоги: {0}", "Thank you for showing up for yourself": "Спасибо, что заботитесь о себе", "Every check-in adds to the picture. See you tomorrow.": "Каждая отметка дополняет картину. До завтра!", "Much the same as the {0} before.": "Примерно так же, как за {0}.", "scrmoods summary": "итоги scrmoods", "Close summary": "Закрыть итоги", "Tap to continue": "Нажмите, чтобы продолжить", "Tap to close": "Нажмите, чтобы закрыть", "Summary": "Итоги", "How your last {0} went, in words": "Итоги за {0} простыми словами", "The download looks incomplete.": "Похоже, файл скачался не полностью.", "Allow scrmoods to install updates, then tap Install again.": "Разрешите scrmoods устанавливать обновления, затем снова нажмите «Установить».", "App updates": "Обновления", "Installed: build {0}": "Установлена сборка {0}", "New versions come from the app's GitHub page.": "Новые версии приходят со страницы приложения на GitHub.", "Checking…": "Проверяем…", "Couldn't read the latest build number. You can still download it.": "Не удалось узнать номер последней сборки. Её всё равно можно скачать.", "A new version is ready: build {0}.": "Доступна новая версия: сборка {0}.", "You have the latest version.": "У вас последняя версия.", "Downloading… {0}%": "Скачиваем… {0}%", "Downloaded. The installer should open; tap Update there.": "Скачано. Откроется установщик — нажмите в нём «Обновить».", "Something went wrong: {0}": "Что-то пошло не так: {0}", "Install": "Установить", "Download and install": "Скачать и установить", "Check for updates": "Проверить обновления", "Download it anyway": "Всё равно скачать", "Open the release page": "Открыть страницу релиза", "Less": "Меньше", "More": "Больше", "Tracking point": "Вопрос", "A soft click of vibration when you tap buttons and answers. On iPhone this needs iOS 18 or newer.": "Лёгкий отклик вибрацией при нажатии на кнопки и ответы. На iPhone нужна iOS 18 или новее.", "Uses your media volume. On iPhone, the silent switch mutes it.": "Громкость как у медиа. На iPhone беззвучный режим её выключает.", "Everything is stored as one XML file inside this app on this device, in the same format as the Android app, so you can move your data between them.": "Всё хранится одним XML-файлом внутри приложения на этом устройстве, в том же формате, что и в Android-версии, поэтому данные можно переносить между ними.", "Removing the app from the home screen deletes its data": "Удаление приложения с экрана «Домой» стирает его данные", ", so export regularly.": ", поэтому регулярно сохраняйте их.", "On iPhone, Export opens the share sheet: choose “Save to Files”.": "На iPhone «Сохранить» открывает меню «Поделиться»: выберите «Сохранить в Файлы».", "The file has {0} {1}. Importing replaces everything in the app (tracking points and all days). Export first if you want a copy of the current data.": "В файле {0} {1}. Загрузка заменит всё в приложении (вопросы и все дни). Сначала сохраните текущие данные, если хотите оставить копию.", "Timestamped note": "Заметка со временем", "Add": "Добавить", "Delete note?": "Удалить заметку?", "Saved data could not be read; a copy was kept. Starting fresh.": "Не удалось прочитать сохранённые данные; копия сохранена. Начинаем с чистого листа.", "Could not save! Storage may be full: export your data.": "Не удалось сохранить! Возможно, память заполнена: сохраните свои данные."}, "plurals": {"days": "день|дня|дней", "notes": "заметку|заметки|заметок", "nights": "ночь|ночи|ночей"}}/*END_RU_DICT*/;
+const LANGS = [['en', 'English'], ['ru', 'Русский']];
+let lang = 'en';
+try { lang = localStorage.getItem('scrmoods.lang') || ((navigator.language || '').toLowerCase().startsWith('ru') ? 'ru' : 'en'); } catch (e) {}
+function setLang(code) { lang = code; try { localStorage.setItem('scrmoods.lang', code); } catch (e) {} }
+const LOC = () => lang === 'ru' ? 'ru-RU' : undefined;
+function tr(en, ...args) {
+  let s = lang === 'ru' && RU.map[en] != null ? RU.map[en] : en;
+  args.forEach((a, i) => { s = s.split('{' + i + '}').join(String(a)); });
+  return s;
+}
+/* The right word for a count: trp(3, 'day', 'days'); Russian has three forms (1 день, 2 дня, 5 дней). */
+function trp(n, one, many) {
+  if (lang !== 'ru') return n === 1 ? one : many;
+  const f = RU.plurals[many]; if (!f) return tr(n === 1 ? one : many);
+  const forms = f.split('|'), n10 = Math.abs(n) % 10, n100 = Math.abs(n) % 100;
+  return n10 === 1 && n100 !== 11 ? forms[0] : n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14) ? forms[1] : forms[2];
+}
 /* =====================================================================
    Data model — identical to the Android app, and the same XML file format,
    so an export from one can be imported into the other.
@@ -494,14 +517,14 @@ function load() {
     try { D = fromXml(raw); return; }
     catch (e) {
       try { localStorage.setItem(KEY + '.unreadable-' + Date.now(), raw); } catch (_) {}
-      setTimeout(() => toast('Saved data could not be read; a copy was kept. Starting fresh.'), 300);
+      setTimeout(() => toast(tr('Saved data could not be read; a copy was kept. Starting fresh.')), 300);
     }
   }
   D = defaults(); save();
 }
 function save() {
   try { localStorage.setItem(KEY, toXml(D)); }
-  catch (e) { toast('Could not save! Storage may be full: export your data.'); }
+  catch (e) { toast(tr('Could not save! Storage may be full: export your data.')); }
 }
 const entry = date => D.entries[date] || { values: {}, note: '', timed: [] };
 function updateEntry(date, fn) {
@@ -557,6 +580,8 @@ if (document.fonts) document.fonts.ready.then(() => afterRender());
 function render() {
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', !ui.manage && b.dataset.tab === ui.tab));
   document.getElementById('nav').style.display = ui.manage ? 'none' : 'flex';
+  document.querySelectorAll('#nav [data-k]').forEach(s => s.textContent = tr(s.dataset.k));
+  document.documentElement.lang = lang;
   if (ui.manage) { renderManage(); return afterRender(); }
   ({ checkin: renderCheckin, calendar: renderCalendar, graph: renderGraph, data: renderData })[ui.tab]();
   afterRender();
@@ -572,60 +597,60 @@ function seg(options, selected, act, pid, multiRow = true) {
   const chunk = multiRow ? 5 : all.length;
   for (let i = 0; i < all.length; i += chunk) rows.push(all.slice(i, i + chunk));
   return rows.map(r => `<div class="seg">${r.map(([o, i]) =>
-    `<button class="${selected === i ? 'on' : ''}" data-act="${act}" data-pid="${esc(pid)}" data-i="${i}">${esc(o)}</button>`).join('')}</div>`).join('');
+    `<button class="${selected === i ? 'on' : ''}" data-act="${act}" data-pid="${esc(pid)}" data-i="${i}">${esc(tr(o))}</button>`).join('')}</div>`).join('');
 }
 
 function pointInput(p, v) {
   const sel = v == null ? null : parseInt(v);
-  if (p.type === 'scale') return `<div class="q">${esc(p.label)}</div>${seg(p.options, sel, 'pick', p.id)}`;
-  if (p.type === 'yesno') return `<div class="yn"><div class="q">${esc(p.label)}</div>${seg(['No', 'Yes'], sel, 'pick', p.id)}</div>`;
+  if (p.type === 'scale') return `<div class="q">${esc(tr(p.label))}</div>${seg(p.options, sel, 'pick', p.id)}`;
+  if (p.type === 'yesno') return `<div class="yn"><div class="q">${esc(tr(p.label))}</div>${seg(['No', 'Yes'], sel, 'pick', p.id)}</div>`;
   if (p.type === 'number') {
     const has = v != null;
     const val = has ? parseFloat(v) : p.min;
     return `<div class="num">
-      <div class="head"><div class="q">${esc(p.label)}</div>
-        <span class="${has ? 'val' : 'unset'}" id="nv-${esc(p.id)}">${has ? fmtNum(val) : 'not set'}</span>
-        ${has && p.unit ? `<span class="unit">${esc(p.unit)}</span>` : ''}</div>
+      <div class="head"><div class="q">${esc(tr(p.label))}</div>
+        <span class="${has ? 'val' : 'unset'}" id="nv-${esc(p.id)}">${has ? fmtNum(val) : tr('not set')}</span>
+        ${has && p.unit ? `<span class="unit">${esc(tr(p.unit))}</span>` : ''}</div>
       <div class="ctrl">
-        <button class="rbtn" data-act="minus" data-pid="${esc(p.id)}" aria-label="Less">−</button>
+        <button class="rbtn" data-act="minus" data-pid="${esc(p.id)}" aria-label="${tr('Less')}">−</button>
         <input type="range" min="${p.min}" max="${p.max}" step="${p.step}" value="${val}" data-pid="${esc(p.id)}">
-        <button class="rbtn" data-act="plus" data-pid="${esc(p.id)}" aria-label="More">+</button>
+        <button class="rbtn" data-act="plus" data-pid="${esc(p.id)}" aria-label="${tr('More')}">+</button>
       </div>
-      ${has ? `<button class="clear" data-act="clear" data-pid="${esc(p.id)}">Clear</button>` : ''}</div>`;
+      ${has ? `<button class="clear" data-act="clear" data-pid="${esc(p.id)}">${tr('Clear')}</button>` : ''}</div>`;
   }
-  return `<div class="textq"><div class="q">${esc(p.label)}</div><textarea data-pid="${esc(p.id)}">${esc(v || '')}</textarea></div>`;
+  return `<div class="textq"><div class="q">${esc(tr(p.label))}</div><textarea data-pid="${esc(p.id)}">${esc(v || '')}</textarea></div>`;
 }
 
 function pageHead(big, sub, prevAct, nextAct, nextDisabled, extra = '') {
   return `<div class="jhead"><div class="t"><div class="big">${esc(big)}</div><div class="sub">${esc(sub)}</div>${extra}</div>
-    <button class="rbtn" data-act="${prevAct}" aria-label="Previous">${ARROW_L}</button>
-    <button class="rbtn" data-act="${nextAct}" aria-label="Next" ${nextDisabled ? 'disabled' : ''}>${ARROW_R}</button></div>`;
+    <button class="rbtn" data-act="${prevAct}" aria-label="${tr('Previous')}">${ARROW_L}</button>
+    <button class="rbtn" data-act="${nextAct}" aria-label="${tr('Next')}" ${nextDisabled ? 'disabled' : ''}>${ARROW_R}</button></div>`;
 }
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 
 function renderCheckin() {
   const t = today(), d = ui.date, e = entry(d);
   const dt = parseYmd(d);
-  let h = pageHead(cap(dt.toLocaleDateString(undefined, { weekday: 'long' })),
-    dt.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }),
-    'prev', 'next', d >= t, d !== t ? '<button class="back" data-act="todayDate">Back to today</button>' : '');
+  let h = pageHead(cap(dt.toLocaleDateString(LOC(), { weekday: 'long' })),
+    dt.toLocaleDateString(LOC(), { day: 'numeric', month: 'long', year: 'numeric' }).replace(/\s*г\.$/, ''),
+    'prev', 'next', d >= t, d !== t ? `<button class="back" data-act="todayDate">${tr('Back to today')}</button>` : '');
   if (showQuote) h += quoteHtml(d);
-  h += `<button class="sumbtn quickbtn" data-act="quick"><span><b>Quick check-in</b><i>One question at a time, no distractions</i></span><span class="star">→</span></button>`;
+  h += `<button class="sumbtn quickbtn" data-act="quick"><span><b>${tr('Quick check-in')}</b><i>${tr('One question at a time, no distractions')}</i></span><span class="star">→</span></button>`;
   for (const s of D.sections) {
     if (s.hidden) continue;
     if (s.id === 'bipolar') { h += moodCard(s, e); continue; }
     const pts = D.points.filter(p => p.section === s.id && !p.archived);
     if (!pts.length && s.id !== 'custom' && s.id !== 'meds') continue;
-    h += `<div class="section card"><h2>${esc(s.title)}</h2>`;
+    h += `<div class="section card"><h2>${esc(tr(s.title))}</h2>`;
     for (const p of pts) h += `<div class="qb">${pointInput(p, e.values[p.id])}</div>`;
-    if (s.id === 'custom') h += `<div><button class="link" data-act="addPoint" data-sec="custom">+ Add custom tracking point</button></div>`;
-    if (s.id === 'meds') h += `<div><button class="link" data-act="addPoint" data-sec="meds">+ Add medication</button>
-      <button class="link" style="margin-left:0" data-act="manage">Edit medications</button></div>`;
+    if (s.id === 'custom') h += `<div><button class="link" data-act="addPoint" data-sec="custom">${tr('+ Add custom tracking point')}</button></div>`;
+    if (s.id === 'meds') h += `<div><button class="link" data-act="addPoint" data-sec="meds">${tr('+ Add medication')}</button>
+      <button class="link" style="margin-left:0" data-act="manage">${tr('Edit medications')}</button></div>`;
     h += '</div>';
   }
-  h += `<div class="section card" style="padding-bottom:6px"><h2>Today's note</h2>
-    <textarea class="ruled" id="noteArea" placeholder="Write about your day…">${esc(e.note)}</textarea>
-    ${gn.on ? `<button class="finish ${gn.finished === d ? 'done' : ''}" data-act="finishDay">${gn.finished === d ? 'Day finished&nbsp; ✓' : 'Finish the day&nbsp; ☾'}</button>` : ''}</div>`;
+  h += `<div class="section card" style="padding-bottom:6px"><h2>${tr("Today's note")}</h2>
+    <textarea class="ruled" id="noteArea" placeholder="${tr('Write about your day…')}">${esc(e.note)}</textarea>
+    ${gn.on ? `<button class="finish ${gn.finished === d ? 'done' : ''}" data-act="finishDay">${gn.finished === d ? tr('Day finished') + '&nbsp; ✓' : tr('Finish the day') + '&nbsp; ☾'}</button>` : ''}</div>`;
   $main.innerHTML = h + '<div style="height:28px"></div>';
 }
 
@@ -713,8 +738,8 @@ function quoteFor(day) {
   return QUOTES[((epochDay % QUOTES.length) + QUOTES.length) % QUOTES.length];
 }
 function quoteHtml(day) {
-  const [t, a] = quoteFor(day);
-  return `<div class="quote"><span class="qm">“</span><div><p>${esc(t)}</p><span class="qa">${a ? esc(a) : 'A reminder for today'}</span></div></div>`;
+  const [q, a] = quoteFor(day);
+  return `<div class="quote"><span class="qm">“</span><div><p>${esc(tr(q))}</p><span class="qa">${a ? esc(tr(a)) : tr('A reminder for today')}</span></div></div>`;
 }
 
 /* ---------- mood scale: 0 severe depression, 5 balanced, 10 mania ---------- */
@@ -738,11 +763,11 @@ function moodCard(sec, e) {
   const a = num(e.values.bipolar_mood), b = mixed ? num(e.values.bipolar_mood2) : null;
   const shown = [a, b].filter(v => v != null).sort((x, y) => x - y);
   const panel = v => `<div class="mhalf" style="background:color-mix(in srgb, ${moodZone(v)} 20%, transparent)">
-      <span class="mnum" style="color:${moodZone(v)}">${v}</span><b>${MOOD[v][0]}</b><i>${MOOD[v][1]}</i></div>`;
-  let h = `<div class="section card"><h2>${esc(sec.title)}</h2>
-    <div class="q">${mixed ? 'Pick two numbers: how low and how high you feel' : 'Where is your mood today?'}</div>
+      <span class="mnum" style="color:${moodZone(v)}">${v}</span><b>${tr(MOOD[v][0])}</b><i>${tr(MOOD[v][1])}</i></div>`;
+  let h = `<div class="section card"><h2>${esc(tr(sec.title))}</h2>
+    <div class="q">${mixed ? tr('Pick two numbers: how low and how high you feel') : tr('Where is your mood today?')}</div>
     <div class="mstate ${shown.length === 2 ? 'two' : ''}">${shown.length ? shown.map(panel).join('')
-      : '<span class="mempty">Tap a number below: 0 is severe depression, 5 balanced, 10 mania.</span>'}</div><div class="mdots">`;
+      : `<span class="mempty">${tr('Tap a number below: 0 is severe depression, 5 balanced, 10 mania.')}</span>`}</div><div class="mdots">`;
   const lo = shown[0], hi = shown[shown.length - 1];
   for (let n = 0; n <= 10; n++) {
     const c = moodZone(n), sel = n === a || n === b;
@@ -750,11 +775,11 @@ function moodCard(sec, e) {
     const bg = sel ? c : inRange ? `color-mix(in srgb, ${c} 25%, transparent)` : 'var(--paper)';
     h += `<button data-act="mood" data-n="${n}" style="background:${bg};border-color:${sel ? c : `color-mix(in srgb, ${c} 45%, transparent)`};${sel ? 'color:#fff;font-weight:600' : ''}">${n}</button>`;
   }
-  h += `</div><div class="mlabels"><span>Depression</span><span>Balanced</span><span>Mania</span></div>
-    <div class="mmixed"><button data-act="mixed" class="${mixed ? 'on' : ''}">${mixed ? '✓ ' : ''}Mixed features</button>
-      <span>${mixed ? 'pick a low and a high number' : 'low and high at the same time'}</span></div>`;
-  if (shown.some(v => v <= 1)) h += `<div class="msupport">If you're thinking about suicide, please reach out now: call a crisis line or emergency services, or tell someone you trust. You don't have to carry this alone.</div>`;
-  else if (shown.some(v => v >= 9)) h += `<div class="msupport">This is a lot. Consider contacting your doctor or someone you trust today.</div>`;
+  h += `</div><div class="mlabels"><span>${tr('Depression')}</span><span>${tr('Balanced')}</span><span>${tr('Mania')}</span></div>
+    <div class="mmixed"><button data-act="mixed" class="${mixed ? 'on' : ''}">${mixed ? '✓ ' : ''}${tr('Mixed features')}</button>
+      <span>${mixed ? tr('pick a low and a high number') : tr('low and high at the same time')}</span></div>`;
+  if (shown.some(v => v <= 1)) h += `<div class="msupport">${tr("If you're thinking about suicide, please reach out now: call a crisis line or emergency services, or tell someone you trust. You don't have to carry this alone.")}</div>`;
+  else if (shown.some(v => v >= 9)) h += `<div class="msupport">${tr('This is a lot. Consider contacting your doctor or someone you trust today.')}</div>`;
   return h + '</div>';
 }
 
@@ -773,10 +798,10 @@ function renderCalendar() {
   const offset = (first.getDay() + 6) % 7; // Monday first
   const t = today();
   const outlook = D.points.find(p => p.id === 'outlook');
-    let h = pageHead(cap(first.toLocaleDateString(undefined, { month: 'long' })), String(y), 'prevMonth', 'nextMonth', false) + '<div class="calgrid">';
+    let h = pageHead(cap(first.toLocaleDateString(LOC(), { month: 'long' })), String(y), 'prevMonth', 'nextMonth', false) + '<div class="calgrid">';
   for (let i = 0; i < 7; i++) {
     const wd = new Date(2024, 0, 1 + i); // 1 Jan 2024 was a Monday
-    h += `<div class="wd">${wd.toLocaleDateString(undefined, { weekday: 'short' })}</div>`;
+    h += `<div class="wd">${cap(wd.toLocaleDateString(LOC(), { weekday: 'short' }))}</div>`;
   }
   for (let i = 0; i < offset; i++) h += '<div></div>';
   let logged = 0;
@@ -792,13 +817,13 @@ function renderCalendar() {
     const cls = ['day', ds === ui.date ? 'sel' : '', ds === t ? 'today' : '', ds > t ? 'future' : ''].join(' ');
     h += `<button class="${cls}" ${ds > t ? 'disabled' : `data-act="pickDay" data-d="${ds}"`}><span>${n}</span><span class="dot" style="background:${dot}"></span></button>`;
   }
-  h += `</div><div class="info">Days logged this month: ${logged}</div>`;
+  h += `</div><div class="info">${tr('Days logged this month: {0}', logged)}</div>`;
   if (outlook && outlook.options.length) {
-    h += `<div class="info">Dot colour = overall outlook</div><div class="legend">` +
-      outlook.options.map((o, i) => `<span><i class="dot" style="background:${moodColor(outlook.options.length > 1 ? i / (outlook.options.length - 1) : 1)}"></i>${esc(o)}</span>`).join('') +
-      `<span><i class="dot" style="background:var(--soft)"></i>Other entries</span></div>`;
+    h += `<div class="info">${tr('Dot colour = overall outlook')}</div><div class="legend">` +
+      outlook.options.map((o, i) => `<span><i class="dot" style="background:${moodColor(outlook.options.length > 1 ? i / (outlook.options.length - 1) : 1)}"></i>${esc(tr(o))}</span>`).join('') +
+      `<span><i class="dot" style="background:var(--soft)"></i>${tr('Other entries')}</span></div>`;
   }
-  h += `<div class="hint">Tap a day to open its check-in.</div>`;
+  h += `<div class="hint">${tr('Tap a day to open its check-in.')}</div>`;
   $main.innerHTML = h;
 }
 
@@ -812,10 +837,10 @@ function stats(p, days) {
   return { count: vals.length, avg: vals.reduce((a, b) => a + b, 0) / vals.length, min: Math.min(...vals), max: Math.max(...vals), vals };
 }
 function summary(p, s) {
-  if (!s) return 'no answers';
-  if (p.type === 'yesno') return `Yes on ${Math.round(s.avg * 100)}% of ${s.count} days`;
-  if (p.type === 'scale') return `avg ${s.avg.toFixed(1)} (${p.options[Math.round(s.avg)] || ''}), ${s.count} days`;
-  return `avg ${s.avg.toFixed(1)}${p.unit ? ' ' + p.unit : ''}, ${s.count} days`;
+  if (!s) return tr('no answers');
+  if (p.type === 'yesno') return tr('Yes on {0}% of {1} {2}', Math.round(s.avg * 100), s.count, trp(s.count, 'day', 'days'));
+  if (p.type === 'scale') return tr('avg {0} ({1}), {2} {3}', s.avg.toFixed(1), tr(p.options[Math.round(s.avg)] || ''), s.count, trp(s.count, 'day', 'days'));
+  return tr('avg {0}, {1} {2}', s.avg.toFixed(1) + (p.unit ? ' ' + tr(p.unit) : ''), s.count, trp(s.count, 'day', 'days'));
 }
 function fraction(p, v) {
   const [lo, hi] = yRange(p);
@@ -839,8 +864,8 @@ function oldValueColor(p, v) {
 function chartSvg(p, days) {
   const W = Math.round(Math.min(Math.max(window.innerWidth - 34, 280), 900)), H = 230, L = 70, R = 8, T = 12, B = 12;
   const [lo, hi] = yRange(p);
-  const labels = p.type === 'scale' ? [...p.options].reverse() : p.type === 'yesno' ? ['Yes', 'No']
-    : p.id === 'bipolar_mood' ? ['Mania', 'Balanced', 'Depression'] : [fmtNum(hi), fmtNum((lo + hi) / 2), fmtNum(lo)];
+  const labels = p.type === 'scale' ? [...p.options].reverse().map(o => tr(o)) : p.type === 'yesno' ? [tr('Yes'), tr('No')]
+    : p.id === 'bipolar_mood' ? [tr('Mania'), tr('Balanced'), tr('Depression')] : [fmtNum(hi), fmtNum((lo + hi) / 2), fmtNum(lo)];
   const vals = series(p, days);
   const n = days.length, slot = (W - L - R) / n;
   const x = i => L + slot * i + slot / 2;
@@ -867,39 +892,47 @@ function chartSvg(p, days) {
   return s + '</svg>';
 }
 /* ---------- Summary: a plain-words retrospective, story style (same logic as the Android app) ---------- */
+/* "7 days" / "year" said after "your last…"; in Russian with the right words ("последние 7 дней", "последний год"). */
+function periodPhrase(label, prev) {
+  if (lang !== 'ru') return label;
+  const n = parseInt(label);
+  return isNaN(n) ? `${prev ? 'предыдущий' : 'последний'} ${tr(label)}` : `${prev ? 'предыдущие' : 'последние'} ${n} ${trp(n, 'day', 'days')}`;
+}
 function buildSummary(days, label) {
   const prev = days.map(d => addDays(d, -days.length));
+  const lastP = periodPhrase(label, false), prevP = periodPhrase(label, true);
   const v = (pid, day) => { const x = D.entries[day]?.values?.[pid]; const n = parseFloat(x); return x == null || isNaN(n) ? null : n; };
   const vals = (p, ds) => ds.map(d => v(p.id, d)).filter(x => x != null);
   const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
-  const fmtDay = d => parseYmd(d).toLocaleDateString(undefined, { day: 'numeric', month: 'long' });
-  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-  const q = p => `“${p.label.replace(/:$/, '')}”`;
+  const fmtDay = d => parseYmd(d).toLocaleDateString(LOC(), { day: 'numeric', month: 'long' });
+  const days_ = n => trp(n, 'day', 'days');
+  const q = p => tr('“{0}”', tr(p.label).replace(/:$/, ''));
   const active = D.points.filter(p => !p.archived && !D.sections.find(s => s.id === p.section)?.hidden);
   const pages = [];
   const logged = days.filter(d => D.entries[d]);
-  if (!logged.length) return [{ k: `Your last ${label}`, h: 'Nothing written yet in this period', b: ['Check in for a few days and your summary will start to take shape.'], t: 'neutral' }];
+  if (!logged.length) return [{ k: cap(tr('Your last {0}', lastP)), h: tr('Nothing written yet in this period'), b: [tr('Check in for a few days and your summary will start to take shape.')], t: 'neutral' }];
   let run = 0, best = 0; for (const d of days) { if (D.entries[d]) { run++; best = Math.max(best, run); } else run = 0; }
   const notes = days.reduce((n, d) => n + (D.entries[d] ? (D.entries[d].note ? 1 : 0) + D.entries[d].timed.length : 0), 0);
-  pages.push({ k: `Your last ${label}`, h: `You checked in on ${logged.length} of ${days.length} days`, t: 'neutral',
-    b: [best >= 3 ? `Your longest run was ${best} days in a row.` : null, notes ? `You wrote ${plural(notes, 'note', 'notes')} along the way.` : null,
-        logged.length === days.length ? 'Not a single day missed.' : null].filter(Boolean) });
+  pages.push({ k: cap(tr('Your last {0}', lastP)), h: tr('You checked in on {0} of {1} days', logged.length, days.length), t: 'neutral',
+    b: [best >= 3 ? tr('Your longest run was {0} {1} in a row.', best, days_(best)) : null,
+        notes ? tr('You wrote {0} {1} along the way.', notes, trp(notes, 'note', 'notes')) : null,
+        logged.length === days.length ? tr('Not a single day missed.') : null].filter(Boolean) });
 
   const outlook = active.find(p => p.id === 'outlook' && p.type === 'scale' && vals(p, days).length);
   const moodP = active.find(p => p.id === 'bipolar_mood' && vals(p, days).length);
-  const target = outlook || moodP, targetName = outlook ? 'your outlook' : 'your mood';
+  const target = outlook || moodP, targetName = outlook ? tr('your outlook') : tr('your mood');
   const gOn = day => { if (!target) return null; const x = v(target.id, day); return x == null ? null : goodness(target, x); };
 
   if (outlook) {
     const cur = vals(outlook, days), counts = outlook.options.map((_, i) => cur.filter(x => Math.round(x) === i).length);
     const top = counts.indexOf(Math.max(...counts));
-    const split = outlook.options.map((o, i) => [o, counts[i]]).reverse().filter(([, c]) => c).map(([o, c]) => `${o.toLowerCase()} on ${plural(c, 'day', 'days')}`).join(', ');
-    const b = [`You felt ${split}.`];
+    const split = outlook.options.map((o, i) => [o, counts[i]]).reverse().filter(([, c]) => c).map(([o, c]) => tr('{0} on {1} {2}', tr(o).toLowerCase(), c, days_(c))).join(', ');
+    const b = [tr('You felt {0}.', split)];
     const pv = vals(outlook, prev);
     if (pv.length >= 3) { const diff = avg(cur.map(x => goodness(outlook, x))) - avg(pv.map(x => goodness(outlook, x)));
-      b.push(diff >= 0.08 ? `That's brighter than the ${label} before.` : diff <= -0.08 ? `A bit heavier than the ${label} before. That happens.` : `Much the same as the ${label} before.`); }
+      b.push(diff >= 0.08 ? tr("That's brighter than the {0} before.", prevP) : diff <= -0.08 ? tr('A bit heavier than the {0} before. That happens.', prevP) : tr('Much the same as the {0} before.', prevP)); }
     const g = avg(cur.map(x => goodness(outlook, x)));
-    pages.push({ k: 'Your outlook', h: `Mostly ${outlook.options[top]}`, b, t: g >= 0.6 ? 'good' : g <= 0.4 ? 'care' : 'mood' });
+    pages.push({ k: tr('Your outlook'), h: tr('Mostly {0}', tr(outlook.options[top])), b, t: g >= 0.6 ? 'good' : g <= 0.4 ? 'care' : 'mood' });
   }
   if (moodP) {
     const cur = days.map(d => v('bipolar_mood', d)).filter(x => x != null);
@@ -907,12 +940,13 @@ function buildSummary(days, label) {
     const bal = days.filter(isBal).length, mixedDays = days.filter(d => v('bipolar_mixed', d) === 1).length;
     const both = [...cur, ...days.filter(d => v('bipolar_mixed', d) === 1).map(d => v('bipolar_mood2', d)).filter(x => x != null)];
     const lo = Math.round(Math.min(...both)), hi = Math.round(Math.max(...both));
-    const b = [lo === hi ? `Every answer sat at ${lo}, ${MOOD[lo][0].toLowerCase()}.` : `Your range went from ${lo} (${MOOD[lo][0].toLowerCase()}) to ${hi} (${MOOD[hi][0].toLowerCase()}).`];
-    if (mixedDays) b.push(`${mixedDays} ${mixedDays === 1 ? 'day was' : 'days were'} mixed, low and high at once.`);
+    const lvl = n => tr(MOOD[n][0]).toLowerCase();
+    const b = [lo === hi ? tr('Every answer sat at {0}, {1}.', lo, lvl(lo)) : tr('Your range went from {0} ({1}) to {2} ({3}).', lo, lvl(lo), hi, lvl(hi))];
+    if (mixedDays) b.push(tr('{0} {1} mixed, low and high at once.', mixedDays, lang === 'ru' ? days_(mixedDays) : mixedDays === 1 ? 'day was' : 'days were'));
     const pv = prev.map(d => v('bipolar_mood', d)).filter(x => x != null);
     if (pv.length >= 3) { const c = bal / cur.length, p = prev.filter(isBal).length / pv.length;
-      if (c - p >= 0.1) b.push(`More balanced days than the ${label} before.`); else if (p - c >= 0.1) b.push(`Fewer balanced days than the ${label} before. Worth keeping an eye on.`); }
-    pages.push({ k: 'Your mood scale', h: `Balanced on ${bal} of ${cur.length} days`, b, t: bal / cur.length >= 0.6 ? 'good' : 'mood' });
+      if (c - p >= 0.1) b.push(tr('More balanced days than the {0} before.', prevP)); else if (p - c >= 0.1) b.push(tr('Fewer balanced days than the {0} before. Worth keeping an eye on.', prevP)); }
+    pages.push({ k: tr('Your mood scale'), h: tr('Balanced on {0} of {1} days', bal, cur.length), b, t: bal / cur.length >= 0.6 ? 'good' : 'mood' });
   }
   const sleep = active.find(p => p.id === 'sleep_hours');
   if (sleep) {
@@ -920,46 +954,50 @@ function buildSummary(days, label) {
     if (nights.length) {
       const a = avg(nights.map(n => n[1]));
       const longest = nights.reduce((m, n) => n[1] > m[1] ? n : m), shortest = nights.reduce((m, n) => n[1] < m[1] ? n : m);
-      const b = [`Your longest night was ${fmtNum(longest[1])} h on ${fmtDay(longest[0])}, the shortest ${fmtNum(shortest[1])} h.`];
+      const b = [tr('Your longest night was {0} h on {1}, the shortest {2} h.', fmtNum(longest[1]), fmtDay(longest[0]), fmtNum(shortest[1]))];
       const pv = vals(sleep, prev);
-      if (pv.length >= 3) { const diff = a - avg(pv); b.push(Math.abs(diff) >= 0.3 ? `About ${Math.abs(diff).toFixed(1)} h ${diff > 0 ? 'more' : 'less'} a night than the ${label} before.` : `About the same as the ${label} before.`); }
-      pages.push({ k: 'Your sleep', h: `${a.toFixed(1)} hours a night`, b, t: a >= 7 ? 'good' : a < 6 ? 'care' : 'mood' });
+      if (pv.length >= 3) { const diff = a - avg(pv); b.push(Math.abs(diff) >= 0.3 ? tr('About {0} h {1} a night than the {2} before.', Math.abs(diff).toFixed(1), tr(diff > 0 ? 'more' : 'less'), prevP) : tr('About the same as the {0} before.', prevP)); }
+      pages.push({ k: tr('Your sleep'), h: tr('{0} hours a night', a.toFixed(1)), b, t: a >= 7 ? 'good' : a < 6 ? 'care' : 'mood' });
     }
   }
   const judged = active.filter(p => p.type !== 'text' && p.better && p.better !== 'none' && p.id !== 'bipolar_mood' && p.id !== 'outlook' && p.section !== 'bipolar')
     .map(p => { const cur = vals(p, days); return cur.length < 2 ? null : [p, cur, goodness(p, avg(cur))]; }).filter(x => x && x[2] != null);
-  const describe = (p, cur) => p.type === 'yesno' ? `${q(p)} Yes on ${cur.filter(x => x >= 0.5).length} of ${cur.length} days`
-    : p.type === 'scale' ? `${q(p)} mostly ${(p.options[Math.round(avg(cur))] || '').toLowerCase()}` : `${q(p)} ${avg(cur).toFixed(1)}${p.unit ? ' ' + p.unit : ''} on average`;
+  const describe = (p, cur) => p.type === 'yesno' ? tr('{0} Yes on {1} of {2} days', q(p), cur.filter(x => x >= 0.5).length, cur.length)
+    : p.type === 'scale' ? tr('{0} mostly {1}', q(p), tr(p.options[Math.round(avg(cur))] || '').toLowerCase())
+    : tr('{0} {1} on average', q(p), avg(cur).toFixed(1) + (p.unit ? ' ' + tr(p.unit) : ''));
   const wins = judged.filter(j => j[2] >= 0.6).sort((a, b) => b[2] - a[2]).slice(0, 4);
-  if (wins.length) pages.push({ k: 'What went well', h: wins.length === 1 ? 'One thing that held up' : `${wins.length} things that held up`, b: wins.map(j => describe(j[0], j[1])), t: 'good' });
+  if (wins.length) pages.push({ k: tr('What went well'), h: wins.length === 1 ? tr('One thing that held up') : tr('{0} things that held up', wins.length), b: wins.map(j => describe(j[0], j[1])), t: 'good' });
   const care = judged.filter(j => j[2] <= 0.4).sort((a, b) => a[2] - b[2]).slice(0, 3);
-  if (care.length) pages.push({ k: 'Worth some extra care', h: care.length === 1 ? 'One thing to be gentle with' : `${care.length} things to be gentle with`, b: [...care.map(j => describe(j[0], j[1])), 'Small steps count.'], t: 'care', soft: 'Small steps count.' });
+  const small = tr('Small steps count.');
+  if (care.length) pages.push({ k: tr('Worth some extra care'), h: care.length === 1 ? tr('One thing to be gentle with') : tr('{0} things to be gentle with', care.length), b: [...care.map(j => describe(j[0], j[1])), small], t: 'care', soft: small });
   if (target) {
     const found = [];
     for (const p of active.filter(p => p.type === 'yesno' && p.section !== 'bipolar')) {
       const yes = days.filter(d => v(p.id, d) === 1).map(gOn).filter(x => x != null), no = days.filter(d => v(p.id, d) === 0).map(gOn).filter(x => x != null);
       if (yes.length < 3 || no.length < 3) continue;
       const diff = avg(yes) - avg(no); if (Math.abs(diff) < 0.12) continue;
-      found.push([diff, diff > 0 ? `On days you answered yes to ${q(p)}, ${targetName} was noticeably better.` : `On days you answered yes to ${q(p)}, ${targetName} tended to be lower.`]);
+      found.push([diff, diff > 0 ? tr('On days you answered yes to {0}, {1} was noticeably better.', q(p), targetName) : tr('On days you answered yes to {0}, {1} tended to be lower.', q(p), targetName)]);
     }
     if (sleep) {
       const long = days.filter(d => (v(sleep.id, d) ?? -1) >= 7).map(gOn).filter(x => x != null), short = days.filter(d => (v(sleep.id, d) ?? 99) < 7).map(gOn).filter(x => x != null);
       if (long.length >= 3 && short.length >= 3) { const diff = avg(long) - avg(short);
-        if (Math.abs(diff) >= 0.12) found.push([diff, diff > 0 ? `After 7 or more hours of sleep, ${targetName} was better.` : `Interestingly, ${targetName} wasn't better after longer nights.`]); }
+        if (Math.abs(diff) >= 0.12) found.push([diff, diff > 0 ? tr('After 7 or more hours of sleep, {0} was better.', targetName) : tr("Interestingly, {0} wasn't better after longer nights.", targetName)]); }
     }
     const picked = found.sort((a, b) => Math.abs(b[0]) - Math.abs(a[0])).slice(0, 3);
-    if (picked.length) pages.push({ k: 'Patterns worth noticing', h: 'What goes with your better days', b: [...picked.map(x => x[1]), 'These are patterns in your answers, not proof of cause.'], t: 'mood', soft: 'These are patterns in your answers, not proof of cause.' });
+    const notProof = tr('These are patterns in your answers, not proof of cause.');
+    if (picked.length) pages.push({ k: tr('Patterns worth noticing'), h: tr('What goes with your better days'), b: [...picked.map(x => x[1]), notProof], t: 'mood', soft: notProof });
     const scored = days.map(d => [d, gOn(d)]).filter(([, g]) => g != null);
     const bestG = scored.length ? Math.max(...scored.map(x => x[1])) : null;
     if (bestG != null && bestG >= 0.6) {
       const cands = scored.filter(x => x[1] === bestG).map(x => x[0]);
       const day = cands.find(d => D.entries[d]?.note) || cands[cands.length - 1];
       const note = (D.entries[day]?.note || '').trim();
-      pages.push({ k: 'Your brightest day', h: fmtDay(day), t: 'good',
-        b: [note ? `You wrote: “${note.length > 160 ? note.slice(0, 157).trim() + '…' : note}”` : outlook ? `Your outlook that day: ${display(outlook, String(Math.round(v('outlook', day))))}.` : 'One of your steadiest days.'] });
+      pages.push({ k: tr('Your brightest day'), h: fmtDay(day), t: 'good',
+        b: [note ? tr('You wrote: “{0}”', note.length > 160 ? note.slice(0, 157).trim() + '…' : note)
+          : outlook ? tr('Your outlook that day: {0}.', tr(display(outlook, String(Math.round(v('outlook', day)))))) : tr('One of your steadiest days.')] });
     }
   }
-  pages.push({ k: `That's your ${label}`, h: 'Thank you for showing up for yourself', b: ['Every check-in adds to the picture. See you tomorrow.'], t: 'neutral' });
+  pages.push({ k: tr("That's your {0}", lastP), h: tr('Thank you for showing up for yourself'), b: [tr('Every check-in adds to the picture. See you tomorrow.')], t: 'neutral' });
   return pages;
 }
 let sumState = null;
@@ -971,10 +1009,10 @@ function showSummary() {
   const p = sumState.pages[sumState.i], last = sumState.i === sumState.pages.length - 1;
   el.className = 'sum-' + p.t;
   el.innerHTML = `<div class="sbars">${sumState.pages.map((_, i) => `<i class="${i <= sumState.i ? 'on' : ''}"></i>`).join('')}</div>
-    <div class="stop"><span>scrmoods summary</span><button class="sclose" aria-label="Close summary">✕</button></div>
+    <div class="stop"><span>${tr('scrmoods summary')}</span><button class="sclose" aria-label="${tr('Close summary')}">✕</button></div>
     <div class="sbody"><div class="sk">${esc(p.k)}</div><div class="sh">${esc(p.h)}</div>
       ${p.b.map(l => `<p class="${l === p.soft ? 'soft' : ''}">${esc(l)}</p>`).join('')}</div>
-    <div class="shint">${last ? 'Tap to close' : 'Tap to continue'}</div>`;
+    <div class="shint">${last ? tr('Tap to close') : tr('Tap to continue')}</div>`;
 }
 document.addEventListener('click', ev => {
   const el = document.getElementById('summary');
@@ -987,7 +1025,7 @@ document.addEventListener('click', ev => {
 }, true);
 
 /* ---------- fixed Trends charts: mood trend and sleep pattern ---------- */
-const shortDate = s => parseYmd(s).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+const shortDate = s => parseYmd(s).toLocaleDateString(LOC(), { day: 'numeric', month: 'short' });
 const ends = days => `<div class="ends"><span style="flex:1">${shortDate(days[0])}</span><span>${shortDate(days[days.length - 1])}</span></div>`;
 const chartW = () => Math.round(Math.min(Math.max(window.innerWidth - 34, 280), 900));
 function yLabels(L, T, B, H, labels) {
@@ -999,7 +1037,7 @@ function moodTrendSvg(days) {
   let s = `<svg viewBox="0 0 ${W} ${H}">`;
   [[0, 1.5, 0], [1.5, 3.5, 2], [3.5, 6.5, 5], [6.5, 8.5, 7], [8.5, 10, 10]].forEach(([lo, hi, z]) =>
     s += `<rect x="${L}" y="${y(hi)}" width="${W - L - R}" height="${y(lo) - y(hi)}" fill="${moodZone(z)}" fill-opacity=".16"/>`);
-  s += `<line x1="${L}" x2="${W - R}" y1="${y(5)}" y2="${y(5)}" style="stroke:var(--rule)"/>` + yLabels(L, T, B, H, ['10 Mania', '5 Balanced', '0 Depression']);
+  s += `<line x1="${L}" x2="${W - R}" y1="${y(5)}" y2="${y(5)}" style="stroke:var(--rule)"/>` + yLabels(L, T, B, H, ['10 ' + tr('Mania'), '5 ' + tr('Balanced'), '0 ' + tr('Depression')]);
   const vals = days.map(d => { const e = D.entries[d]?.values || {}; const a = parseFloat(e.bipolar_mood);
     const b = e.bipolar_mixed === '1' ? parseFloat(e.bipolar_mood2) : NaN; return [isNaN(a) ? null : a, isNaN(b) ? null : b]; });
   vals.forEach(([a, b], i) => { if (a != null && b != null) s += `<line x1="${x(i)}" x2="${x(i)}" y1="${y(a)}" y2="${y(b)}" stroke-width="3" stroke-linecap="round" style="stroke:var(--acc);stroke-opacity:.7"/>`; });
@@ -1011,12 +1049,12 @@ function moodTrendSvg(days) {
 }
 function moodLegend(days) {
   const items = [[moodZone(10), 'Mania'], [moodZone(7), 'Hypomania'], [moodZone(5), 'Balanced'], [moodZone(2), 'Mild to moderate'], [moodZone(0), 'Severe']];
-  let h = '<div class="legend2">' + items.map(([c, l]) => `<span><i style="background:${c}"></i>${l}</span>`).join('') + '<span><i class="ln"></i>Mixed</span></div>';
+  let h = '<div class="legend2">' + items.map(([c, l]) => `<span><i style="background:${c}"></i>${tr(l)}</span>`).join('') + `<span><i class="ln"></i>${tr('Mixed')}</span></div>`;
   const vals = days.map(d => D.entries[d]?.values || {}).filter(e => e.bipolar_mood != null);
-  if (!vals.length) return h + '<div class="tnote2" style="color:var(--faint)">No mood scale answers in this period yet.</div>';
+  if (!vals.length) return h + `<div class="tnote2" style="color:var(--faint)">${tr('No mood scale answers in this period yet.')}</div>`;
   const mixed = vals.filter(e => e.bipolar_mixed === '1' && e.bipolar_mood2 != null).length;
   const bal = vals.filter(e => { const v = Math.round(parseFloat(e.bipolar_mood)); return v >= 4 && v <= 6 && !(e.bipolar_mixed === '1' && e.bipolar_mood2 != null); }).length;
-  return h + `<div class="tnote2">Balanced on ${bal} of ${vals.length} days${mixed ? `, mixed on ${mixed}` : ''}</div>`;
+  return h + `<div class="tnote2">${tr('Balanced on {0} of {1} days', bal, vals.length)}${mixed ? tr(', mixed on {0}', mixed) : ''}</div>`;
 }
 function sleepSvg(p, days) {
   const vals = series(p, days), known = vals.filter(v => v != null);
@@ -1024,7 +1062,7 @@ function sleepSvg(p, days) {
   const W = chartW(), H = 200, L = 70, R = 8, T = 10, B = 10, n = days.length, slot = (W - L - R) / n;
   const y = v => T + (1 - Math.min(1, v / maxV)) * (H - T - B), grid = [maxV, maxV * 3 / 4, maxV / 2, maxV / 4, 0];
   let s = `<svg viewBox="0 0 ${W} ${H}">` + grid.map(g => `<line x1="${L}" x2="${W - R}" y1="${y(g)}" y2="${y(g)}" style="stroke:var(--rule)"/>`).join('')
-    + yLabels(L, T, B, H, grid.map(g => fmtNum(g) + ' h'));
+    + yLabels(L, T, B, H, grid.map(g => tr('{0} h', fmtNum(g))));
   const bw = Math.min(22, Math.max(1, slot * 0.68));
   vals.forEach((v, i) => { if (v > 0) s += `<rect x="${L + slot * i + slot / 2 - bw / 2}" y="${y(v)}" width="${bw}" height="${y(0) - y(v)}" rx="${Math.min(bw / 2, 3)}" style="fill:var(--acc);fill-opacity:.78"/>`; });
   if (avg != null) s += `<line x1="${L}" x2="${W - R}" y1="${y(avg)}" y2="${y(avg)}" stroke-width="1.4" stroke-dasharray="8 5" style="stroke:var(--ink);stroke-opacity:.6"/>`;
@@ -1032,59 +1070,59 @@ function sleepSvg(p, days) {
 }
 function sleepNote(p, days) {
   const known = series(p, days).filter(v => v != null);
-  if (!known.length) return '<div class="tnote2" style="color:var(--faint)">No sleep answers in this period yet.</div>';
+  if (!known.length) return `<div class="tnote2" style="color:var(--faint)">${tr('No sleep answers in this period yet.')}</div>`;
   const avg = known.reduce((a, b) => a + b, 0) / known.length;
-  return `<div class="tnote2">Average ${avg.toFixed(1)} ${esc(p.unit || 'hrs')} (dashed line), shortest ${fmtNum(Math.min(...known))}, longest ${fmtNum(Math.max(...known))}, ${known.length} nights</div>`;
+  return `<div class="tnote2">${tr('Average {0} {1} (dashed line), shortest {2}, longest {3}, {4} {5}', avg.toFixed(1), esc(tr(p.unit || 'hrs')), fmtNum(Math.min(...known)), fmtNum(Math.max(...known)), known.length, trp(known.length, 'night', 'nights'))}</div>`;
 }
 
 function renderGraph() {
   const chartable = D.points.filter(p => p.type !== 'text' && p.id !== 'bipolar_mood2');
-  if (!chartable.length) { $main.innerHTML = '<div class="info" style="padding:16px">No tracking points to chart yet.</div>'; return; }
+  if (!chartable.length) { $main.innerHTML = `<div class="info" style="padding:16px">${tr('No tracking points to chart yet.')}</div>`; return; }
   let p = chartable.find(q => q.id === ui.graphPoint) || chartable.find(q => q.id === 'outlook') || chartable[0];
   ui.graphPoint = p.id;
   const nDays = RANGES[ui.range][0];
   const days = []; for (let i = nDays - 1; i >= 0; i--) days.push(addDays(today(), -i));
-  const short = s => parseYmd(s).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+  const short = s => parseYmd(s).toLocaleDateString(LOC(), { day: 'numeric', month: 'short' });
   const s = stats(p, days);
   const moodOn = D.sections.find(x => x.id === 'bipolar')?.hidden === false;
   const sleepP = D.points.find(q => q.id === 'sleep_hours' && !q.archived);
   const periodLabel = nDays === 365 ? 'year' : `${nDays} days`;
   let h = `<div class="rangeseg" style="margin:12px 16px 2px">${seg(RANGES.map(r => r[1]), ui.range, 'range', '')}</div>
-    <button class="sumbtn" data-act="summary"><span><b>Summary</b><i>How your last ${periodLabel} went, in words</i></span><span class="star">✦</span></button>`;
-  if (moodOn) h += `<div class="tcard"><div class="tt">Mood trend</div>${moodTrendSvg(days)}${ends(days)}${moodLegend(days)}</div>`;
-  if (sleepP) h += `<div class="tcard"><div class="tt">Sleep pattern</div>${sleepSvg(sleepP, days)}${ends(days)}${sleepNote(sleepP, days)}</div>`;
-  h += `<div class="section"><h2>Any tracking point</h2></div><div class="picker" style="margin-top:10px"><div class="ptitle">${esc(p.label)}${p.archived ? ' (removed)' : ''}</div>
-    <div class="sub">Tap to look at another tracking point</div><select id="graphPick" aria-label="Tracking point">${chartable.map(q =>
-    `<option value="${esc(q.id)}" ${q.id === p.id ? 'selected' : ''}>${esc(q.label)}${q.archived ? ' (removed)' : ''}</option>`).join('')}</select></div>
+    <button class="sumbtn" data-act="summary"><span><b>${tr('Summary')}</b><i>${tr('How your last {0} went, in words', periodPhrase(periodLabel, false))}</i></span><span class="star">✦</span></button>`;
+  if (moodOn) h += `<div class="tcard"><div class="tt">${tr('Mood trend')}</div>${moodTrendSvg(days)}${ends(days)}${moodLegend(days)}</div>`;
+  if (sleepP) h += `<div class="tcard"><div class="tt">${tr('Sleep pattern')}</div>${sleepSvg(sleepP, days)}${ends(days)}${sleepNote(sleepP, days)}</div>`;
+  h += `<div class="section"><h2>${tr('Any tracking point')}</h2></div><div class="picker" style="margin-top:10px"><div class="ptitle">${esc(tr(p.label))}${p.archived ? ' ' + tr('(removed)') : ''}</div>
+    <div class="sub">${tr('Tap to look at another tracking point')}</div><select id="graphPick" aria-label="${tr('Tracking point')}">${chartable.map(q =>
+    `<option value="${esc(q.id)}" ${q.id === p.id ? 'selected' : ''}>${esc(tr(q.label))}${q.archived ? ' ' + tr('(removed)') : ''}</option>`).join('')}</select></div>
     <div class="chart" style="margin-top:12px">${chartSvg(p, days)}
       <div class="ends"><span style="flex:1">${short(days[0])}</span><span>${short(days[days.length - 1])}</span></div></div>
-    <div class="section"><h2>In numbers</h2><div style="height:6px"></div>
-    <div class="stat"><span>Days answered</span><span>${s ? s.count : 0} of ${nDays}</span></div>`;
+    <div class="section"><h2>${tr('In numbers')}</h2><div style="height:6px"></div>
+    <div class="stat"><span>${tr('Days answered')}</span><span>${tr('{0} of {1}', s ? s.count : 0, nDays)}</span></div>`;
   if (s) {
     if (p.type === 'yesno') {
       const yes = s.vals.filter(v => v >= 0.5).length;
-      h += `<div class="stat"><span>Yes</span><span>${yes} days (${Math.round(yes * 100 / s.count)}%)</span></div>
-            <div class="stat"><span>No</span><span>${s.count - yes} days</span></div>`;
+      h += `<div class="stat"><span>${tr('Yes')}</span><span>${yes} ${trp(yes, 'day', 'days')} (${Math.round(yes * 100 / s.count)}%)</span></div>
+            <div class="stat"><span>${tr('No')}</span><span>${s.count - yes} ${trp(s.count - yes, 'day', 'days')}</span></div>`;
     } else if (p.type === 'scale') {
-      h += `<div class="stat"><span>Average</span><span>${s.avg.toFixed(2)} → ${esc(p.options[Math.round(s.avg)] || '')}</span></div><div style="height:8px"></div>`;
+      h += `<div class="stat"><span>${tr('Average')}</span><span>${s.avg.toFixed(2)} → ${esc(tr(p.options[Math.round(s.avg)] || ''))}</span></div><div style="height:8px"></div>`;
       p.options.forEach((o, i) => {
         const c = s.vals.filter(v => Math.round(v) === i).length;
-        h += `<div class="dist"><span class="l">${esc(o)}</span><span class="b"><i style="width:${c * 100 / s.count}%;background:${valueColor(p, i)}"></i></span><span class="c">${c}</span></div>`;
+        h += `<div class="dist"><span class="l">${esc(tr(o))}</span><span class="b"><i style="width:${c * 100 / s.count}%;background:${valueColor(p, i)}"></i></span><span class="c">${c}</span></div>`;
       });
     } else {
-      const u = p.unit ? ' ' + esc(p.unit) : '';
-      h += `<div class="stat"><span>Average</span><span>${s.avg.toFixed(1)}${u}</span></div>
-            <div class="stat"><span>Lowest</span><span>${fmtNum(s.min)}${u}</span></div>
-            <div class="stat"><span>Highest</span><span>${fmtNum(s.max)}${u}</span></div>`;
+      const u = p.unit ? ' ' + esc(tr(p.unit)) : '';
+      h += `<div class="stat"><span>${tr('Average')}</span><span>${s.avg.toFixed(1)}${u}</span></div>
+            <div class="stat"><span>${tr('Lowest')}</span><span>${fmtNum(s.min)}${u}</span></div>
+            <div class="stat"><span>${tr('Highest')}</span><span>${fmtNum(s.max)}${u}</span></div>`;
     }
   }
-  h += `</div><div class="section"><h2>Everything, last ${RANGES[ui.range][1]}</h2>
-    <div class="hint" style="padding:8px 0 0">Green is going well, red needs attention. Each square is a day${nDays > 31 ? ' (or a few days averaged)' : ''}.</div>`;
+  h += `</div><div class="section"><h2>${tr('Everything, last {0}', tr(RANGES[ui.range][1]))}</h2>
+    <div class="hint" style="padding:8px 0 0">${nDays > 31 ? tr('Green is going well, red needs attention. Each square is a day (or a few days averaged).') : tr('Green is going well, red needs attention. Each square is a day.')}</div>`;
   for (const sec of D.sections) {
     if (sec.hidden) continue;
     const pts = chartable.filter(q => q.section === sec.id && !q.archived);
     if (!pts.length) continue;
-    h += `<div class="ovsec">${esc(sec.title)}</div>`;
+    h += `<div class="ovsec">${esc(tr(sec.title))}</div>`;
     for (const q of pts) h += overviewRow(q, days);
   }
   $main.innerHTML = h + '</div>';
@@ -1096,10 +1134,10 @@ function verdict(p, s) {
   return g == null ? 'none' : g >= 0.6 ? 'good' : g <= 0.4 ? 'bad' : 'mixed';
 }
 function tagText(p, s) {
-  if (p.type === 'scale') return p.options[Math.round(s.avg)] ?? fmtNum(s.avg);
-  if (p.type === 'yesno') return s.avg >= 0.5 ? `Yes ${Math.round(s.avg * 100)}%` : `No ${Math.round((1 - s.avg) * 100)}%`;
-  if (p.id === 'bipolar_mood') return `${MOOD[Math.round(s.avg)][0]} ${s.avg.toFixed(1)}`;
-  return s.avg.toFixed(1) + (p.unit ? ' ' + p.unit : '');
+  if (p.type === 'scale') return p.options[Math.round(s.avg)] != null ? tr(p.options[Math.round(s.avg)]) : fmtNum(s.avg);
+  if (p.type === 'yesno') return s.avg >= 0.5 ? `${tr('Yes')} ${Math.round(s.avg * 100)}%` : `${tr('No')} ${Math.round((1 - s.avg) * 100)}%`;
+  if (p.id === 'bipolar_mood') return `${tr(MOOD[Math.round(s.avg)][0])} ${s.avg.toFixed(1)}`;
+  return s.avg.toFixed(1) + (p.unit ? ' ' + tr(p.unit) : '');
 }
 function overviewRow(p, days) {
   const s = stats(p, days), v = verdict(p, s);
@@ -1114,95 +1152,95 @@ function overviewRow(p, days) {
     }
     strip += `<i style="background:${bg}"></i>`;
   }
-  const right = s ? `<span class="tag ${v}">${esc(tagText(p, s))}</span><span class="cnt">${s.count} ${s.count === 1 ? 'day' : 'days'}</span>`
-                  : '<span class="cnt" style="color:var(--faint)">no answers yet</span>';
+  const right = s ? `<span class="tag ${v}">${esc(tagText(p, s))}</span><span class="cnt">${s.count} ${trp(s.count, 'day', 'days')}</span>`
+                  : `<span class="cnt" style="color:var(--faint)">${tr('no answers yet')}</span>`;
   return `<button class="ov2" data-act="graphPoint" data-pid="${esc(p.id)}">
-    <span class="top"><span class="l">${esc(p.label)}</span><span class="r">${right}</span></span>
+    <span class="top"><span class="l">${esc(tr(p.label))}</span><span class="r">${right}</span></span>
     <span class="strip">${strip}</span>
-    ${v === 'bad' ? '<span class="attn">Needs attention</span>' : ''}</button>`;
+    ${v === 'bad' ? `<span class="attn">${tr('Needs attention')}</span>` : ''}</button>`;
 }
 
 /* ---------- data ---------- */
 function renderData() {
   const keys = Object.keys(D.entries).sort();
-  $main.innerHTML = `<div class="section"><h2>Appearance</h2><div class="themes">${THEMES.map(t => `
+  $main.innerHTML = `<div class="section"><h2>${tr('Language')}</h2><div style="margin-top:12px">${seg(LANGS.map(l => l[1]), LANGS.findIndex(l => l[0] === lang), 'lang', '')}</div></div>
+    <div class="section"><h2>${tr('Appearance')}</h2><div class="themes">${THEMES.map(t => `
       <button class="theme ${t.id === theme.id ? 'on' : ''}" data-act="theme" data-id="${t.id}" style="background:${t.paper};border-color:${t.id === theme.id ? t.acc : t.rule};color:${t.ink}">
         <span class="mini" style="display:block;background:${t.page};border-color:${t.rule}"><i style="width:80%;background:${t.ink};opacity:.75"></i><i style="width:55%;background:${t.soft};opacity:.6"></i><span class="pills"><b style="background:${t.acc}"></b><b style="background:${t.paper};border-color:${t.rule}"></b></span></span>
-        <span class="nm">${t.name}</span></button>`).join('')}</div></div>
-    <div class="section"><h2>Journal sections</h2>${(() => { const b = D.sections.find(x => x.id === 'bipolar'); return b ? `
+        <span class="nm">${tr(t.name)}</span></button>`).join('')}</div></div>
+    <div class="section"><h2>${tr('Journal sections')}</h2>${(() => { const b = D.sections.find(x => x.id === 'bipolar'); return b ? `
       <button class="switchrow" data-act="toggleSection" data-id="bipolar" role="switch" aria-checked="${!b.hidden}">
-        <span class="t"><b>Mood scale</b><i>Track depression and mania from 0 to 10 at the top of the journal. Hiding it keeps your past answers.</i></span>
+        <span class="t"><b>${tr('Mood scale')}</b><i>${tr('Track depression and mania from 0 to 10 at the top of the journal. Hiding it keeps your past answers.')}</i></span>
         <span class="switch ${b.hidden ? '' : 'on'}"></span></button>` : ''; })()}
       <button class="switchrow" data-act="toggleQuote" role="switch" aria-checked="${showQuote}">
-        <span class="t"><b>Quote of the day</b><i>A quote or gentle reminder at the top of the journal, a new one each day.</i></span>
+        <span class="t"><b>${tr('Quote of the day')}</b><i>${tr('A quote or gentle reminder at the top of the journal, a new one each day.')}</i></span>
         <span class="switch ${showQuote ? 'on' : ''}"></span></button>
       <button class="switchrow" data-act="toggleHaptics" role="switch" aria-checked="${hapticsOn}">
-        <span class="t"><b>Vibrate on tap</b><i>A soft click of vibration when you tap buttons and answers. On iPhone this needs iOS 18 or newer.</i></span>
+        <span class="t"><b>${tr('Vibrate on tap')}</b><i>${tr('A soft click of vibration when you tap buttons and answers. On iPhone this needs iOS 18 or newer.')}</i></span>
         <span class="switch ${hapticsOn ? 'on' : ''}"></span></button>
       <button class="switchrow" data-act="toggleWelcome" role="switch" aria-checked="${welcomeOn}">
-        <span class="t"><b>Welcome when opening</b><i>A short greeting, then the journal rises into place.</i></span>
+        <span class="t"><b>${tr('Welcome when opening')}</b><i>${tr('A short greeting, then the journal rises into place.')}</i></span>
         <span class="switch ${welcomeOn ? 'on' : ''}"></span></button>
       <button class="switchrow" data-act="toggleSparkles" role="switch" aria-checked="${sparklesOn}">
-        <span class="t"><b>Stars when answering</b><i>Answer buttons squish when tapped and pop out little stars.</i></span>
+        <span class="t"><b>${tr('Stars when answering')}</b><i>${tr('Answer buttons squish when tapped and pop out little stars.')}</i></span>
         <span class="switch ${sparklesOn ? 'on' : ''}"></span></button>
       <button class="switchrow" data-act="toggleGoodNight" role="switch" aria-checked="${gn.on}">
-        <span class="t"><b>Good night celebration</b><i>A “Finish the day” button under today's note: confetti, a good-night wish and a short lullaby.</i></span>
+        <span class="t"><b>${tr('Good night celebration')}</b><i>${tr("A “Finish the day” button under today's note: confetti, a good-night wish and a short lullaby.")}</i></span>
         <span class="switch ${gn.on ? 'on' : ''}"></span></button>
       ${gn.on ? `<button class="switchrow" data-act="toggleMelody" role="switch" aria-checked="${gn.melody}">
-        <span class="t"><b>Play the lullaby</b><i>Uses your media volume. On iPhone, the silent switch mutes it.</i></span>
+        <span class="t"><b>${tr('Play the lullaby')}</b><i>${tr('Uses your media volume. On iPhone, the silent switch mutes it.')}</i></span>
         <span class="switch ${gn.melody ? 'on' : ''}"></span></button>
-      <div><button class="link" data-act="previewGoodNight">Preview the celebration</button></div>` : ''}</div>
-    <div class="section"><h2>Your journal</h2>
-    <div class="count">${keys.length} ${keys.length === 1 ? 'day' : 'days'} written</div>
-    ${keys.length ? `<div style="font-style:italic;color:var(--soft)">since ${keys[0]}</div>` : ''}
-    <div style="margin-top:8px">${D.points.filter(p => !p.archived).length} tracking points in use</div>
-    <p class="info" style="padding:10px 0 0">Everything is stored as one XML file inside this app on this device, in the same format as the Android app,
-      so you can move your data between them. <b>Removing the app from the home screen deletes its data</b>, so export regularly.</p>
+      <div><button class="link" data-act="previewGoodNight">${tr('Preview the celebration')}</button></div>` : ''}</div>
+    <div class="section"><h2>${tr('Your journal')}</h2>
+    <div class="count">${tr('{0} {1} written', keys.length, trp(keys.length, 'day', 'days'))}</div>
+    ${keys.length ? `<div style="font-style:italic;color:var(--soft)">${tr('since {0}', keys[0])}</div>` : ''}
+    <div style="margin-top:8px">${tr('{0} tracking points in use', D.points.filter(p => !p.archived).length)}</div>
+    <p class="info" style="padding:10px 0 0">${tr('Everything is stored as one XML file inside this app on this device, in the same format as the Android app, so you can move your data between them.')}
+      <b>${tr('Removing the app from the home screen deletes its data')}</b>${tr(', so export regularly.')}</p>
     <div style="margin-top:14px">
-      <button class="btn primary" data-act="export">Export data (XML)</button>
-      <button class="btn outline" data-act="import">Import data from file…</button>
-      <button class="btn outline" data-act="manage">Manage tracking points</button></div>
-    <div class="hint" style="padding:6px 0">On iPhone, Export opens the share sheet: choose “Save to Files”.</div></div>`;
+      <button class="btn primary" data-act="export">${tr('Export data (XML)')}</button>
+      <button class="btn outline" data-act="import">${tr('Import data from file…')}</button>
+      <button class="btn outline" data-act="manage">${tr('Manage tracking points')}</button></div>
+    <div class="hint" style="padding:6px 0">${tr('On iPhone, Export opens the share sheet: choose “Save to Files”.')}</div></div>`;
 }
 
 /* ---------- manage tracking points ---------- */
 function typeSummary(p) {
-  if (p.type === 'scale') return p.options.join(' · ');
-  if (p.type === 'yesno') return 'No · Yes';
-  if (p.type === 'number') return `Number ${fmtNum(p.min)}–${fmtNum(p.max)}${p.unit ? ' ' + p.unit : ''}`;
-  return 'Text';
+  if (p.type === 'scale') return p.options.map(o => tr(o)).join(' · ');
+  if (p.type === 'yesno') return tr('No') + ' · ' + tr('Yes');
+  if (p.type === 'number') return tr('Number {0}–{1}', fmtNum(p.min), fmtNum(p.max)) + (p.unit ? ' ' + tr(p.unit) : '');
+  return tr('Text');
 }
 function renderManage() {
-  let h = `<div class="backrow"><button data-act="closeManage" aria-label="Back">←</button>Tracking points</div>
-    <div class="info" style="font-style:italic">Add your own questions, edit or reorder them, or remove the ones you don't need.
-      Removing a point only hides it from the check-in, so its past answers stay in your data.</div>`;
+  let h = `<div class="backrow"><button data-act="closeManage" aria-label="${tr('Back')}">←</button>${tr('Tracking points')}</div>
+    <div class="info" style="font-style:italic">${tr("Add your own questions, edit or reorder them, or remove the ones you don't need. Removing a point only hides it from the check-in, so its past answers stay in your data.")}</div>`;
   for (const s of D.sections) {
     if (s.id === 'bipolar') continue; // switched on/off in Settings
     const pts = D.points.filter(p => p.section === s.id && !p.archived);
-    h += `<div class="section"><h2>${esc(s.title)}</h2>`;
+    h += `<div class="section"><h2>${esc(tr(s.title))}</h2>`;
     pts.forEach((p, i) => {
-      h += `<div class="prow"><div class="lab" data-act="editPoint" data-pid="${esc(p.id)}"><div>${esc(p.label)}</div><div>${esc(typeSummary(p))}</div></div>
-        <button class="ic" data-act="up" data-pid="${esc(p.id)}" ${i === 0 ? 'disabled' : ''} aria-label="Move up">▲</button>
-        <button class="ic" data-act="down" data-pid="${esc(p.id)}" ${i === pts.length - 1 ? 'disabled' : ''} aria-label="Move down">▼</button>
-        <button class="ic" data-act="editPoint" data-pid="${esc(p.id)}" aria-label="Edit">✎</button>
-        <button class="ic" data-act="archive" data-pid="${esc(p.id)}" aria-label="Remove">🗑</button></div>`;
+      h += `<div class="prow"><div class="lab" data-act="editPoint" data-pid="${esc(p.id)}"><div>${esc(tr(p.label))}</div><div>${esc(typeSummary(p))}</div></div>
+        <button class="ic" data-act="up" data-pid="${esc(p.id)}" ${i === 0 ? 'disabled' : ''} aria-label="${tr('Move up')}">▲</button>
+        <button class="ic" data-act="down" data-pid="${esc(p.id)}" ${i === pts.length - 1 ? 'disabled' : ''} aria-label="${tr('Move down')}">▼</button>
+        <button class="ic" data-act="editPoint" data-pid="${esc(p.id)}" aria-label="${tr('Edit')}">✎</button>
+        <button class="ic" data-act="archive" data-pid="${esc(p.id)}" aria-label="${tr('Remove')}">🗑</button></div>`;
     });
-    if (!pts.length) h += `<div class="empty">Nothing here yet.</div>`;
-    h += `<div><button class="link" data-act="addPoint" data-sec="${esc(s.id)}">${s.id === 'meds' ? '+ Add medication' : '+ Add tracking point'}</button></div></div>`;
+    if (!pts.length) h += `<div class="empty">${tr('Nothing here yet.')}</div>`;
+    h += `<div><button class="link" data-act="addPoint" data-sec="${esc(s.id)}">${s.id === 'meds' ? tr('+ Add medication') : tr('+ Add tracking point')}</button></div></div>`;
   }
   const removed = D.points.filter(p => p.archived && p.section !== 'bipolar');
   if (removed.length) {
-    h += `<div class="section"><h2>Removed tracking points</h2>
-      <div class="info">Hidden from the check-in. Restore brings a point back; Delete erases it and all its past answers.</div>`;
+    h += `<div class="section"><h2>${tr('Removed tracking points')}</h2>
+      <div class="info">${tr('Hidden from the check-in. Restore brings a point back; Delete erases it and all its past answers.')}</div>`;
     for (const p of removed) {
-      const st = D.sections.find(s => s.id === p.section)?.title || p.section;
-      h += `<div class="prow"><div class="lab"><div style="color:var(--soft)">${esc(p.label)}</div><div>${esc(st)}</div></div>
-        <button class="ic" data-act="restore" data-pid="${esc(p.id)}" aria-label="Restore">↺</button>
-        <button class="ic red" data-act="deleteForever" data-pid="${esc(p.id)}" aria-label="Delete forever">🗑</button></div>`;
+      const st = tr(D.sections.find(s => s.id === p.section)?.title || p.section);
+      h += `<div class="prow"><div class="lab"><div style="color:var(--soft)">${esc(tr(p.label))}</div><div>${esc(st)}</div></div>
+        <button class="ic" data-act="restore" data-pid="${esc(p.id)}" aria-label="${tr('Restore')}">↺</button>
+        <button class="ic red" data-act="deleteForever" data-pid="${esc(p.id)}" aria-label="${tr('Delete forever')}">🗑</button></div>`;
     }
     h += '</div>';
   }
-  h += `<button class="small-btn" style="margin:20px 12px 24px" data-act="resetDefaults">Restore all built-in questions</button>`;
+  h += `<button class="small-btn" style="margin:20px 12px 24px" data-act="resetDefaults">${tr('Restore all built-in questions')}</button>`;
   $main.innerHTML = h;
 }
 
@@ -1220,64 +1258,68 @@ $modal.addEventListener('click', e => { if (e.target === $modal) closeDialog(); 
 
 function textDialog(title, initial, confirm, onSave) {
   openDialog(title, `<textarea id="dlgText">${esc(initial)}</textarea>`,
-    [{ label: 'Cancel', run: () => {} }, { label: confirm, run: () => onSave(document.getElementById('dlgText').value) }]);
+    [{ label: tr('Cancel'), run: () => {} }, { label: confirm, run: () => onSave(document.getElementById('dlgText').value) }]);
 }
 function confirmDialog(title, msg, confirm, onOk) {
-  openDialog(title, `<p style="margin:0 0 4px;line-height:1.4">${esc(msg)}</p>`, [{ label: 'Cancel', run: () => {} }, { label: confirm, run: onOk }]);
+  openDialog(title, `<p style="margin:0 0 4px;line-height:1.4">${esc(msg)}</p>`, [{ label: tr('Cancel'), run: () => {} }, { label: confirm, run: onOk }]);
 }
 
 function betterOpts(type, cur) {
   const labels = type === 'yesno' ? ['Yes is good', 'No is good', 'Neither'] : type === 'scale'
     ? ['Later options are better', 'Earlier options are better', 'Neither'] : ['Higher is better', 'Lower is better', 'Neither'];
   return ['higher', 'lower', 'none'].map((b, i) =>
-    `<label class="radio"><input type="radio" name="pBetter" value="${b}" ${cur === b ? 'checked' : ''}>${labels[i]}</label>`).join('');
+    `<label class="radio"><input type="radio" name="pBetter" value="${b}" ${cur === b ? 'checked' : ''}>${tr(labels[i])}</label>`).join('');
 }
 function pointEditor(existing, sectionId) {
   const isNew = !existing;
-  const p = existing ? clone(existing) : P('', sectionId, sectionId === 'meds' ? 'yesno' : 'scale', '', { options: FREQ.slice() });
+  const p = existing ? clone(existing) : P('', sectionId, sectionId === 'meds' ? 'yesno' : 'scale', '', { options: FREQ.map(o => tr(o)) });
+  // built-in questions show in the app's language; left unchanged, they keep their original wording
+  const orig = existing ? clone(existing) : null;
   const body = () => {
     const med = p.section === 'meds';
-    return `<label class="f">${med ? 'Name and dose' : 'Question'}</label>
-      <input type="text" id="pLabel" value="${esc(p.label)}" placeholder="${med ? 'e.g. Vitamin D, 2000 IU (AM)' : 'e.g. Did you drink enough water?'}">
-      <label class="f">Section</label>
-      ${D.sections.filter(s => s.id !== 'bipolar').map(s => `<label class="radio"><input type="radio" name="pSec" value="${esc(s.id)}" ${p.section === s.id ? 'checked' : ''}>${esc(s.title)}</label>`).join('')}
-      <label class="f">Answer type</label>
-      ${isNew ? Object.entries(TYPES).map(([k, t]) => `<label class="radio"><input type="radio" name="pType" value="${k}" ${p.type === k ? 'checked' : ''}>${t}</label>`).join('')
-              : `<div style="font-size:14px;padding:4px 0">${TYPES[p.type]} (can't be changed once created, so old answers stay valid)</div>`}
-      <div id="pBetter" style="display:${p.type === 'text' ? 'none' : 'block'}"><label class="f">Which is better?</label>
+    return `<label class="f">${med ? tr('Name and dose') : tr('Question')}</label>
+      <input type="text" id="pLabel" value="${esc(tr(p.label))}" placeholder="${med ? tr('e.g. Vitamin D, 2000 IU (AM)') : tr('e.g. Did you drink enough water?')}">
+      <label class="f">${tr('Section')}</label>
+      ${D.sections.filter(s => s.id !== 'bipolar').map(s => `<label class="radio"><input type="radio" name="pSec" value="${esc(s.id)}" ${p.section === s.id ? 'checked' : ''}>${esc(tr(s.title))}</label>`).join('')}
+      <label class="f">${tr('Answer type')}</label>
+      ${isNew ? Object.entries(TYPES).map(([k, t]) => `<label class="radio"><input type="radio" name="pType" value="${k}" ${p.type === k ? 'checked' : ''}>${tr(t)}</label>`).join('')
+              : `<div style="font-size:14px;padding:4px 0">${tr("{0} (can't be changed once created, so old answers stay valid)", tr(TYPES[p.type]))}</div>`}
+      <div id="pBetter" style="display:${p.type === 'text' ? 'none' : 'block'}"><label class="f">${tr('Which is better?')}</label>
         <div id="pBetterOpts">${betterOpts(p.type, p.better || 'higher')}</div>
-        <div class="hint" style="padding:2px 0 0">Used to colour Trends green when it's going well and red when it needs attention.</div></div>
+        <div class="hint" style="padding:2px 0 0">${tr("Used to colour Trends green when it's going well and red when it needs attention.")}</div></div>
       <div id="pScale" style="display:${p.type === 'scale' ? 'block' : 'none'}">
-        <label class="f">Options, one per line (lowest first)</label><textarea id="pOpts">${esc(p.options.join('\n'))}</textarea>
-        ${isNew ? '' : '<div class="hint" style="padding:4px 0">Answers are saved by position, so keep the same number and order of options.</div>'}
+        <label class="f">${tr('Options, one per line (lowest first)')}</label><textarea id="pOpts">${esc(p.options.map(o => tr(o)).join('\n'))}</textarea>
+        ${isNew ? '' : `<div class="hint" style="padding:4px 0">${tr('Answers are saved by position, so keep the same number and order of options.')}</div>`}
       </div>
       <div id="pNum" style="display:${p.type === 'number' ? 'block' : 'none'}">
-        <div class="row3"><div><label class="f">Min</label><input type="number" inputmode="decimal" id="pMin" value="${p.min}"></div>
-          <div><label class="f">Max</label><input type="number" inputmode="decimal" id="pMax" value="${p.max}"></div>
-          <div><label class="f">Step</label><input type="number" inputmode="decimal" id="pStep" value="${p.step}"></div></div>
-        <label class="f">Unit (optional, e.g. hrs, cups)</label><input type="text" id="pUnit" value="${esc(p.unit)}">
+        <div class="row3"><div><label class="f">${tr('Min')}</label><input type="number" inputmode="decimal" id="pMin" value="${p.min}"></div>
+          <div><label class="f">${tr('Max')}</label><input type="number" inputmode="decimal" id="pMax" value="${p.max}"></div>
+          <div><label class="f">${tr('Step')}</label><input type="number" inputmode="decimal" id="pStep" value="${p.step}"></div></div>
+        <label class="f">${tr('Unit (optional, e.g. hrs, cups)')}</label><input type="text" id="pUnit" value="${esc(tr(p.unit))}">
       </div>
       <div class="err" id="pErr"></div>`;
   };
-  openDialog(isNew ? (sectionId === 'meds' ? 'Add medication' : 'Add tracking point') : 'Edit tracking point', body(), [
-    { label: 'Cancel', run: () => {} },
-    { label: 'Save', run: () => {
+  openDialog(isNew ? (sectionId === 'meds' ? tr('Add medication') : tr('Add tracking point')) : tr('Edit tracking point'), body(), [
+    { label: tr('Cancel'), run: () => {} },
+    { label: tr('Save'), run: () => {
       const err = m => { document.getElementById('pErr').textContent = m; return false; };
-      const label = document.getElementById('pLabel').value.trim();
+      let label = document.getElementById('pLabel').value.trim();
+      if (orig && label === tr(orig.label)) label = orig.label;
       const section = $modal.querySelector('input[name=pSec]:checked')?.value || p.section;
       const type = isNew ? ($modal.querySelector('input[name=pType]:checked')?.value || p.type) : p.type;
-      if (!label) return err('Please enter a question or name.');
-      const opts = document.getElementById('pOpts').value.split('\n').map(s => s.trim()).filter(Boolean);
-      if (type === 'scale' && opts.length < 2) return err('A scale needs at least 2 options (one per line).');
+      if (!label) return err(tr('Please enter a question or name.'));
+      const opts = document.getElementById('pOpts').value.split('\n').map(s => s.trim()).filter(Boolean)
+        .map((o, i) => orig && orig.options[i] != null && tr(orig.options[i]) === o ? orig.options[i] : o);
+      if (type === 'scale' && opts.length < 2) return err(tr('A scale needs at least 2 options (one per line).'));
       const mn = parseFloat(document.getElementById('pMin').value.replace(',', '.'));
       const mx = parseFloat(document.getElementById('pMax').value.replace(',', '.'));
       const st = parseFloat(document.getElementById('pStep').value.replace(',', '.'));
       if (type === 'number' && (isNaN(mn) || isNaN(mx) || isNaN(st) || mx <= mn || st <= 0))
-        return err('Check the numbers: maximum must be above minimum and step above 0.');
+        return err(tr('Check the numbers: maximum must be above minimum and step above 0.'));
       const better = type === 'text' ? 'none' : ($modal.querySelector('input[name=pBetter]:checked')?.value || 'higher');
       Object.assign(p, { label, section, type, better, options: type === 'scale' ? opts : [],
         min: type === 'number' ? mn : 0, max: type === 'number' ? mx : 10, step: type === 'number' ? st : 1,
-        unit: type === 'number' ? document.getElementById('pUnit').value.trim() : '' });
+        unit: type === 'number' ? (u => orig && u === tr(orig.unit) ? orig.unit : u)(document.getElementById('pUnit').value.trim()) : '' });
       if (isNew) { p.id = (section === 'meds' ? 'med_' : 'custom_') + Date.now().toString(36); D.points.push(p); }
       else D.points = D.points.map(q => q.id === p.id ? p : q);
       save(); render();
@@ -1317,10 +1359,11 @@ document.getElementById('importFile').addEventListener('change', async ev => {
   if (!f) return;
   const text = await f.text();
   let data;
-  try { data = fromXml(text); } catch (e) { return toast('Import failed: ' + e.message); }
-  confirmDialog('Replace all data?',
-    `The file has ${Object.keys(data.entries).length} days. Importing replaces everything in the app (tracking points and all days). Export first if you want a copy of the current data.`,
-    'Import', () => { D = data; save(); render(); toast(`Imported ${Object.keys(D.entries).length} days`); });
+  try { data = fromXml(text); } catch (e) { return toast(tr('Import failed: {0}', e.message)); }
+  const nIn = Object.keys(data.entries).length;
+  confirmDialog(tr('Replace all data?'),
+    tr('The file has {0} {1}. Importing replaces everything in the app (tracking points and all days). Export first if you want a copy of the current data.', nIn, trp(nIn, 'day', 'days')),
+    tr('Import'), () => { D = data; save(); render(); const n = Object.keys(D.entries).length; toast(tr('Imported {0} {1}', n, trp(n, 'day', 'days'))); });
 });
 
 /* ---------- events ---------- */
@@ -1362,15 +1405,15 @@ document.addEventListener('click', ev => {
     case 'editPoint': return pointEditor(pt(pid));
     case 'manage': ui.manage = true; window.scrollTo(0, 0); break;
     case 'closeManage': ui.manage = false; window.scrollTo(0, 0); break;
-    case 'editNote': return textDialog("Today's Note", entry(d).note, 'Save', v => { updateEntry(d, e => e.note = v.trim()); render(); });
-    case 'addTimed': return textDialog('Timestamped note', '', 'Add', v => {
+    case 'editNote': return textDialog(tr("Today's note"), entry(d).note, tr('Save'), v => { updateEntry(d, e => e.note = v.trim()); render(); });
+    case 'addTimed': return textDialog(tr('Timestamped note'), '', tr('Add'), v => {
       if (!v.trim()) return;
       const n = new Date();
       updateEntry(d, e => e.timed.push({ time: `${d} ${pad(n.getHours())}:${pad(n.getMinutes())}`, text: v.trim() })); render();
     });
     case 'delTimed': {
       const i = +el.dataset.i;
-      return confirmDialog('Delete note?', entry(d).timed[i]?.text || '', 'Delete', () => { updateEntry(d, e => e.timed.splice(i, 1)); render(); });
+      return confirmDialog(tr('Delete note?'), entry(d).timed[i]?.text || '', tr('Delete'), () => { updateEntry(d, e => e.timed.splice(i, 1)); render(); });
     }
     case 'prevMonth': case 'nextMonth': {
       const [y, m] = ui.month; const nd = new Date(y, m + (act === 'nextMonth' ? 1 : -1), 1);
@@ -1394,6 +1437,7 @@ document.addEventListener('click', ev => {
       break;
     }
     case 'quick': openQuick(d); return;
+    case 'lang': { const L = LANGS[+el.dataset.i]; if (L) setLang(L[0]); break; }
     case 'previewGoodNight': celebrate(today(), false); return;
     case 'toggleQuote': showQuote = !showQuote; try { localStorage.setItem('scrmoods.quote', showQuote ? 'on' : 'off'); } catch (e) {} break;
     case 'summary': { const n = RANGES[ui.range][0], ds = []; for (let i = n - 1; i >= 0; i--) ds.push(addDays(today(), -i)); openSummary(ds, n === 365 ? 'year' : `${n} days`); return; }
@@ -1423,14 +1467,14 @@ document.addEventListener('click', ev => {
     case 'restore': pt(pid).archived = false; save(); break;
     case 'deleteForever': {
       const p = pt(pid);
-      return confirmDialog('Delete forever?', `"${p.label}" and every answer you gave for it will be erased. This can't be undone.`, 'Delete', () => {
+      return confirmDialog(tr('Delete forever?'), tr("“{0}” and every answer you gave for it will be erased. This can't be undone.", tr(p.label)), tr('Delete'), () => {
         D.points = D.points.filter(q => q.id !== pid);
         for (const [k, e] of Object.entries(D.entries)) { delete e.values[pid]; if (entryEmpty(e)) delete D.entries[k]; }
         save(); render();
       });
     }
-    case 'resetDefaults': return confirmDialog('Restore built-in questions?',
-      'Any removed or deleted built-in questions come back. Your own points and all answers are kept.', 'Restore', () => {
+    case 'resetDefaults': return confirmDialog(tr('Restore built-in questions?'),
+      tr('Any removed or deleted built-in questions come back. Your own points and all answers are kept.'), tr('Restore'), () => {
         const ids = new Set(D.points.map(p => p.id));
         for (const p of D.points) if (DEFAULT_POINTS.some(q => q.id === p.id)) p.archived = false;
         for (const q of DEFAULT_POINTS) if (!ids.has(q.id)) D.points.push(clone(q));
@@ -1579,7 +1623,7 @@ const WISHES = [
 function wishFor(day) {
   const [y, m, dd] = day.split('-').map(Number);
   const epochDay = Math.round(Date.UTC(y, m - 1, dd) / 86400000);
-  return WISHES[((epochDay % WISHES.length) + WISHES.length) % WISHES.length];
+  return tr(WISHES[((epochDay % WISHES.length) + WISHES.length) % WISHES.length]);
 }
 
 /* The lullaby, synthesised here (no sound files): a music-box melody over soft chords. */
@@ -1644,12 +1688,12 @@ function celebrate(date, remember) {
   if (gn.melody) playLullaby();
   document.getElementById('goodnight')?.remove();
   const days = Object.values(D.entries).filter(e => !entryEmpty(e)).length;
-  const encLine = `You've filled in your journal on ${days} ${days === 1 ? 'day' : 'days'}. Keep it up, you're doing great.`;
+  const encLine = tr("You've filled in your journal on {0} {1}. Keep it up, you're doing great.", days, trp(days, 'day', 'days'));
   const el = document.createElement('div');
   el.id = 'goodnight';
-  el.innerHTML = `<canvas></canvas><div class="gcard"><div class="moon">☾</div><div class="gh">Good night</div>
-    <div class="gs">${dayComplete(entry(date)) ? "Today's journal is complete." : 'Today is saved.'}</div><div class="gw">${esc(wishFor(date))}</div>
-    <div class="genc"><span class="typed"></span><span class="rest">${esc(encLine)}</span></div><div class="gt">Tap anywhere to close</div></div>`;
+  el.innerHTML = `<canvas></canvas><div class="gcard"><div class="moon">☾</div><div class="gh">${tr('Good night')}</div>
+    <div class="gs">${dayComplete(entry(date)) ? tr("Today's journal is complete.") : tr('Today is saved.')}</div><div class="gw">${esc(wishFor(date))}</div>
+    <div class="genc"><span class="typed"></span><span class="rest">${esc(encLine)}</span></div><div class="gt">${tr('Tap anywhere to close')}</div></div>`;
   document.body.appendChild(el);
   requestAnimationFrame(() => el.classList.add('in'));
   // the encouragement types itself out a few seconds after the card appears
@@ -1764,43 +1808,43 @@ function showQuick() {
     const v = e.values.bipolar_mood != null ? Math.round(+e.values.bipolar_mood) : null;
     const circle = n => { const c = moodZone(n), on = n === v;
       return `<button data-q="mood" data-v="${n}" style="border-color:${on ? c : `color-mix(in srgb, ${c} 55%, transparent)`};background:${on ? c : 'var(--page)'};${on ? 'color:#fff;font-weight:600' : ''}">${n}</button>`; };
-    b = `<div class="qk">${esc(st.section)}</div><div class="qh">Where is your mood today?</div>
+    b = `<div class="qk">${esc(tr(st.section))}</div><div class="qh">${tr('Where is your mood today?')}</div>
       <div class="qmrow">${[0, 1, 2, 3, 4, 5].map(circle).join('')}</div><div class="qmrow">${[6, 7, 8, 9, 10].map(circle).join('')}</div>
-      <div class="qmlab"><span>0 depression</span><span>5 balanced</span><span>10 mania</span></div>
-      <div class="qmdesc">${v == null ? '' : `<b style="color:${moodZone(v)}">${v} · ${esc(MOOD[v][0])}</b><i>${esc(MOOD[v][1])}</i>`}</div>`;
+      <div class="qmlab"><span>${tr('0 depression')}</span><span>${tr('5 balanced')}</span><span>${tr('10 mania')}</span></div>
+      <div class="qmdesc">${v == null ? '' : `<b style="color:${moodZone(v)}">${v} · ${esc(tr(MOOD[v][0]))}</b><i>${esc(tr(MOOD[v][1]))}</i>`}</div>`;
   } else if (st.kind === 'note') {
-    b = `<div class="qk">Today's note</div><div class="qh">Anything you'd like to remember about today?</div>
-      <textarea id="qnote" placeholder="Write about your day…">${esc(e.note)}</textarea>
-      <button class="qnext" data-q="finish">${gn.finished === date ? 'Save and close' : 'Finish the day&nbsp; ☾'}</button>`;
+    b = `<div class="qk">${tr("Today's note")}</div><div class="qh">${tr("Anything you'd like to remember about today?")}</div>
+      <textarea id="qnote" placeholder="${tr('Write about your day…')}">${esc(e.note)}</textarea>
+      <button class="qnext" data-q="finish">${gn.finished === date ? tr('Save and close') : tr('Finish the day') + '&nbsp; ☾'}</button>`;
   } else {
     const p = st.p, v = e.values[p.id];
-    b = `<div class="qk">${esc(st.section)}</div><div class="qh">${esc(p.label)}</div>`;
+    b = `<div class="qk">${esc(tr(st.section))}</div><div class="qh">${esc(tr(p.label))}</div>`;
     if (p.type === 'scale' || p.type === 'yesno') {
       const opts = p.type === 'yesno' ? [[1, 'Yes'], [0, 'No']] : p.options.map((o, k) => [k, o]);
       // red for the bad end, green for the good end (following the question's "Which is better?")
       b += opts.map(([k, o]) => {
         const g = goodness(p, k), c = g == null ? 'var(--acc)' : answerColor(g);
-        return `<button class="qopt ${v != null && +v === k ? 'on' : ''}" style="--c:${c}" data-q="pick" data-v="${k}">${esc(o)}</button>`;
+        return `<button class="qopt ${v != null && +v === k ? 'on' : ''}" style="--c:${c}" data-q="pick" data-v="${k}">${esc(tr(o))}</button>`;
       }).join('');
     } else if (p.type === 'number') {
       const prev = entry(addDays(date, -1)).values[p.id];
       const start = v != null ? +v : prev != null ? +prev : snap(p, (p.min + p.max) / 2);
       quick.num = start;
-      b += `<div class="qnum"><b id="qnv">${fmtNum(start)}</b>${p.unit ? `<span> ${esc(p.unit)}</span>` : ''}</div>
+      b += `<div class="qnum"><b id="qnv">${fmtNum(start)}</b>${p.unit ? `<span> ${esc(tr(p.unit))}</span>` : ''}</div>
         <div class="qctrl"><button class="rbtn" data-q="minus">−</button>
         <input type="range" id="qrange" min="${p.min}" max="${p.max}" step="${p.step}" value="${start}">
         <button class="rbtn" data-q="plus">+</button></div>
-        <button class="qnext" data-q="next">Next</button>`;
+        <button class="qnext" data-q="next">${tr('Next')}</button>`;
     } else {
-      b += `<textarea id="qtext">${esc(v || '')}</textarea><button class="qnext" data-q="next">Next</button>`;
+      b += `<textarea id="qtext">${esc(v || '')}</textarea><button class="qnext" data-q="next">${tr('Next')}</button>`;
     }
   }
-  el.innerHTML = `<div class="qtop"><button class="qx" data-q="close" aria-label="Close">✕</button>
+  el.innerHTML = `<div class="qtop"><button class="qx" data-q="close" aria-label="${tr('Close')}">✕</button>
       <div class="qbar"><i style="width:${(i + 1) / steps.length * 100}%"></i></div>
-      ${st.kind === 'note' ? '<span style="width:52px"></span>' : '<button class="qskip" data-q="skip">Skip</button>'}</div>
-    <div class="qcount">${i + 1} of ${steps.length}</div>
+      ${st.kind === 'note' ? '<span style="width:52px"></span>' : `<button class="qskip" data-q="skip">${tr('Skip')}</button>`}</div>
+    <div class="qcount">${tr('{0} of {1}', i + 1, steps.length)}</div>
     <div class="qbody ${quick.fwd ? 'fwd' : 'back'}"><div>${b}</div></div>
-    <div class="qbottom">${i > 0 ? '<button class="link" data-q="prev" style="margin-left:-12px">‹ Previous</button>' : ''}</div>`;
+    <div class="qbottom">${i > 0 ? `<button class="link" data-q="prev" style="margin-left:-12px">‹ ${tr('Previous')}</button>` : ''}</div>`;
 }
 function quickInput(ev) {
   if (ev.target.id === 'qrange') { quick.num = parseFloat(ev.target.value); document.getElementById('qnv').textContent = fmtNum(quick.num); }
@@ -1846,7 +1890,7 @@ let welcomeOn = true;
 try { welcomeOn = localStorage.getItem('scrmoods.welcome') !== 'off'; } catch (e) {}
 function greeting() {
   const h = new Date().getHours();
-  return h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 17 ? 'Good afternoon' : h >= 17 && h < 23 ? 'Good evening' : 'Hello, night owl';
+  return tr(h >= 5 && h < 12 ? 'Good morning' : h >= 12 && h < 17 ? 'Good afternoon' : h >= 17 && h < 23 ? 'Good evening' : 'Hello, night owl');
 }
 function playIntro() {
   if (!welcomeOn || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
@@ -1854,7 +1898,7 @@ function playIntro() {
   const el = document.createElement('div');
   el.id = 'welcome';
   el.innerHTML = `<div class="wrap"><div class="w"><div class="orn">✦</div><div class="wh">${greeting()}</div>
-    <div class="ws">Welcome back. Let's see how today is going.</div></div></div>`;
+    <div class="ws">${tr("Welcome back. Let's see how today is going.")}</div></div></div>`;
   document.body.appendChild(el);
   [...$main.children].forEach((c, i) => c.style.setProperty('--d', (RISE + i * STEP) + 'ms'));
   $main.classList.add('intro');
