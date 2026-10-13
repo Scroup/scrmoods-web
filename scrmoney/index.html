@@ -114,6 +114,24 @@ h2.hl::after { content: ""; flex: 1 0 24px; height: 1px; background: var(--rule)
 .mrow.zero { color: var(--faint); } .mrow.zero .mg { font-weight: 400; }
 .hint { font-size: 13px; font-style: italic; color: var(--soft); line-height: 18px; margin: 10px 4px 0; }
 
+/* личные расходы: конвертер */
+.fx { padding-top: 6px; }
+.fxrow { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
+.fxrow:last-child { border-bottom: 0; }
+.fxrow .sym { width: 42px; height: 42px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 1px solid var(--rule); font-size: 19px; font-weight: 500; color: var(--acc); }
+.fxrow.on .sym { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+.fxrow .nm { flex: 1; min-width: 0; }
+.fxrow .nm b { display: block; font-weight: 500; }
+.fxrow .nm i { display: block; font-size: 12.5px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fxrow input { width: 46%; max-width: 220px; min-width: 0; text-align: right; border: 1px solid transparent; border-radius: 12px; background: transparent; padding: 8px 10px; font-size: 22px; font-weight: 500; }
+.fxrow input:focus { outline: none; border-color: var(--acc); background: var(--paper); }
+.fxrow.on input { background: var(--wash); }
+.fxrow .rm { width: 28px; height: 28px; flex: none; color: var(--faint); font-size: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.chips button { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); font-size: 14px; }
+.chips button.add { color: var(--acc); font-style: italic; }
+.addsel { width: 100%; margin-top: 12px; }
+
 /* настройки */
 .themes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
 .theme { border-radius: 16px; padding: 7px; text-align: left; border: 1px solid; min-width: 0; }
@@ -177,6 +195,7 @@ input[type=number] { -moz-appearance: textfield; }
 
 <nav id="nav">
   <button data-tab="income"><span class="ic"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-1 10h-5v5h-2v-5H6v-2h5V6h2v5h5z"/></svg></span>Приходы</button>
+  <button data-tab="spend"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 7h11.17l-2.58-2.59L17 3l5 5-5 5-1.41-1.41L18.17 9H7zm10 10H5.83l2.58 2.59L7 21l-5-5 5-5 1.41 1.41L5.83 15H17z"/></svg></span>Расходы</button>
   <button data-tab="year"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 11h4v9H4zM10 4h4v16h-4zM16 8h4v12h-4z"/></svg></span>Год</button>
   <button data-tab="settings"><span class="ic"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.48.48 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></span>Настройки</button>
 </nav>
@@ -233,13 +252,37 @@ const plural = (n, a, b, c) => { const m10 = n % 10, m100 = n % 100; return m10 
 
 /* ---------- курс Национального банка Грузии ---------- */
 const NBG = d => `https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/en/json/?currencies=USD&date=${d}`;
+/* Бережём сайт НБГ: курсы меняются раз в день, поэтому каждый адрес
+   запрашивается не больше одного раза в сутки. Удачный ответ запоминается
+   (прошлые даты — навсегда, сегодняшний курс — до конца дня). Если запрос
+   не удался, следующая попытка — не раньше чем через час. */
+const RETRY_MS = 60 * 60 * 1000;
+let nbgLog = store.get('nbgLog', {});            // адрес -> { day, ok, t }
+for (const k in nbgLog) if (nbgLog[k].day !== today()) delete nbgLog[k];
+store.set('nbgLog', nbgLog);
+async function nbgFetch(url) {
+  const day = today(), e = nbgLog[url];
+  if (e && e.day === day && (e.ok || Date.now() - e.t < RETRY_MS)) {
+    const at = new Date(e.t + RETRY_MS);
+    throw new Error(e.ok ? 'сегодня уже загружено' : `следующая попытка в ${String(at.getHours()).padStart(2, '0')}:${String(at.getMinutes()).padStart(2, '0')}`);
+  }
+  const mark = ok => { nbgLog[url] = { day, ok, t: Date.now() }; store.set('nbgLog', nbgLog); };
+  let res;
+  try { res = await fetch(url, { cache: 'no-store' }); } catch (err) { mark(false); throw new Error('нет связи с сайтом НБГ'); }
+  if (!res.ok) { mark(false); throw new Error('сайт НБГ ответил ' + res.status); }
+  try { const j = await res.json(); mark(true); return j; } catch (err) { mark(false); throw new Error('сайт НБГ прислал непонятный ответ'); }
+}
 let rates = store.get('rates', {});            // дата -> { rate, valid }
 const pending = {};
 function getRate(date) {
   if (rates[date]) return Promise.resolve(rates[date]);
   if (pending[date]) return pending[date];
-  return pending[date] = fetch(NBG(date), { cache: 'no-store' })
-    .then(r => { if (!r.ok) throw new Error('сайт НБГ ответил ' + r.status); return r.json(); })
+  // курс доллара на сегодня мог прийти вместе с остальными валютами
+  if (date === today() && fx && fx.date === date && fx.r.USD) {
+    rates[date] = { rate: fx.r.USD, valid: fx.valid || date }; store.set('rates', rates);
+    return Promise.resolve(rates[date]);
+  }
+  return pending[date] = nbgFetch(NBG(date))
     .then(j => {
       const c = j && j[0] && (j[0].currencies || []).find(x => x.code === 'USD');
       if (!c) throw new Error('на эту дату курса нет');
@@ -259,6 +302,36 @@ const rateOf = r => r.manual ? r.rate : (rates[r.date] ? rates[r.date].rate : nu
 const gelOf = r => { const k = rateOf(r); return k ? r2(r.usd * k) : null; };
 let taxRate = store.get('tax', 1);
 const LIMIT = 500000;
+
+/* ---------- все курсы НБГ на дату (для конвертера) ---------- */
+const CUR = {
+  GEL: { s: '₾', n: 'Грузинский лари' }, USD: { s: '$', n: 'Доллар США' }, EUR: { s: '€', n: 'Евро' }, RUB: { s: '₽', n: 'Российский рубль' },
+  TRY: { s: '₺', n: 'Турецкая лира' }, AMD: { s: '֏', n: 'Армянский драм' }, AZN: { s: '₼', n: 'Азербайджанский манат' }, GBP: { s: '£', n: 'Фунт стерлингов' },
+  KZT: { s: '₸', n: 'Казахстанский тенге' }, UAH: { s: '₴', n: 'Гривна' }, AED: { s: 'د.إ', n: 'Дирхам ОАЭ' }, CNY: { s: '¥', n: 'Юань' },
+  THB: { s: '฿', n: 'Тайский бат' }, PLN: { s: 'zł', n: 'Польский злотый' }, CHF: { s: '₣', n: 'Швейцарский франк' }, ILS: { s: '₪', n: 'Шекель' }
+};
+let fx = store.get('fx', null);                 // { date, valid, r: { USD: ₾ за 1, ... } }
+let fxErr = null;
+async function loadFx(want) {
+  if (fx && fx.date === now && want.every(c => c === 'GEL' || fx.r[c])) return;
+  const r = fx && fx.date === now ? { ...fx.r } : {};
+  let valid = fx && fx.date === now ? fx.valid : '';
+  const take = j => { for (const c of (j && j[0] && j[0].currencies) || []) { r[c.code] = c.rate / (c.quantity || 1); valid = valid || (c.validFromDate || j[0].date || '').slice(0, 10); } };
+  const base = `https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/en/json/?date=${now}`;
+  if (rates[now] && !r.USD) { r.USD = rates[now].rate; valid = valid || rates[now].valid; }
+  try {
+    if (want.some(c => c !== 'GEL' && !r[c])) { try { take(await nbgFetch(base)); } catch (e) {} }
+    for (const c of want) if (c !== 'GEL' && !r[c]) take(await nbgFetch(base + '&currencies=' + c));
+    const miss = want.filter(c => c !== 'GEL' && !r[c]);
+    fx = { date: now, valid, r }; store.set('fx', fx);
+    fxErr = miss.length ? 'нет курса для ' + miss.join(', ') : null;
+  } catch (e) { fxErr = e.message; }
+}
+let fxList = store.get('fxList', ['GEL', 'USD', 'RUB', 'EUR']);
+let fxBase = store.get('fxBase', { c: 'USD', v: 100 });
+const fxRate = c => c === 'GEL' ? 1 : (fx && fx.r[c]) || null;      // лари за 1 единицу
+const fxFmt = (x, c) => { const n = Math.abs(x) >= 1000 || ['RUB', 'AMD', 'KZT'].includes(c) && Math.abs(x) >= 100 ? 0 : 2; return x.toLocaleString('ru-RU', { minimumFractionDigits: n, maximumFractionDigits: n }); };
+const fxNum = s => parseFloat(String(s).replace(/\s/g, '').replace(',', '.'));
 
 async function loadMissing() {
   const dates = [...new Set(rows.filter(r => !r.manual && !rates[r.date]).map(r => r.date))];
@@ -379,10 +452,52 @@ function renderSettings() {
   $('#taxIn').oninput = e => { taxRate = Math.max(0, parseFloat(e.target.value) || 0); store.set('tax', taxRate); };
 }
 
+function renderSpend() {
+  const stale = fx && fx.date !== now;
+  const sub = fx && !stale ? `по курсу НБГ на ${longDate(fx.valid || now)}` : fxErr ? 'курс не загрузился' : 'загружаю курсы НБГ…';
+  const baseK = fxRate(fxBase.c);
+  const rows = fxList.map(c => {
+    const k = fxRate(c), on = c === fxBase.c;
+    const val = on ? fxBase.v : baseK && k ? fxBase.v * baseK / k : null;
+    const note = c === 'GEL' ? 'лари' : k ? (k < 0.1 ? `${(k * 100).toFixed(4).replace('.', ',')} ₾ за 100` : `${k.toFixed(4).replace('.', ',')} ₾`) : 'курса нет';
+    return `<div class="fxrow ${on ? 'on' : ''}" data-c="${c}">
+      <span class="sym">${CUR[c].s}</span>
+      <span class="nm"><b>${c}</b><i>${note}</i></span>
+      <input class="num" inputmode="decimal" id="fx${c}" aria-label="${CUR[c].n}" value="${val == null || val === '' ? '' : on ? String(val).replace('.', ',') : fxFmt(val, c)}" placeholder="—">
+      ${fxList.length > 2 ? `<button class="rm" data-act="fxrm" data-c="${c}" aria-label="Убрать ${c}">✕</button>` : ''}
+    </div>`;
+  }).join('');
+  const others = Object.keys(CUR).filter(c => !fxList.includes(c));
+  $main.innerHTML = `
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">Личные расходы</div><div class="sub">${sub}</div></div></div>
+    <div class="card fx" style="--d:40ms">${rows}
+      <div class="chips">${[10, 50, 100, 1000].map(v => `<button data-act="fxset" data-v="${v}">${v.toLocaleString('ru-RU')} <span class="cs">${CUR[fxBase.c].s}</span></button>`).join('')}</div>
+      ${others.length ? `<select class="in addsel" id="fxAdd"><option value="">+ добавить валюту</option>${others.map(c => `<option value="${c}">${c} · ${CUR[c].n}</option>`).join('')}</select>` : ''}
+    </div>
+    ${fxErr ? `<p class="hint" style="margin:12px 24px;color:var(--danger)">Курс НБГ не загрузился: ${esc(fxErr)}.${fx ? ` Показан курс на ${longDate(fx.valid || fx.date)}.` : ''}</p>` : ''}
+    <p class="hint" style="margin:12px 24px">Впишите сумму в любой строке — остальные пересчитаются через лари по официальному курсу НБГ. Это для прикидки: в обменниках и банках курс будет немного другим.</p>`;
+  for (const c of fxList) {
+    const inp = $('#fx' + c);
+    inp.oninput = () => { fxBase = { c, v: inp.value }; store.set('fxBase', fxBase); updateSpend(c); };
+  }
+  const add = $('#fxAdd');
+  if (add) add.onchange = () => { if (add.value) { fxList.push(add.value); store.set('fxList', fxList); loadFx(fxList).then(() => tab === 'spend' && render()); render(); } };
+}
+function updateSpend(src) {
+  const v = fxNum(fxBase.v), k0 = fxRate(fxBase.c);
+  for (const c of fxList) {
+    const row = document.querySelector(`.fxrow[data-c="${c}"]`); row.classList.toggle('on', c === src);
+    if (c === src) continue;
+    document.querySelectorAll('.chips .cs').forEach(x => x.textContent = CUR[src].s);
+    const k = fxRate(c);
+    $('#fx' + c).value = isFinite(v) && k0 && k ? fxFmt(v * k0 / k, c) : '';
+  }
+}
+
 function render(anim) {
   $main.classList.toggle('intro', !!anim);
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
-  if (tab === 'income') renderIncome(); else if (tab === 'year') renderYear(); else renderSettings();
+  if (tab === 'income') renderIncome(); else if (tab === 'year') renderYear(); else if (tab === 'spend') renderSpend(); else renderSettings();
 }
 
 /* ---------- окно прихода ---------- */
@@ -498,6 +613,8 @@ document.addEventListener('click', e => {
     case 'del': $('#delBox').innerHTML = `<div class="confirm">Удалить этот приход?<div class="row"><button class="btn outline" data-act="delno">Нет</button><button class="btn primary" data-act="delyes">Удалить</button></div></div>`; break;
     case 'delno': $('#delBox').innerHTML = ''; break;
     case 'delyes': rows = rows.filter(r => r.id !== edit.id); save(); closeModal(); render(); toast('Приход удалён'); break;
+    case 'fxset': fxBase = { c: fxBase.c, v: el.dataset.v }; store.set('fxBase', fxBase); render(); break;
+    case 'fxrm': fxList = fxList.filter(c => c !== el.dataset.c); if (fxBase.c === el.dataset.c) fxBase = { c: fxList[0], v: fxBase.v }; store.set('fxList', fxList); store.set('fxBase', fxBase); render(); break;
     case 'theme': applyTheme(el.dataset.id); render(); break;
     case 'export': exportCsv(); break;
     case 'import': $('#importFile').click(); break;
@@ -515,8 +632,12 @@ $('#importFile').onchange = e => {
 };
 
 render(true);
-getRate(now).then(v => { todayRate = v; }).catch(e => { todayErr = e.message; }).finally(() => { if (tab === 'income') render(); });
-loadMissing();
+// сначала один запрос всех валют на сегодня, из него же берётся курс доллара
+loadFx(fxList).finally(() => {
+  if (tab === 'spend') render();
+  getRate(now).then(v => { todayRate = v; }).catch(e => { todayErr = e.message; }).finally(() => { if (tab === 'income') render(); });
+  loadMissing();
+});
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
