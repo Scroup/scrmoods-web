@@ -610,6 +610,10 @@ function renderPlan() {
 function planOut() {
   const box = $('#planOut'); if (!box) return;
   const c = planCalc(), neg = c.free < 0;
+  // валюта показа: лари, доллары или евро (считается всё равно через лари по курсу НБГ)
+  const V = plan.view && (plan.view === 'GEL' || fxRate(plan.view)) ? plan.view : 'GEL', kV = V === 'GEL' ? 1 : fxRate(V);
+  const num = g => money(g / kV, 0), pv = g => `${num(g)} ${CUR[V].s}`;
+  const second = g => V === 'GEL' ? eqUsd(g).trim() : `≈ ${money(g, 0)} ₾`;
   const noRate = [...plan.inc, ...plan.exp, ...plan.goals, plan.saved].some(x => x.c !== 'GEL' && !fxRate(x.c));
   // график накоплений
   const W = 340, H = 150, top = 16, bot = 18, n = c.months.length;
@@ -631,20 +635,21 @@ function planOut() {
     const when = !g.t ? '<b>впишите сумму</b>' : g.at === -1 ? '<b>уже накоплено</b>'
       : g.at ? `<b>${MONTHS[g.at.m]} ${g.at.y}</b><span>${g.at.k === 0 ? 'в этом месяце' : 'через ' + (g.at.k + 1) + ' ' + plural(g.at.k + 1, 'месяц', 'месяца', 'месяцев')}</span>`
       : '<b>не накопится</b><span>расходы больше доходов</span>';
-    return `<div class="goal"><div class="pline" style="padding:0"><b style="font-size:16px">${esc(g.g.n || 'Цель')}</b><b class="num">${money(g.t, 0)} ₾</b></div>
+    return `<div class="goal"><div class="pline" style="padding:0"><b style="font-size:16px">${esc(g.g.n || 'Цель')}</b><b class="num">${pv(g.t)}</b></div>
       <div class="gbar"><i style="width:${pct}%"></i></div>
       <div class="eta ${g.at || !g.t ? '' : 'no'}">${when}</div></div>`;
   }).join('');
   box.innerHTML = `
     <div class="card" style="--d:40ms">
+      <div class="seg small" style="margin-top:14px">${['GEL', 'USD', 'EUR'].map(k => `<button data-act="plview" data-c="${k}" class="${V === k ? 'on' : ''}" ${k !== 'GEL' && !fxRate(k) ? 'disabled' : ''}>${CUR[k].s} ${k === 'GEL' ? 'Лари' : k === 'USD' ? 'Доллары' : 'Евро'}</button>`).join('')}</div>
       <div class="yearbig" style="padding-bottom:0"><div class="k">${neg ? 'Не хватает в месяц' : 'Свободно в месяц'}</div>
-        <div class="pfree num ${neg ? 'neg' : ''}">${money(Math.abs(c.free), 0)} <small>₾</small></div>
-        <div class="speq num">${eqUsd(Math.abs(c.free)).trim()}${!neg && c.inc ? ` · ${money(c.free / c.inc * 100, 0)}% дохода` : ''}</div></div>
+        <div class="pfree num ${neg ? 'neg' : ''}">${num(Math.abs(c.free))} <small>${CUR[V].s}</small></div>
+        <div class="speq num">${second(Math.abs(c.free))}${!neg && c.inc ? ` · ${money(c.free / c.inc * 100, 0)}% дохода` : ''}</div></div>
       <div style="margin-top:12px">
-        <div class="pline"><span>доходы</span><b class="num">${money(c.inc, 0)} ₾</b></div>
-        ${plan.tax ? `<div class="pline"><span>налог ${String(taxRate).replace('.', ',')}%</span><b class="num">− ${money(c.tax, 0)} ₾</b></div>` : ''}
-        <div class="pline"><span>обязательные расходы</span><b class="num">− ${money(c.exp, 0)} ₾</b></div>
-        <div class="pline sum"><span>за год останется</span><b class="num">${money(c.free * 12, 0)} ₾</b></div>
+        <div class="pline"><span>доходы</span><b class="num">${pv(c.inc)}</b></div>
+        ${plan.tax ? `<div class="pline"><span>налог ${String(taxRate).replace('.', ',')}%</span><b class="num">− ${pv(c.tax)}</b></div>` : ''}
+        <div class="pline"><span>обязательные расходы</span><b class="num">− ${pv(c.exp)}</b></div>
+        <div class="pline sum"><span>за год останется</span><b class="num">${pv(c.free * 12)}</b></div>
       </div>
       ${noRate ? `<p class="hint" style="color:var(--danger)">Курс НБГ ещё не загрузился — суммы в долларах и евро пока не учтены.</p>` : ''}
     </div>
@@ -654,7 +659,7 @@ function planOut() {
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;margin-top:12px" role="img" aria-label="Накопления по месяцам">
         <line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" stroke="var(--rule)"/>${bars}${glines}${labels}</svg>
       <div style="margin-top:8px">${rowsList.map(r => `<div class="prow"><span class="mn">${r.l}${r.gl ? `<br><span class="gl">цель: ${esc(r.gl.join(', '))}</span>` : ''}</span>
-        ${r.add != null ? `<span class="mu num">${r.add >= 0 ? '+' : '−'}${money(Math.abs(r.add), 0)}</span>` : ''}<span class="mg num" style="${r.bal < 0 ? 'color:var(--danger)' : ''}">${money(r.bal, 0)} ₾</span></div>`).join('')}</div>
+        ${r.add != null ? `<span class="mu num">${r.add >= 0 ? '+' : '−'}${num(Math.abs(r.add))}</span>` : ''}<span class="mg num" style="${r.bal < 0 ? 'color:var(--danger)' : ''}">${pv(r.bal)}</span></div>`).join('')}</div>
     </div>`;
 }
 
@@ -1014,6 +1019,7 @@ document.addEventListener('click', e => {
     case 'spdel': $('#delBox').innerHTML = `<div class="confirm">Удалить этот расход?<div class="row"><button class="btn outline" data-act="delno">Нет</button><button class="btn primary" data-act="spdelyes" data-id="${el.dataset.id}">Удалить</button></div></div>`; break;
     case 'spdelyes': spends = spends.filter(x => x.id !== el.dataset.id); saveSpends(); closeModal(); render(); toast('Расход удалён'); break;
     case 'exportsp': exportCsv('spend'); break;
+    case 'plview': plan.view = el.dataset.c; store.set('plan', plan); planOut(); break;
     case 'plh': plan.horizon = +el.dataset.h; savePlan(); planOut(); break;
     case 'pladd': { const k = el.dataset.kind; plan[k].push({ id: newId(), n: '', a: '', c: k === 'inc' ? 'USD' : 'GEL' }); savePlan(); render();
       const rows = document.querySelectorAll(`.pitem[data-kind="${k}"] .pn`); rows[rows.length - 1].focus(); break; }
