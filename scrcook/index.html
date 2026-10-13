@@ -36,7 +36,10 @@ a { color: var(--acc); }
 #top { position: fixed; top: 0; left: 0; right: 0; z-index: 10; background: var(--paper); padding-top: var(--safe-top); }
 #top .row { height: 56px; display: flex; align-items: center; padding: 0 16px 0 24px; max-width: 620px; margin: 0 auto; }
 #top h1 { flex: 1; margin: 0; font-size: 21px; font-weight: 500; font-style: italic; color: var(--acc); }
-#top .sync { font-size: 13px; font-style: italic; color: var(--soft); }
+#top .tpill { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px 0 10px; border-radius: 17px; background: var(--wash); color: var(--acc); font-size: 15px; font-weight: 500; }
+#top .tpill svg { width: 18px; height: 18px; fill: currentColor; }
+#top .tpill.ring { background: var(--acc); color: var(--on-acc); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(1.06); } }
 
 /* нижняя навигация */
 #nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; background: var(--paper); border-top: 1px solid var(--rule);
@@ -166,25 +169,76 @@ h3.gt { margin: 14px 0 0; font-size: 13px; font-weight: 500; letter-spacing: .06
 #toast.in { opacity: 1; transform: translate(-50%, 0); }
 #main.intro > * { animation: rise .5s cubic-bezier(.16, 1, .3, 1) both; animation-delay: var(--d, 0ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { #main.intro > * { animation: none; } #toast { transition: none; } }
+/* таймеры */
+.tset { padding-top: 6px; }
+.dial { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 0 4px; }
+.dial .step { width: 48px; height: 48px; flex: none; border-radius: 50%; border: 1px solid var(--rule); background: var(--paper); font-size: 22px; color: var(--acc); }
+.dial .val { min-width: 0; text-align: center; }
+.dial input { width: 3.2ch; border: 0; background: transparent; text-align: center; font-size: 46px; line-height: 54px; font-weight: 500; padding: 0; }
+.dial input:focus { outline: none; color: var(--acc); }
+.dial .colon { font-size: 40px; color: var(--faint); }
+.dial .u { display: block; font-size: 12.5px; font-style: italic; color: var(--soft); text-align: center; margin-top: -2px; }
+.presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
+.presets button { min-height: 40px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); font-size: 14.5px; }
+.tl { display: flex; align-items: center; gap: 12px; padding: 14px 2px; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
+.tl:last-child { border-bottom: 0; }
+.tl .ring { width: 54px; height: 54px; flex: none; position: relative; }
+.tl .ring svg { width: 54px; height: 54px; transform: rotate(-90deg); }
+.tl .ring circle { fill: none; stroke-width: 5; }
+.tl .ring .bg { stroke: var(--rule); } .tl .ring .fg { stroke: var(--acc); stroke-linecap: round; transition: stroke-dashoffset .25s linear; }
+.tl .m { flex: 1; min-width: 0; }
+.tl .left { display: block; font-size: 30px; line-height: 34px; font-weight: 500; }
+.tl .lab { display: block; font-size: 13.5px; font-style: italic; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tl .acts { display: flex; gap: 6px; flex: none; }
+.tl .acts button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--rule); background: var(--paper); font-size: 13px; color: var(--acc); display: grid; place-items: center; }
+.tl .acts svg { width: 18px; height: 18px; fill: currentColor; }
+.tl.paused .left { color: var(--faint); }
+.tl.done .left { color: var(--acc); }
+.stimer { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); color: var(--acc); font-size: 13.5px; font-style: normal; }
+.stimer svg { width: 15px; height: 15px; fill: currentColor; }
+.setrow { display: flex; align-items: center; gap: 12px; padding: 12px 0; text-align: left; width: 100%; }
+.setrow .l { flex: 1; } .setrow .l i { display: block; font-size: 13px; color: var(--soft); }
+.sw { width: 46px; height: 28px; flex: none; border-radius: 14px; background: var(--rule); position: relative; transition: background .2s; }
+.sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--page); transition: transform .2s; }
+.sw.on { background: var(--acc); } .sw.on::after { transform: translateX(18px); }
+#alarm { position: fixed; inset: 0; z-index: 80; background: var(--acc); color: var(--on-acc); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  padding: calc(24px + var(--safe-top)) 24px calc(24px + var(--safe-bottom)); text-align: center; }
+#alarm.open { display: flex; }
+#alarm .bell svg { width: 72px; height: 72px; fill: currentColor; animation: shake .9s ease-in-out infinite; }
+@keyframes shake { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-14deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-8deg); } 80% { transform: rotate(5deg); } }
+#alarm .al { font-size: 34px; line-height: 40px; font-weight: 500; text-wrap: balance; }
+#alarm .as { font-size: 16px; font-style: italic; opacity: .85; }
+#alarm .ab { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 340px; margin-top: 18px; }
+#alarm .ab button { padding: 16px; border-radius: 999px; font-size: 18px; font-weight: 500; }
+#alarm .ab .off { background: var(--on-acc); color: var(--acc); }
+#alarm .ab .more { display: flex; gap: 10px; } #alarm .ab .more button { flex: 1; border: 1px solid color-mix(in srgb, var(--on-acc) 55%, transparent); font-size: 16px; }
+@media (prefers-reduced-motion: reduce) { #main.intro > * { animation: none; } #toast { transition: none; } #alarm .bell svg, #top .tpill.ring { animation: none; } }
 </style>
 </head>
 <body>
 <div id="top"><div class="row">
   <h1>scrcook</h1>
-  <span class="sync" id="sync"></span>
+  <button class="tpill" id="tpill" data-act="gotimer" hidden><svg viewBox="0 0 24 24"><path d="M15 1H9v2h6zm-4 13h2V8h-2zm8.03-6.61 1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.96 8.96 0 0 0 12 4a9 9 0 1 0 9 9c0-2.12-.74-4.07-1.97-5.61zM12 20a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></svg><span class="num" id="tpillT"></span></button>
 </div></div>
 
 <main id="main"></main>
 
 <nav id="nav">
   <button data-tab="recipes"><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM9 4h2v5l-1-.75L9 9zm9 16H6V4h1v9l3-2.25L13 13V4h5z"/></svg></span>Рецепты</button>
+  <button data-tab="timer"><span class="ic"><svg viewBox="0 0 24 24"><path d="M15 1H9v2h6zm-4 13h2V8h-2zm8.03-6.61 1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.96 8.96 0 0 0 12 4a9 9 0 1 0 9 9c0-2.12-.74-4.07-1.97-5.61zM12 20a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></svg></span>Таймер</button>
   <button data-tab="shop"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7.2 14.8h9.9c.75 0 1.4-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 21.55 6H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 17.37 5.48 19 7 19h12v-2H7l1.1-2z"/></svg></span>Покупки<span class="badge" id="badge" hidden></span></button>
   <button data-tab="stores"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></span>Магазины</button>
   <button data-tab="settings"><span class="ic"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.48.48 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></span>Настройки</button>
 </nav>
 
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="alarm" role="alertdialog" aria-modal="true" aria-labelledby="alarmL">
+  <div class="bell"><svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1z"/></svg></div>
+  <div class="al" id="alarmL">Время вышло</div>
+  <div class="as" id="alarmS"></div>
+  <div class="ab"><button class="off" data-act="alarmoff">Выключить</button>
+    <div class="more"><button data-act="alarmmore" data-s="60">+1 мин</button><button data-act="alarmmore" data-s="300">+5 мин</button></div></div>
+</div>
 
 <script>
 'use strict';
@@ -316,7 +370,7 @@ function renderRecipe() {
     <div class="card" style="--d:120ms"><h2 class="hl">Ингредиенты</h2>${ing}
       <p class="hint">Отмечайте, что уже положили или что есть дома. Отмеченное не попадёт в покупки.</p></div>
     <div class="card" style="--d:140ms"><h2 class="hl">Приготовление</h2>
-      <ol class="steps">${r.steps.map(s => `<li><p>${esc(s[0])}${s[1] ? `<span class="tip">${esc(s[1])}</span>` : ''}</p></li>`).join('')}</ol></div>
+      <ol class="steps">${r.steps.map(s => `<li><p>${esc(s[0])}${s[1] ? `<span class="tip">${esc(s[1])}</span>` : ''}${stepTimers(s[0], r)}</p></li>`).join('')}</ol></div>
     ${r.notes && r.notes.length ? `<div class="note" style="--d:160ms">${r.notes.map(t => `<p>${esc(t)}</p>`).join('')}</div>` : ''}
     <p class="hint" style="margin:14px 24px">Рецепт из рилса <a href="${r.url}" target="_blank" rel="noopener">@${esc(r.author)}</a>, ${esc(r.date)}.
       ${items(r).some((_, i) => checks[r.id + '|' + i]) ?'<button data-act="uncheck" style="color:var(--acc);font-style:italic">Снять все отметки</button>' : ''}</p>`;
@@ -373,6 +427,10 @@ function renderSettings() {
         <span class="mini" style="display:block;background:${t.page};border-color:${t.rule}"><i style="background:${t.acc};width:60%"></i><i style="background:${t.rule}"></i>
         <span class="pills"><b style="background:${t.acc}"></b><b style="background:${t.paper};border-color:${t.rule}"></b></span></span>
         <span class="nm">${t.name}</span></button>`).join('')}</div></div>
+    <div class="section" style="--d:20ms"><h2 class="hl">Таймер</h2>
+      <button class="setrow" data-act="opt" data-k="sound"><span class="l">Звук<i>когда время вышло, играет сигнал, пока не нажмёте «Выключить»</i></span><span class="sw ${opts.sound ? 'on' : ''}"></span></button>
+      <button class="setrow" data-act="opt" data-k="awake"><span class="l">Не гасить экран<i>пока идёт таймер — чтобы сигнал точно прозвучал</i></span><span class="sw ${opts.awake ? 'on' : ''}"></span></button>
+      <button class="setrow" data-act="notif"><span class="l">Уведомления<i>${notifText()}</i></span><span class="sw ${notifOn() ? 'on' : ''}"></span></button></div>
     <div class="section" style="--d:40ms"><h2 class="hl">Данные</h2>
       <p class="hint" style="margin:6px 0 8px">Отметки и список покупок хранятся только на этом устройстве, отдельно от scrmoods и scrmoney.</p>
       <button class="btn outline" data-act="resetChecks">Снять все отметки в рецептах</button>
@@ -380,11 +438,189 @@ function renderSettings() {
     <p class="hint" style="margin:20px 24px">Рисунки блюд временные, свои фото подставляются через IMAGES в index.html. Рецепты переписаны из описаний рилсов в Инстаграме, авторы указаны в каждом рецепте. Английские рецепты переведены, чашки и унции пересчитаны в граммы и миллилитры.</p>`;
 }
 
+
+/* ---------- таймер ---------- */
+// Таймеры хранят время окончания, поэтому переживают перезапуск приложения.
+// iPhone останавливает страницу, когда экран гаснет или приложение свёрнуто:
+// тогда сигнал прозвучит, как только вы вернётесь. Поэтому есть «не гасить экран».
+let timers = store.get('timers', []);            // [{ id, label, dur, end, left (на паузе), rang }]
+let opts = Object.assign({ sound: true, awake: true }, store.get('opts', {}));
+let dial = store.get('dial', 600);
+const saveTimers = () => store.set('timers', timers);
+const remain = t => t.left != null ? t.left : Math.max(0, t.end - Date.now());
+const pad = n => String(n).padStart(2, '0');
+const fmt = ms => { const s = Math.ceil(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? `${h}:${pad(m)}:${pad(x)}` : `${pad(m)}:${pad(x)}`; };
+const fmtShort = s => s >= 3600 ? (s % 3600 ? `${Math.floor(s / 3600)} ч ${Math.round(s % 3600 / 60)} мин` : `${s / 3600} ч`) : s >= 60 ? (s % 60 ? `${Math.floor(s / 60)} мин ${s % 60} с` : `${s / 60} мин`) : `${s} с`;
+const PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>', PAUSE = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg>', X = '<svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+
+// «30 минут», «15–20 минут», «1,5 часа», «~25 мин» в тексте шага -> кнопки таймера
+function stepTimers(text, r) {
+  const re = /(\d+(?:[,.]\d+)?)(?:\s*[–-]\s*(\d+(?:[,.]\d+)?))?\s*(час|ч\b|минут|мин)/gi, out = [];
+  let m;
+  while ((m = re.exec(text))) {
+    const k = /^ч/i.test(m[3]) ? 3600 : 60, a = parseFloat(m[1].replace(',', '.')), b = m[2] ? parseFloat(m[2].replace(',', '.')) : null;
+    const sec = Math.round(a * k);
+    if (sec < 30 || sec > 6 * 3600 || out.some(o => o[0] === sec)) continue;
+    out.push([sec, b ? `${m[1]}–${m[2]} ${k === 60 ? 'мин' : 'ч'}` : null]);
+  }
+  return out.map(([sec, range]) => `<button class="stimer" data-act="tstepstart" data-s="${sec}" data-l="${esc(r.title)}">${CLOCK}Таймер ${fmtShort(sec)}${range ? ` <i style="opacity:.7">(${range}, потом проверить)</i>` : ''}</button>`).join(' ');
+}
+const CLOCK = '<svg viewBox="0 0 24 24"><path d="M15 1H9v2h6zm-4 13h2V8h-2zm8.03-6.61 1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42A8.96 8.96 0 0 0 12 4a9 9 0 1 0 9 9c0-2.12-.74-4.07-1.97-5.61zM12 20a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></svg>';
+
+function startTimer(sec, label) {
+  unlockAudio(); askNotif();
+  const t = { id: Date.now(), label: label || '', dur: sec * 1000, end: Date.now() + sec * 1000, left: null, rang: false };
+  timers.push(t); saveTimers(); wake(); tickNow();
+  if (tab === 'timer') render(); else toast('Таймер на ' + fmtShort(sec) + ' запущен');
+}
+function pauseTimer(id) {
+  const t = timers.find(x => x.id === id); if (!t || t.rang) return;
+  if (t.left == null) t.left = Math.max(0, t.end - Date.now()); else { t.end = Date.now() + t.left; t.left = null; }
+  saveTimers(); render();
+}
+function addTime(id, sec) {
+  const t = timers.find(x => x.id === id); if (!t) return;
+  if (t.rang) { t.rang = false; t.end = Date.now() + sec * 1000; t.dur = sec * 1000; }
+  else if (t.left != null) { t.left += sec * 1000; t.dur += sec * 1000; }
+  else { t.end += sec * 1000; t.dur += sec * 1000; }
+  saveTimers(); wake(); render();
+}
+function setDial(v) { dial = Math.max(0, Math.min(v, 6 * 3600 - 1)); store.set('dial', dial); const mm = $('#tMin'), ss = $('#tSec'); if (mm) { mm.value = Math.floor(dial / 60); ss.value = pad(dial % 60); } }
+
+function renderTimer() {
+  const run = timers.filter(t => !t.rang).sort((a, b) => remain(a) - remain(b)), done = timers.filter(t => t.rang);
+  const row = t => {
+    const left = t.rang ? 0 : remain(t), C = 2 * Math.PI * 23, off = C * (1 - (t.dur ? left / t.dur : 0));
+    return `<div class="tl ${t.left != null ? 'paused' : ''} ${t.rang ? 'done' : ''}" data-tid="${t.id}">
+      <span class="ring"><svg viewBox="0 0 54 54"><circle class="bg" cx="27" cy="27" r="23"/><circle class="fg" cx="27" cy="27" r="23" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg></span>
+      <span class="m"><span class="left num">${t.rang ? 'Готово' : fmt(left)}</span><span class="lab">${esc(t.label || 'Таймер')} · ${t.rang ? 'время вышло' : t.left != null ? 'на паузе' : 'до ' + new Date(t.end).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</span></span>
+      <span class="acts">${t.rang ? '' : `<button data-act="tpause" data-id="${t.id}" aria-label="${t.left != null ? 'Продолжить' : 'Пауза'}">${t.left != null ? PLAY : PAUSE}</button>`}
+        <button data-act="tadd" data-id="${t.id}" aria-label="Добавить минуту">+1</button>
+        <button data-act="tdel" data-id="${t.id}" aria-label="Убрать таймер">${X}</button></span></div>`;
+  };
+  $main.innerHTML = `
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">Таймер</div>
+      <div class="sub">${run.length ? 'идёт ' + run.length + ' ' + plural(run.length, 'таймер', 'таймера', 'таймеров') : 'можно запустить несколько сразу'}</div></div></div>
+    ${timers.length ? `<div class="card" style="--d:40ms"><h2 class="hl">Идут</h2>${run.map(row).join('')}${done.map(row).join('')}</div>` : ''}
+    <div class="card tset" style="--d:80ms"><h2 class="hl">Новый таймер</h2>
+      <div class="dial">
+        <button class="step" data-act="tstep" data-s="-60" aria-label="Минус минута">−</button>
+        <span class="val"><input class="num" id="tMin" inputmode="numeric" maxlength="3" value="${Math.floor(dial / 60)}" aria-label="Минуты"><span class="u">мин</span></span>
+        <span class="colon">:</span>
+        <span class="val"><input class="num" id="tSec" inputmode="numeric" maxlength="2" value="${pad(dial % 60)}" aria-label="Секунды"><span class="u">сек</span></span>
+        <button class="step" data-act="tstep" data-s="60" aria-label="Плюс минута">+</button>
+      </div>
+      <input class="in" id="tLabel" type="text" maxlength="40" placeholder="Что готовится: картошка, духовка…" style="margin-top:10px">
+      <button class="btn primary" data-act="tstart" style="margin-top:12px">Запустить</button>
+      <div class="presets">${[1, 3, 5, 8, 10, 15, 20, 25, 30, 40, 45, 60].map(m => `<button data-act="tpreset" data-s="${m * 60}">${m === 60 ? '1 ч' : m + ' мин'}</button>`).join('')}</div>
+      <p class="hint">Кнопки снизу сразу запускают таймер. В шагах рецептов тоже есть кнопки с временем из шага.</p>
+    </div>
+    <p class="hint" style="margin:14px 24px">${isIOS ? 'На iPhone приложение засыпает, когда гаснет экран или вы переключаетесь в другое приложение, — тогда сигнал прозвучит, как только вы вернётесь. Поэтому, пока идёт таймер, экран не гаснет (можно выключить в настройках). Чтобы будильник сработал на заблокированном телефоне, надёжнее попросить Siri: «Поставь таймер на 10 минут».' : 'Когда время выйдет, прозвучит сигнал и придёт уведомление, если оно разрешено в настройках.'}</p>`;
+  const mm = $('#tMin'), ss = $('#tSec');
+  const read = () => { const v = (parseInt(mm.value) || 0) * 60 + Math.min(59, parseInt(ss.value) || 0); dial = Math.max(0, v); store.set('dial', dial); };
+  mm.oninput = ss.oninput = read;
+  ss.onblur = () => { ss.value = pad(dial % 60); mm.value = Math.floor(dial / 60); };
+  mm.onfocus = ss.onfocus = e => e.target.select();
+}
+
+/* тик: обновляем цифры на месте, без перерисовки */
+let tickT = null;
+function tickNow() {
+  let fired = null;
+  for (const t of timers) if (!t.rang && t.left == null && t.end <= Date.now()) { t.rang = true; fired = t; }
+  if (fired) { saveTimers(); ring(timers.filter(t => t.rang && !t.seen)); }
+  const run = timers.filter(t => !t.rang && t.left == null).sort((a, b) => a.end - b.end);
+  const pill = $('#tpill'), anyRing = timers.some(t => t.rang && !t.seen);
+  pill.hidden = !run.length && !anyRing;
+  pill.classList.toggle('ring', anyRing);
+  $('#tpillT').textContent = anyRing ? 'Готово' : run.length ? fmt(remain(run[0])) : '';
+  if (tab === 'timer') document.querySelectorAll('.tl[data-tid]').forEach(el => {
+    const t = timers.find(x => x.id === +el.dataset.tid); if (!t || t.rang) return;
+    const left = remain(t), C = 2 * Math.PI * 23;
+    el.querySelector('.left').textContent = fmt(left);
+    el.querySelector('.fg').setAttribute('stroke-dashoffset', (C * (1 - left / t.dur)).toFixed(1));
+  });
+  if (fired && tab === 'timer') render();
+  const need = timers.some(t => !t.rang && t.left == null) || anyRing;
+  if (need && !tickT) tickT = setInterval(tickNow, 250);
+  if (!need && tickT) { clearInterval(tickT); tickT = null; }
+  if (!need) wake();
+}
+
+/* сигнал */
+let actx = null, beepT = null, beepStop = null;
+function unlockAudio() {
+  try { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch (e) {}
+}
+function beep() {
+  if (!actx) return;
+  const t0 = actx.currentTime;
+  [0, .18, .36].forEach((d, i) => {
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'sine'; o.frequency.value = i === 2 ? 1175 : 880;
+    g.gain.setValueAtTime(0, t0 + d); g.gain.linearRampToValueAtTime(.35, t0 + d + .02); g.gain.exponentialRampToValueAtTime(.001, t0 + d + .16);
+    o.connect(g).connect(actx.destination); o.start(t0 + d); o.stop(t0 + d + .17);
+  });
+}
+function ring(list) {
+  if (!list.length) return;
+  const late = Date.now() - Math.max(...list.map(t => t.end));
+  $('#alarmL').textContent = list.length > 1 ? 'Время вышло' : (list[0].label || 'Время вышло');
+  $('#alarmS').textContent = (list.length > 1 ? list.map(t => t.label || 'Таймер').join(', ') + ' · ' : list[0].label ? 'время вышло · ' : '') +
+    (late > 60000 ? `закончился ${Math.round(late / 60000)} мин назад` : 'таймер на ' + fmtShort(Math.round(list[0].dur / 1000)));
+  $('#alarm').classList.add('open');
+  if (opts.sound) { unlockAudio(); clearInterval(beepT); beep(); beepT = setInterval(beep, 1100); clearTimeout(beepStop); beepStop = setTimeout(() => clearInterval(beepT), 90000); }
+  try { navigator.vibrate && navigator.vibrate([400, 200, 400, 200, 400]); } catch (e) {}
+  notify(list);
+}
+function stopAlarm(clear) {
+  clearInterval(beepT); clearTimeout(beepStop); $('#alarm').classList.remove('open');
+  if (clear) timers = timers.filter(t => !t.rang);
+  saveTimers(); tickNow(); render();
+}
+function snooze(sec) {
+  const last = timers.filter(t => t.rang);
+  clearInterval(beepT); $('#alarm').classList.remove('open');
+  for (const t of last) { t.rang = false; t.end = Date.now() + sec * 1000; t.dur = sec * 1000; }
+  saveTimers(); wake(); tickNow(); render(); toast('Ещё ' + fmtShort(sec));
+}
+
+/* уведомления */
+const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const notifOn = () => 'Notification' in window && Notification.permission === 'granted';
+function notifText() {
+  if (!('Notification' in window)) return isIOS ? 'на iPhone работают, только если приложение добавлено на экран «Домой»' : 'этот браузер их не поддерживает';
+  return Notification.permission === 'granted' ? 'разрешены' : Notification.permission === 'denied' ? 'запрещены — включите в настройках телефона' : 'нажмите, чтобы разрешить';
+}
+function askNotif() {
+  try { if ('Notification' in window && Notification.permission === 'default') return Notification.requestPermission().catch(() => {}); } catch (e) {}
+  return Promise.resolve();
+}
+async function notify(list) {
+  if (!notifOn()) return;
+  const title = list.length > 1 ? 'Время вышло' : (list[0].label || 'Таймер') + ': время вышло';
+  const opt = { body: list.length > 1 ? list.map(t => t.label || 'Таймер').join(', ') : 'scrcook', icon: 'icon-192.png', tag: 'scrcook-timer', renotify: true, requireInteraction: true };
+  try { const reg = await navigator.serviceWorker.getRegistration(); if (reg) { reg.showNotification(title, opt); return; } } catch (e) {}
+  try { new Notification(title, opt); } catch (e) {}
+}
+
+/* не гасить экран, пока идёт таймер */
+let wakeLock = null;
+async function wake() {
+  const need = opts.awake && timers.some(t => !t.rang && t.left == null);
+  try {
+    if (need && !wakeLock && 'wakeLock' in navigator) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+    if (!need && wakeLock) { await wakeLock.release(); wakeLock = null; }
+  } catch (e) { wakeLock = null; }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { tickNow(); wake(); } });
+window.addEventListener('pageshow', () => tickNow());
+
 function render(anim) {
   $main.classList.toggle('intro', !!anim);
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
   if (tab === 'recipes') (openId ? renderRecipe : renderRecipes)();
-  else if (tab === 'shop') renderShop(); else if (tab === 'stores') renderStores(); else renderSettings();
+  else if (tab === 'timer') renderTimer(); else if (tab === 'shop') renderShop(); else if (tab === 'stores') renderStores(); else renderSettings();
 }
 
 let toastT;
@@ -425,11 +661,24 @@ document.addEventListener('click', e => {
     case 'resetChecks': $('#resetBox').innerHTML = `<div class="confirm">Снять отметки во всех рецептах?<div class="row"><button class="btn outline" data-act="resetno">Нет</button><button class="btn primary" data-act="resetyes">Снять</button></div></div>`; break;
     case 'resetno': $('#resetBox').innerHTML = ''; break;
     case 'resetyes': checks = {}; store.set('checks', checks); render(); toast('Отметки сняты'); break;
+    case 'gotimer': tab = 'timer'; openId = null; render(true); window.scrollTo(0, 0); break;
+    case 'tstep': setDial(dial + (+el.dataset.s)); break;
+    case 'tpreset': startTimer(+el.dataset.s, $('#tLabel') ? $('#tLabel').value.trim() : ''); break;
+    case 'tstart': if (dial > 0) startTimer(dial, $('#tLabel').value.trim()); else toast('Задайте время'); break;
+    case 'tstepstart': startTimer(+el.dataset.s, el.dataset.l); toast('Таймер на ' + fmtShort(+el.dataset.s) + ' запущен'); break;
+    case 'tpause': pauseTimer(+el.dataset.id); break;
+    case 'tadd': addTime(+el.dataset.id, 60); break;
+    case 'tdel': timers = timers.filter(t => t.id !== +el.dataset.id); saveTimers(); render(); break;
+    case 'alarmoff': stopAlarm(true); break;
+    case 'alarmmore': snooze(+el.dataset.s); break;
+    case 'opt': opts[el.dataset.k] = !opts[el.dataset.k]; store.set('opts', opts); if (el.dataset.k === 'awake') wake(); render(); break;
+    case 'notif': askNotif().then(render); break;
   }
 });
 window.addEventListener('popstate', e => { openId = e.state && e.state.r || null; tab = 'recipes'; render(true); window.scrollTo(0, 0); });
 
 history.replaceState({ r: null }, '');
+tickNow(); wake();
 badge();
 render(true);
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
