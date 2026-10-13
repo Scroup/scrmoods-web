@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>scrmoney</title>
+<meta name="theme-color" content="#F3E1DC">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="scrmoney">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+@font-face { font-family: Lora; src: url(../lora_regular.woff) format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: Lora; src: url(../lora_medium.woff) format('woff'); font-weight: 500 700; font-style: normal; font-display: swap; }
+@font-face { font-family: Lora; src: url(../lora_italic.woff) format('woff'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: Lora; src: url(../lora_medium_italic.woff) format('woff'); font-weight: 500 700; font-style: italic; font-display: swap; }
+:root {
+  /* та же палитра, что в scrmoods: какао-чернила на розоватой бумаге */
+  --paper: #F3E1DC; --page: #FFF8F5; --ink: #3B2A25; --soft: #8A6B63; --faint: #C2A49B; --rule: #EBCFC6;
+  --acc: #C0584A; --wash: #F9DCD3; --on-acc: #fff; --good: #93A77F; --warn: #D9B26A; --danger: #A8463F;
+  --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: Lora, Georgia, serif; font-size: 15.5px; line-height: 1.35; }
+body { padding-top: calc(56px + var(--safe-top)); padding-bottom: calc(84px + var(--safe-bottom)); -webkit-text-size-adjust: 100%; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+#main { max-width: 620px; margin: 0 auto; }
+.num { font-variant-numeric: tabular-nums lining-nums; }
+
+/* верхняя полоса */
+#top { position: fixed; top: 0; left: 0; right: 0; z-index: 10; background: var(--paper); padding-top: var(--safe-top); }
+#top .row { height: 56px; display: flex; align-items: center; padding: 0 16px 0 24px; max-width: 620px; margin: 0 auto; }
+#top h1 { flex: 1; margin: 0; font-size: 21px; font-weight: 500; font-style: italic; color: var(--acc); }
+#top .sync { font-size: 13px; font-style: italic; color: var(--soft); }
+
+/* нижняя навигация */
+#nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; background: var(--paper); border-top: 1px solid var(--rule);
+  display: flex; justify-content: center; padding-bottom: var(--safe-bottom); }
+#nav button { flex: 1; max-width: 200px; height: 68px; color: var(--soft); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12.5px; }
+#nav .ic { width: 58px; height: 30px; border-radius: 15px; display: grid; place-items: center; }
+#nav svg { width: 22px; height: 22px; fill: currentColor; }
+#nav button.on { color: var(--acc); font-weight: 500; }
+#nav button.on .ic { background: var(--wash); }
+
+/* заголовок страницы: крупный месяц, курсивная подпись, круглые стрелки */
+.jhead { display: flex; align-items: flex-end; padding: 12px 20px 2px 24px; gap: 8px; }
+.jhead .t { flex: 1; min-width: 0; }
+.jhead .big { font-size: 32px; line-height: 38px; font-weight: 500; letter-spacing: -0.3px; }
+.jhead .sub { font-size: 15.5px; font-style: italic; color: var(--soft); }
+.rbtn { width: 40px; height: 40px; flex: none; border-radius: 50%; background: var(--page); border: 1px solid var(--rule); display: grid; place-items: center; margin-bottom: 4px; color: var(--ink); }
+.rbtn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+.rbtn:disabled { color: var(--rule); }
+
+/* секции: курсивный заголовок и тонкая линия */
+.section { padding: 0 20px; }
+h2.hl { display: flex; align-items: center; gap: 14px; margin: 28px 0 6px; font-size: 19px; line-height: 24px; font-weight: 400; font-style: italic; color: var(--acc); }
+h2.hl::after { content: ""; flex: 1 0 24px; height: 1px; background: var(--rule); }
+.card { background: var(--page); border: 1px solid var(--rule); border-radius: 20px; margin: 12px 10px 0; padding: 4px 16px 16px; }
+.card h2.hl { margin-top: 14px; }
+
+/* курс дня — как цитата дня */
+.rate { display: flex; padding: 12px 24px 4px 18px; gap: 4px; }
+.rate .qm { width: 26px; flex: none; font-size: 30px; line-height: 40px; color: color-mix(in srgb, var(--acc) 55%, transparent); }
+.rate .rv { font-size: 30px; line-height: 38px; font-weight: 500; }
+.rate .rv small { font-size: 17px; font-weight: 400; color: var(--soft); }
+.rate .rs { font-size: 13.5px; font-style: italic; color: var(--soft); margin-top: 2px; }
+.rate .rs.bad { color: var(--danger); }
+
+/* большая кнопка — как «Summary» */
+.sumbtn { display: flex; align-items: center; width: calc(100% - 20px); margin: 12px 10px 0; padding: 14px 18px; border-radius: 20px; background: var(--acc); color: var(--on-acc); text-align: left; }
+.sumbtn > span:first-child { flex: 1; } .sumbtn b { display: block; font-size: 18px; font-weight: 500; } .sumbtn i { font-size: 13.5px; opacity: .85; }
+.sumbtn .plus { width: 34px; height: 34px; border-radius: 50%; background: color-mix(in srgb, var(--on-acc) 18%, transparent); display: grid; place-items: center; font-size: 22px; line-height: 1; }
+
+/* список приходов */
+.inc { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 2px; text-align: left; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
+.inc:last-child { border-bottom: 0; }
+.inc .d { width: 44px; flex: none; text-align: center; }
+.inc .d b { display: block; font-size: 24px; line-height: 26px; font-weight: 500; }
+.inc .d i { font-size: 12px; color: var(--soft); }
+.inc .m { flex: 1; min-width: 0; }
+.inc .m .usd { font-size: 17px; font-weight: 500; }
+.inc .m .note { font-size: 13.5px; font-style: italic; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.inc .g { text-align: right; flex: none; }
+.inc .g b { display: block; font-size: 17px; font-weight: 500; color: var(--acc); }
+.inc .g i { font-size: 12px; color: var(--soft); }
+.inc .g i.manual { color: var(--warn); } .inc .g i.bad { color: var(--danger); }
+.total { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 2px 0; border-top: 1px solid var(--rule); margin-top: 4px; }
+.total span { font-style: italic; color: var(--soft); }
+.total b { font-size: 19px; font-weight: 500; }
+.empty { padding: 24px 8px 12px; text-align: center; font-style: italic; color: var(--soft); line-height: 21px; }
+
+/* итоги года */
+.yearbig { padding: 14px 4px 4px; }
+.yearbig .k { font-size: 14px; font-style: italic; color: var(--soft); }
+.yearbig .v { font-size: 38px; line-height: 44px; font-weight: 500; }
+.yearbig .v small { font-size: 20px; color: var(--soft); font-weight: 400; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.pair > div { background: var(--paper); border-radius: 14px; padding: 10px 12px; }
+.pair .k { font-size: 13px; font-style: italic; color: var(--soft); }
+.pair .v { font-size: 19px; font-weight: 500; }
+.limit { margin-top: 14px; }
+.limit .bar { height: 8px; border-radius: 4px; background: var(--paper); overflow: hidden; }
+.limit .bar i { display: block; height: 100%; border-radius: 4px; background: var(--good); transition: width .5s ease; }
+.limit.hot .bar i { background: var(--warn); } .limit.over .bar i { background: var(--danger); }
+.limit .lt { display: flex; justify-content: space-between; font-size: 12.5px; font-style: italic; color: var(--soft); margin-top: 6px; }
+.chart svg { width: 100%; height: auto; display: block; margin-top: 8px; }
+.mrow { display: flex; align-items: baseline; gap: 10px; width: 100%; padding: 10px 2px; text-align: left; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
+.mrow:last-child { border-bottom: 0; }
+.mrow .mn { flex: 1; } .mrow .mu { font-size: 13.5px; font-style: italic; color: var(--soft); } .mrow .mg { font-weight: 500; min-width: 110px; text-align: right; }
+.mrow.zero { color: var(--faint); } .mrow.zero .mg { font-weight: 400; }
+.hint { font-size: 13px; font-style: italic; color: var(--soft); line-height: 18px; margin: 10px 4px 0; }
+
+/* настройки */
+.themes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.theme { border-radius: 16px; padding: 7px; text-align: left; border: 1px solid; min-width: 0; }
+.theme.on { box-shadow: inset 0 0 0 1px var(--acc); }
+.theme .mini { border-radius: 10px; padding: 8px; border: 1px solid; }
+.theme .mini i { display: block; height: 5px; border-radius: 3px; margin-bottom: 5px; }
+.theme .mini .pills { display: flex; gap: 4px; margin-top: 3px; }
+.theme .mini b { flex: 1; height: 10px; border-radius: 5px; border: 1px solid transparent; }
+.theme .nm { display: block; font-size: 12px; margin: 6px 0 0; font-style: italic; text-align: center; white-space: nowrap; overflow: hidden; }
+.theme.on .nm { font-style: normal; font-weight: 500; }
+.setrow { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
+.setrow .l { flex: 1; } .setrow .l i { display: block; font-size: 13px; color: var(--soft); }
+.setrow input { width: 96px; text-align: right; }
+.btn { display: block; width: 100%; margin: 8px 0; padding: 13px; border-radius: 999px; text-align: center; font-weight: 500; }
+.btn.primary { background: var(--acc); color: var(--on-acc); }
+.btn.outline { border: 1px solid var(--rule); color: var(--acc); background: var(--page); }
+.btn.quiet { color: var(--danger); font-weight: 400; font-style: italic; }
+
+/* поля */
+.fld { display: block; margin-top: 14px; }
+.fld > span { display: block; font-size: 14px; font-style: italic; color: var(--soft); margin-bottom: 6px; }
+.in { width: 100%; min-height: 48px; border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); padding: 10px 14px; font-size: 17px; }
+.in.big { font-size: 26px; font-weight: 500; min-height: 60px; }
+.in:focus { outline: none; border-color: var(--acc); }
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* окно */
+#modal { position: fixed; inset: 0; z-index: 50; background: rgba(59, 42, 37, .35); display: none; align-items: flex-end; justify-content: center; }
+#modal.open { display: flex; }
+.dlg { width: 100%; max-width: 520px; max-height: calc(100% - 24px - var(--safe-top)); overflow-y: auto; background: var(--page); border-radius: 26px 26px 0 0;
+  padding: 18px 20px calc(18px + var(--safe-bottom)); animation: up .38s cubic-bezier(.16, 1, .3, 1) both; }
+@media (min-width: 560px) { #modal { align-items: center; } .dlg { border-radius: 26px; } }
+@keyframes up { from { transform: translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+.dlg .dh { display: flex; align-items: center; }
+.dlg .dh b { flex: 1; font-size: 24px; font-weight: 500; }
+.dlg .x { width: 44px; height: 44px; font-size: 18px; color: var(--soft); }
+.preview { margin-top: 16px; padding: 14px 16px; border-radius: 16px; background: var(--wash); }
+.preview .pv { font-size: 30px; line-height: 36px; font-weight: 500; }
+.preview .ps { font-size: 13.5px; font-style: italic; color: var(--soft); margin-top: 2px; }
+.preview .ps a { color: var(--acc); }
+.confirm { margin-top: 6px; text-align: center; font-style: italic; }
+.confirm .row { display: flex; gap: 8px; } .confirm .btn { flex: 1; }
+
+#toast { position: fixed; left: 50%; bottom: calc(84px + var(--safe-bottom)); transform: translate(-50%, 20px); opacity: 0; z-index: 60; background: var(--ink); color: var(--page);
+  padding: 10px 18px; border-radius: 999px; font-size: 14px; font-style: italic; transition: .3s ease; pointer-events: none; white-space: nowrap; }
+#toast.in { opacity: 1; transform: translate(-50%, 0); }
+#main.intro > * { animation: rise .5s cubic-bezier(.16, 1, .3, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { #main.intro > *, .dlg { animation: none; } #toast, .limit .bar i { transition: none; } }
+</style>
+</head>
+<body>
+<div id="top"><div class="row">
+  <h1>scrmoney</h1>
+  <span class="sync" id="sync"></span>
+</div></div>
+
+<main id="main"></main>
+
+<nav id="nav">
+  <button data-tab="income"><span class="ic"><svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-1 10h-5v5h-2v-5H6v-2h5V6h2v5h5z"/></svg></span>Приходы</button>
+  <button data-tab="year"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 11h4v9H4zM10 4h4v16h-4zM16 8h4v12h-4z"/></svg></span>Год</button>
+  <button data-tab="settings"><span class="ic"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.48.48 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></span>Настройки</button>
+</nav>
+
+<div id="modal"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="importFile" accept=".csv,text/csv,text/plain" hidden>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const $main = $('#main'), $modal = $('#modal');
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('scrmoney.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('scrmoney.' + k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ---------- темы: те же мягкие палитры, что в scrmoods ---------- */
+const THEMES = [
+  { id: 'rosewood', name: 'Rosewood', paper: '#F3E1DC', page: '#FFF8F5', ink: '#3B2A25', soft: '#8A6B63', faint: '#C2A49B', rule: '#EBCFC6', acc: '#C0584A', wash: '#F9DCD3' },
+  { id: 'peach', name: 'Peach', paper: '#FCE3CF', page: '#FFF8F1', ink: '#43291C', soft: '#93684F', faint: '#CFA588', rule: '#F3D0B5', acc: '#DB6E35', wash: '#FFE0CB' },
+  { id: 'sepia', name: 'Sepia', paper: '#EADFCF', page: '#FBF6EE', ink: '#4F3933', soft: '#85695A', faint: '#BCA893', rule: '#E0D2BF', acc: '#945B46', wash: '#F0E0D0' },
+  { id: 'matcha', name: 'Matcha', paper: '#E3EDD8', page: '#F9FCF4', ink: '#26331F', soft: '#5F7351', faint: '#A2B393', rule: '#CFDDBF', acc: '#5C8A3E', wash: '#DDEDCC' },
+  { id: 'lavender', name: 'Lavender', paper: '#ECE3F4', page: '#FCF9FF', ink: '#33263F', soft: '#77648A', faint: '#B4A5C4', rule: '#DED0EC', acc: '#8A5BB8', wash: '#EBDCF7' },
+  { id: 'berry', name: 'Berry', paper: '#F7DFE8', page: '#FFF7FA', ink: '#3D2030', soft: '#8F5F74', faint: '#C99AAD', rule: '#EFC9D7', acc: '#C24A7C', wash: '#FBD9E6' },
+  { id: 'night', name: 'Night', paper: '#221A17', page: '#2E2420', ink: '#F1E4DC', soft: '#BCA79C', faint: '#7E6B62', rule: '#44362F', acc: '#E39A7E', wash: '#4A3129', onAcc: '#2A1C17', dark: true },
+];
+let theme = THEMES[0];
+function applyTheme(id) {
+  theme = THEMES.find(t => t.id === id) || THEMES[0];
+  const r = document.documentElement.style;
+  for (const k of ['paper', 'page', 'ink', 'soft', 'faint', 'rule', 'wash']) r.setProperty('--' + k, theme[k]);
+  r.setProperty('--acc', theme.acc);
+  r.setProperty('--on-acc', theme.onAcc || '#fff');
+  document.documentElement.style.colorScheme = theme.dark ? 'dark' : 'light';
+  document.querySelector('meta[name=theme-color]').setAttribute('content', theme.paper);
+  store.set('theme', theme.id);
+}
+applyTheme(store.get('theme', 'rosewood'));
+
+/* ---------- даты и числа ---------- */
+const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+const MONTHS_G = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const MONTHS_S = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+const WD = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const ymd = s => s.split('-').map(Number);
+const longDate = s => { const [y, m, d] = ymd(s); return `${d} ${MONTHS_G[m - 1]} ${y}`; };
+const wd = s => { const [y, m, d] = ymd(s); return WD[new Date(y, m - 1, d).getDay()]; };
+const r2 = x => Math.round((x + Number.EPSILON) * 100) / 100;
+const money = (x, n = 2) => (isFinite(x) ? x : 0).toLocaleString('ru-RU', { minimumFractionDigits: n, maximumFractionDigits: n });
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const plural = (n, a, b, c) => { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? a : m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20) ? b : c; };
+
+/* ---------- курс Национального банка Грузии ---------- */
+const NBG = d => `https://nbg.gov.ge/gw/api/ct/monetarypolicy/currencies/ru/json/?currencies=USD&date=${d}`;
+let rates = store.get('rates', {});            // дата -> { rate, valid }
+const pending = {};
+function getRate(date) {
+  if (rates[date]) return Promise.resolve(rates[date]);
+  if (pending[date]) return pending[date];
+  return pending[date] = fetch(NBG(date), { cache: 'no-store' })
+    .then(r => { if (!r.ok) throw new Error('сайт НБГ ответил ' + r.status); return r.json(); })
+    .then(j => {
+      const c = j && j[0] && (j[0].currencies || []).find(x => x.code === 'USD');
+      if (!c) throw new Error('на эту дату курса нет');
+      const v = { rate: c.rate / (c.quantity || 1), valid: (c.validFromDate || j[0].date || '').slice(0, 10) };
+      if (date <= today()) { rates[date] = v; store.set('rates', rates); }
+      return v;
+    })
+    .finally(() => { delete pending[date]; });
+}
+
+/* ---------- данные ---------- */
+let rows = store.get('rows', []);
+let nextId = rows.reduce((m, r) => Math.max(m, r.id), 0) + 1;
+let failed = {};                                  // дата -> текст ошибки
+const save = () => store.set('rows', rows);
+const rateOf = r => r.manual ? r.rate : (rates[r.date] ? rates[r.date].rate : null);
+const gelOf = r => { const k = rateOf(r); return k ? r2(r.usd * k) : null; };
+let taxRate = store.get('tax', 1);
+const LIMIT = 500000;
+
+async function loadMissing() {
+  const dates = [...new Set(rows.filter(r => !r.manual && !rates[r.date]).map(r => r.date))];
+  if (!dates.length) return;
+  $('#sync').textContent = 'обновляю курсы…';
+  for (const d of dates) {
+    try { await getRate(d); delete failed[d]; } catch (e) { failed[d] = e.message; }
+  }
+  $('#sync').textContent = '';
+  render();
+}
+
+/* ---------- экраны ---------- */
+let tab = 'income';
+const now = today();
+let viewY = ymd(now)[0], viewM = ymd(now)[1];
+let yearY = viewY;
+let todayRate = null, todayErr = null;
+
+const arrow = d => `<svg viewBox="0 0 24 24"><path d="${d ? 'M9 6l6 6-6 6' : 'M15 6l-6 6 6 6'}"/></svg>`;
+
+function renderIncome() {
+  const key = `${viewY}-${String(viewM).padStart(2, '0')}`;
+  const list = rows.filter(r => r.date.startsWith(key)).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const usd = list.reduce((s, r) => s + r.usd, 0), gel = list.reduce((s, r) => s + (gelOf(r) || 0), 0);
+  const missing = list.some(r => gelOf(r) == null);
+  const isNow = key === now.slice(0, 7);
+
+  let rateHtml;
+  if (todayRate) rateHtml = `<div class="rv num">${todayRate.rate.toFixed(4).replace('.', ',')} <small>₾ за 1 $</small></div>
+    <div class="rs">курс НБГ, действует с ${longDate(todayRate.valid)}</div>`;
+  else if (todayErr) rateHtml = `<div class="rv">нет связи</div><div class="rs bad">Курс НБГ не загрузился: ${esc(todayErr)}. <a href="${NBG(now)}" target="_blank" rel="noopener" style="color:inherit">Открыть на сайте</a></div>`;
+  else rateHtml = `<div class="rv" style="color:var(--faint)">…</div><div class="rs">загружаю курс НБГ на сегодня</div>`;
+
+  $main.innerHTML = `
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">${MONTHS[viewM - 1]}</div>
+      <div class="sub">${viewY} · ${list.length ? list.length + ' ' + plural(list.length, 'приход', 'прихода', 'приходов') : 'приходов пока нет'}</div></div>
+      <button class="rbtn" data-act="prev" aria-label="Предыдущий месяц">${arrow(0)}</button>
+      <button class="rbtn" data-act="next" aria-label="Следующий месяц" ${isNow ? 'disabled' : ''}>${arrow(1)}</button></div>
+    <div class="rate" style="--d:40ms"><span class="qm">$</span><div>${rateHtml}</div></div>
+    <button class="sumbtn" data-act="add" style="--d:80ms"><span><b>Записать приход</b><i>сумма в долларах пересчитается в лари сама</i></span><span class="plus">+</span></button>
+    <div class="card" style="--d:120ms"><h2 class="hl">Приходы за месяц</h2>
+      ${list.length ? list.map(r => {
+        const k = rateOf(r), g = gelOf(r), [, , d] = ymd(r.date);
+        const sub = r.manual ? `<i class="manual">курс вручную ${k.toFixed(4).replace('.', ',')}</i>`
+          : k ? `<i>по ${k.toFixed(4).replace('.', ',')}</i>`
+          : failed[r.date] ? `<i class="bad">курс не загрузился</i>` : `<i>курс загружается…</i>`;
+        return `<button class="inc" data-act="edit" data-id="${r.id}">
+          <span class="d"><b class="num">${d}</b><i>${wd(r.date)}</i></span>
+          <span class="m"><div class="usd num">${money(r.usd)} $</div><div class="note">${r.note ? esc(r.note) : '&nbsp;'}</div></span>
+          <span class="g"><b class="num">${g != null ? money(g) + ' ₾' : '—'}</b>${sub}</span></button>`;
+      }).join('') + `<div class="total"><span>Итого за ${MONTHS[viewM - 1].toLowerCase()}</span><b class="num">${money(gel)} ₾</b></div>
+        <div class="hint" style="text-align:right;margin-top:2px">${money(usd)} $${missing ? ' · есть приходы без курса' : ''}</div>`
+      : `<div class="empty">В этом месяце приходов нет.<br>Нажмите «Записать приход», когда придут деньги.</div>`}
+    </div>`;
+}
+
+function renderYear() {
+  const list = rows.filter(r => r.date.startsWith(yearY + '-'));
+  const byM = Array.from({ length: 12 }, () => ({ usd: 0, gel: 0, n: 0 }));
+  for (const r of list) { const m = ymd(r.date)[1] - 1; byM[m].usd += r.usd; byM[m].gel += gelOf(r) || 0; byM[m].n++; }
+  const usd = byM.reduce((s, x) => s + x.usd, 0), gel = r2(byM.reduce((s, x) => s + x.gel, 0));
+  const tax = r2(gel * taxRate / 100), p = gel / LIMIT * 100;
+  const years = [...new Set(rows.map(r => ymd(r.date)[0]).concat([ymd(now)[0]]))];
+  const minY = Math.min(...years), maxY = Math.max(...years);
+
+  // столбики по месяцам
+  const W = 340, H = 130, top = 14, bot = 20, bw = 18, step = (W - 20) / 12;
+  const max = Math.max(...byM.map(x => x.gel), 1);
+  const curM = yearY === ymd(now)[0] ? ymd(now)[1] - 1 : -1;
+  const bars = byM.map((x, i) => {
+    const h = x.gel ? Math.max(3, (H - top - bot) * x.gel / max) : 0, cx = 10 + step * i + step / 2;
+    return `${h ? `<rect x="${cx - bw / 2}" y="${H - bot - h}" width="${bw}" height="${h}" rx="5" fill="${i === curM ? 'var(--acc)' : 'color-mix(in srgb, var(--acc) 45%, var(--page))'}"/>` : `<rect x="${cx - bw / 2}" y="${H - bot - 2}" width="${bw}" height="2" rx="1" fill="var(--rule)"/>`}
+      <text x="${cx}" y="${H - 5}" text-anchor="middle" font-size="10" font-style="italic" fill="var(--soft)">${MONTHS_S[i]}</text>`;
+  }).join('');
+  const peak = byM.indexOf(byM.reduce((a, b) => b.gel > a.gel ? b : a));
+  const peakLabel = byM[peak].gel ? `<text x="${10 + step * peak + step / 2}" y="${H - bot - (H - top - bot) - 3}" text-anchor="middle" font-size="10" fill="var(--ink)">${money(byM[peak].gel / 1000, 1)}k</text>` : '';
+
+  $main.innerHTML = `
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big num">${yearY}</div><div class="sub">доход в лари для декларации</div></div>
+      <button class="rbtn" data-act="yprev" aria-label="Предыдущий год" ${yearY <= minY ? 'disabled' : ''}>${arrow(0)}</button>
+      <button class="rbtn" data-act="ynext" aria-label="Следующий год" ${yearY >= maxY ? 'disabled' : ''}>${arrow(1)}</button></div>
+    <div class="card" style="--d:40ms">
+      <div class="yearbig"><div class="k">Доход за год</div><div class="v num">${money(gel)} <small>₾</small></div></div>
+      <div class="pair">
+        <div><div class="k">в долларах</div><div class="v num">${money(usd)} $</div></div>
+        <div><div class="k">налог ${String(taxRate).replace('.', ',')}%</div><div class="v num">${money(tax)} ₾</div></div>
+      </div>
+      <div class="limit ${p >= 100 ? 'over' : p >= 80 ? 'hot' : ''}"><div class="bar"><i style="width:${Math.min(p, 100)}%"></i></div>
+        <div class="lt"><span>лимит малого бизнеса: ${money(p, 1)}%</span><span class="num">осталось ${money(Math.max(LIMIT - gel, 0), 0)} ₾</span></div></div>
+    </div>
+    <div class="card chart" style="--d:80ms"><h2 class="hl">По месяцам</h2>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Доход в лари по месяцам">${bars}${peakLabel}</svg>
+      ${byM.map((x, i) => `<button class="mrow ${x.n ? '' : 'zero'}" data-act="month" data-m="${i + 1}">
+        <span class="mn">${MONTHS[i]}</span><span class="mu num">${x.n ? money(x.usd) + ' $' : ''}</span><span class="mg num">${x.n ? money(x.gel) + ' ₾' : '—'}</span></button>`).join('')}
+    </div>
+    <p class="hint" style="margin:12px 24px">Каждый приход пересчитан по официальному курсу НБГ на дату получения. Лимит считается от ${money(LIMIT, 0)} ₾ в год.</p>`;
+}
+
+function renderSettings() {
+  $main.innerHTML = `
+    <div class="section" style="--d:0ms"><h2 class="hl">Оформление</h2><div class="themes">${THEMES.map(t => `
+      <button class="theme ${t.id === theme.id ? 'on' : ''}" data-act="theme" data-id="${t.id}" style="background:${t.paper};border-color:${t.id === theme.id ? t.acc : t.rule};color:${t.ink}">
+        <span class="mini" style="display:block;background:${t.page};border-color:${t.rule}"><i style="background:${t.acc};width:60%"></i><i style="background:${t.rule}"></i>
+        <span class="pills"><b style="background:${t.acc}"></b><b style="background:${t.paper};border-color:${t.rule}"></b></span></span>
+        <span class="nm">${t.name}</span></button>`).join('')}</div></div>
+    <div class="section" style="--d:40ms"><h2 class="hl">Налог</h2>
+      <label class="setrow"><span class="l">Ставка налога, %<i>1% — малый бизнес, 20% — обычный ИП</i></span>
+        <input class="in num" id="taxIn" type="number" inputmode="decimal" step="0.1" min="0" value="${taxRate}"></label></div>
+    <div class="section" style="--d:80ms"><h2 class="hl">Данные</h2>
+      <p class="hint" style="margin:6px 0 8px">Записи хранятся только на этом устройстве. Время от времени сохраняйте копию.</p>
+      <button class="btn primary" data-act="export">Сохранить в CSV</button>
+      <button class="btn outline" data-act="import">Загрузить из CSV</button>
+      <button class="btn quiet" data-act="wipe">Удалить все записи</button>
+      <div id="wipeBox"></div>
+    </div>
+    <p class="hint" style="margin:20px 24px">Курс берётся с nbg.gov.ge — официальный курс доллара, действующий на дату прихода. В выходные действует курс последнего рабочего дня.</p>`;
+  $('#taxIn').oninput = e => { taxRate = Math.max(0, parseFloat(e.target.value) || 0); store.set('tax', taxRate); };
+}
+
+function render(anim) {
+  $main.classList.toggle('intro', !!anim);
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  if (tab === 'income') renderIncome(); else if (tab === 'year') renderYear(); else renderSettings();
+}
+
+/* ---------- окно прихода ---------- */
+let edit = null;
+function openEdit(r) {
+  edit = r ? { ...r } : { id: null, date: now, usd: '', note: '', rate: null, manual: false };
+  $modal.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dt">
+    <div class="dh"><b id="dt">${r ? 'Приход' : 'Новый приход'}</b><button class="x" data-act="close" aria-label="Закрыть">✕</button></div>
+    <label class="fld"><span>Сколько пришло, $</span><input class="in big num" id="fUsd" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0,00" value="${edit.usd}"></label>
+    <div class="two">
+      <label class="fld"><span>Когда</span><input class="in" id="fDate" type="date" max="${now}" value="${edit.date}"></label>
+      <label class="fld"><span>Курс, ₾ за $</span><input class="in num" id="fRate" type="number" inputmode="decimal" step="0.0001" min="0" placeholder="авто"></label>
+    </div>
+    <label class="fld"><span>От кого или за что</span><input class="in" id="fNote" type="text" maxlength="120" value="${esc(edit.note || '')}" placeholder="например, клиент из Берлина"></label>
+    <div class="preview"><div class="pv num" id="pv">—</div><div class="ps" id="ps">&nbsp;</div></div>
+    <button class="btn primary" data-act="save" style="margin-top:16px">${r ? 'Сохранить' : 'Записать'}</button>
+    ${r ? '<button class="btn quiet" data-act="del">Удалить приход</button><div id="delBox"></div>' : ''}
+  </div>`;
+  $modal.classList.add('open');
+  const fUsd = $('#fUsd'), fDate = $('#fDate'), fRate = $('#fRate');
+  if (edit.manual) fRate.value = edit.rate;
+  fUsd.oninput = preview;
+  fRate.oninput = () => { const v = parseFloat(fRate.value); edit.manual = v > 0; edit.rate = v > 0 ? v : null; preview(); };
+  fDate.onchange = () => { edit.date = fDate.value; if (edit.manual) { edit.manual = false; edit.rate = null; fRate.value = ''; } fetchFor(); };
+  fetchFor();
+  if (!r) setTimeout(() => fUsd.focus(), 60);
+}
+let autoRate = null, autoErr = null, autoValid = null;
+function fetchFor() {
+  const d = edit.date; autoRate = null; autoErr = null; preview();
+  if (!d) return;
+  getRate(d).then(v => { if (edit && edit.date === d) { autoRate = v.rate; autoValid = v.valid; preview(); } })
+    .catch(e => { if (edit && edit.date === d) { autoErr = e.message; preview(); } });
+}
+function preview() {
+  if (!edit) return;
+  const usd = parseFloat($('#fUsd').value), k = edit.manual ? edit.rate : autoRate;
+  $('#fRate').placeholder = autoRate ? autoRate.toFixed(4) : 'авто';
+  $('#pv').textContent = k && usd >= 0 ? money(r2(usd * k)) + ' ₾' : '—';
+  $('#ps').innerHTML = edit.manual ? `по курсу, который вы ввели: ${edit.rate}`
+    : autoRate ? `по курсу НБГ ${autoRate.toFixed(4).replace('.', ',')} · действует с ${longDate(autoValid)}`
+    : autoErr ? `Курс НБГ не загрузился (${esc(autoErr)}). <a href="${NBG(edit.date)}" target="_blank" rel="noopener">Посмотреть на сайте</a> и вписать в поле «Курс».`
+    : edit.date ? 'загружаю курс НБГ…' : 'выберите дату';
+}
+function closeModal() { $modal.classList.remove('open'); $modal.innerHTML = ''; edit = null; }
+
+/* ---------- CSV ---------- */
+function toCsv() {
+  const head = 'Дата;USD;Курс НБГ;GEL;Курс;Комментарий';
+  const lines = [...rows].sort((a, b) => a.date.localeCompare(b.date)).map(r => {
+    const k = rateOf(r), g = gelOf(r), [y, m, d] = r.date.split('-');
+    return [`${d}.${m}.${y}`, r.usd.toFixed(2).replace('.', ','), k ? k.toFixed(4).replace('.', ',') : '', g != null ? g.toFixed(2).replace('.', ',') : '',
+      r.manual ? 'вручную' : 'НБГ', '"' + (r.note || '').replace(/"/g, '""') + '"'].join(';');
+  });
+  return '﻿' + [head, ...lines].join('\r\n');
+}
+function fromCsv(text) {
+  let added = 0;
+  for (const ln of text.replace(/^﻿/, '').split(/\r?\n/).slice(1)) {
+    if (!ln.trim()) continue;
+    const c = (ln.match(/("([^"]|"")*"|[^;]*)(;|$)/g) || []).map(s => s.replace(/;$/, '').replace(/^"|"$/g, '').replace(/""/g, '"'));
+    const [d, m, y] = (c[0] || '').split('.'); if (!y) continue;
+    const date = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`, usd = parseFloat((c[1] || '').replace(',', '.'));
+    if (!(usd >= 0)) continue;
+    const note = c[5] || '';
+    if (rows.some(r => r.date === date && r.usd === usd && (r.note || '') === note)) continue;
+    const manual = c[4] === 'вручную', rate = parseFloat((c[2] || '').replace(',', '.'));
+    rows.push({ id: nextId++, date, usd, note, rate: manual ? rate : null, manual: manual && rate > 0 });
+    added++;
+  }
+  return added;
+}
+async function exportCsv() {
+  const name = `scrmoney-${now}.csv`, blob = new Blob([toCsv()], { type: 'text/csv;charset=utf-8' });
+  try {
+    const file = new File([blob], name, { type: 'text/csv' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return; }
+  } catch (e) { if (e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+let toastT;
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('in'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('in'), 2200); }
+
+/* ---------- события ---------- */
+document.addEventListener('click', e => {
+  const nav = e.target.closest('#nav button');
+  if (nav) { tab = nav.dataset.tab; render(true); window.scrollTo(0, 0); return; }
+  if (e.target === $modal) { closeModal(); return; }
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  switch (el.dataset.act) {
+    case 'prev': if (--viewM < 1) { viewM = 12; viewY--; } render(); break;
+    case 'next': if (++viewM > 12) { viewM = 1; viewY++; } render(); break;
+    case 'yprev': yearY--; render(); break;
+    case 'ynext': yearY++; render(); break;
+    case 'month': viewY = yearY; viewM = +el.dataset.m; tab = 'income'; render(); window.scrollTo(0, 0); break;
+    case 'add': openEdit(null); break;
+    case 'edit': openEdit(rows.find(r => r.id === +el.dataset.id)); break;
+    case 'close': closeModal(); break;
+    case 'save': {
+      const usd = parseFloat($('#fUsd').value), date = $('#fDate').value;
+      if (!(usd > 0)) { $('#fUsd').focus(); toast('Впишите сумму в долларах'); break; }
+      if (!date) { toast('Выберите дату'); break; }
+      const rec = { id: edit.id || nextId++, date, usd: r2(usd), note: $('#fNote').value.trim(), rate: edit.manual ? edit.rate : null, manual: !!edit.manual };
+      const i = rows.findIndex(r => r.id === rec.id);
+      if (i >= 0) rows[i] = rec; else rows.push(rec);
+      save(); closeModal();
+      [viewY, viewM] = ymd(date);
+      tab = 'income'; render(); toast(i >= 0 ? 'Сохранено' : 'Приход записан'); loadMissing();
+      break;
+    }
+    case 'del': $('#delBox').innerHTML = `<div class="confirm">Удалить этот приход?<div class="row"><button class="btn outline" data-act="delno">Нет</button><button class="btn primary" data-act="delyes">Удалить</button></div></div>`; break;
+    case 'delno': $('#delBox').innerHTML = ''; break;
+    case 'delyes': rows = rows.filter(r => r.id !== edit.id); save(); closeModal(); render(); toast('Приход удалён'); break;
+    case 'theme': applyTheme(el.dataset.id); render(); break;
+    case 'export': exportCsv(); break;
+    case 'import': $('#importFile').click(); break;
+    case 'wipe': $('#wipeBox').innerHTML = `<div class="confirm">Удалить все ${rows.length} ${plural(rows.length, 'запись', 'записи', 'записей')}? Сначала сохраните CSV.<div class="row"><button class="btn outline" data-act="wipeno">Нет</button><button class="btn primary" data-act="wipeyes">Удалить всё</button></div></div>`; break;
+    case 'wipeno': $('#wipeBox').innerHTML = ''; break;
+    case 'wipeyes': rows = []; save(); render(); toast('Все записи удалены'); break;
+  }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $modal.classList.contains('open')) closeModal(); });
+$('#importFile').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { const n = fromCsv(String(rd.result)); save(); render(); toast(n ? `Добавлено записей: ${n}` : 'Новых записей нет'); loadMissing(); e.target.value = ''; };
+  rd.readAsText(f, 'utf-8');
+};
+
+render(true);
+getRate(now).then(v => { todayRate = v; }).catch(e => { todayErr = e.message; }).finally(() => { if (tab === 'income') render(); });
+loadMissing();
+if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
