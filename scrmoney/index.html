@@ -187,6 +187,13 @@ h2.hl::after { content: ""; flex: 1 0 24px; height: 1px; background: var(--rule)
 .pitem select.in { width: 62px; flex: none; padding: 8px 4px; }
 .pitem .rm { width: 28px; height: 28px; flex: none; color: var(--faint); font-size: 14px; }
 .addrow { margin-top: 8px; color: var(--acc); font-style: italic; padding: 8px 2px; }
+.mv { display: flex; flex-direction: column; flex: none; gap: 2px; }
+.mv button { width: 26px; height: 20px; border-radius: 6px; border: 1px solid var(--rule); background: var(--paper); color: var(--acc); font-size: 12px; line-height: 1; }
+.mv button:disabled { color: var(--rule); }
+.goal .mv { margin-left: 8px; }
+.gnum { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 50%; background: var(--wash); color: var(--acc); font-size: 13px; vertical-align: 2px; }
+.gorig { display: block; font-size: 12px; font-weight: 400; font-style: italic; color: var(--soft); text-align: right; }
+.sublab { font-size: 14px; font-style: italic; color: var(--soft); margin: 12px 0 2px; }
 .goal { padding: 10px 0 12px; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
 .goal:last-of-type { border-bottom: 0; }
 .goal .eta { display: flex; justify-content: space-between; gap: 10px; margin-top: 8px; font-size: 14px; }
@@ -529,21 +536,23 @@ function renderYear() {
 
 /* ---------- план бюджета ---------- */
 const PLAN_EXAMPLE = {
-  example: true, tax: true, horizon: 12, saved: { a: 0, c: 'GEL' },
+  example: true, tax: true, horizon: 12, savings: [{ id: 's1', n: 'Накопления', a: 0, c: 'GEL' }],
   inc: [{ id: 'i1', n: 'Зарплата', a: 2500, c: 'USD' }],
   exp: [{ id: 'e1', n: 'Аренда квартиры', a: 1500, c: 'GEL' }, { id: 'e2', n: 'Продукты', a: 600, c: 'GEL' },
         { id: 'e3', n: 'Транспорт', a: 80, c: 'GEL' }, { id: 'e4', n: 'Связь и интернет', a: 50, c: 'GEL' }],
   goals: [{ id: 'g1', n: 'Первый взнос за машину', a: 5000, c: 'USD' }]
 };
 let plan = store.get('plan', null) || JSON.parse(JSON.stringify(PLAN_EXAMPLE));
-const PCUR = ['GEL', 'USD', 'EUR'];
+const PCUR = ['GEL', 'USD', 'EUR', 'RUB'];
+// старый формат: одно поле «уже накоплено» → список накоплений
+if (!plan.savings) { plan.savings = [{ id: 's1', n: 'Накопления', a: plan.saved ? plan.saved.a : 0, c: plan.saved ? plan.saved.c : 'GEL' }]; delete plan.saved; store.set('plan', plan); }
 const savePlan = () => { plan.example = false; store.set('plan', plan); };
 const toGel = (a, c) => c === 'GEL' ? a : fxRate(c) ? a * fxRate(c) : null;
 const MONTHS_SH = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
 function planCalc() {
   const sum = list => list.reduce((t, x) => t + (toGel(+x.a || 0, x.c) || 0), 0);
   const inc = sum(plan.inc), tax = plan.tax ? r2(inc * taxRate / 100) : 0, exp = sum(plan.exp);
-  const free = r2(inc - tax - exp), saved = toGel(+plan.saved.a || 0, plan.saved.c) || 0;
+  const free = r2(inc - tax - exp), saved = sum(plan.savings);
   const [y0, m0] = ymd(now);
   const months = [];          // накоплено к концу месяца i (0 — этот месяц)
   let bal = saved;
@@ -562,7 +571,9 @@ function planCalc() {
 }
 const eqUsd = gel => fxRate('USD') ? ` ≈ ${money(gel / fxRate('USD'), 0)} $` : '';
 function itemRows(kind) {
-  return plan[kind].map(x => `<div class="pitem" data-kind="${kind}" data-id="${x.id}">
+  const n = plan[kind].length;
+  return plan[kind].map((x, i) => `<div class="pitem" data-kind="${kind}" data-id="${x.id}">
+
     <input class="in pn" data-f="n" value="${esc(x.n)}" placeholder="название" aria-label="Название">
     <input class="in pa num" data-f="a" inputmode="decimal" value="${x.a === '' ? '' : String(x.a).replace('.', ',')}" placeholder="0" aria-label="Сумма в месяц">
     <select class="in" data-f="c" aria-label="Валюта">${PCUR.map(c => `<option value="${c}" ${x.c === c ? 'selected' : ''}>${CUR[c].s}</option>`).join('')}</select>
@@ -584,12 +595,13 @@ function renderPlan() {
       <button class="addrow" data-act="pladd" data-kind="exp">+ ещё расход</button>
       ${lastSpend ? `<p class="hint" style="margin:6px 2px 0">По учёту расходов в ${MONTHS_P[pm[1] - 1]} вы потратили <b class="num">${money(lastSpend)} ₾</b>. <button class="chk" data-act="plspend" data-v="${lastSpend}" style="font-style:italic">Добавить строкой</button></p>` : ''}</div>
     <div class="card" style="--d:200ms"><h2 class="hl">Цели</h2>
-      <div class="pitem"><span class="pn" style="font-size:15px">Уже накоплено</span>
-        <input class="in pa num" id="plSavedA" inputmode="decimal" value="${String(plan.saved.a).replace('.', ',')}" placeholder="0" aria-label="Уже накоплено">
-        <select class="in" id="plSavedC" aria-label="Валюта">${PCUR.map(c => `<option value="${c}" ${plan.saved.c === c ? 'selected' : ''}>${CUR[c].s}</option>`).join('')}</select><span style="width:28px"></span></div>
+      <div class="sublab">Уже накоплено</div>
+      ${itemRows('savings')}
+      <button class="addrow" data-act="pladd" data-kind="savings">+ ещё накопления</button>
+      <div class="sublab">Цели — сверху самая важная</div>
       ${itemRows('goals')}
       <button class="addrow" data-act="pladd" data-kind="goals">+ ещё цель</button>
-      <p class="hint" style="margin:4px 2px 0">Цели копятся по очереди: сначала первая, потом следующая. Все свободные деньги идут в накопления.</p></div>
+      <p class="hint" style="margin:4px 2px 0">Цели копятся по очереди: сначала верхняя, потом следующая. Порядок меняется стрелками ↑ ↓ в блоке «Когда дойдёте до цели». Все свободные деньги идут в накопления.</p></div>
     <p class="hint" style="margin:12px 24px">Доллары и евро пересчитаны по сегодняшнему курсу НБГ. Это прикидка: реальные траты и курс будут немного плавать.</p>`;
   planOut();
   $main.querySelectorAll('.pitem[data-kind]').forEach(row => {
@@ -604,8 +616,6 @@ function renderPlan() {
     });
   });
   $('#plTax').onchange = e => { plan.tax = e.target.checked; savePlan(); planOut(); };
-  $('#plSavedA').oninput = e => { plan.saved.a = fxNum(e.target.value) >= 0 ? fxNum(e.target.value) : 0; savePlan(); planOut(); };
-  $('#plSavedC').onchange = e => { plan.saved.c = e.target.value; savePlan(); planOut(); };
 }
 function planOut() {
   const box = $('#planOut'); if (!box) return;
@@ -614,7 +624,7 @@ function planOut() {
   const V = plan.view && (plan.view === 'GEL' || fxRate(plan.view)) ? plan.view : 'GEL', kV = V === 'GEL' ? 1 : fxRate(V);
   const num = g => money(g / kV, 0), pv = g => `${num(g)} ${CUR[V].s}`;
   const second = g => V === 'GEL' ? eqUsd(g).trim() : `≈ ${money(g, 0)} ₾`;
-  const noRate = [...plan.inc, ...plan.exp, ...plan.goals, plan.saved].some(x => x.c !== 'GEL' && !fxRate(x.c));
+  const noRate = [...plan.inc, ...plan.exp, ...plan.goals, ...plan.savings].some(x => x.c !== 'GEL' && !fxRate(x.c));
   // график накоплений
   const W = 340, H = 150, top = 16, bot = 18, n = c.months.length;
   const goalMax = c.goals.length ? c.goals[c.goals.length - 1].cum : 0;
@@ -635,7 +645,11 @@ function planOut() {
     const when = !g.t ? '<b>впишите сумму</b>' : g.at === -1 ? '<b>уже накоплено</b>'
       : g.at ? `<b>${MONTHS[g.at.m]} ${g.at.y}</b><span>${g.at.k === 0 ? 'в этом месяце' : 'через ' + (g.at.k + 1) + ' ' + plural(g.at.k + 1, 'месяц', 'месяца', 'месяцев')}</span>`
       : '<b>не накопится</b><span>расходы больше доходов</span>';
-    return `<div class="goal"><div class="pline" style="padding:0"><b style="font-size:16px">${esc(g.g.n || 'Цель')}</b><b class="num">${pv(g.t)}</b></div>
+    const i = c.goals.indexOf(g), n = c.goals.length;
+    return `<div class="goal"><div class="pline" style="padding:0;align-items:center">
+      <b style="font-size:16px;flex:1;min-width:0;white-space:normal;line-height:21px"><span class="gnum">${i + 1}</span>${esc(g.g.n || 'Цель')}</b>
+      <b class="num">${pv(g.t)}${g.g.c !== V && g.g.c !== 'GEL' ? `<span class="gorig">${money(+g.g.a || 0, 0)} ${CUR[g.g.c].s}</span>` : ''}</b>
+      ${n > 1 ? `<span class="mv" data-id="${g.g.id}"><button data-act="plup" ${i === 0 ? 'disabled' : ''} aria-label="Выше">↑</button><button data-act="pldown" ${i === n - 1 ? 'disabled' : ''} aria-label="Ниже">↓</button></span>` : ''}</div>
       <div class="gbar"><i style="width:${pct}%"></i></div>
       <div class="eta ${g.at || !g.t ? '' : 'no'}">${when}</div></div>`;
   }).join('');
@@ -1020,6 +1034,11 @@ document.addEventListener('click', e => {
     case 'spdelyes': spends = spends.filter(x => x.id !== el.dataset.id); saveSpends(); closeModal(); render(); toast('Расход удалён'); break;
     case 'exportsp': exportCsv('spend'); break;
     case 'plview': plan.view = el.dataset.c; store.set('plan', plan); planOut(); break;
+    case 'plup': case 'pldown': {
+      const id = (el.closest('[data-id]') || {}).dataset.id, i = plan.goals.findIndex(x => x.id === id), j = i + (el.dataset.act === 'plup' ? -1 : 1);
+      if (i < 0 || j < 0 || j >= plan.goals.length) break;
+      [plan.goals[i], plan.goals[j]] = [plan.goals[j], plan.goals[i]]; savePlan(); render(); break;
+    }
     case 'plh': plan.horizon = +el.dataset.h; savePlan(); planOut(); break;
     case 'pladd': { const k = el.dataset.kind; plan[k].push({ id: newId(), n: '', a: '', c: k === 'inc' ? 'USD' : 'GEL' }); savePlan(); render();
       const rows = document.querySelectorAll(`.pitem[data-kind="${k}"] .pn`); rows[rows.length - 1].focus(); break; }
@@ -1043,7 +1062,7 @@ $('#importFile').onchange = e => {
 
 render(true);
 // сначала один запрос всех валют на сегодня, из него же берётся курс доллара
-loadFx([...new Set([...fxList, 'USD', 'EUR'])]).finally(() => {
+loadFx([...new Set([...fxList, 'USD', 'EUR', 'RUB'])]).finally(() => {
   render();
   loadMissing();
 });
