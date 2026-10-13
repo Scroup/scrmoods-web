@@ -23,6 +23,7 @@
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
 html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: Lora, Georgia, serif; font-size: 15.5px; line-height: 1.35; }
 body { padding-top: calc(56px + var(--safe-top)); padding-bottom: calc(84px + var(--safe-bottom)); -webkit-text-size-adjust: 100%; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
@@ -214,6 +215,18 @@ h2.hl::after { content: ""; flex: 1 0 24px; height: 1px; background: var(--rule)
 .prow .gx { font-size: 12px; font-style: italic; color: var(--acc); }
 .prow .gl { font-size: 12px; font-style: italic; color: var(--good); }
 .example { margin: 12px 10px 0; padding: 12px 16px; border-radius: 16px; background: var(--wash); font-size: 14px; line-height: 19px; font-style: italic; }
+
+.catbtn { display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 14px; padding: 11px 14px; border-radius: 14px; border: 1px solid var(--rule); background: var(--paper); text-align: left; }
+.catbtn span:first-child { font-size: 14px; font-style: italic; color: var(--soft); }
+.catbtn b { flex: 1; font-weight: 500; } .catbtn .arr { color: var(--acc); }
+#catList { margin-top: 8px; }
+.cats .catadd { color: var(--acc); font-style: italic; background: transparent; border-style: dashed; }
+.catnew { display: flex; gap: 8px; width: 100%; }
+.catnew[hidden] { display: none; }
+.catnew .in { flex: 1; min-height: 40px; padding: 6px 12px; font-size: 15px; }
+.fxset { margin: 4px 24px 12px; }
+.fxset summary { cursor: pointer; font-size: 13.5px; font-style: italic; color: var(--soft); padding: 6px 0; }
+.fxset .cats button:disabled { opacity: .6; }
 
 /* настройки */
 .themes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
@@ -428,6 +441,10 @@ const CATS = [
   { id: 'home', n: 'Дом', s: 'Д' }, { id: 'shop', n: 'Покупки', s: 'П' }, { id: 'health', n: 'Здоровье', s: 'З' },
   { id: 'fun', n: 'Досуг', s: 'Д' }, { id: 'other', n: 'Другое', s: '·' }
 ];
+// свои категории — перед «Другое»
+let userCats = store.get('spCatsUser', []);
+CATS.splice(CATS.length - 1, 0, ...userCats);
+let spCatsOpen = false, fxSetOpen = false;
 const catOf = id => CATS.find(c => c.id === id) || CATS[CATS.length - 1];
 let spends = store.get('spend', []);            // { id, date, ts, amt, cur, k (₾ за 1), gel, cat, note }
 const saveSpends = () => store.set('spend', spends);
@@ -746,7 +763,7 @@ function renderSpend() {
       <span class="sym">${CUR[c].s}</span>
       <span class="nm"><b>${c}</b><i>${note}</i></span>
       <input class="num" inputmode="decimal" id="fx${c}" aria-label="${CUR[c].n}" value="${val == null || val === '' ? '' : on ? String(val).replace('.', ',') : fxFmt(val, c)}" placeholder="—">
-      ${fxList.length > 2 ? `<button class="rm" data-act="fxrm" data-c="${c}" aria-label="Убрать ${c}">✕</button>` : ''}
+      <button class="rm" data-act="fxclr" aria-label="Очистить сумму">✕</button>
     </div>`;
   }).join('');
   const others = Object.keys(CUR).filter(c => !fxList.includes(c));
@@ -788,13 +805,13 @@ function renderSpend() {
   $main.innerHTML = `
     <div class="jhead" style="--d:0ms"><div class="t"><div class="big">Личные расходы</div><div class="sub">${sub}</div></div></div>
     <div class="card fx" style="--d:40ms">${rowsHtml}
-      <div class="chips">${[1, 5, 10, 50, 100].map(v => `<button data-act="fxset" data-v="${v}">${v.toLocaleString('ru-RU')} <span class="cs">${CUR[fxBase.c].s}</span></button>`).join('')}</div>
-      <div class="cats">${CATS.map(c => `<button data-act="spcat" data-id="${c.id}" class="${spCat === c.id ? 'on' : ''}">${c.n}</button>`).join('')}</div>
+      <button class="catbtn" data-act="spcats" aria-expanded="${spCatsOpen}"><span>Категория</span><b id="catName">${esc(catOf(spCat).n)}</b><span class="arr">${spCatsOpen ? '▴' : '▾'}</span></button>
+      <div class="cats" id="catList" ${spCatsOpen ? '' : 'hidden'}>${CATS.map(c => `<button data-act="spcat" data-id="${c.id}" class="${spCat === c.id ? 'on' : ''}">${esc(c.n)}</button>`).join('')}<button class="catadd" data-act="spcatnew">+ своя</button>
+        <div class="catnew" id="catNew" hidden><input class="in" id="catNewIn" maxlength="24" placeholder="название категории"><button class="btn primary" data-act="spcatok" style="margin:0;width:auto;padding:10px 16px">Добавить</button></div></div>
       <input class="in" id="spNote" type="text" maxlength="80" placeholder="на что (необязательно)" value="${esc(spNote)}" style="margin-top:10px">
       <div class="sprow"><div class="seg small"><button data-act="spday" data-n="0" class="${d === now ? 'on' : ''}">Сегодня</button><button data-act="spday" data-n="-1" class="${d === shift(now, -1) ? 'on' : ''}">Вчера</button></div>
         <input class="in" id="spDateIn" type="date" max="${now}" value="${d}" aria-label="Дата расхода"></div>
       <button class="fix" data-act="spsave" id="spSave"><span>Зафиксировать расход</span><i id="spSum"></i></button>
-      ${others.length ? `<select class="in addsel" id="fxAdd"><option value="">+ добавить валюту в конвертер</option>${others.map(c => `<option value="${c}">${c} · ${CUR[c].n}</option>`).join('')}</select>` : ''}
     </div>
     ${fxErr ? `<p class="hint" style="margin:12px 24px;color:var(--danger)">Курс НБГ не загрузился: ${esc(fxErr)}.${fx ? ` Показан курс на ${longDate(fx.valid || fx.date)}.` : ''}</p>` : ''}
 
@@ -814,15 +831,17 @@ function renderSpend() {
         <span class="cb"><i style="width:${x.v / maxCat * 100}%"></i></span></div>`).join('')}` : ''}
       ${list.length ? `<h2 class="hl" style="margin-top:18px">История</h2>${hist}` : `<div class="empty">${isNowM ? 'В этом месяце расходов пока нет.<br>Впишите сумму выше и нажмите «Зафиксировать расход».' : 'В этом месяце расходов нет.'}</div>`}
     </div>
-    <p class="hint" style="margin:12px 24px">Расход сохраняется в лари по курсу НБГ на момент записи. Конвертер — для прикидки: в обменниках курс будет немного другим.</p>`;
+    <p class="hint" style="margin:12px 24px">Расход сохраняется в лари по курсу НБГ на момент записи. Конвертер — для прикидки: в обменниках курс будет немного другим.</p>
+    <details class="fxset" id="fxSet" ${fxSetOpen ? 'open' : ''}><summary>Валюты в конвертере</summary>
+      <div class="cats">${Object.keys(CUR).map(c => `<button data-act="fxtoggle" data-c="${c}" class="${fxList.includes(c) ? 'on' : ''}" ${c === 'GEL' ? 'disabled' : ''}>${CUR[c].s} ${c}</button>`).join('')}</div>
+      <p class="hint" style="margin:8px 0 0">Нажмите на валюту, чтобы показать или спрятать её в конвертере.</p></details>`;
   for (const c of fxList) {
     const inp = $('#fx' + c);
     inp.oninput = () => { fxBase = { c, v: inp.value }; store.set('fxBase', fxBase); updateSpend(c); };
   }
   $('#spNote').oninput = e => { spNote = e.target.value; };
   $('#spDateIn').onchange = e => { spDate = e.target.value || null; render(); };
-  const add = $('#fxAdd');
-  if (add) add.onchange = () => { if (add.value) { fxList.push(add.value); store.set('fxList', fxList); loadFx(fxList).then(() => tab === 'spend' && render()); render(); } };
+  $('#fxSet').ontoggle = e => { fxSetOpen = e.target.open; };
   spSum();
 }
 // подпись на кнопке: сколько это в лари
@@ -1044,7 +1063,25 @@ document.addEventListener('click', e => {
     case 'delyes': rows = rows.filter(r => r.id !== edit.id); save(); closeModal(); render(); toast('Приход удалён'); break;
     case 'fxset': fxBase = { c: fxBase.c, v: el.dataset.v }; store.set('fxBase', fxBase); render(); break;
     case 'fxrm': fxList = fxList.filter(c => c !== el.dataset.c); if (fxBase.c === el.dataset.c) fxBase = { c: fxList[0], v: fxBase.v }; store.set('fxList', fxList); store.set('fxBase', fxBase); render(); break;
-    case 'spcat': spCat = el.dataset.id; store.set('spCat', spCat); document.querySelectorAll('[data-act=spcat]').forEach(b => b.classList.toggle('on', b === el)); break;
+    case 'spcat': spCat = el.dataset.id; store.set('spCat', spCat); spCatsOpen = false;
+      document.querySelectorAll('[data-act=spcat]').forEach(b => b.classList.toggle('on', b === el));
+      $('#catName').textContent = catOf(spCat).n; $('#catList').hidden = true; $('.catbtn .arr').textContent = '▾'; break;
+    case 'spcats': spCatsOpen = $('#catList').hidden; $('#catList').hidden = !spCatsOpen; $('.catbtn .arr').textContent = spCatsOpen ? '▴' : '▾'; break;
+    case 'spcatnew': $('#catNew').hidden = false; $('#catNewIn').focus(); break;
+    case 'spcatok': {
+      const n = $('#catNewIn').value.trim(); if (!n) break;
+      const ex = CATS.find(c => c.n.toLowerCase() === n.toLowerCase());
+      if (ex) spCat = ex.id;
+      else { const c = { id: 'u' + newId(), n, s: n[0].toUpperCase() }; userCats.push(c); store.set('spCatsUser', userCats); CATS.splice(CATS.length - 1, 0, c); spCat = c.id; }
+      store.set('spCat', spCat); spCatsOpen = false; render(); toast('Категория: ' + catOf(spCat).n); break;
+    }
+    case 'fxclr': fxBase = { c: fxBase.c, v: '' }; store.set('fxBase', fxBase); fxList.forEach(c => { $('#fx' + c).value = ''; }); spSum(); break;
+    case 'fxtoggle': {
+      const c = el.dataset.c;
+      if (fxList.includes(c)) { if (fxList.length <= 2) { toast('Нужно хотя бы две валюты'); break; } fxList = fxList.filter(x => x !== c); if (fxBase.c === c) fxBase = { c: 'GEL', v: '' }; }
+      else { fxList.push(c); loadFx(fxList).then(() => tab === 'spend' && render()); }
+      store.set('fxList', fxList); store.set('fxBase', fxBase); fxSetOpen = true; render(); break;
+    }
     case 'spday': spDate = shift(now, +el.dataset.n); render(); break;
     case 'spprev': if (--spM < 1) { spM = 12; spY--; } render(); break;
     case 'spnext': if (++spM > 12) { spM = 1; spY++; } render(); break;
