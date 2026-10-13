@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>scrcook</title>
+<meta name="theme-color" content="#F3E1DC">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="scrcook">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+@font-face { font-family: Lora; src: url(../lora_regular.woff) format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: Lora; src: url(../lora_medium.woff) format('woff'); font-weight: 500 700; font-style: normal; font-display: swap; }
+@font-face { font-family: Lora; src: url(../lora_italic.woff) format('woff'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: Lora; src: url(../lora_medium_italic.woff) format('woff'); font-weight: 500 700; font-style: italic; font-display: swap; }
+:root {
+  /* та же палитра, что в scrmoods и scrmoney: какао-чернила на розоватой бумаге */
+  --paper: #F3E1DC; --page: #FFF8F5; --ink: #3B2A25; --soft: #8A6B63; --faint: #C2A49B; --rule: #EBCFC6;
+  --acc: #C0584A; --wash: #F9DCD3; --on-acc: #fff; --good: #93A77F; --warn: #D9B26A; --danger: #A8463F;
+  --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: Lora, Georgia, serif; font-size: 15.5px; line-height: 1.35; }
+body { padding-top: calc(56px + var(--safe-top)); padding-bottom: calc(84px + var(--safe-bottom)); -webkit-text-size-adjust: 100%; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+input, textarea, select { font: inherit; color: inherit; }
+a { color: var(--acc); }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+#main { max-width: 620px; margin: 0 auto; }
+.num { font-variant-numeric: tabular-nums lining-nums; }
+
+/* верхняя полоса */
+#top { position: fixed; top: 0; left: 0; right: 0; z-index: 10; background: var(--paper); padding-top: var(--safe-top); }
+#top .row { height: 56px; display: flex; align-items: center; padding: 0 16px 0 24px; max-width: 620px; margin: 0 auto; }
+#top h1 { flex: 1; margin: 0; font-size: 21px; font-weight: 500; font-style: italic; color: var(--acc); }
+#top .sync { font-size: 13px; font-style: italic; color: var(--soft); }
+
+/* нижняя навигация */
+#nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; background: var(--paper); border-top: 1px solid var(--rule);
+  display: flex; justify-content: center; padding-bottom: var(--safe-bottom); }
+#nav button { flex: 1; max-width: 200px; height: 68px; color: var(--soft); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12.5px; position: relative; }
+#nav .ic { width: 58px; height: 30px; border-radius: 15px; display: grid; place-items: center; }
+#nav svg { width: 22px; height: 22px; fill: currentColor; }
+#nav button.on { color: var(--acc); font-weight: 500; }
+#nav button.on .ic { background: var(--wash); }
+#nav .badge { position: absolute; top: 8px; left: calc(50% + 10px); min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--acc); color: var(--on-acc); font-size: 11px; line-height: 18px; font-weight: 500; font-style: normal; }
+
+/* заголовок страницы */
+.jhead { display: flex; align-items: flex-end; padding: 12px 20px 2px 24px; gap: 8px; }
+.jhead .t { flex: 1; min-width: 0; }
+.jhead .big { font-size: 32px; line-height: 38px; font-weight: 500; letter-spacing: -0.3px; text-wrap: balance; }
+.jhead .sub { font-size: 15.5px; font-style: italic; color: var(--soft); }
+.jhead.back { align-items: center; padding-left: 14px; }
+.jhead.back .big { font-size: 26px; line-height: 31px; }
+.rbtn { width: 40px; height: 40px; flex: none; border-radius: 50%; background: var(--page); border: 1px solid var(--rule); display: grid; place-items: center; margin-bottom: 4px; color: var(--ink); }
+.rbtn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* секции и карточки */
+.section { padding: 0 20px; }
+h2.hl { display: flex; align-items: center; gap: 14px; margin: 28px 0 6px; font-size: 19px; line-height: 24px; font-weight: 400; font-style: italic; color: var(--acc); }
+h2.hl::after { content: ""; flex: 1 0 24px; height: 1px; background: var(--rule); }
+.card { background: var(--page); border: 1px solid var(--rule); border-radius: 20px; margin: 12px 10px 0; padding: 4px 16px 16px; }
+.card h2.hl { margin-top: 14px; }
+.hint { font-size: 13px; font-style: italic; color: var(--soft); line-height: 18px; margin: 10px 4px 0; }
+.empty { padding: 24px 8px 12px; text-align: center; font-style: italic; color: var(--soft); line-height: 21px; }
+
+/* поиск и фильтры */
+.find { display: flex; gap: 8px; padding: 12px 10px 0; }
+.in { width: 100%; min-height: 48px; border: 1px solid var(--rule); border-radius: 14px; background: var(--page); padding: 10px 14px; font-size: 17px; }
+.in:focus { outline: none; border-color: var(--acc); }
+.find .in { flex: 1; min-width: 0; }
+.find .go { flex: none; padding: 0 18px; border-radius: 14px; background: var(--acc); color: var(--on-acc); font-weight: 500; }
+.chips { display: flex; gap: 6px; padding: 12px 10px 0; overflow-x: auto; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips button { flex: none; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--page); font-size: 14px; white-space: nowrap; }
+.chips button.on { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+.seg { display: flex; gap: 6px; padding: 10px 10px 0; }
+.seg button { flex: 1 1 0; min-width: 0; min-height: 36px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.seg button.on { background: var(--ink); border-color: var(--ink); color: var(--page); }
+.count { font-size: 13px; font-style: italic; color: var(--soft); padding: 12px 24px 0; }
+
+/* список рецептов */
+.rc { display: block; width: calc(100% - 20px); margin: 12px 10px 0; text-align: left; background: var(--page); border: 1px solid var(--rule); border-radius: 20px; overflow: hidden; }
+.rc .ph { aspect-ratio: 16 / 9; max-width: 100%; background: var(--wash); overflow: hidden; }
+.rc .ph img, .hero img, .rc .ph svg, .hero svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rc .tx { padding: 12px 16px 14px; }
+.rc .tt { font-size: 20px; line-height: 25px; font-weight: 500; text-wrap: balance; }
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 6px; font-size: 13.5px; font-style: italic; color: var(--soft); }
+.lvl { display: inline-flex; align-items: center; gap: 3px; font-style: normal; }
+.lvl i { width: 7px; height: 7px; border-radius: 50%; background: var(--rule); }
+.lvl i.f { background: var(--acc); }
+.lvl span { margin-left: 4px; font-style: italic; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.tags > span { font-size: 12.5px; padding: 3px 10px; border-radius: 999px; background: var(--paper); color: var(--soft); }
+
+/* рецепт */
+.hero { margin: 12px 10px 0; border-radius: 20px; overflow: hidden; aspect-ratio: 16 / 10; max-width: calc(100% - 20px); background: var(--wash); }
+.lede { padding: 14px 24px 0; font-size: 16.5px; line-height: 23px; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 22px 0; }
+.facts > span { font-size: 13.5px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--page); }
+.sumbtn { display: flex; align-items: center; width: calc(100% - 20px); margin: 14px 10px 0; padding: 14px 18px; border-radius: 20px; background: var(--acc); color: var(--on-acc); text-align: left; }
+.sumbtn > span:first-child { flex: 1; } .sumbtn b { display: block; font-size: 18px; font-weight: 500; } .sumbtn i { font-size: 13.5px; opacity: .85; }
+.sumbtn .plus { width: 34px; height: 34px; flex: none; border-radius: 50%; background: color-mix(in srgb, var(--on-acc) 18%, transparent); display: grid; place-items: center; font-size: 22px; line-height: 1; }
+.sumbtn.done { background: var(--page); color: var(--acc); border: 1px solid var(--rule); }
+.sumbtn.done .plus { background: var(--wash); }
+
+/* строки ингредиентов и покупок */
+.ing { display: flex; align-items: flex-start; gap: 12px; width: 100%; padding: 11px 2px; text-align: left; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
+.ing:last-child { border-bottom: 0; }
+.ing .ck { width: 24px; height: 24px; flex: none; margin-top: 1px; border-radius: 50%; border: 1.5px solid var(--faint); display: grid; place-items: center; color: transparent; }
+.ing .ck svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 3; fill: none; }
+.ing.on .ck { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+.ing .m { flex: 1; min-width: 0; }
+.ing .n { font-size: 16px; }
+.ing .s { display: block; font-size: 13px; font-style: italic; color: var(--soft); margin-top: 1px; }
+.ing .w { display: block; font-size: 12.5px; color: var(--acc); margin-top: 3px; }
+.ing .w.alt { color: var(--danger); font-style: italic; }
+.ing .q { flex: none; text-align: right; max-width: 40%; font-size: 15px; color: var(--soft); }
+.ing .q i { display: block; font-size: 12px; color: var(--faint); }
+.ing.on .n, .ing.on .q { text-decoration: line-through; color: var(--faint); }
+.ing.on .w, .ing.on .s { opacity: .55; }
+h3.gt { margin: 14px 0 0; font-size: 13px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--soft); }
+
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.steps li { display: flex; gap: 14px; padding: 12px 2px; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); counter-increment: s; }
+.steps li:last-child { border-bottom: 0; }
+.steps li::before { content: counter(s); flex: none; width: 26px; font-size: 26px; line-height: 26px; font-weight: 500; font-style: italic; color: var(--acc); }
+.steps p { margin: 0; flex: 1; min-width: 0; line-height: 22px; }
+.steps .tip { display: block; margin-top: 6px; font-size: 13.5px; font-style: italic; color: var(--soft); line-height: 19px; }
+.note { margin: 12px 10px 0; padding: 12px 16px; border-radius: 16px; background: var(--wash); font-size: 14px; font-style: italic; line-height: 20px; }
+.note p { margin: 0; } .note p + p { margin-top: 6px; }
+
+/* покупки */
+.shop .src { display: block; font-size: 12.5px; font-style: italic; color: var(--faint); margin-top: 2px; }
+.btn { display: block; width: 100%; margin: 8px 0; padding: 13px; border-radius: 999px; text-align: center; font-weight: 500; }
+.btn.primary { background: var(--acc); color: var(--on-acc); }
+.btn.outline { border: 1px solid var(--rule); color: var(--acc); background: var(--page); }
+.btn.quiet { color: var(--danger); font-weight: 400; font-style: italic; }
+.confirm { margin-top: 6px; text-align: center; font-style: italic; }
+.confirm .row { display: flex; gap: 8px; } .confirm .btn { flex: 1; }
+
+/* магазины */
+.place .pt { display: flex; align-items: baseline; gap: 10px; margin-top: 14px; }
+.place .pt b { flex: 1; font-size: 19px; font-weight: 500; }
+.place .pt span { font-size: 12.5px; font-style: italic; color: var(--soft); white-space: nowrap; }
+.place p { margin: 6px 0 0; font-size: 14.5px; line-height: 20px; color: var(--soft); }
+.place .what { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.place .what span { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--paper); }
+
+/* настройки */
+.themes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.theme { border-radius: 16px; padding: 7px; text-align: left; border: 1px solid; min-width: 0; }
+.theme.on { box-shadow: inset 0 0 0 1px var(--acc); }
+.theme .mini { border-radius: 10px; padding: 8px; border: 1px solid; }
+.theme .mini i { display: block; height: 5px; border-radius: 3px; margin-bottom: 5px; }
+.theme .mini .pills { display: flex; gap: 4px; margin-top: 3px; }
+.theme .mini b { flex: 1; height: 10px; border-radius: 5px; border: 1px solid transparent; }
+.theme .nm { display: block; font-size: 12px; margin: 6px 0 0; font-style: italic; text-align: center; white-space: nowrap; overflow: hidden; }
+.theme.on .nm { font-style: normal; font-weight: 500; }
+
+#toast { position: fixed; left: 50%; bottom: calc(84px + var(--safe-bottom)); transform: translate(-50%, 20px); opacity: 0; z-index: 60; background: var(--ink); color: var(--page);
+  padding: 10px 18px; border-radius: 999px; font-size: 14px; font-style: italic; transition: .3s ease; pointer-events: none; white-space: nowrap; }
+#toast.in { opacity: 1; transform: translate(-50%, 0); }
+#main.intro > * { animation: rise .5s cubic-bezier(.16, 1, .3, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { #main.intro > * { animation: none; } #toast { transition: none; } }
+</style>
+</head>
+<body>
+<div id="top"><div class="row">
+  <h1>scrcook</h1>
+  <span class="sync" id="sync"></span>
+</div></div>
+
+<main id="main"></main>
+
+<nav id="nav">
+  <button data-tab="recipes"><span class="ic"><svg viewBox="0 0 24 24"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM9 4h2v5l-1-.75L9 9zm9 16H6V4h1v9l3-2.25L13 13V4h5z"/></svg></span>Рецепты</button>
+  <button data-tab="shop"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7.2 14.8h9.9c.75 0 1.4-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 21.55 6H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44C4.52 17.37 5.48 19 7 19h12v-2H7l1.1-2z"/></svg></span>Покупки<span class="badge" id="badge" hidden></span></button>
+  <button data-tab="stores"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></span>Магазины</button>
+  <button data-tab="settings"><span class="ic"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.48.48 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></span>Настройки</button>
+</nav>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const $main = $('#main');
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('scrcook.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('scrcook.' + k, JSON.stringify(v)); } catch (e) {} }
+};
+
+/* ---------- темы: те же мягкие палитры, что в scrmoods ---------- */
+const THEMES = [
+  { id: 'rosewood', name: 'Rosewood', paper: '#F3E1DC', page: '#FFF8F5', ink: '#3B2A25', soft: '#8A6B63', faint: '#C2A49B', rule: '#EBCFC6', acc: '#C0584A', wash: '#F9DCD3' },
+  { id: 'peach', name: 'Peach', paper: '#FCE3CF', page: '#FFF8F1', ink: '#43291C', soft: '#93684F', faint: '#CFA588', rule: '#F3D0B5', acc: '#DB6E35', wash: '#FFE0CB' },
+  { id: 'sepia', name: 'Sepia', paper: '#EADFCF', page: '#FBF6EE', ink: '#4F3933', soft: '#85695A', faint: '#BCA893', rule: '#E0D2BF', acc: '#945B46', wash: '#F0E0D0' },
+  { id: 'matcha', name: 'Matcha', paper: '#E3EDD8', page: '#F9FCF4', ink: '#26331F', soft: '#5F7351', faint: '#A2B393', rule: '#CFDDBF', acc: '#5C8A3E', wash: '#DDEDCC' },
+  { id: 'lavender', name: 'Lavender', paper: '#ECE3F4', page: '#FCF9FF', ink: '#33263F', soft: '#77648A', faint: '#B4A5C4', rule: '#DED0EC', acc: '#8A5BB8', wash: '#EBDCF7' },
+  { id: 'berry', name: 'Berry', paper: '#F7DFE8', page: '#FFF7FA', ink: '#3D2030', soft: '#8F5F74', faint: '#C99AAD', rule: '#EFC9D7', acc: '#C24A7C', wash: '#FBD9E6' },
+  { id: 'night', name: 'Night', paper: '#221A17', page: '#2E2420', ink: '#F1E4DC', soft: '#BCA79C', faint: '#7E6B62', rule: '#44362F', acc: '#E39A7E', wash: '#4A3129', onAcc: '#2A1C17', dark: true },
+];
+let theme = THEMES[0];
+function applyTheme(id) {
+  theme = THEMES.find(t => t.id === id) || THEMES[0];
+  const r = document.documentElement.style;
+  for (const k of ['paper', 'page', 'ink', 'soft', 'faint', 'rule', 'wash']) r.setProperty('--' + k, theme[k]);
+  r.setProperty('--acc', theme.acc);
+  r.setProperty('--on-acc', theme.onAcc || '#fff');
+  document.documentElement.style.colorScheme = theme.dark ? 'dark' : 'light';
+  document.querySelector('meta[name=theme-color]').setAttribute('content', theme.paper);
+  store.set('theme', theme.id);
+}
+applyTheme(store.get('theme', 'rosewood'));
+
+/* ---------- рецепты ---------- */
+// Рецепты переписаны из описаний рилсов. Поля ингредиента: n — название, q — сколько,
+// s — пояснение, o — мера из оригинала, w — где купить в Тбилиси, alt — в Тбилиси не нашёлся.
+const RECIPES = [{"id":"pirog","title":"Комфортный пирог","lede":"Говяжий фарш с морковью и горошком в томате, слой сыра и шапка из картофельного пюре с корочкой.","cats":["Запеканки","Говядина","Духовка"],"time":"~1 ч","facts":["Форма ⌀ 23 см","180 °C","~25 мин в духовке"],"level":3,"groups":[{"t":"Начинка","items":[{"n":"Говяжий фарш","q":"400 г","s":"или готовый фарш в супермаркете","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Морковь","q":"1 шт.","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Лук","q":"1 шт.","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Зелёный горошек, замороженный","q":"2 горсти","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Томатный соус или паста","q":"2–3 ст. л.","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Соль, сушёный чеснок, сушёный базилик, сладкий перец","q":"по вкусу","s":"специи продают на рынке на развес","w":"Дезертирский рынок (специи на развес), Nikora"},{"n":"Сыр","q":"100 г","s":"подойдёт любой плавкий, например сулугуни","w":"Nikora, Spar, Carrefour, Libre"}]},{"t":"Картофельный слой","items":[{"n":"Картофель","q":"700–800 г","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Молоко","q":"50 мл","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Сливочное масло","q":"40 г","w":"Nikora, Spar, Carrefour, Libre"}]}],"steps":[["Почистите картофель и отварите до мягкости."],["Слегка обжарьте фарш. Добавьте мелко нарезанный лук, морковь кубиками и горошек и жарьте, пока овощи не станут мягкими."],["Под конец вмешайте томатный соус или пасту, посолите, добавьте специи и тушите, пока жидкость не выпарится.","Если берёте пасту, добавьте ещё около 100 мл воды."],["Разомните картофель с молоком и маслом в пюре."],["Соберите пирог: начинка, сверху сыр, затем пюре. По желанию проведите по пюре вилкой узор."],["Запекайте около 25 минут при 180 °C до золотистой корочки."]],"notes":["Количество соли и специй в оригинале не указано."],"author":"shlomadaria","url":"https://www.instagram.com/reel/DdqYwRTs-H5/","date":"24 сентября 2026","photo":"pirog"},{"id":"hashlama","title":"Хашлама в пиве","lede":"Говядина на кости, томлённая слоями с овощами в светлом пиве, а в конце с картошкой.","cats":["Говядина","Тушёное","Кавказская кухня"],"time":"2–3 ч","facts":["Средний огонь","Под крышкой","Картошка за 40 мин до конца"],"level":1,"groups":[{"t":"","items":[{"n":"Говядина на кости","s":"грудинка, рёбра или голяшка, в мясных рядах","w":"Дезертирский рынок (мясные ряды), рынок Навтлуги"},{"n":"Репчатый лук","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Помидоры","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Болгарский перец","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Чеснок","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Светлое пиво","q":"500 мл","s":"можно заменить водой или бульоном","w":"Nikora, Spar, Ori Nabiji"},{"n":"Картофель","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Петрушка, кинза, базилик","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Соль, чёрный перец","q":"по вкусу","w":"Nikora, Spar, Carrefour, Libre"}]}],"steps":[["Выложите в кастрюлю слоями всё, кроме картошки. Залейте пивом, накройте крышкой и доведите до кипения на среднем огне."],["Посолите, поперчите и тушите под крышкой на среднем огне около 1,5 часа.","У автора ушло около двух часов: мясо должно легко отходить от кости."],["Добавьте картофель, посолите и тушите ещё примерно 40 минут."]],"notes":["В описании указано только количество пива. Порядок слоёв автор не уточняет."],"author":"lena__gotovit","url":"https://www.instagram.com/lena__gotovit/","date":"1 августа 2026","photo":"hashlama"},{"id":"kurica","title":"Куриные конверты с сыром","lede":"Куриный фарш на листе для жарки, внутри сыр и помидоры. Лист складывают пополам и отправляют в аэрогриль.","cats":["Курица","Аэрогриль","Быстро"],"time":"~30 мин","facts":["4 порции","~200 г фарша на лист"],"level":1,"groups":[{"t":"","items":[{"n":"Листы для жарки Магги","q":"4 шт.","s":"в продаже в Грузии я их не нашёл. Замена: пергамент и специи для курицы, посолить фарш","w":"в Тбилиси не нашёл, см. замену","alt":1},{"n":"Куриный фарш","q":"800 г","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Сыр, тёртый","q":"150 г","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Помидоры","q":"1–2 шт.","w":"Дезертирский рынок, Nikora, Spar"}]}],"steps":[["Разложите фарш по листу для жарки ровным слоем, примерно по 200 г на лист."],["На одну половину выложите тёртый сыр и нарезанные помидоры."],["Накройте второй половиной листа и отправьте в аэрогриль.","Время и температура в видимой части описания не указаны."]],"notes":["200 г на лист я посчитал сам: 800 г фарша на 4 листа."],"author":"tashaavagyan","url":"https://www.instagram.com/tashaavagyan/","date":"24 декабря 2025","photo":"kurica"},{"id":"sup","title":"Пикл-суп","lede":"Сливочный суп на курином бульоне с маринованными огурцами, ветчиной, картошкой, чеддером и укропом.","cats":["Супы","Быстро"],"time":"~40 мин","facts":["Варка 15–20 мин","Перевод с английского"],"level":2,"groups":[{"t":"Основа супа","items":[{"n":"Красный лук, кубиком","q":"1–2 шт.","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Чеснок, пластинками","q":"10–12 зубч.","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Морковь небольшая","q":"3–4 шт.","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Стебель сельдерея","q":"1 шт.","s":"на рынке бывает не всегда","w":"Agrohub, Fresco"},{"n":"Картофель средний","q":"2 шт.","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Маринованные огурцы с укропом","q":"8 шт.","s":"грузинские квашеные (мжаве) другие на вкус, лучше маринованные в банке","w":"Fresco (соленья), Nikora, Carrefour"},{"n":"Огуречный рассол","q":"~80 мл","s":"из той же банки","o":"⅓ чашки","w":"из банки с огурцами"},{"n":"Куриный бульон","q":"по объёму","s":"или бульонные кубики","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Укроп, рубленый","q":"~20 г","o":"⅓ чашки","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Чеддер, тёртый","q":"~100 г","o":"1 чашка","w":"Agrohub, Fresco (импортные сыры)"},{"n":"Ветчина, кубиком","q":"~150 г","o":"1 чашка","w":"Fresco (ветчина и бекон), Nikora, Carrefour"},{"n":"Итальянские травы","q":"1 ст. л.","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Приправа Old Bay","q":"1 ст. л.","s":"замена: сельдерейная соль, паприка, чёрный и красный перец, щепотка горчицы","w":"в Тбилиси не нашёл, см. замену","alt":1},{"n":"Соль, перец, масло для обжарки","q":"по вкусу","w":"Nikora, Spar, Carrefour, Libre"}]},{"t":"Сметанная заправка","items":[{"n":"Мука","q":"~65 г","o":"½ чашки","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Сметана","q":"~240 г","o":"1 чашка","w":"Nikora, Spar, Carrefour, Libre"}]}],"steps":[["Обжарьте лук и чеснок на масле. Добавьте морковь, сельдерей, картофель и огурцы, перемешайте и всыпьте специи."],["Положите ветчину, залейте бульоном почти доверху и влейте рассол. Варите на слабом огне 15–20 минут."],["Пока суп варится, смешайте сметану с мукой.","Чтобы сметана не свернулась, сначала разведите смесь половником горячего бульона."],["Влейте заправку, добавьте чеддер и укроп, перемешайте до расплавления сыра."],["Подавайте, посыпав укропом и кусочками огурцов."]],"notes":["Автор пишет, что все количества примерные. Граммы пересчитаны из американских чашек (1 чашка ≈ 240 мл)."],"author":"jujumaoeats","url":"https://www.instagram.com/jujumaoeats/","date":"28 ноября 2025","photo":"sup"},{"id":"vinegret","title":"Винегрет из запечённых овощей","lede":"Овощи не варят, а сразу режут кубиками и запекают вместе с головкой чеснока. Чеснок потом идёт в заправку с горчицей и лимоном.","cats":["Салаты","Без мяса","Духовка"],"time":"~45 мин","facts":["190–200 °C без конвекции","~30 мин в духовке"],"level":1,"groups":[{"t":"Овощи","items":[{"n":"Свёкла","s":"нарезать мелкими кубиками","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Картофель","s":"кубики чуть крупнее, чем свёкла и морковь","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Морковь","s":"нарезать мелкими кубиками","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Чеснок","q":"1 головка","s":"для запекания","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Растительное масло для запекания","q":"немного","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Маринованный огурец","w":"Fresco (соленья), Nikora, Carrefour"},{"n":"Зелёный горошек","w":"Nikora, Spar, Carrefour, Libre"}]},{"t":"Заправка","items":[{"n":"Запечённый чеснок","s":"та самая головка из духовки","w":"своя заготовка"},{"n":"Ароматное растительное масло","s":"нерафинированное подсолнечное, его много на рынке Навтлуги","w":"рынок Навтлуги, Дезертирский рынок"},{"n":"Зернистая горчица","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Лимонный сок","q":"немного","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Соль, чёрный перец","q":"по вкусу","w":"Nikora, Spar, Carrefour, Libre"}]},{"t":"Для подачи","items":[{"n":"Сельдь, кусочками","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Зелёный лук","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Чёрный хлеб","w":"Nikora, Spar, Carrefour, Libre"}]}],"steps":[["Нарежьте свёклу, картошку и морковь небольшими кубиками: картошку чуть крупнее, свёклу и морковь мельче. Так всё приготовится одновременно.","В кадре овощи разложены на противне отдельными полосами, так свёкла не окрашивает остальное."],["Слегка сбрызните овощи маслом."],["У головки чеснока срежьте верхушку, капните масла и заверните в фольгу. Положите на тот же противень."],["Запекайте при 190–200 °C без конвекции примерно 30 минут."],["К готовым овощам добавьте нарезанный огурец и горошек."],["Для заправки разомните запечённый чеснок и смешайте с маслом, горчицей, лимонным соком, солью и перцем. Заправьте винегрет."],["Подавайте с кусочками сельди, зелёным луком и чёрным хлебом."]],"notes":["Количества в описании не указаны, только температура и время."],"author":"andrey.maladets","url":"https://www.instagram.com/andrey.maladets/","date":"октябрь 2026","photo":"vinegret"},{"id":"pasta","title":"Паста с митболами","lede":"Куриные митболы с сыром внутри в сливочно-томатном соусе со спагетти. Рецепт рассчитан на 4 контейнера на неделю.","cats":["Паста","Курица","Быстро","Еда на неделю"],"time":"~30 мин","facts":["4 контейнера по 500 г","570 ккал на контейнер","Б 60 · Ж 11 · У 57"],"level":2,"groups":[{"t":"На 4 контейнера","items":[{"n":"Спагетти","q":"280 г","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Куриное филе, в фарш","q":"600 г","s":"или готовый куриный фарш в супермаркете","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Сыр","q":"160 г","s":"кусочками для начинки","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Творожный сыр","q":"100 г","w":"Nikora, Carrefour, Spar"},{"n":"Томатный соус","q":"150 г","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Специи для фарша","q":"по вкусу","w":"Дезертирский рынок (специи на развес), Nikora"},{"n":"Итальянские травы","q":"по вкусу","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Вода от варки макарон","q":"200 г","s":"сохраните, когда сливаете спагетти","w":"своя"}]}],"steps":[["Отварите спагетти и сохраните 200 г воды, в которой они варились."],["Смешайте куриный фарш со специями. Сформируйте лепёшку примерно по 30 г, положите в центр кусочек сыра и закатайте в шарик.","Из 600 г фарша выйдет около 20 митболов."],["Обжарьте митболы с двух сторон."],["Добавьте к ним томатный соус, воду от макарон, итальянские травы и творожный сыр. Тушите всё вместе 5 минут."],["Выложите спагетти, перемешайте и разложите по контейнерам."]],"notes":["КБЖУ на 100 г: 114 ккал, белки 12 г, жиры 2 г, углеводы 11 г (по данным автора).","Количество митболов я посчитал сам: 600 г фарша по 30 г."],"author":"abramov_channel","url":"https://www.instagram.com/abramov_channel/","date":"20 ноября 2025","photo":"pasta"},{"id":"kartofelnyj-sup","title":"Суп из запечённого картофеля с беконом","lede":"Кремовый суп на курином бульоне: картошку сначала запекают до корочки, потом соединяют с беконом, сельдереем, сливками и чеддером.","cats":["Супы","Духовка"],"time":"~1 ч","facts":["8 порций","Картошка 30 мин при 220 °C"],"level":3,"groups":[{"t":"","items":[{"n":"Картофель","q":"500 г","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Оливковое масло","q":"2 ст. л.","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Бекон","q":"200 г","w":"Fresco (ветчина и бекон), Nikora, Carrefour"},{"n":"Сельдерей","q":"4 стебля","s":"на рынке бывает не всегда","w":"Agrohub, Fresco"},{"n":"Лук репчатый","q":"1 шт.","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Сливочное масло","q":"2 ст. л.","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Мука","q":"2 ст. л.","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Куриный бульон","q":"1,5 л","s":"или бульонные кубики","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Чеддер, тёртый","q":"220 г","w":"Agrohub, Fresco (импортные сыры)"},{"n":"Жирные сливки","q":"200 мл","w":"Nikora, Carrefour, Spar"},{"n":"Укроп, рубленый","q":"маленький пучок","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Соль, перец","q":"по вкусу","w":"Nikora, Spar, Carrefour, Libre"}]}],"steps":[["Нарежьте картофель небольшими ломтиками, сбрызните маслом, посолите, поперчите и выложите на противень срезом вниз. Запекайте 30 минут при 220 °C."],["Обжарьте бекон с луком и сельдереем до золотистой корочки."],["В кастрюле растопите сливочное масло и понемногу вмешайте муку. Медленно вливайте бульон, всё время помешивая венчиком и доводя до кипения. Посолите по вкусу."],["Вмешайте в суп две трети тёртого сыра, сливки, картофель, зажарку и укроп."]],"notes":["На скриншоте описание заканчивается четвёртым шагом. Оставшуюся треть сыра, скорее всего, посыпают сверху при подаче, но это моё предположение."],"author":"accent.cooking","url":"https://www.instagram.com/accent.cooking/","date":"7 декабря 2025","photo":"kartsup"},{"id":"shnicel","title":"Куриный шницель с птитимом","lede":"Хрустящая куриная грудка в панко и птитим в сливочном соусе со шпинатом, черри, чесноком и сыром.","cats":["Курица","Паста","Быстро"],"time":"~40 мин","facts":["4 порции","Сковорода"],"level":2,"groups":[{"t":"Шницель","items":[{"n":"Филе куриной грудки","q":"600 г","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Яйца","q":"2 шт.","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Панировочные сухари панко","s":"ищите в разделе азиатских продуктов","w":"Fresco (азиатские продукты), Agrohub"},{"n":"Мука для панировки","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Смесь перцев, соль, кориандр","q":"по вкусу","s":"автор растирает специи в ступке","w":"Дезертирский рынок (специи на развес), Nikora"},{"n":"Масло для жарки","w":"Nikora, Spar, Carrefour, Libre"}]},{"t":"Птитим в сливочном соусе","items":[{"n":"Паста птитим","q":"400 г","s":"если не найдёте, подойдёт орзо","w":"Agrohub, Fresco"},{"n":"Сливки от 20%","q":"200 мл","w":"Nikora, Carrefour, Spar"},{"n":"Черри","q":"200 г","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Шпинат","q":"70 г","s":"бывает и замороженный в супермаркете","w":"Дезертирский рынок, Agrohub, Fresco"},{"n":"Твёрдый сыр","q":"100 г","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Чеснок","q":"2 зубчика","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Соль","q":"по вкусу","w":"Nikora, Spar, Carrefour, Libre"}]}],"steps":[["Разрежьте филе, отбейте и натрите специями.","Специи лучше растереть в ступке, так они пахнут сильнее."],["Обваляйте куски в муке, затем в яйце и в сухарях. Обжарьте с двух сторон до золотистого цвета."],["Отварите птитим."],["Обжарьте шпинат, черри и измельчённый чеснок пару минут. Влейте сливки и прогрейте почти до кипения, не кипятите."],["Добавьте птитим и тёртый сыр, перемешайте. Подавайте со шницелем."]],"notes":["Количество сухарей, муки и масла для жарки в описании не указано."],"author":"lusya_food_mood","url":"https://www.instagram.com/lusya_food_mood/","date":"27 ноября 2025","photo":"shnicel"},{"id":"cajun","title":"Сливочная паста по-каджунски в одной сковороде","lede":"Паста, черри, бекон, грибы и шпинат готовятся прямо в сливках с бульоном в одной сковороде. Сливочная, с кислинкой томатов и лёгкой остротой.","cats":["Паста","Быстро"],"time":"~25 мин","facts":["2 порции","Одна сковорода с крышкой","Перевод с английского"],"level":1,"groups":[{"t":"На 2 порции","items":[{"n":"Оливковое масло","q":"2 ст. л.","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Длинная паста","q":"170 г","s":"в кадре волнистая, вроде маффальдине","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Черри, половинками","q":"200 г","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Лук, полукольцами","q":"½ шт.","s":"в кадре красный","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Бекон, нарезанный","q":"2–3 полоски","w":"Fresco (ветчина и бекон), Nikora, Carrefour"},{"n":"Коричневые шампиньоны, ломтиками","q":"4 шт.","s":"в оригинале baby bella","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Шпинат","q":"2 горсти","w":"Дезертирский рынок, Agrohub, Fresco"},{"n":"Чеснок, тонкими пластинками","q":"3 зубчика","w":"Дезертирский рынок, Nikora, Spar"},{"n":"Итальянские травы","q":"1 ч. л.","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Каджунская приправа","q":"½ ст. л.","s":"замена: сладкая паприка, сушёный чеснок и лук, щепотка кайенского перца, орегано, тимьян","w":"в Тбилиси не нашёл, см. замену","alt":1},{"n":"Сахар","q":"1 ч. л. – ½ ст. л.","s":"по кислотности томатов","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Соль, перец","q":"по вкусу","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Жирные сливки","q":"300 мл","o":"~1¼ чашки","w":"Nikora, Carrefour, Spar"},{"n":"Томатная паста","q":"1 ст. л.","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Говяжий бульон","q":"~150 г","s":"или бульонный кубик","o":"⅔ чашки","w":"Nikora, Spar, Carrefour, Libre"},{"n":"Пармезан, тёртый","q":"~28 г","o":"⅓ чашки","w":"Agrohub, Fresco, Carrefour"}]}],"steps":[["Разогрейте оливковое масло в большой сковороде на среднем огне."],["Выложите пасту в центр. Вокруг разложите черри, лук, бекон и грибы, сверху посыпьте чесноком."],["Добавьте итальянские травы, каджунскую приправу и сахар. Выложите томатную пасту поверх пасты и овощей."],["Влейте бульон и сливки. Накройте крышкой и готовьте 8–10 минут, пока паста не станет почти аль денте. Снимите крышку и аккуратно перемешайте, при необходимости подлейте немного воды или бульона."],["Вмешайте шпинат, чтобы он только слегка увял. Добавьте пармезан и перемешайте до гладкого сливочного соуса. Посолите и поперчите."],["Подавайте горячей, посыпав пармезаном или щепоткой каджунской приправы.","Немного сахара гасит кислоту томатов и делает соус глубже."]],"notes":["Меры пересчитаны из американских. Каджунскую приправу в Тбилиси я не нашёл, замена указана в списке."],"author":"haileyateit","url":"https://www.instagram.com/haileyateit/","date":"28 сентября 2025","photo":"cajun"}];
+// Рисунки блюд. Чтобы поставить своё фото, положите файл в папку img/ (лучше 16:10)
+// и впишите его сюда, например pirog: 'img/pirog.jpg'. Файл добавьте и в FILES в sw.js.
+const IMAGES = {};
+const ART = {"pirog": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Пирог с картофельным пюре\"> <ellipse cx=\"160\" cy=\"160\" rx=\"132\" ry=\"22\" fill=\"#000\" opacity=\".08\"/> <rect x=\"40\" y=\"70\" width=\"240\" height=\"88\" rx=\"14\" fill=\"#f4f1ea\" stroke=\"#cfc8b8\" stroke-width=\"3\"/> <rect x=\"52\" y=\"78\" width=\"216\" height=\"30\" rx=\"8\" fill=\"#e9c75e\"/> <g stroke=\"#c9a33d\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"> <path d=\"M64 88 q10 8 20 0 t20 0 t20 0 t20 0 t20 0\"/> <path d=\"M150 98 q10 8 20 0 t20 0 t20 0 t20 0 t20 0\"/> <path d=\"M64 100 q10 6 20 0 t20 0\"/> </g> <rect x=\"52\" y=\"108\" width=\"216\" height=\"8\" fill=\"#f2df9a\"/> <rect x=\"52\" y=\"116\" width=\"216\" height=\"34\" rx=\"6\" fill=\"#8a4a2c\"/> <g fill=\"#5c8a3a\"><circle cx=\"72\" cy=\"128\" r=\"5\"/><circle cx=\"118\" cy=\"140\" r=\"5\"/><circle cx=\"170\" cy=\"126\" r=\"5\"/><circle cx=\"222\" cy=\"138\" r=\"5\"/><circle cx=\"250\" cy=\"126\" r=\"5\"/></g> <g fill=\"#e07b33\"><rect x=\"90\" y=\"124\" width=\"10\" height=\"10\" rx=\"2\"/><rect x=\"140\" y=\"132\" width=\"10\" height=\"10\" rx=\"2\"/><rect x=\"196\" y=\"122\" width=\"10\" height=\"10\" rx=\"2\"/><rect x=\"236\" y=\"140\" width=\"9\" height=\"9\" rx=\"2\"/></g> <path d=\"M210 40 v26\" stroke=\"#9aa0a6\" stroke-width=\"5\" stroke-linecap=\"round\"/> <path d=\"M202 22 v14 M210 22 v14 M218 22 v14 M202 36 q8 8 16 0\" stroke=\"#9aa0a6\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/> </svg>", "hashlama": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Хашлама в кастрюле\"> <ellipse cx=\"160\" cy=\"176\" rx=\"120\" ry=\"14\" fill=\"#000\" opacity=\".08\"/> <path d=\"M60 80 h200 v70 q0 26 -26 26 h-148 q-26 0 -26 -26 z\" fill=\"#3d3d40\"/> <rect x=\"44\" y=\"92\" width=\"22\" height=\"10\" rx=\"5\" fill=\"#2c2c2e\"/><rect x=\"254\" y=\"92\" width=\"22\" height=\"10\" rx=\"5\" fill=\"#2c2c2e\"/> <ellipse cx=\"160\" cy=\"80\" rx=\"100\" ry=\"22\" fill=\"#b5762a\"/> <ellipse cx=\"160\" cy=\"80\" rx=\"100\" ry=\"22\" fill=\"none\" stroke=\"#2c2c2e\" stroke-width=\"5\"/> <g> <path d=\"M100 70 q14 -16 34 -6 q10 10 -4 18 q-20 8 -30 -12z\" fill=\"#7a3a24\"/> <rect x=\"124\" y=\"60\" width=\"26\" height=\"7\" rx=\"3.5\" fill=\"#efe6d4\" transform=\"rotate(-18 137 63)\"/> <path d=\"M178 66 q18 -12 34 0 q6 12 -12 16 q-18 2 -22 -16z\" fill=\"#8b4429\"/> <ellipse cx=\"150\" cy=\"86\" rx=\"15\" ry=\"10\" fill=\"#efd27a\"/> <ellipse cx=\"196\" cy=\"88\" rx=\"13\" ry=\"9\" fill=\"#efd27a\"/> <ellipse cx=\"118\" cy=\"88\" rx=\"12\" ry=\"8\" fill=\"#efd27a\"/> <circle cx=\"170\" cy=\"74\" r=\"9\" fill=\"#d8442c\"/><circle cx=\"170\" cy=\"74\" r=\"4\" fill=\"#f08a6f\"/> <path d=\"M206 76 q8 -6 16 0\" stroke=\"#3f8a3a\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\"/> </g> <g stroke=\"#3f8a3a\" stroke-width=\"2.5\" stroke-linecap=\"round\"><path d=\"M132 76 l6 -5\"/><path d=\"M160 92 l7 -3\"/><path d=\"M186 78 l5 4\"/><path d=\"M110 80 l-5 -4\"/><path d=\"M220 86 l6 3\"/></g> <g stroke=\"#d9d6cf\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\" opacity=\".7\"><path d=\"M130 44 q-8 -10 0 -20 q8 -10 0 -18\"/><path d=\"M168 46 q-8 -10 0 -20 q8 -10 0 -18\"/><path d=\"M204 44 q-8 -10 0 -20\"/></g> </svg>", "kurica": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Куриные конверты с сыром\"> <ellipse cx=\"160\" cy=\"168\" rx=\"130\" ry=\"16\" fill=\"#000\" opacity=\".08\"/> <rect x=\"34\" y=\"60\" width=\"252\" height=\"106\" rx=\"16\" fill=\"#2f2f33\"/> <rect x=\"44\" y=\"70\" width=\"232\" height=\"86\" rx=\"10\" fill=\"#3b3b40\"/> <g> <rect x=\"58\" y=\"80\" width=\"98\" height=\"66\" rx=\"8\" fill=\"#f6f1e6\"/> <rect x=\"64\" y=\"86\" width=\"86\" height=\"54\" rx=\"6\" fill=\"#d9925a\"/> <path d=\"M64 112 h86\" stroke=\"#b86e3a\" stroke-width=\"3\"/> <path d=\"M70 140 q8 8 16 0 q8 8 16 0\" fill=\"#f2d468\"/> </g> <g> <rect x=\"164\" y=\"80\" width=\"98\" height=\"66\" rx=\"8\" fill=\"#f6f1e6\"/> <rect x=\"170\" y=\"86\" width=\"86\" height=\"54\" rx=\"6\" fill=\"#cf8650\"/> <path d=\"M170 112 h86\" stroke=\"#b06535\" stroke-width=\"3\"/> <circle cx=\"236\" cy=\"140\" r=\"8\" fill=\"#d8442c\"/> <path d=\"M186 140 q8 9 16 0\" fill=\"#f2d468\"/> </g> <g fill=\"#b9532a\" opacity=\".5\"><circle cx=\"90\" cy=\"98\" r=\"2\"/><circle cx=\"120\" cy=\"126\" r=\"2\"/><circle cx=\"200\" cy=\"96\" r=\"2\"/><circle cx=\"228\" cy=\"124\" r=\"2\"/></g> <g stroke=\"#d9d6cf\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\" opacity=\".7\"><path d=\"M120 50 q-8 -10 0 -20\"/><path d=\"M200 50 q-8 -10 0 -20\"/></g> </svg>", "sup": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Пикл-суп в тарелке\"> <ellipse cx=\"160\" cy=\"170\" rx=\"118\" ry=\"16\" fill=\"#000\" opacity=\".08\"/> <ellipse cx=\"160\" cy=\"104\" rx=\"120\" ry=\"62\" fill=\"#f4f1ea\" stroke=\"#cfc8b8\" stroke-width=\"3\"/> <ellipse cx=\"160\" cy=\"100\" rx=\"92\" ry=\"44\" fill=\"#e7cf8c\"/> <g> <circle cx=\"124\" cy=\"92\" r=\"13\" fill=\"#8aa84a\"/><circle cx=\"124\" cy=\"92\" r=\"9\" fill=\"#c3d47c\"/> <circle cx=\"186\" cy=\"110\" r=\"12\" fill=\"#8aa84a\"/><circle cx=\"186\" cy=\"110\" r=\"8\" fill=\"#c3d47c\"/> <circle cx=\"160\" cy=\"80\" r=\"10\" fill=\"#8aa84a\"/><circle cx=\"160\" cy=\"80\" r=\"6\" fill=\"#c3d47c\"/> <rect x=\"140\" y=\"104\" width=\"13\" height=\"13\" rx=\"2\" fill=\"#e8a0a0\"/> <rect x=\"200\" y=\"86\" width=\"12\" height=\"12\" rx=\"2\" fill=\"#e8a0a0\"/> <rect x=\"108\" y=\"110\" width=\"11\" height=\"11\" rx=\"2\" fill=\"#e8873a\"/> <rect x=\"216\" y=\"104\" width=\"10\" height=\"10\" rx=\"2\" fill=\"#e8873a\"/> <rect x=\"174\" y=\"88\" width=\"12\" height=\"12\" rx=\"2\" fill=\"#f1e2b5\"/> </g> <g stroke=\"#3f7f2a\" stroke-width=\"2.5\" stroke-linecap=\"round\" fill=\"none\"> <path d=\"M138 78 l6 -6 M141 75 l-3 -5 M144 72 l4 -4\"/> <path d=\"M200 120 l6 -6 M203 117 l-3 -5 M206 114 l4 -4\"/> <path d=\"M100 98 l6 -6 M103 95 l-3 -5\"/> <path d=\"M168 122 l6 -6 M171 119 l4 -5\"/> </g> <path d=\"M258 70 l40 -36\" stroke=\"#9aa0a6\" stroke-width=\"6\" stroke-linecap=\"round\"/> </svg>", "pasta": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Паста с митболами\"> <ellipse cx=\"160\" cy=\"172\" rx=\"120\" ry=\"15\" fill=\"#000\" opacity=\".08\"/> <rect x=\"42\" y=\"62\" width=\"236\" height=\"104\" rx=\"14\" fill=\"#e9eef0\" stroke=\"#c4ccd0\" stroke-width=\"3\" opacity=\".95\"/> <rect x=\"52\" y=\"72\" width=\"216\" height=\"84\" rx=\"9\" fill=\"#e07a4a\"/> <g stroke=\"#f2d27a\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"> <path d=\"M60 92 q20 -14 40 0 t40 0 t40 0 t40 0 t36 0\"/> <path d=\"M60 110 q20 14 40 0 t40 0 t40 0 t40 0 t36 0\"/> <path d=\"M60 128 q20 -12 40 0 t40 0 t40 0 t40 0 t36 0\"/> <path d=\"M60 144 q20 10 40 0 t40 0 t40 0 t40 0 t36 0\"/> </g> <g> <circle cx=\"98\" cy=\"104\" r=\"16\" fill=\"#c98a52\"/><circle cx=\"93\" cy=\"99\" r=\"5\" fill=\"#e3b07a\"/> <circle cx=\"158\" cy=\"122\" r=\"17\" fill=\"#c27e48\"/><circle cx=\"153\" cy=\"117\" r=\"5\" fill=\"#e3b07a\"/> <circle cx=\"220\" cy=\"100\" r=\"16\" fill=\"#c98a52\"/><circle cx=\"215\" cy=\"95\" r=\"5\" fill=\"#e3b07a\"/> <path d=\"M150 128 q8 8 16 0\" fill=\"#f6efd8\"/> </g> <g fill=\"#3f7f2a\"><circle cx=\"120\" cy=\"88\" r=\"2.5\"/><circle cx=\"186\" cy=\"138\" r=\"2.5\"/><circle cx=\"246\" cy=\"128\" r=\"2.5\"/><circle cx=\"76\" cy=\"136\" r=\"2.5\"/></g> </svg>", "kartsup": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Суп из запечённого картофеля в кастрюле\"> <ellipse cx=\"160\" cy=\"176\" rx=\"120\" ry=\"14\" fill=\"#000\" opacity=\".08\"/> <path d=\"M60 82 h200 v66 q0 26 -26 26 h-148 q-26 0 -26 -26 z\" fill=\"#2f3033\"/> <rect x=\"42\" y=\"92\" width=\"24\" height=\"10\" rx=\"5\" fill=\"#222326\"/><rect x=\"254\" y=\"92\" width=\"24\" height=\"10\" rx=\"5\" fill=\"#222326\"/> <ellipse cx=\"160\" cy=\"82\" rx=\"100\" ry=\"22\" fill=\"#efe2c2\"/> <ellipse cx=\"160\" cy=\"82\" rx=\"100\" ry=\"22\" fill=\"none\" stroke=\"#222326\" stroke-width=\"5\"/> <g> <path d=\"M104 78 q10 -10 22 0 q-10 8 -22 0z\" fill=\"#c98a4a\"/> <path d=\"M176 86 q12 -10 24 0 q-12 8 -24 0z\" fill=\"#c98a4a\"/> <path d=\"M140 72 q10 -8 20 0 q-10 7 -20 0z\" fill=\"#d49a58\"/> <rect x=\"124\" y=\"86\" width=\"16\" height=\"6\" rx=\"2\" fill=\"#b0503a\" transform=\"rotate(-10 132 89)\"/> <rect x=\"206\" y=\"74\" width=\"16\" height=\"6\" rx=\"2\" fill=\"#b0503a\" transform=\"rotate(8 214 77)\"/> <rect x=\"164\" y=\"78\" width=\"9\" height=\"9\" rx=\"2\" fill=\"#a7c26a\"/> <rect x=\"92\" y=\"88\" width=\"8\" height=\"8\" rx=\"2\" fill=\"#a7c26a\"/> </g> <g fill=\"#f0c94a\" opacity=\".9\"><circle cx=\"152\" cy=\"90\" r=\"3\"/><circle cx=\"190\" cy=\"76\" r=\"3\"/><circle cx=\"118\" cy=\"70\" r=\"3\"/><circle cx=\"228\" cy=\"86\" r=\"3\"/></g> <g stroke=\"#3f7f2a\" stroke-width=\"2.5\" stroke-linecap=\"round\"><path d=\"M130 80 l6 -4\"/><path d=\"M196 90 l7 -3\"/><path d=\"M166 70 l5 4\"/><path d=\"M220 80 l-5 -3\"/></g> <g stroke=\"#d9d6cf\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\" opacity=\".7\"><path d=\"M140 48 q-8 -10 0 -20 q8 -10 0 -18\"/><path d=\"M182 48 q-8 -10 0 -20\"/></g> </svg>", "shnicel": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Шницель с птитимом на тарелке\"> <ellipse cx=\"160\" cy=\"172\" rx=\"122\" ry=\"15\" fill=\"#000\" opacity=\".08\"/> <ellipse cx=\"160\" cy=\"104\" rx=\"128\" ry=\"62\" fill=\"#f4f1ea\" stroke=\"#cfc8b8\" stroke-width=\"3\"/> <ellipse cx=\"200\" cy=\"104\" rx=\"62\" ry=\"38\" fill=\"#f0e3bf\"/> <g fill=\"#e9d59c\"><circle cx=\"176\" cy=\"92\" r=\"3\"/><circle cx=\"186\" cy=\"100\" r=\"3\"/><circle cx=\"198\" cy=\"88\" r=\"3\"/><circle cx=\"210\" cy=\"112\" r=\"3\"/><circle cx=\"222\" cy=\"96\" r=\"3\"/><circle cx=\"192\" cy=\"118\" r=\"3\"/><circle cx=\"236\" cy=\"108\" r=\"3\"/><circle cx=\"168\" cy=\"110\" r=\"3\"/><circle cx=\"214\" cy=\"80\" r=\"3\"/></g> <g><circle cx=\"186\" cy=\"84\" r=\"8\" fill=\"#d8442c\"/><circle cx=\"226\" cy=\"118\" r=\"8\" fill=\"#d8442c\"/><circle cx=\"206\" cy=\"100\" r=\"7\" fill=\"#e0573c\"/></g> <g fill=\"#3f7f2a\"><path d=\"M172 104 q8 -10 16 0 q-8 6 -16 0z\"/><path d=\"M228 88 q8 -10 16 0 q-8 6 -16 0z\"/><path d=\"M196 122 q8 -10 16 0 q-8 6 -16 0z\"/></g> <path d=\"M58 92 q10 -34 56 -30 q40 6 36 40 q-4 30 -46 32 q-50 -2 -46 -42z\" fill=\"#d79a3e\"/> <path d=\"M66 94 q10 -26 48 -24 q32 6 28 34 q-4 22 -38 24 q-42 -2 -38 -34z\" fill=\"#e6b257\"/> <g fill=\"#c4852c\" opacity=\".7\"><circle cx=\"84\" cy=\"88\" r=\"2\"/><circle cx=\"104\" cy=\"80\" r=\"2\"/><circle cx=\"122\" cy=\"96\" r=\"2\"/><circle cx=\"96\" cy=\"110\" r=\"2\"/><circle cx=\"116\" cy=\"118\" r=\"2\"/><circle cx=\"78\" cy=\"106\" r=\"2\"/></g> </svg>", "cajun": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Сливочная паста в сковороде\"> <ellipse cx=\"150\" cy=\"172\" rx=\"118\" ry=\"14\" fill=\"#000\" opacity=\".08\"/> <path d=\"M262 108 l50 -10\" stroke=\"#2c2c2e\" stroke-width=\"12\" stroke-linecap=\"round\"/> <ellipse cx=\"150\" cy=\"104\" rx=\"118\" ry=\"62\" fill=\"#3a3a3d\"/> <ellipse cx=\"150\" cy=\"100\" rx=\"104\" ry=\"52\" fill=\"#e39a55\"/> <g stroke=\"#f3cf6a\" stroke-width=\"5\" fill=\"none\" stroke-linecap=\"round\"> <path d=\"M90 84 q6 -6 12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0\"/> <path d=\"M86 100 q6 -6 12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0\"/> <path d=\"M94 116 q6 -6 12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0\"/> </g> <g><circle cx=\"80\" cy=\"76\" r=\"9\" fill=\"#d8442c\"/><circle cx=\"214\" cy=\"120\" r=\"9\" fill=\"#d8442c\"/><circle cx=\"72\" cy=\"112\" r=\"8\" fill=\"#e0573c\"/></g> <g fill=\"#b98a68\"><path d=\"M200 70 q10 -12 20 0 v6 h-20z\"/><path d=\"M226 92 q10 -12 20 0 v6 h-20z\"/></g> <g><rect x=\"110\" y=\"128\" width=\"26\" height=\"7\" rx=\"3\" fill=\"#c0504a\"/><rect x=\"170\" y=\"64\" width=\"24\" height=\"7\" rx=\"3\" fill=\"#c0504a\"/></g> <g fill=\"#3f7f2a\"><path d=\"M150 128 q10 -12 20 0 q-10 8 -20 0z\"/><path d=\"M60 92 q8 -10 16 0 q-8 6 -16 0z\"/></g> <g fill=\"#f4ecd6\"><circle cx=\"130\" cy=\"92\" r=\"2.5\"/><circle cx=\"168\" cy=\"108\" r=\"2.5\"/><circle cx=\"190\" cy=\"94\" r=\"2.5\"/><circle cx=\"118\" cy=\"110\" r=\"2.5\"/></g> </svg>", "vinegret": "<svg viewBox=\"0 0 320 200\" xmlns=\"http://www.w3.org/2000/svg\" aria-label=\"Винегрет в миске\"> <ellipse cx=\"160\" cy=\"170\" rx=\"116\" ry=\"15\" fill=\"#000\" opacity=\".08\"/> <path d=\"M48 96 h224 q-6 70 -112 70 q-106 0 -112 -70z\" fill=\"#f4f1ea\" stroke=\"#cfc8b8\" stroke-width=\"3\"/> <ellipse cx=\"160\" cy=\"96\" rx=\"112\" ry=\"26\" fill=\"#f4f1ea\" stroke=\"#cfc8b8\" stroke-width=\"3\"/> <ellipse cx=\"160\" cy=\"94\" rx=\"100\" ry=\"20\" fill=\"#7e1f45\"/> <g> <rect x=\"80\" y=\"84\" width=\"11\" height=\"11\" rx=\"2\" fill=\"#a52a5a\"/> <rect x=\"104\" y=\"90\" width=\"12\" height=\"12\" rx=\"2\" fill=\"#efd27a\" transform=\"rotate(12 110 96)\"/> <rect x=\"124\" y=\"80\" width=\"10\" height=\"10\" rx=\"2\" fill=\"#e8873a\"/> <rect x=\"140\" y=\"92\" width=\"11\" height=\"11\" rx=\"2\" fill=\"#a52a5a\" transform=\"rotate(-10 145 97)\"/> <rect x=\"160\" y=\"80\" width=\"12\" height=\"12\" rx=\"2\" fill=\"#efd27a\"/> <rect x=\"182\" y=\"92\" width=\"10\" height=\"10\" rx=\"2\" fill=\"#e8873a\" transform=\"rotate(15 187 97)\"/> <rect x=\"200\" y=\"82\" width=\"11\" height=\"11\" rx=\"2\" fill=\"#a52a5a\"/> <rect x=\"220\" y=\"94\" width=\"12\" height=\"12\" rx=\"2\" fill=\"#efd27a\" transform=\"rotate(-8 226 100)\"/> <rect x=\"96\" y=\"100\" width=\"10\" height=\"10\" rx=\"2\" fill=\"#e8873a\"/> <rect x=\"236\" y=\"86\" width=\"9\" height=\"9\" rx=\"2\" fill=\"#a52a5a\"/> <rect x=\"168\" y=\"100\" width=\"10\" height=\"10\" rx=\"2\" fill=\"#9cbf5a\"/> <rect x=\"116\" y=\"104\" width=\"9\" height=\"9\" rx=\"2\" fill=\"#9cbf5a\"/> </g> <g fill=\"#5c8a3a\"><circle cx=\"92\" cy=\"94\" r=\"4.5\"/><circle cx=\"152\" cy=\"86\" r=\"4.5\"/><circle cx=\"196\" cy=\"104\" r=\"4.5\"/><circle cx=\"214\" cy=\"88\" r=\"4.5\"/><circle cx=\"132\" cy=\"100\" r=\"4.5\"/></g> <g stroke=\"#3f8a3a\" stroke-width=\"3\" stroke-linecap=\"round\"><path d=\"M240 60 l18 -22\"/><path d=\"M250 64 l20 -18\"/></g> </svg>"};
+const pic = (r, alt) => IMAGES[r.photo] ? `<img src="${IMAGES[r.photo]}" alt="${esc(alt || '')}" loading="lazy" decoding="async">` : (ART[r.photo] || '');
+const LEVELS = ['', 'Просто', 'Средне', 'Сложнее'];
+const PLACES = [
+  { name: 'Дезертирский рынок', kind: 'рынок', match: 'Дезертирский', text: 'Самый большой продуктовый рынок города: мясо, овощи, зелень, сыр, специи на развес. Молочка и мясо здесь обычно дешевле и свежее, чем в супермаркете.' },
+  { name: 'Рынок Навтлуги', kind: 'рынок', match: 'Навтлуги', text: 'Мясо и овощи из Кахетии, ароматное нерафинированное подсолнечное масло.' },
+  { name: 'Nikora, Spar, Carrefour, Libre', kind: 'супермаркеты', match: /Nikora|Spar|Carrefour|Libre/, text: 'Средний ценовой сегмент: фарш, сметана, сливки, ветчина, заморозка, паста, томатная паста, пиво. Подешевле — Ori Nabiji и Magniti.' },
+  { name: 'Agrohub и Fresco', kind: 'премиум', match: /Agrohub|Fresco/, text: 'Самый широкий выбор и импорт: чеддер, пармезан, панко, птитим, сельдерей. У Fresco есть каталог в Glovo — там видно, что сейчас в наличии.', link: ['Fresco в Glovo', 'https://glovoapp.com/ge/tbilisi/stores/fresco-tbi'] },
+];
+
+/* ---------- состояние ---------- */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const plural = (n, a, b, c) => { const m10 = n % 10, m100 = n % 100; return m10 === 1 && m100 !== 11 ? a : m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20) ? b : c; };
+const tick = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const arrow = d => `<svg viewBox="0 0 24 24"><path d="${d ? 'M9 6l6 6-6 6' : 'M15 6l-6 6 6 6'}"/></svg>`;
+const byId = id => RECIPES.find(r => r.id === id);
+const items = r => r.groups.flatMap(g => g.items);
+const CATS = ['Все'].concat([...new Set(RECIPES.flatMap(r => r.cats))]);
+
+let tab = 'recipes', openId = null, q = '', cat = store.get('cat', 'Все'), sort = store.get('sort', 'added');
+if (!CATS.includes(cat)) cat = 'Все';
+let checks = store.get('checks', {});            // 'рецепт|номер' -> true: уже положили
+let list = store.get('list', []);                // [{ k, rid, n, q, w, done }]
+const saveList = () => { store.set('list', list); badge(); };
+
+function badge() {
+  const n = list.filter(x => !x.done).length, b = $('#badge');
+  b.hidden = !n; b.textContent = n;
+}
+function lvl(n) { return `<span class="lvl" title="Сложность">${[1, 2, 3].map(i => `<i class="${i <= n ? 'f' : ''}"></i>`).join('')}<span>${LEVELS[n]}</span></span>`; }
+
+/* ---------- экраны ---------- */
+function renderRecipes() {
+  const shown = filterNow();
+  $main.innerHTML = `
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">Рецепты</div>
+      <div class="sub">${RECIPES.length} ${plural(RECIPES.length, 'рецепт', 'рецепта', 'рецептов')} из рилсов</div></div></div>
+    <form class="find" id="findForm" role="search" style="--d:40ms">
+      <input class="in" id="q" type="search" placeholder="Название или продукт: сыр, фарш…" value="${esc(q)}" autocomplete="off" aria-label="Найти рецепт">
+      <button class="go" type="submit">Найти</button></form>
+    <div class="chips" style="--d:60ms">${CATS.map(c => `<button data-act="cat" data-c="${esc(c)}" class="${c === cat ? 'on' : ''}">${esc(c)}</button>`).join('')}</div>
+    <div class="seg" style="--d:80ms">${[['added', 'Как добавлены'], ['easy', 'Сначала простые'], ['hard', 'Сначала сложные']].map(([k, t]) =>
+      `<button data-act="sort" data-s="${k}" class="${k === sort ? 'on' : ''}">${t}</button>`).join('')}</div>
+    <div id="cards" style="--d:120ms">${cardsHtml(shown)}</div>`;
+  const inp = $('#q');
+  inp.oninput = () => { q = inp.value; $('#cards').innerHTML = cardsHtml(filterNow()); };
+  $('#findForm').onsubmit = e => { e.preventDefault(); inp.blur(); const c = document.querySelector('.rc'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+}
+function filterNow() {
+  const s = q.trim().toLowerCase();
+  let shown = RECIPES.filter(r => (cat === 'Все' || r.cats.includes(cat)) &&
+    (!s || [r.title, r.lede, ...r.cats, ...items(r).map(i => i.n)].join(' ').toLowerCase().includes(s)));
+  if (sort === 'easy') shown = [...shown].sort((a, b) => a.level - b.level);
+  if (sort === 'hard') shown = [...shown].sort((a, b) => b.level - a.level);
+  return shown;
+}
+function cardsHtml(shown) {
+  if (!shown.length) return `<div class="card"><div class="empty">Ничего не нашлось.<br>Попробуйте другое слово или категорию «Все».</div></div>`;
+  return `<div class="count">${shown.length < RECIPES.length ? 'Найдено: ' + shown.length : ''}</div>` + shown.map(r => `
+    <button class="rc" data-act="open" data-id="${r.id}">
+      <div class="ph">${pic(r)}</div>
+      <div class="tx"><div class="tt">${esc(r.title)}</div>
+        <div class="meta">${lvl(r.level)}<span>${esc(r.time)}</span><span>@${esc(r.author)}</span></div>
+        <div class="tags">${r.cats.map(c => `<span>${esc(c)}</span>`).join('')}</div></div>
+    </button>`).join('');
+}
+
+function renderRecipe() {
+  const r = byId(openId);
+  if (!r) { openId = null; return renderRecipes(); }
+  let n = 0;
+  const ing = r.groups.map(g => (g.t ? `<h3 class="gt">${esc(g.t)}</h3>` : '') + g.items.map(i => {
+    const k = r.id + '|' + (n++), on = !!checks[k];
+    return `<button class="ing ${on ? 'on' : ''}" data-act="check" data-k="${k}" aria-pressed="${on}">
+      <span class="ck">${tick}</span>
+      <span class="m"><span class="n">${esc(i.n)}</span>${i.s ? `<span class="s">${esc(i.s)}</span>` : ''}<span class="w ${i.alt ? 'alt' : ''}">${i.alt ? '' : 'где: '}${esc(i.w)}</span></span>
+      <span class="q num">${esc(i.q || '')}${i.o ? `<i>${esc(i.o)}</i>` : ''}</span></button>`;
+  }).join('')).join('');
+  const inList = list.filter(x => x.rid === r.id).length;
+  const need = items(r).filter((_, i) => !checks[r.id + '|' + i]).length;
+  $main.innerHTML = `
+    <div class="jhead back" style="--d:0ms"><button class="rbtn" data-act="back" aria-label="Ко всем рецептам">${arrow(0)}</button>
+      <div class="t"><div class="big">${esc(r.title)}</div></div></div>
+    <div class="hero" style="--d:40ms">${pic(r, r.title)}</div>
+    <div class="lede" style="--d:60ms">${esc(r.lede)}</div>
+    <div class="facts" style="--d:80ms"><span>${lvl(r.level)}</span><span>${esc(r.time)}</span>${r.facts.map(f => `<span>${esc(f)}</span>`).join('')}</div>
+    <button class="sumbtn ${inList ? 'done' : ''}" data-act="tolist" style="--d:100ms"><span><b>${inList ? 'Уже в покупках' : 'Добавить в покупки'}</b>
+      <i>${inList ? inList + ' ' + plural(inList, 'продукт', 'продукта', 'продуктов') + ' · нажмите, чтобы открыть список' : need + ' ' + plural(need, 'продукт', 'продукта', 'продуктов') + ', сгруппированы по магазинам'}</i></span><span class="plus">${inList ? '→' : '+'}</span></button>
+    <div class="card" style="--d:120ms"><h2 class="hl">Ингредиенты</h2>${ing}
+      <p class="hint">Отмечайте, что уже положили или что есть дома. Отмеченное не попадёт в покупки.</p></div>
+    <div class="card" style="--d:140ms"><h2 class="hl">Приготовление</h2>
+      <ol class="steps">${r.steps.map(s => `<li><p>${esc(s[0])}${s[1] ? `<span class="tip">${esc(s[1])}</span>` : ''}</p></li>`).join('')}</ol></div>
+    ${r.notes && r.notes.length ? `<div class="note" style="--d:160ms">${r.notes.map(t => `<p>${esc(t)}</p>`).join('')}</div>` : ''}
+    <p class="hint" style="margin:14px 24px">Рецепт из рилса <a href="${r.url}" target="_blank" rel="noopener">@${esc(r.author)}</a>, ${esc(r.date)}.
+      ${items(r).some((_, i) => checks[r.id + '|' + i]) ?'<button data-act="uncheck" style="color:var(--acc);font-style:italic">Снять все отметки</button>' : ''}</p>`;
+}
+
+function shopOf(w) {
+  if (/не нашёл|своя/.test(w) || /^из банки/.test(w)) return 'Дома или замена';
+  if (/Дезертирский|Навтлуги/.test(w)) return 'Рынок';
+  if (/^(Agrohub|Fresco)/.test(w)) return 'Agrohub или Fresco';
+  return 'Супермаркет';
+}
+function renderShop() {
+  const groups = {};
+  for (const x of list) (groups[shopOf(x.w)] = groups[shopOf(x.w)] || []).push(x);
+  const order = ['Рынок', 'Супермаркет', 'Agrohub или Fresco', 'Дома или замена'];
+  const left = list.filter(x => !x.done).length;
+  $main.innerHTML = `
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">Покупки</div>
+      <div class="sub">${list.length ? (left ? `осталось купить ${left}` : 'всё куплено') : 'список пуст'}</div></div></div>
+    ${list.length ? order.filter(g => groups[g]).map((g, gi) => `
+      <div class="card shop" style="--d:${40 + gi * 30}ms"><h2 class="hl">${g}</h2>
+        ${groups[g].map(x => `<button class="ing ${x.done ? 'on' : ''}" data-act="buy" data-k="${esc(x.k)}" aria-pressed="${!!x.done}">
+          <span class="ck">${tick}</span>
+          <span class="m"><span class="n">${esc(x.n)}</span><span class="w">${esc(x.w)}</span><span class="src">${esc((byId(x.rid) || {}).title || '')}</span></span>
+          <span class="q num">${esc(x.q || '')}</span></button>`).join('')}</div>`).join('') + `
+      <div class="section" style="--d:180ms;margin-top:14px">
+        ${list.some(x => x.done) ? '<button class="btn outline" data-act="clean">Убрать купленное</button>' : ''}
+        <button class="btn quiet" data-act="wipe">Очистить список</button><div id="wipeBox"></div></div>`
+    : `<div class="card" style="--d:40ms"><div class="empty">Откройте рецепт и нажмите «Добавить в покупки».<br>Продукты сгруппируются по местам, где их купить в Тбилиси.</div></div>`}`;
+}
+
+function renderStores() {
+  const all = RECIPES.flatMap(r => items(r));
+  $main.innerHTML = `
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">Магазины</div><div class="sub">где покупать в Тбилиси</div></div></div>
+    ${PLACES.map((p, i) => {
+      const hit = w => typeof p.match === 'string' ? w.includes(p.match) : p.match.test(w);
+      const what = [...new Set(all.filter(x => !x.alt && hit(x.w)).map(x => x.n.split(',')[0]))].slice(0, 16);
+      return `<div class="card place" style="--d:${40 + i * 30}ms"><div class="pt"><b>${esc(p.name)}</b><span>${p.kind}</span></div><p>${esc(p.text)}</p>
+        ${what.length ? `<div class="what">${what.map(w => `<span>${esc(w)}</span>`).join('')}</div>` : ''}
+        ${p.link ? `<p><a href="${p.link[1]}" target="_blank" rel="noopener">${p.link[0]} ↗</a></p>` : ''}</div>`;
+    }).join('')}
+    <div class="card place" style="--d:180ms"><div class="pt"><b>Не нашлось в Тбилиси</b><span>замены</span></div>
+      <p>Приправы Old Bay и каджунская, листы для жарки Магги. Чем заменить — написано в рецептах.</p>
+      <div class="what">${all.filter(x => x.alt).map(x => `<span>${esc(x.n)}</span>`).join('')}</div></div>
+    <p class="hint" style="margin:14px 24px">Магазины подобраны по типу товара и разделам каталога Fresco в Glovo. Наличие конкретного товара лучше проверить в приложении магазина, Wolt или Glovo.
+      Источник по рынкам и сетям — <a href="https://t-j.ru/food-georgia/" target="_blank" rel="noopener">обзор Т—Ж</a>.</p>`;
+}
+
+function renderSettings() {
+  $main.innerHTML = `
+    <div class="section" style="--d:0ms"><h2 class="hl">Оформление</h2><div class="themes">${THEMES.map(t => `
+      <button class="theme ${t.id === theme.id ? 'on' : ''}" data-act="theme" data-id="${t.id}" style="background:${t.paper};border-color:${t.id === theme.id ? t.acc : t.rule};color:${t.ink}">
+        <span class="mini" style="display:block;background:${t.page};border-color:${t.rule}"><i style="background:${t.acc};width:60%"></i><i style="background:${t.rule}"></i>
+        <span class="pills"><b style="background:${t.acc}"></b><b style="background:${t.paper};border-color:${t.rule}"></b></span></span>
+        <span class="nm">${t.name}</span></button>`).join('')}</div></div>
+    <div class="section" style="--d:40ms"><h2 class="hl">Данные</h2>
+      <p class="hint" style="margin:6px 0 8px">Отметки и список покупок хранятся только на этом устройстве, отдельно от scrmoods и scrmoney.</p>
+      <button class="btn outline" data-act="resetChecks">Снять все отметки в рецептах</button>
+      <div id="resetBox"></div></div>
+    <p class="hint" style="margin:20px 24px">Рисунки блюд временные, свои фото подставляются через IMAGES в index.html. Рецепты переписаны из описаний рилсов в Инстаграме, авторы указаны в каждом рецепте. Английские рецепты переведены, чашки и унции пересчитаны в граммы и миллилитры.</p>`;
+}
+
+function render(anim) {
+  $main.classList.toggle('intro', !!anim);
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  if (tab === 'recipes') (openId ? renderRecipe : renderRecipes)();
+  else if (tab === 'shop') renderShop(); else if (tab === 'stores') renderStores(); else renderSettings();
+}
+
+let toastT;
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('in'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('in'), 2200); }
+
+/* ---------- события ---------- */
+document.addEventListener('click', e => {
+  const nav = e.target.closest('#nav button');
+  if (nav) { if (nav.dataset.tab === tab && tab === 'recipes') openId = null; tab = nav.dataset.tab; render(true); window.scrollTo(0, 0); return; }
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  switch (el.dataset.act) {
+    case 'cat': cat = el.dataset.c; store.set('cat', cat); render(); break;
+    case 'sort': sort = el.dataset.s; store.set('sort', sort); render(); break;
+    case 'open': openId = el.dataset.id; history.pushState({ r: openId }, ''); render(true); window.scrollTo(0, 0); break;
+    case 'back': history.back(); break;
+    case 'check': {
+      const k = el.dataset.k; if (checks[k]) delete checks[k]; else checks[k] = true; store.set('checks', checks);
+      el.classList.toggle('on', !!checks[k]); el.setAttribute('aria-pressed', !!checks[k]); break;
+    }
+    case 'uncheck': for (const k in checks) if (k.startsWith(openId + '|')) delete checks[k]; store.set('checks', checks); render(); break;
+    case 'tolist': {
+      const r = byId(openId);
+      if (list.some(x => x.rid === r.id)) { tab = 'shop'; openId = null; render(true); window.scrollTo(0, 0); break; }
+      let added = 0;
+      items(r).forEach((i, n) => {
+        if (checks[r.id + '|' + n]) return;
+        list.push({ k: r.id + '|' + n, rid: r.id, n: i.n, q: i.q || '', w: i.w, done: false }); added++;
+      });
+      saveList(); render(); toast(added ? `В покупках: ${added} ${plural(added, 'продукт', 'продукта', 'продуктов')}` : 'Всё уже отмечено');
+      break;
+    }
+    case 'buy': { const x = list.find(y => y.k === el.dataset.k); if (x) { x.done = !x.done; saveList(); render(); } break; }
+    case 'clean': list = list.filter(x => !x.done); saveList(); render(); toast('Купленное убрано'); break;
+    case 'wipe': $('#wipeBox').innerHTML = `<div class="confirm">Очистить весь список?<div class="row"><button class="btn outline" data-act="wipeno">Нет</button><button class="btn primary" data-act="wipeyes">Очистить</button></div></div>`; break;
+    case 'wipeno': $('#wipeBox').innerHTML = ''; break;
+    case 'wipeyes': list = []; saveList(); render(); toast('Список очищен'); break;
+    case 'theme': applyTheme(el.dataset.id); render(); break;
+    case 'resetChecks': $('#resetBox').innerHTML = `<div class="confirm">Снять отметки во всех рецептах?<div class="row"><button class="btn outline" data-act="resetno">Нет</button><button class="btn primary" data-act="resetyes">Снять</button></div></div>`; break;
+    case 'resetno': $('#resetBox').innerHTML = ''; break;
+    case 'resetyes': checks = {}; store.set('checks', checks); render(); toast('Отметки сняты'); break;
+  }
+});
+window.addEventListener('popstate', e => { openId = e.state && e.state.r || null; tab = 'recipes'; render(true); window.scrollTo(0, 0); });
+
+history.replaceState({ r: null }, '');
+badge();
+render(true);
+if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
