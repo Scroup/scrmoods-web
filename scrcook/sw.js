@@ -1,7 +1,8 @@
 // Offline support: serve the app from the cache, refresh the cache in the background.
 // Bump VERSION when files change so phones pick up the new version on the next launch.
-const VERSION = 'scrcook-v6';
+const VERSION = 'scrcook-v8';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
+  './img/borsch.jpg', './img/cajun.jpg', './img/lavash.jpg', './img/omlet.jpg', './img/onigirazu.jpg', './img/pasta.jpg', './img/pirog.jpg', './img/potroast.jpg', './img/sendvich.jpg', './img/strips.jpg', './img/tabletki.jpg', './img/udon.jpg', './img/vafli.jpg', './img/vinegret.jpg',
   '../lora_regular.woff', '../lora_medium.woff', '../lora_italic.woff', '../lora_medium_italic.woff'];
 
 self.addEventListener('install', e => {
