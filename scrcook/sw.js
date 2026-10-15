@@ -1,6 +1,6 @@
 // Offline support: serve the app from the cache, refresh the cache in the background.
 // Bump VERSION when files change so phones pick up the new version on the next launch.
-const VERSION = 'scrcook-v11';
+const VERSION = 'scrcook-v12';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   './img/borsch.jpg', './img/cajun.jpg', './img/lavash.jpg', './img/omlet.jpg', './img/onigirazu.jpg', './img/pasta.jpg', './img/pirog.jpg', './img/potroast.jpg', './img/sendvich.jpg', './img/strips.jpg', './img/tabletki.jpg', './img/udon.jpg', './img/vafli.jpg', './img/vinegret.jpg',
   './img/w-pancakes.jpg', './img/w-frtoast.jpg', './img/w-syrniki.jpg', './img/w-shakshuka.jpg', './img/w-scramble.jpg', './img/w-chsoup.jpg', './img/w-lentil.jpg', './img/w-minestrone.jpg', './img/w-shawarma.jpg', './img/w-greek.jpg', './img/w-bolognese.jpg', './img/w-butterchicken.jpg', './img/w-stroganoff.jpg', './img/w-honeychicken.jpg', './img/w-chopsuey.jpg',

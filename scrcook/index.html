@@ -81,6 +81,17 @@ h2.hl::after { content: ""; flex: 1 0 24px; height: 1px; background: var(--rule)
 .chips::-webkit-scrollbar { display: none; }
 .chips button { flex: none; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--page); font-size: 14px; white-space: nowrap; }
 .chips button.on { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+.hrt { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; display: block; }
+.chips .fvchip { display: inline-flex; align-items: center; gap: 5px; color: var(--acc); }
+.chips .fvchip .hrt { width: 15px; height: 15px; fill: currentColor; }
+.chips .fvchip.on { color: var(--on-acc); }
+.rbtn.fav { color: var(--acc); align-self: center; margin-bottom: 0; }
+.rbtn.fav .hrt { width: 21px; height: 21px; }
+.rbtn.fav.on { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+.rbtn.fav.on .hrt { fill: currentColor; }
+.rc .ph { position: relative; }
+.rc .fv { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 50%; background: var(--acc); color: var(--on-acc); display: grid; place-items: center; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+.rc .fv .hrt { width: 18px; height: 18px; fill: currentColor; }
 .seg { display: flex; gap: 6px; padding: 10px 10px 0; }
 .seg button { flex: 1 1 0; min-width: 0; min-height: 36px; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .seg button.on { background: var(--ink); border-color: var(--ink); color: var(--page); }
@@ -439,12 +450,16 @@ let list = store.get('list', []);                 // покупки
 let prefs = Object.assign({ leftovers: true, hidePantry: false, webBook: true, webPlan: true }, store.get('prefs', {}));
 const saveMine = () => store.set('mine', mine), saveFridge = () => store.set('fridge', fridge), savePantry = () => store.set('pantry', pantry);
 const savePlan = () => store.set('plan', plan), savePrefs = () => store.set('prefs', prefs);
+let favs = store.get('favs', {});                 // избранное: { id рецепта: true }
+const saveFavs = () => store.set('favs', favs);
 let reels = store.get('reels', {});               // ссылки на рилсы, которые вы добавили сами: { id рецепта: url }
 const saveReels = () => store.set('reels', reels);
 const isReel = u => /instagram\.com\/(reel|reels|p)\//.test(u || '') || /tiktok\.com|youtu/.test(u || '');
 // ссылка на сам ролик: своя (если добавили) → из рецепта, если это ролик
 const reelOf = r => reels[r.id] || (isReel(r.url) ? r.url : '');
 const profileOf = r => r.author ? 'https://www.instagram.com/' + r.author + '/' : '';
+const HEART = '<svg class="hrt" viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 7.9 3.6 4.5 7 4.5c2.1 0 3.9 1.2 5 3 1.1-1.8 2.9-3 5-3 3.4 0 5.6 3.4 4.3 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg>';
+const favN = () => everything().filter(r => favs[r.id] && (!r.web || prefs.webBook)).length;
 const SHARE_ICON = '<svg viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>';
 const LINK_ICON = '<svg viewBox="0 0 24 24"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>';
 /* ---------- поделиться рецептом ----------
@@ -537,7 +552,7 @@ function lvl(n) { return `<span class="lvl" title="Сложность">${[1, 2, 
 /* ---------- навигация ---------- */
 let tab = 'recipes', openId = null, openB = null, editId = null, ptab = store.get('ptab', 'home');
 let q = '', meal = store.get('meal', 'Все'), ing = null, sort = store.get('sort', 'added');
-if (!MEAL_NAME[meal]) meal = 'Все';
+if (!MEAL_NAME[meal] && meal !== 'fav') meal = 'Все';
 const nav = st => { history.pushState(st, ''); apply(st); render(true); window.scrollTo(0, 0); };
 function apply(st) { st = st || {}; tab = st.tab || 'recipes'; openId = st.r || null; openB = st.b || null; editId = st.e || null; if (st.p) ptab = st.p; }
 
@@ -554,7 +569,7 @@ function renderRecipes() {
     <form class="find" id="findForm" role="search" style="--d:40ms">
       <input class="in" id="q" type="search" placeholder="Название или продукт: сыр, фарш…" value="${esc(q)}" autocomplete="off" aria-label="Найти рецепт">
       <button class="go" type="submit">Найти</button></form>
-    <div class="chips" style="--d:60ms">${MEALS.map(([k, t]) => `<button data-act="meal" data-m="${k}" class="${k === meal ? 'on' : ''}">${t}</button>`).join('')}</div>
+    <div class="chips" style="--d:60ms"><button data-act="meal" data-m="fav" class="fvchip ${meal === 'fav' ? 'on' : ''}">${HEART}Избранное${favN() ? ` <small>${favN()}</small>` : ''}</button>${MEALS.map(([k, t]) => `<button data-act="meal" data-m="${k}" class="${k === meal ? 'on' : ''}">${t}</button>`).join('')}</div>
     ${ready ? `<button class="homebar" data-act="goHome" style="--d:70ms"><b>${ready}</b> ${plural(ready, 'блюдо можно', 'блюда можно', 'блюд можно')} приготовить из того, что дома <span>→</span></button>` : ''}
     ${plain ? `<div class="section" style="--d:80ms"><h2 class="hl">Купить раз — приготовить несколько</h2></div>
     <div class="bundles" style="--d:90ms">${BUNDLES.map(b => `<button class="bcard" data-act="bundle" data-id="${b.id}">
@@ -572,7 +587,7 @@ function renderRecipes() {
 function filterNow() {
   const s = q.trim().toLowerCase();
   const withSubs = k => [k, ...(SUBS[k] || [])].join('|');
-  let shown = all().filter(r => (meal === 'Все' || r.meal === meal) && (!ing || has(r, withSubs(ing))) &&
+  let shown = all().filter(r => (meal === 'Все' || (meal === 'fav' ? favs[r.id] : r.meal === meal)) && (!ing || has(r, withSubs(ing))) &&
     (!s || [r.title, r.lede, MEAL_NAME[r.meal], ...r.cats, ...items(r).map(i => i.n + ' ' + (i.ks || []).join(' '))].join(' ').toLowerCase().includes(s)));
   if (sort === 'easy') shown = [...shown].sort((a, b) => a.level - b.level);
   if (sort === 'hard') shown = [...shown].sort((a, b) => b.level - a.level);
@@ -580,13 +595,14 @@ function filterNow() {
 }
 function card(r) {
   return `<button class="rc" data-act="open" data-id="${r.id}">
-      <div class="ph">${pic(r)}</div>
+      <div class="ph">${pic(r)}${favs[r.id] ? `<span class="fv" aria-label="В избранном">${HEART}</span>` : ''}</div>
       <div class="tx"><div class="tt">${esc(r.title)}</div>
         <div class="meta">${lvl(r.level)}<span>${esc(r.time || '')}</span>${r.author ? `<span>@${esc(r.author)}</span>` : ''}${r.rating ? `<span class="rt">★ ${esc(r.rating.split(' ·')[0].replace(' из 5', ''))}</span>` : ''}</div>
         <div class="tags"><span class="ml">${esc(MEAL_NAME[r.meal] || '')}</span>${r.mine ? '<span class="my">Мой рецепт</span>' : ''}${r.web ? '<span class="wb">Из интернета</span>' : ''}${!r.web && reelOf(r) ? '<span class="rl">▶ рилс</span>' : ''}${(r.cats || []).map(c => `<span>${esc(c)}</span>`).join('')}</div></div>
     </button>`;
 }
 function cardsHtml(shown) {
+  if (!shown.length && meal === 'fav' && !q.trim() && !ing) return `<div class="card"><div class="empty">В избранном пока пусто.<br>Откройте рецепт и нажмите ${HEART} рядом с названием.</div></div>`;
   if (!shown.length) return `<div class="card"><div class="empty">Ничего не нашлось.<br>Попробуйте другое слово, раздел «Все» или снимите выбор продукта.</div></div>`;
   const head = ing ? `<div class="count">С продуктом «${esc(ing)}»${SUBS[ing] ? ' или заменой' : ''}: ${shown.length} · <button data-act="ingf" data-k="${esc(ing)}" class="lnk">показать все</button></div>`
     : shown.length < all().length ? `<div class="count">Найдено: ${shown.length}</div>` : '';
@@ -614,7 +630,8 @@ function renderRecipe() {
   const need = items(r).filter((_, i) => !checks[r.id + '|' + i]).length;
   $main.innerHTML = `
     <div class="jhead back" style="--d:0ms"><button class="rbtn" data-act="back" aria-label="Назад">${arrow(0)}</button>
-      <div class="t"><div class="big">${esc(r.title)}</div></div></div>
+      <div class="t"><div class="big">${esc(r.title)}</div></div>
+      ${r.shared ? '' : `<button class="rbtn fav ${favs[r.id] ? 'on' : ''}" data-act="fav" aria-pressed="${!!favs[r.id]}" aria-label="${favs[r.id] ? 'Убрать из избранного' : 'В избранное'}">${HEART}</button>`}</div>
     <div class="hero" style="--d:40ms">${pic(r, r.title)}</div>
     ${r.lede ? `<div class="lede" style="--d:60ms">${esc(r.lede)}</div>` : ''}
     <div class="facts" style="--d:80ms"><span>${esc(MEAL_NAME[r.meal] || '')}</span><span>${lvl(r.level)}</span>${r.time ? `<span>${esc(r.time)}</span>` : ''}${(r.facts || []).map(f => `<span>${esc(f)}</span>`).join('')}</div>
@@ -809,6 +826,7 @@ function score(r, slot, day, chosen, weekKeys) {
   if (fresh.length) s += 0.8 * fresh.filter(k => weekKeys.has(k)).length / fresh.length;
   const times = chosen.filter(x => x === r.id).length;
   s -= (slot === 'b' ? 0.7 : 1.6) * times;
+  if (favs[r.id]) s += 0.6;                               // избранное попадает в план чаще
   if (r.level === 3) s += weekend ? 0.3 : -0.9;
   if (slot === 'd' && r.big) s += 0.3;
   return s;
@@ -951,7 +969,7 @@ function newProduct(name) {
 
 /* ---------- резервная копия ---------- */
 async function exportData() {
-  const data = { app: 'scrcook', v: 1, saved: new Date().toISOString(), mine, custom, fridge, pantry, plan, list, checks, prefs, reels };
+  const data = { app: 'scrcook', v: 1, saved: new Date().toISOString(), mine, custom, fridge, pantry, plan, list, checks, prefs, reels, favs };
   const name = `scrcook-${todayISO()}.json`, blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
   try { const file = new File([blob], name, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return; } }
   catch (e) { if (e.name === 'AbortError') return; }
@@ -969,6 +987,7 @@ function importData(text) {
   for (const x of d.list || []) if (!list.some(y => y.k === x.k)) list.push(x);
   Object.assign(checks, d.checks || {});
   Object.assign(reels, d.reels || {}); saveReels();
+  Object.assign(favs, d.favs || {}); saveFavs();
   saveMine(); store.set('custom', custom); saveFridge(); savePantry(); if (plan) savePlan(); saveList(); store.set('checks', checks);
   return n;
 }
@@ -1243,6 +1262,11 @@ document.addEventListener('click', e => {
     case 'delRecipe': confirmBox('#delBox', 'Удалить этот рецепт?', 'delYes', 'Удалить'); break;
     case 'delYes': mine = mine.filter(r => r.id !== openId); saveMine(); history.back(); toast('Рецепт удалён'); break;
     case 'cancelBox': $(el.dataset.box).innerHTML = ''; break;
+    case 'fav': {
+      const id = openId; if (favs[id]) delete favs[id]; else favs[id] = true; saveFavs();
+      el.classList.toggle('on', !!favs[id]); el.setAttribute('aria-pressed', !!favs[id]); el.setAttribute('aria-label', favs[id] ? 'Убрать из избранного' : 'В избранное');
+      toast(favs[id] ? 'Добавлено в избранное' : 'Убрано из избранного'); break;
+    }
     case 'share': { const r = byId(openId); shareUrl(r).then(url => navigator.share({ title: r.title, text: r.title + ' — рецепт из scrcook', url })).catch(() => {}); break; }
     case 'copyLink': { const r = byId(openId); shareUrl(r).then(copyText).then(ok => toast(ok ? 'Ссылка скопирована — отправьте её' : 'Не получилось скопировать')); break; }
     case 'saveShared': {
