@@ -251,6 +251,12 @@ h2.hl .lnk.sm + * { display: none; }
 .lnk.sm2 { display: block; margin: 6px 24px 0 auto; font-size: 13px; }
 .reeladd { margin: 12px 10px 0; padding: 12px 14px; border-radius: 16px; border: 1px dashed var(--rule); font-size: 14px; font-style: italic; color: var(--soft); line-height: 20px; }
 .reeladd a { color: var(--acc); }
+.share { display: flex; gap: 8px; margin: 12px 10px 0; }
+.share button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--page); color: var(--acc); font-weight: 500; font-size: 15px; }
+.share svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.gift { margin: 12px 10px 0; padding: 14px 16px; border-radius: 18px; background: var(--acc); color: var(--on-acc); }
+.gift p { margin: 0 0 10px; font-style: italic; }
+.gift button { width: 100%; padding: 11px; border-radius: 999px; background: var(--page); color: var(--acc); font-weight: 500; }
 .reelform { display: flex; gap: 8px; margin-top: 10px; }
 .reelform .in { flex: 1; min-width: 0; min-height: 42px; font-size: 15px; font-style: normal; }
 .reelform .go { flex: none; padding: 0 14px; border-radius: 14px; background: var(--acc); color: var(--on-acc); font-weight: 500; font-style: normal; }
@@ -439,6 +445,43 @@ const isReel = u => /instagram\.com\/(reel|reels|p)\//.test(u || '') || /tiktok\
 // ссылка на сам ролик: своя (если добавили) → из рецепта, если это ролик
 const reelOf = r => reels[r.id] || (isReel(r.url) ? r.url : '');
 const profileOf = r => r.author ? 'https://www.instagram.com/' + r.author + '/' : '';
+const SHARE_ICON = '<svg viewBox="0 0 24 24"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>';
+const LINK_ICON = '<svg viewBox="0 0 24 24"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>';
+/* ---------- поделиться рецептом ----------
+   Встроенный рецепт: ссылка вида …/#r=pirog — у получателя он уже есть в приложении.
+   Свой рецепт: весь рецепт упакован в ссылку (#s=…), получатель может сохранить его себе. */
+const b64u = bytes => { let t = ''; bytes.forEach(b => t += String.fromCharCode(b)); return btoa(t).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+const unb64u = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+const pipe = (bytes, T) => new Response(new Blob([bytes]).stream().pipeThrough(new T('deflate-raw'))).arrayBuffer().then(b => new Uint8Array(b));
+async function packRecipe(r) {
+  const o = { title: r.title, lede: r.lede, meal: r.meal, time: r.time, level: r.level, big: r.big, url: reelOf(r) || r.url || '', groups: r.groups, steps: r.steps, notes: r.notes };
+  const raw = new TextEncoder().encode(JSON.stringify(o));
+  if (window.CompressionStream) { try { return 'z' + b64u(await pipe(raw, CompressionStream)); } catch (e) {} }
+  return 'j' + b64u(raw);
+}
+async function unpackRecipe(s) {
+  let bytes = unb64u(s.slice(1));
+  if (s[0] === 'z') bytes = await pipe(bytes, DecompressionStream);
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+const appUrl = () => location.origin + location.pathname;
+async function shareUrl(r) { return r.mine || r.shared ? appUrl() + '#s=' + await packRecipe(r) : appUrl() + '#r=' + encodeURIComponent(r.id); }
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; } catch (e) {
+    const a = document.createElement('textarea'); a.value = t; a.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(a); a.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e2) {} a.remove(); return ok;
+  }
+}
+async function openFromHash() {
+  const h = location.hash, m = h.match(/^#([rs])=(.+)$/); if (!m) return false;
+  history.replaceState({ tab: 'recipes' }, '', appUrl() + location.search);
+  if (m[1] === 'r') { const id = decodeURIComponent(m[2]); if (!byId(id)) { toast('Такого рецепта нет в приложении'); return false; } nav({ tab: 'recipes', r: id }); return true; }
+  try {
+    const o = await unpackRecipe(m[2]);
+    shared = { ...o, id: 'shared', shared: 1, photo: 'mine', author: '', cats: [], facts: o.facts || [], notes: o.notes || [], steps: o.steps || [], groups: o.groups || [] };
+    nav({ tab: 'recipes', r: 'shared' }); return true;
+  } catch (e) { toast('Ссылка повреждена — попросите прислать её ещё раз'); return false; }
+}
 const REEL_ICON = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
 function reelBlock(r) {
   if (r.web) return '';
@@ -456,7 +499,8 @@ const everything = () => BUILTIN.concat(mine);
 // рецепты из интернета можно спрятать из книги и/или убрать из плана недели
 const all = () => everything().filter(r => !r.web || prefs.webBook);
 const inRotation = r => !r.web || (prefs.webBook && prefs.webPlan);
-const byId = id => everything().find(r => r.id === id);
+let shared = null;                                  // рецепт, который прислали по ссылке (ещё не сохранён)
+const byId = id => everything().find(r => r.id === id) || (shared && shared.id === id ? shared : null);
 const WEB_N = BUILTIN.filter(r => r.web).length;
 const items = r => r.groups.flatMap(g => g.items);
 const catalog = () => CATALOG.concat(custom);
@@ -574,7 +618,8 @@ function renderRecipe() {
     <div class="hero" style="--d:40ms">${pic(r, r.title)}</div>
     ${r.lede ? `<div class="lede" style="--d:60ms">${esc(r.lede)}</div>` : ''}
     <div class="facts" style="--d:80ms"><span>${esc(MEAL_NAME[r.meal] || '')}</span><span>${lvl(r.level)}</span>${r.time ? `<span>${esc(r.time)}</span>` : ''}${(r.facts || []).map(f => `<span>${esc(f)}</span>`).join('')}</div>
-    ${reelBlock(r)}
+    ${r.shared ? `<div class="gift" style="--d:85ms"><p>Этим рецептом с вами поделились.</p><button data-act="saveShared">Сохранить в мои рецепты</button></div>` : reelBlock(r)}
+    <div class="share" style="--d:90ms">${navigator.share ? `<button data-act="share">${SHARE_ICON}Поделиться</button>` : ''}<button data-act="copyLink">${LINK_ICON}Скопировать ссылку</button></div>
     ${fridge.length ? `<div class="homeline ${st.miss.length ? '' : 'ok'}" style="--d:90ms">${st.miss.length ? 'Дома не хватает: ' + st.miss.map(esc).join(', ') : 'Всё есть дома — можно готовить'}${st.swaps.length ? ' · замены: ' + st.swaps.map(([a, v]) => esc(a.toLowerCase()) + ' → ' + esc(v.toLowerCase())).join(', ') : ''}</div>` : ''}
     <button class="sumbtn ${inList ? 'done' : ''}" data-act="tolist" style="--d:100ms"><span><b>${inList ? 'Уже в покупках' : 'Добавить в покупки'}</b>
       <i>${inList ? inList + ' ' + plural(inList, 'продукт', 'продукта', 'продуктов') + ' · нажмите, чтобы открыть список' : need + ' ' + plural(need, 'продукт', 'продукта', 'продуктов') + ', сгруппированы по магазинам'}</i></span><span class="plus">${inList ? '→' : '+'}</span></button>
@@ -1198,6 +1243,14 @@ document.addEventListener('click', e => {
     case 'delRecipe': confirmBox('#delBox', 'Удалить этот рецепт?', 'delYes', 'Удалить'); break;
     case 'delYes': mine = mine.filter(r => r.id !== openId); saveMine(); history.back(); toast('Рецепт удалён'); break;
     case 'cancelBox': $(el.dataset.box).innerHTML = ''; break;
+    case 'share': { const r = byId(openId); shareUrl(r).then(url => navigator.share({ title: r.title, text: r.title + ' — рецепт из scrcook', url })).catch(() => {}); break; }
+    case 'copyLink': { const r = byId(openId); shareUrl(r).then(copyText).then(ok => toast(ok ? 'Ссылка скопирована — отправьте её' : 'Не получилось скопировать')); break; }
+    case 'saveShared': {
+      const r = { ...shared, id: 'my-' + Date.now().toString(36), mine: 1 }; delete r.shared;
+      for (const g of r.groups) for (const i of g.items) for (const k of i.ks || []) if (!catalog().some(p => p.n === k)) { custom.push({ n: k, g: 'Другое', d: 7, w: i.w || '' }); store.set('custom', custom); }
+      mine.push(r); saveMine(); shared = null;
+      history.replaceState({ tab: 'recipes', r: r.id }, ''); apply({ tab: 'recipes', r: r.id }); render(true); toast('Рецепт сохранён в ваши'); break;
+    }
     case 'reelEdit': delete reels[openId]; saveReels(); render(); { const f = document.querySelector('.reelform input'); f && f.focus(); } break;
     /* продукты */
     case 'ptab': ptab = el.dataset.p; store.set('ptab', ptab); history.replaceState({ tab: 'products', p: ptab }, ''); render(); break;
@@ -1277,6 +1330,8 @@ history.replaceState({ tab: 'recipes' }, '');
 tickNow(); wake();
 badge();
 render(true);
+openFromHash();
+window.addEventListener('hashchange', openFromHash);
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
 </script>
 </body>
