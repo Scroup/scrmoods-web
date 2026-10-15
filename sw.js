@@ -1,6 +1,6 @@
 // Offline support: serve the app from the cache, refresh the cache in the background.
 // Bump VERSION when files change so phones pick up the new version on the next launch.
-const VERSION = 'scrmoods-v27';
+const VERSION = 'scrmoods-v28';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   './lora_regular.woff', './lora_medium.woff', './lora_italic.woff', './lora_medium_italic.woff'];
 
@@ -22,7 +22,7 @@ self.addEventListener('fetch', e => {
     caches.open(VERSION).then(async cache => {
       const cached = await cache.match(e.request, { ignoreSearch: true });
       const network = fetch(e.request)
-        .then(res => { if (res.ok) cache.put(e.request, res.clone()); return res; })
+        .then(res => { if (res.ok || res.type === 'opaque') cache.put(e.request, res.clone()); return res; })
         .catch(() => cached);
       return cached || network;
     })
