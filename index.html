@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>scrmoods</title>
 <meta name="theme-color" content="#EFE4DF">
+<!-- Defence in depth for health data: even if something slipped into the page, it can't send anything to another site. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; media-src 'self' data: blob:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -659,7 +661,7 @@ const mealsPoint = () => D.points.find(p => p.id === MEALS_ID && !p.archived);
 const snacksPoint = () => D.points.find(p => p.id === SNACKS_ID && !p.archived);
 const goalMeals = p => Math.min(8, Math.max(1, Math.round(p.max)));
 const waterPoint = () => D.points.find(p => p.id === WATER_ID && !p.archived);
-const goalCups = p => Math.max(1, Math.round(p.max));
+const goalCups = p => Math.min(30, Math.max(1, Math.round(p.max) || 1)); // same 1–30 range as the goal setting
 const litres = cups => (cups * ML_PER_CUP / 1000).toFixed(1);
 const recommendedCups = kg => Math.min(20, Math.max(4, Math.round(kg * 30 / ML_PER_CUP)));
 const EVENING_HOUR = 20;
@@ -720,6 +722,14 @@ function toXml(d) {
   L.push('  </entries>', '</scrmoods>', '');
   return L.join('\n');
 }
+/* A real calendar day written as yyyy-mm-dd. */
+function isIsoDate(s) {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z'); // 2026-02-30 rolls over to March, so it fails the round trip below
+  return !isNaN(d) && d.toISOString().slice(0, 10) === s;
+}
+/* Keys that would change an object's prototype if a file used them as point ids. */
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 function fromXml(text) {
   const doc = new DOMParser().parseFromString(text, 'application/xml');
   const root = doc.documentElement;
@@ -741,12 +751,12 @@ function fromXml(text) {
     better: ['higher', 'lower', 'none', 'middle'].includes(p.getAttribute('better')) ? p.getAttribute('better')
       : (DEFAULT_POINTS.find(d => d.id === p.getAttribute('id'))?.better || (p.getAttribute('type') === 'yesno' ? 'higher' : 'none')),
     reminders: [...p.getElementsByTagName('reminder')].map(r => r.getAttribute('time')).filter(t => /^([01]\d|2[0-3]):[0-5]\d$/.test(t || '')),
-  })).filter(p => p.id);
+  })).filter(p => p.id && !UNSAFE_KEYS.has(p.id));
   const entries = {};
   for (const e of root.getElementsByTagName('entry')) {
-    const date = e.getAttribute('date'); if (!date) continue;
+    const date = e.getAttribute('date'); if (!isIsoDate(date)) continue; // only real days (also keeps "__proto__" out)
     const values = {};
-    for (const v of e.getElementsByTagName('value')) if (v.getAttribute('point')) values[v.getAttribute('point')] = v.textContent;
+    for (const v of e.getElementsByTagName('value')) { const k = v.getAttribute('point'); if (k && !UNSAFE_KEYS.has(k)) values[k] = v.textContent; }
     const note = e.getElementsByTagName('note')[0]?.textContent || '';
     const timed = [...e.getElementsByTagName('timednote')].map(t => ({ time: t.getAttribute('time') || '', text: t.textContent }));
     entries[date] = { values, note, timed };
@@ -846,13 +856,14 @@ function planFromXml(root) {
   for (const [c, attr] of [['m', 'morning'], ['n', 'noon'], ['e', 'evening']]) if (okTime(el.getAttribute(attr))) plan.times[c] = el.getAttribute(attr);
   plan.meds = [...el.getElementsByTagName('med')].map(m => ({
     id: m.getAttribute('id') || 'pm_' + Math.random().toString(36).slice(2),
-    name: m.getAttribute('name') || '', unit: m.getAttribute('unit') || 'tab',
+    name: m.getAttribute('name') || '', unit: PLAN_UNITS.includes(m.getAttribute('unit')) ? m.getAttribute('unit') : 'tab', // only known units: the unit is shown as HTML
     color: /^#[0-9a-fA-F]{6}$/.test(m.getAttribute('color') || '') ? m.getAttribute('color') : PLAN_COLORS[0],
     remind: m.getAttribute('remind') !== 'false', archived: m.getAttribute('archived') === 'true',
+    // stages with a date that isn't a real yyyy-mm-dd day are dropped (the Android app parses these dates in its alarms)
     stages: [...m.getElementsByTagName('stage')].map(s => ({
-      dose: parseFloat(s.getAttribute('dose')) || 1, from: s.getAttribute('from') || today(), to: s.getAttribute('to') || null,
+      dose: (d => d > 0 && d <= 1000 ? d : 1)(parseFloat(s.getAttribute('dose'))), from: s.getAttribute('from'), to: s.getAttribute('to') || null,
       slots: (s.getAttribute('slots') || '').split(',').map(x => x.trim()).filter(x => ['m', 'n', 'e'].includes(x)),
-    })).sort((a, b) => a.from < b.from ? -1 : 1),
+    })).filter(s => isIsoDate(s.from) && (s.to == null || (isIsoDate(s.to) && s.to >= s.from))).sort((a, b) => a.from < b.from ? -1 : 1),
   }));
   return plan;
 }
@@ -944,7 +955,7 @@ function planEditHtml(P) {
         <div><label class="f" for="plTo-${k}">${tr('To')}</label><input type="date" id="plTo-${k}" value="${s.to || ''}"></div></div>
       ${s.to ? `<button class="link" data-act="plNoEnd" data-k="${k}">${tr('No end date')}</button>` : `<div class="hint" style="padding:4px 0 0">${tr('no end date')}</div>`}
       <label class="f">${tr('When')}</label><div class="pslots">${SLOTS.map(([c]) => `<button class="${s.slots.includes(c) ? 'on' : ''}" data-act="plSlot" data-k="${k}" data-c="${c}"><b>${s.slots.includes(c) ? '✓ ' : ''}${esc(slotName(c))}</b><i>${slotTime(c)}</i></button>`).join('')}</div>
-      ${days > 0 && s.slots.length ? `<div class="hint" style="padding:8px 0 0">${tr('{0} {1} · {2} × {3} a day = {4} {5}', days, trp(days, 'day', 'days'), amount(s.dose), s.slots.length, amount(days * s.slots.length * s.dose), unitLabel(g.unit))}</div>` : ''}</div>`;
+      ${days > 0 && s.slots.length ? `<div class="hint" style="padding:8px 0 0">${tr('{0} {1} · {2} × {3} a day = {4} {5}', days, trp(days, 'day', 'days'), amount(s.dose), s.slots.length, amount(days * s.slots.length * s.dose), esc(unitLabel(g.unit)))}</div>` : ''}</div>`;
   });
   h += `<div style="padding:10px 14px 0"><button class="paddstage" data-act="plAddStage">${tr('+ Add a stage with another dose')}</button></div>
     <div class="card"><button class="switchrow" data-act="plRemind" role="switch" aria-checked="${g.remind}"><span class="t"><b>${tr('Remind me')}</b><i>${tr('Reminders work in the Android app.')}</i></span><span class="switch ${g.remind ? 'on' : ''}"></span></button></div>
@@ -1079,6 +1090,13 @@ function load() {
   }
   D = defaults(); save();
 }
+/* Another tab or window of the app saved: take its data, so this one doesn't overwrite it with an older copy. */
+window.addEventListener('storage', ev => {
+  if (ev.key !== KEY || !ev.newValue) return;
+  try { D = fromXml(ev.newValue); } catch (e) { return; }
+  const typing = document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+  if (!typing) render();
+});
 function save() {
   try { localStorage.setItem(KEY, toXml(D)); }
   catch (e) { toast(tr('Could not save! Storage may be full: export your data.')); }
@@ -1289,7 +1307,7 @@ const cookieSvg = full => `<svg viewBox="0 0 32 32" aria-hidden="true"><circle c
   [[12, 12], [19.5, 12.5], [14.5, 19], [20.5, 19.5], [10.5, 16.5]].map(([x, y]) => `<circle class="chip" cx="${x}" cy="${y}" r="${full ? 1.6 : 1.1}"/>`).join('')}</svg>`;
 function mealsCard(s, e, inQuick = false) {
   const p = mealsPoint(); if (!p) return '';
-  const sp = snacksPoint(), goal = goalMeals(p), eaten = Math.round(parseFloat(e.values[p.id]) || 0);
+  const sp = snacksPoint(), goal = goalMeals(p), eaten = Math.min(20, Math.max(0, Math.round(parseFloat(e.values[p.id]) || 0))); // one bowl is drawn per meal
   const attr = inQuick ? 'data-q' : 'data-act';
   let bowls = ''; for (let i = 0; i < Math.max(goal, eaten); i++) bowls += `<button class="cup ${i < eaten ? 'on' : ''}" ${attr}="meal" data-n="${i}" aria-label="${tr('Meal {0}', i + 1)}">${bowlSvg(i < eaten)}</button>`;
   let h = `<div class="mealrow"><div class="mt"><div class="q">${tr('Meals')}</div><div class="msub ${eaten >= goal ? 'ok' : ''}">${tr('{0} of {1}', eaten, goal)}</div></div><div class="icons ${goal > 4 ? 'many' : ''}">${bowls}</div></div>`;
@@ -1308,7 +1326,7 @@ function mealsCard(s, e, inQuick = false) {
 const tapTo = (i, cur) => i + 1 === cur ? i : i + 1;
 function waterCard(s, e) {
   const p = waterPoint(); if (!p) return '';
-  const drunk = Math.round(parseFloat(e.values[p.id]) || 0), goal = goalCups(p), count = Math.max(goal, drunk);
+  const drunk = Math.min(60, Math.max(0, Math.round(parseFloat(e.values[p.id]) || 0))), goal = goalCups(p), count = Math.max(goal, drunk); // one drop is drawn per cup
   let cups = '';
   for (let i = 0; i < count; i++) cups += `<button class="cup ${i < drunk ? 'on' : ''} ${i >= goal ? 'extra' : ''}" data-act="cup" data-n="${i}" aria-label="${tr('Cup {0}', i + 1)}">${cupSvg(i < drunk)}</button>`;
   const msg = drunk >= goal ? tr('Goal reached. Well done!') : drunk === 0 ? tr('Tap a cup each time you drink a glass (200 ml).')
