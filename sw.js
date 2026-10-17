@@ -1,6 +1,6 @@
 // Offline support: serve the app from the cache, refresh the cache in the background.
 // Bump VERSION when files change so phones pick up the new version on the next launch.
-const VERSION = 'scrmoods-v28';
+const VERSION = 'scrmoods-v30';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   './lora_regular.woff', './lora_medium.woff', './lora_italic.woff', './lora_medium_italic.woff'];
 
@@ -16,8 +16,11 @@ self.addEventListener('activate', e => {
   );
 });
 
+// Only the app's own files and the paper style's Google Fonts are cached; anything else goes to the network untouched.
+const CACHEABLE = url => url.origin === self.location.origin || url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
+
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
+  if (e.request.method !== 'GET' || !CACHEABLE(new URL(e.request.url))) return;
   e.respondWith(
     caches.open(VERSION).then(async cache => {
       const cached = await cache.match(e.request, { ignoreSearch: true });
