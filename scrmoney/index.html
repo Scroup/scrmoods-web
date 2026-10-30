@@ -494,6 +494,57 @@ b.neg { color: var(--danger); }
 .catbar .cb i { background: var(--c, var(--acc)); border-radius: 5px; }
 .sp .ci { font-size: 16px; }
 @media (prefers-reduced-motion: reduce) { #quick .qbody > div, .qwave { animation: none !important; } }
+/* ===== повторы, цели, прогноз ===== */
+.qrep { margin-top: 10px; }
+.qrep button { font-size: 13.5px; }
+.qcnt { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 14px; font-style: italic; color: var(--soft); }
+.qcnt input { width: 64px; min-height: 40px; border: 1px solid var(--rule); border-radius: 12px; background: var(--paper); text-align: center; font-size: 17px; font-style: normal; color: var(--ink); }
+.qcnt input:focus { outline: none; border-color: var(--acc); }
+.qlab { font-size: 13px; font-style: italic; color: var(--soft); margin: 8px 2px 0; }
+.qcs { flex: none; font-size: 15px; color: var(--soft); }
+.qrv .qnum.small { font-size: 18px; }
+.qwhenin { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 14px; font-style: italic; color: var(--soft); }
+.qwhenin .qdin { flex: 1; }
+.qghint { display: block; margin-top: 8px; font-size: 14px; color: var(--acc); font-weight: 500; }
+.qghint:empty { display: none; }
+.qdt span em { display: block; font-size: 12px; font-style: italic; font-weight: 400; color: var(--soft); text-align: right; }
+.bchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.bchips .bnext { margin-top: 0; }
+.bnext.goal { background: color-mix(in srgb, #5B86D6 15%, var(--page)); }
+.goalc { padding: 12px 0 14px; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
+.goalc:last-of-type { border-bottom: 0; }
+.gtop { display: flex; align-items: center; gap: 12px; }
+.gtop .tic { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; flex: none; background: color-mix(in srgb, var(--c) 18%, var(--page)); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--c) 50%, transparent); }
+.gt { flex: 1; min-width: 0; } .gt b { display: block; font-size: 16.5px; font-weight: 500; } .gt i { display: block; font-size: 13px; line-height: 17px; color: var(--soft); }
+.gsave { flex: none; padding: 8px 14px; border-radius: 999px; background: var(--c); color: #fff; font-size: 14px; font-weight: 500; }
+.gbar2 { position: relative; height: 12px; border-radius: 6px; background: color-mix(in srgb, var(--c, var(--acc)) 12%, transparent); margin-top: 10px; overflow: hidden; }
+.gbar2 i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; background: var(--c, var(--acc)); transition: width .6s cubic-bezier(.16, 1, .3, 1); }
+.gbar2 i.plan { background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--c, var(--acc)) 35%, transparent) 0 4px, transparent 4px 8px); }
+.gnums { display: flex; justify-content: space-between; margin-top: 5px; font-size: 13.5px; color: var(--soft); }
+.gnums b { color: var(--ink); font-weight: 500; }
+.gmonth { margin-top: 6px; font-size: 13.5px; font-style: italic; color: var(--c); }
+.glog { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent); font-size: 15px; }
+.glog span { flex: 1; color: var(--soft); } .glog b { font-weight: 500; color: #3E9A62; } .glog b.neg { color: var(--danger); }
+.glog .rm { width: 28px; height: 28px; color: var(--faint); }
+.dlg .gprog { margin-top: 10px; }
+.dlg .gbar2 { --c: var(--acc); }
+.ftable.fc { border-spacing: 0 4px; font-size: 13.5px; }
+.ftable.fc th { font-weight: 400; font-style: italic; color: var(--soft); font-size: 12px; text-align: right; padding: 4px 6px 0; }
+.ftable.fc th:first-child { text-align: left; padding-left: 10px; }
+.ftable.fc td { padding: 7px 6px; }
+.ftable.fc td:first-child { width: auto; padding-left: 10px; }
+.ftable.fc .tn b { font-size: 14px; } .ftable.fc .tn i { font-size: 11.5px; }
+.ftable.fc .tv { font-weight: 400; } .ftable.fc .tv b { font-weight: 600; color: #3E9A62; }
+.ftable.fc tr.bad td { background: color-mix(in srgb, var(--danger) 10%, var(--page)); }
+.ftable.fc tr.bad .tv b { color: var(--danger); }
+.skin-paper .gbar2, .skin-paper .gbar2 i { border-radius: 0; }
+.skin-paper .gsave { border-radius: 2px; box-shadow: 2px 2px 0 var(--ink); font-family: var(--pf-head); text-transform: uppercase; }
+.skin-paper .gtop .tic { border-radius: 2px; }
+.skin-paper .gt i, .skin-paper .gmonth, .skin-paper .qlab, .skin-paper .qcnt, .skin-paper .qwhenin, .skin-paper .ftable.fc th { font-style: normal; }
+.skin-apple .gsave { border: 2px solid rgba(0,0,0,.08); font-weight: 800; border-radius: 22px 18px 24px 20px; }
+.skin-apple .gbar2 { height: 14px; background: #fff; border: 2px solid var(--leaf-soft); }
+.skin-apple .gt b { font-family: var(--ah); font-weight: 400; font-size: 18px; }
+.skin-apple .gt i, .skin-apple .gmonth, .skin-apple .qlab, .skin-apple .qcnt, .skin-apple .qwhenin, .skin-apple .ftable.fc th { font-style: normal; }
 
 /* ===================== Paper style: stacked paper, folder tabs, typewriter labels ===================== */
 html.skin-paper {
@@ -1098,39 +1149,48 @@ function renderYear() {
     <p class="hint" style="margin:12px 24px">Каждый приход пересчитан по официальному курсу НБГ на дату получения. Лимит считается от ${money(LIMIT, 0)} ₾ в год.</p>`;
 }
 
-/* ---------- план бюджета: пять вопросов по одному на экране, как Quick check-in в scrmoods ---------- */
-/* Ответы: сколько денег есть сейчас, сколько и какого числа придёт, какие траты впереди
-   и сколько отложить на непредвиденное. Из этого считаем, сколько можно тратить в день
-   до каждой зарплаты и в среднем за весь период плана. Всё в лари по курсу НБГ на сегодня. */
+/* ---------- план бюджета: вопросы по одному на экране, как Quick check-in в scrmoods ---------- */
+/* Ответы: сколько денег есть сейчас, какие доходы придут (каждый месяц, N месяцев или разово),
+   обязательные ежемесячные траты, крупные разовые траты, цели накопления и запас на непредвиденное.
+   Из этого считаем на 12 месяцев вперёд: сначала откладываем на цели и обязательные траты,
+   крупные разовые траты копим заранее, а остальное делим на дни — «можно тратить в день».
+   Всё в лари по курсу НБГ на сегодня. */
 const BCUR = ['GEL', 'USD', 'EUR', 'RUB'];
 const toGel = (a, c) => c === 'GEL' ? a : fxRate(c) ? a * fxRate(c) : null;
-const INC_HINTS = ['Зарплата', 'Аванс', 'Фриланс', 'Подработка', 'Пенсия', 'Стипендия', 'Пособие', 'Вернут долг'];
+const INC_HINTS = [['Зарплата', 'm'], ['Аванс', 'm'], ['Сдаю квартиру', 'n'], ['Фриланс', 'once'], ['Подработка', 'n'], ['Пенсия', 'm'], ['Стипендия', 'm'], ['Пособие', 'm'], ['Премия', 'once'], ['Вернут долг', 'once']];
 const EXP_HINTS = [
-  ['🏠', 'Жильё'], ['💡', 'Коммуналка'], ['📱', 'Связь и интернет'], ['🩺', 'Здоровье'], ['💊', 'Лекарства'], ['🚌', 'Транспорт'],
-  ['💳', 'Кредит'], ['📺', 'Подписки'], ['🎓', 'Учёба'], ['🧸', 'Дети'], ['🐾', 'Питомцы'], ['🎁', 'Подарки'],
-  ['🏋️', 'Спорт'], ['💇', 'Красота'], ['👕', 'Одежда'], ['🛡️', 'Страховка'], ['✈️', 'Поездка'], ['🤝', 'Отдать долг']];
+  ['🏠', 'Аренда'], ['🏦', 'Ипотека'], ['💡', 'Коммуналка'], ['📱', 'Связь и интернет'], ['🚌', 'Транспорт'], ['💳', 'Кредит'], ['🧾', 'Рассрочка'],
+  ['📺', 'Подписки'], ['🩺', 'Здоровье'], ['💊', 'Лекарства'], ['🎓', 'Учёба'], ['🧸', 'Дети'], ['🐾', 'Питомцы'], ['🏋️', 'Спорт'], ['💇', 'Красота'], ['🛡️', 'Страховка']];
+const BIG_HINTS = [['🔧', 'Ремонт'], ['✈️', 'Отпуск'], ['💻', 'Техника'], ['🛋️', 'Мебель'], ['🦷', 'Стоматолог'], ['🚗', 'ТО машины'], ['🎉', 'Праздник'], ['🎁', 'Подарки'], ['👕', 'Одежда'], ['📄', 'Налог']];
+const GOAL_HINTS = [['🚗', 'Машина'], ['🏡', 'Первоначальный взнос'], ['🛟', 'Подушка безопасности'], ['✈️', 'Путешествие'], ['💍', 'Свадьба'], ['🎓', 'Образование'], ['💻', 'Техника']];
+const ICONS = [...EXP_HINTS, ...BIG_HINTS, ...GOAL_HINTS, ['🏠', 'Жильё'], ['🤝', 'Отдать долг'], ['📦', 'Другое']];
+const iconOf = n => (ICONS.find(h => h[1] === n) || ['📌'])[0];
+const goalIcon = n => (GOAL_HINTS.find(h => h[1] === n) || ['🎯'])[0];
 // дружелюбная палитра для графиков: тёплые и спокойные цвета, хорошо различаются между собой
 const PAL = ['#E8795F', '#6B8FD6', '#B07CD8', '#E68AB0', '#3FA3A3', '#D9894A', '#4FB0D1', '#A79A55', '#C76B8E', '#7C8CC4'];
-const C_FREE = '#58B37E', C_RES = '#E9B949';
+const GPAL = ['#4E7FD9', '#9A63D1', '#2E9C9C', '#D16B9A', '#6C7BD6'];
+const C_FREE = '#58B37E', C_RES = '#E9B949', C_NEED = '#E8795F', C_ONCE = '#D9894A', C_GOAL = '#5B86D6';
+const REP = { m: 'ежемесячно', n: 'N месяцев', once: 'разово' };
 
-let budget = store.get('budget', null);
-const saveBudget = () => store.set('budget', budget);
-const emptyBudget = () => ({ v: 1, start: now, have: { a: '', c: 'GEL' }, inc: [], exp: [], res: { k: 10, a: '' }, end: '' });
-
-/* даты */
+/* даты и месяцы */
 const iso = (y, m, d) => `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 const dnum = s => { const [y, m, d] = ymd(s); return Date.UTC(y, m - 1, d) / 864e5; };
 const daysTo = (a, b) => dnum(b) - dnum(a);
 const endOfMonth = s => { const [y, m] = ymd(s); return iso(y, m, new Date(y, m, 0).getDate()); };
 const shortDate = s => { const [, m, d] = ymd(s); return `${d} ${MONTHS_G[m - 1]}`; };
 const tinyDate = s => { const [, m, d] = ymd(s); return `${d} ${MONTHS_S[m - 1]}`; };
+const ymOf = s => s.slice(0, 7);
+const ymAdd = (ym, k) => { const [y, m] = ym.split('-').map(Number), t = y * 12 + m - 1 + k; return `${Math.floor(t / 12)}-${String(t % 12 + 1).padStart(2, '0')}`; };
+const ymDiff = (a, b) => { const [y1, m1] = a.split('-').map(Number), [y2, m2] = b.split('-').map(Number); return (y2 - y1) * 12 + m2 - m1; };
+const atDay = (ym, d) => { const [y, m] = ym.split('-').map(Number); return iso(y, m, Math.min(d, new Date(y, m, 0).getDate())); };
+const ymName = (ym, short) => { const [y, m] = ym.split('-').map(Number); return (short ? MONTHS_S[m - 1] : MONTHS[m - 1]) + (y !== ymd(now)[0] ? ' ' + y : ''); };
+const ymNameP = ym => { const [y, m] = ym.split('-').map(Number); return MONTHS_P[m - 1] + (y !== ymd(now)[0] ? ' ' + y : ''); };   // «в марте 2028»
+const MONTHS_D = ['январю', 'февралю', 'марту', 'апрелю', 'маю', 'июню', 'июлю', 'августу', 'сентябрю', 'октябрю', 'ноябрю', 'декабрю'];
+const ymNameG = ym => { const [y, m] = ym.split('-').map(Number); return MONTHS_D[m - 1] + ' ' + y; };                          // «к июлю 2030»
 // ближайшая дата (сегодня или позже) с этим числом месяца; 31-е в коротком месяце — последний день
 function nextDay(n) {
-  let [y, m, d] = ymd(now);
-  const at = (yy, mm) => iso(yy, mm, Math.min(n, new Date(yy, mm, 0).getDate()));
-  if (Math.min(n, new Date(y, m, 0).getDate()) >= d) return at(y, m);
-  if (++m > 12) { m = 1; y++; }
-  return at(y, m);
+  const cur = ymOf(now), d = atDay(cur, n);
+  return d >= now ? d : atDay(ymAdd(cur, 1), n);
 }
 function whenWord(s) {
   const n = daysTo(now, s);
@@ -1141,81 +1201,176 @@ function whenWord(s) {
 }
 const gel = (x, n = 0) => `${money(x, n)} ₾`;
 const amtOf = x => fxNum(x.a);
+const mword = n => `${n} ${plural(n, 'месяц', 'месяца', 'месяцев')}`;
+
+/* ---------- данные ---------- */
+const emptyBudget = () => ({ v: 2, start: now, have: { a: '', c: 'GEL' }, inc: [], exp: [], goals: [], res: { k: 10, a: '' } });
+// план первой версии → вторая: траты с числом стали ежемесячными, остальное — разовым
+function budgetMigrate(b) {
+  if (!b) return null;
+  if (b.v >= 2) return b;
+  const from = ymOf(b.start || now);
+  b.inc = (b.inc || []).map(x => ({ ...x, rep: x.rep || 'once', cnt: x.cnt || 6 }));
+  b.exp = (b.exp || []).map(x => ({ ...x, n: x.n === 'Жильё' ? 'Аренда' : x.n, rep: x.rep || (x.day ? 'm' : 'once'), cnt: x.cnt || 12, from: x.from || from, date: x.date || '' }));
+  b.goals = b.goals || [];
+  delete b.end; b.v = 2;
+  return b;
+}
+let budget = budgetMigrate(store.get('budget', null));
+const saveBudget = () => store.set('budget', budget);
+
+/* ---------- цели: сколько в месяц, когда накопится ---------- */
+// день, когда откладываем на цели: день первой регулярной зарплаты (сначала цели, потом всё остальное)
+function payday(B) {
+  const reg = B.inc.filter(x => x.rep !== 'once' && amtOf(x) > 0 && x.date).sort((a, b) => ymd(a.date)[2] - ymd(b.date)[2]);
+  return reg.length ? ymd(reg[0].date)[2] : 1;
+}
+function goalInfo(g, pd, G = (a, c) => toGel(a, c) || 0, start = now) {
+  const cur = ymOf(now);
+  const t = G(fxNum(g.a) || 0, g.c), s0 = G(fxNum(g.s) || 0, g.c);
+  const log = g.log || [], logged = log.reduce((z, l) => z + l.g, 0), loggedNow = log.filter(l => ymOf(l.d) === cur).reduce((z, l) => z + l.g, 0);
+  const saved = s0 + logged, left = Math.max(0, t - saved);
+  // план составлен уже после зарплаты этого месяца — первый взнос со следующей зарплаты
+  const skip = !loggedNow && atDay(cur, pd) < now && start > atDay(cur, pd) ? 1 : 0;
+  let monthly, months = null;
+  if (g.mode === 'by' && g.by) { months = Math.max(1, ymDiff(cur, g.by) + 1 - skip); monthly = (left + loggedNow) / months; }
+  else monthly = G(fxNum(g.m) || 0, g.c);
+  const contrib = [];
+  let acc = 0;
+  if (left > 0.005 && monthly > 0.005) {
+    for (let k = skip; k < 600 && acc < left - 0.005; k++) {
+      const ym = ymAdd(cur, k);
+      const amt = Math.min(k === 0 ? Math.max(0, monthly - loggedNow) : monthly, left - acc);
+      if (amt <= 0.005) continue;
+      const date = k === 0 ? (atDay(cur, pd) >= now ? atDay(cur, pd) : now) : atDay(ym, pd);
+      contrib.push({ date, gel: amt }); acc += amt;
+    }
+  }
+  const eta = left <= 0.005 ? cur : contrib.length ? ymOf(contrib[contrib.length - 1].date) : null;
+  return { t, saved, left, monthly, months, contrib, eta, done: t > 0 && left <= 0.005, loggedNow, thisM: skip ? 0 : Math.max(0, Math.min(monthly - loggedNow, left)), skip };
+}
+const goalLine = (g, gi) => gi.done ? 'цель достигнута 🎉' : !(gi.monthly > 0) ? 'впишите, сколько откладывать в месяц' :
+  g.mode === 'by' && g.by ? `к ${ymNameG(g.by)}: по ${gel(gi.monthly)} в месяц` : `по ${gel(gi.monthly)} в месяц · накопите ${gi.eta === ymOf(now) ? 'в этом месяце' : `к ${ymNameG(gi.eta)}`}`;
+
+/* ---------- все события с сегодня по дату to: доходы, траты, взносы на цели (в лари) ---------- */
+function budgetEvents(B, to, G) {
+  const out = [], cur = ymOf(now), last = ymOf(to);
+  const add = (kind, x, date, g, extra) => { if (date >= now && date <= to && g > 0) out.push({ kind, id: x.id, n: x.n, date, gel: g, ...extra }); };
+  for (const x of B.inc) {
+    const a = amtOf(x); if (!(a > 0)) continue;
+    const g = G(a, x.c), start = x.date || now;
+    if (x.rep === 'once' || !x.rep) { add('inc', x, start, g); continue; }
+    const m0 = ymOf(start), day = ymd(start)[2], cnt = x.rep === 'n' ? Math.max(1, +x.cnt || 1) : 1e4;
+    for (let k = 0; k < cnt && ymDiff(ymAdd(m0, k), last) >= 0; k++) add('inc', x, atDay(ymAdd(m0, k), day), g);
+  }
+  B.exp.forEach((x, i) => {
+    const a = amtOf(x); if (!(a > 0)) return;
+    const g = G(a, x.c), color = PAL[i % PAL.length];
+    if (x.rep === 'once') { add('once', x, x.date || now, g, { color }); return; }
+    const m0 = x.from && x.from > cur ? x.from : cur, cnt = x.rep === 'n' ? Math.max(1, +x.cnt || 1) - Math.max(0, ymDiff(x.from || cur, cur)) : 1e4;
+    for (let k = 0; k < cnt && ymDiff(ymAdd(m0, k), last) >= 0; k++) {
+      const ym = ymAdd(m0, k);
+      add('need', x, x.day ? atDay(ym, +x.day) : ym === cur ? now : atDay(ym, 1), g, { color });
+    }
+  });
+  const pd = payday(B);
+  B.goals.forEach((g, i) => {
+    const gi = goalInfo(g, pd, G, B.start || now);
+    for (const c of gi.contrib) add('goal', g, c.date, c.gel, { color: GPAL[i % GPAL.length], gid: g.id });
+  });
+  return out.sort((a, b) => a.date.localeCompare(b.date));
+}
 
 /* ---------- расчёт ---------- */
 function budgetCalc(B) {
   let noRate = false;
   const G = (a, c) => { const v = toGel(a || 0, c); if (v == null) { noRate = true; return 0; } return v; };
+  const cur = ymOf(now), hEnd = endOfMonth(atDay(ymAdd(cur, 17), 1));    // считаем на 18 месяцев, показываем 12
   const have = Math.max(0, G(fxNum(B.have.a) || 0, B.have.c));
-  const incAll = B.inc.filter(x => amtOf(x) > 0).map(x => ({ ...x, gel: G(amtOf(x), x.c), date: x.date || now }));
-  const past = incAll.filter(x => x.date < now);
-  const inc = incAll.filter(x => x.date >= now).sort((a, b) => a.date.localeCompare(b.date));
-  // период: до конца месяца последней зарплаты, но не меньше двух недель
-  let end = endOfMonth(inc.length ? inc[inc.length - 1].date : now);
-  while (daysTo(now, end) < 14) end = endOfMonth(shift(end, 1));
-  if (B.end && B.end >= (inc.length ? inc[inc.length - 1].date : now)) end = B.end;
-  const N = daysTo(now, end) + 1;
-  const exp = B.exp.filter(x => amtOf(x) > 0).map((x, i) => {
-    let date = x.day ? nextDay(+x.day) : now;
-    if (date > end) date = end;
-    return { ...x, gel: G(amtOf(x), x.c), date, color: PAL[i % PAL.length] };
-  }).sort((a, b) => a.date.localeCompare(b.date));
-  const incSum = inc.reduce((t, x) => t + x.gel, 0), expSum = exp.reduce((t, x) => t + x.gel, 0);
-  const total = have + incSum;
-  const res = Math.max(0, B.res.k === 'own' ? G(fxNum(B.res.a) || 0, 'GEL') : total * (+B.res.k || 0) / 100);
+  const ev = budgetEvents(B, hEnd, G);
+  const incs = ev.filter(e => e.kind === 'inc'), outs = ev.filter(e => e.kind !== 'inc');
+  const past = B.inc.filter(x => (x.rep === 'once' || !x.rep) && amtOf(x) > 0 && x.date && x.date < now);
+  // текущий период: до конца месяца ближайшего поступления, но не меньше двух недель
+  const firstInc = incs.find(e => e.date > now);
+  let pEnd = endOfMonth(firstInc ? firstInc.date : now);
+  while (daysTo(now, pEnd) < 14) pEnd = endOfMonth(shift(pEnd, 1));
+  const N = daysTo(now, pEnd) + 1;
+  const pInc = incs.filter(e => e.date <= pEnd), pIncSum = pInc.reduce((t, e) => t + e.gel, 0);
+  const res = Math.max(0, B.res.k === 'own' ? G(fxNum(B.res.a) || 0, 'GEL') : (have + pIncSum) * (+B.res.k || 0) / 100);
 
-  // отрезки между поступлениями: «до зарплаты»
-  const starts = [now, ...[...new Set(inc.map(x => x.date))].filter(d => d > now)];
+  // отрезки между поступлениями на весь год вперёд
+  const starts = [now, ...[...new Set(incs.map(e => e.date))].filter(d => d > now)];
   const segs = starts.map((s, k) => {
-    const stop = k + 1 < starts.length ? shift(starts[k + 1], -1) : end;
-    return { start: s, stop, n: daysTo(s, stop) + 1,
-      inc: inc.filter(x => x.date === s), incGel: inc.filter(x => x.date === s).reduce((t, x) => t + x.gel, 0),
-      exp: exp.filter(x => x.date >= s && x.date <= stop) };
+    const stop = k + 1 < starts.length ? shift(starts[k + 1], -1) : hEnd;
+    const inc = incs.filter(e => e.date === s), out = outs.filter(e => e.date >= s && e.date <= stop);
+    return { start: s, stop, n: daysTo(s, stop) + 1, inc, incGel: inc.reduce((t, e) => t + e.gel, 0), out, spend: out.reduce((t, e) => t + e.gel, 0) };
   });
-  segs.forEach(s => { s.spend = s.exp.reduce((t, x) => t + x.gel, 0); });
-  // сначала с конца: сколько нужно оставить к концу отрезка, чтобы хватило на будущие траты
-  for (let k = segs.length - 1; k >= 0; k--) {
-    const nx = segs[k + 1];
-    segs[k].keep = nx ? Math.max(0, nx.spend + nx.keep - nx.incGel) : 0;
-  }
-  // потом по порядку: сколько можно тратить в день на каждом отрезке
-  let carry = have - res;
-  for (const s of segs) {
-    const money0 = carry + s.incGel;
-    s.money = money0;
-    const free = money0 - s.spend - s.keep;
-    s.rate = free > 0 ? free / s.n : 0;
-    s.short = free < 0 ? -free : 0;
-    carry = s.keep + Math.min(free, 0);
-  }
-  // остаток на счёте по дням, если тратить по плану
+  // сколько можно тратить в день: столько, чтобы хватило на все траты и цели впереди
+  // (крупная трата через полгода — откладываем на неё понемногу каждый месяц, а не в последний момент)
+  let cash = have - res;
+  segs.forEach((s, k) => {
+    cash += s.incGel;
+    s.money = cash;
+    let best = Infinity, A = cash, D = 0;
+    for (let j = k; j < segs.length; j++) {
+      if (j > k) A += segs[j].incGel;
+      A -= segs[j].spend; D += segs[j].n;
+      best = Math.min(best, A / D);
+    }
+    s.rate = Math.max(0, best);
+    s.short = cash - s.spend < 0 ? -(cash - s.spend) : 0;
+    cash = cash - s.spend - s.rate * s.n;
+  });
+  const rateOn = d => (segs.find(s => d >= s.start && d <= s.stop) || { rate: 0 }).rate;
+
+  // остаток на счёте по дням текущего периода, если тратить по плану
   const series = [];
   let bal = have;
   for (let i = 0; i < N; i++) {
-    const d = shift(now, i), s = segs.find(z => d >= z.start && d <= z.stop);
-    if (i > 0 || s === segs[0]) bal += inc.filter(x => x.date === d).reduce((t, x) => t + x.gel, 0);
-    bal -= exp.filter(x => x.date === d).reduce((t, x) => t + x.gel, 0) + s.rate;
+    const d = shift(now, i);
+    bal += incs.filter(e => e.date === d).reduce((t, e) => t + e.gel, 0) - outs.filter(e => e.date === d).reduce((t, e) => t + e.gel, 0) - rateOn(d);
     series.push({ d, bal });
   }
-  const free = total - expSum - res;
+
+  // прогноз по месяцам
+  const months = Array.from({ length: 12 }, (_, i) => {
+    const ym = ymAdd(cur, i), from = i === 0 ? now : `${ym}-01`, to = endOfMonth(`${ym}-01`);
+    const inM = e => ymOf(e.date) === ym, sum = (k) => ev.filter(e => e.kind === k && inM(e)).reduce((t, e) => t + e.gel, 0);
+    let life = 0;
+    for (const s of segs) { const a = s.start > from ? s.start : from, b = s.stop < to ? s.stop : to; if (a <= b) life += s.rate * (daysTo(a, b) + 1); }
+    const days = daysTo(from, to) + 1;
+    return { ym, inc: sum('inc'), need: sum('need'), once: sum('once'), goal: sum('goal'), life, perDay: life / days, days,
+      short: segs.filter(s => ymOf(s.start) === ym).reduce((t, s) => t + s.short, 0), onceList: ev.filter(e => e.kind === 'once' && inM(e)) };
+  });
+
+  // текущий период целиком
+  const pOut = outs.filter(e => e.date <= pEnd);
+  const pNeed = pOut.filter(e => e.kind !== 'goal').reduce((t, e) => t + e.gel, 0), pGoal = pOut.filter(e => e.kind === 'goal').reduce((t, e) => t + e.gel, 0);
+  let pLife = 0;
+  for (const s of segs) { const b = s.stop < pEnd ? s.stop : pEnd; if (s.start <= b) pLife += s.rate * (daysTo(s.start, b) + 1); }
+  const pKeep = Math.max(0, have + pIncSum - pNeed - pGoal - pLife - res);
+  const pd = payday(B);
+  const goals = B.goals.map((g, i) => ({ g, gi: goalInfo(g, pd, G, B.start || now), color: GPAL[i % GPAL.length] }));
   const spentToday = spends.filter(x => x.date === now).reduce((t, x) => t + x.gel, 0);
-  return { have, inc, past, exp, incSum, expSum, total, res, end, N, segs, series, free, avg: free / N,
-    short: segs.reduce((t, s) => t + s.short, 0), noRate, spentToday };
+  return { have, past, res, end: pEnd, N, segs, series, months, goals, pd, noRate, spentToday,
+    pInc, pIncSum, pOut, pNeed, pGoal, pLife, pKeep, total: have + pIncSum,
+    short: segs.filter(s => s.start <= pEnd).reduce((t, s) => t + s.short, 0) };
 }
 
-/* ---------- мастер вопросов ---------- */
-const WSTEPS = ['hello', 'have', 'inc', 'dates', 'exp', 'res', 'done'];
+/* ---------- анкета ---------- */
+const WSTEPS = ['hello', 'have', 'inc', 'dates', 'exp', 'big', 'goals', 'res', 'done'];
+const QN = WSTEPS.length - 2;    // вопросов
 let wiz = null, wizDraft = null;
 function openWizard(start = 0, only = '') {
   const d = wizDraft && !only ? wizDraft : JSON.parse(JSON.stringify(budget || emptyBudget()));
-  if (!d.inc.length) d.inc.push({ id: newId(), n: 'Зарплата', a: '', c: 'GEL', date: '' });
+  if (!d.inc.length) d.inc.push({ id: newId(), n: 'Зарплата', a: '', c: 'GEL', date: '', rep: 'm', cnt: 6 });
   wiz = { d, i: start, fwd: true, only };
   const el = document.createElement('div'); el.id = 'quick'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'План бюджета');
   document.body.appendChild(el); document.body.style.overflow = 'hidden';
   el.addEventListener('click', wizClick);
   el.addEventListener('input', wizInput);
   el.addEventListener('change', wizInput);
-  el.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input') && !e.target.matches('[type=date]')) { e.preventDefault(); wizNext(); } });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('input') && !e.target.matches('[type=date],[type=month]')) { e.preventDefault(); wizNext(); } });
   showWiz(true);
 }
 function closeWizard(keep) {
@@ -1229,16 +1384,32 @@ function wizGo(to) {
 function wizNext() { wizGo(wiz.i + 1); }
 function wizFinish() {
   const d = wiz.d, only = wiz.only;
-  d.inc =d.inc.filter(x => amtOf(x) > 0 || (x.n || '').trim() && x.a !== '');
+  d.inc = d.inc.filter(x => amtOf(x) > 0);
   d.exp = d.exp.filter(x => amtOf(x) > 0);
+  d.goals = d.goals.filter(g => fxNum(g.a) > 0);
+  d.v = 2;
   if (!budget || !only) d.start = now;
   budget = d; saveBudget(); wizDraft = null;
   tab = 'plan'; closeWizard(true); window.scrollTo(0, 0);
   toast(only ? 'План пересчитан' : 'План готов');
 }
-const curSel = (k, x) => `<select class="qsel" data-k="${k}" data-id="${x.id}" data-f="c" aria-label="Валюта">${BCUR.map(c => `<option value="${c}" ${x.c === c ? 'selected' : ''}>${CUR[c].s}</option>`).join('')}</select>`;
+const curSel = (k, x, f = 'c') => `<select class="qsel" data-k="${k}" data-id="${x.id}" data-f="${f}" aria-label="Валюта">${BCUR.map(c => `<option value="${c}" ${x[f] === c ? 'selected' : ''}>${CUR[c].s}</option>`).join('')}</select>`;
 const eqTxt = (a, c) => { const v = fxNum(a); if (!(v > 0) || c === 'GEL') return ''; const g = toGel(v, c); return g == null ? 'курса НБГ пока нет' : `≈ ${gel(g)} по курсу НБГ`; };
-const expIcon = n => (EXP_HINTS.find(h => h[1] === n) || ['📌'])[0];
+const repSeg = (k, x, opts) => `<div class="seg small qrep">${opts.map(r => `<button data-w="rep" data-k="${k}" data-id="${x.id}" data-r="${r}" class="${(x.rep || 'once') === r ? 'on' : ''}">${REP[r]}</button>`).join('')}</div>`;
+const cntBox = (k, x, word) => x.rep === 'n' ? `<label class="qcnt"><span>${word}</span><input class="num" data-k="${k}" data-id="${x.id}" data-f="cnt" inputmode="numeric" maxlength="3" value="${x.cnt || ''}" aria-label="Сколько месяцев"><span>${plural(+x.cnt || 0, 'месяц', 'месяца', 'месяцев')}</span></label>` : '';
+function goalHint(g) {
+  const gi = goalInfo(g, payday(wiz.d), undefined, wiz.d.start || now);
+  if (!(gi.t > 0)) return '';
+  if (gi.done) return 'уже накоплено 🎉';
+  if (g.mode === 'by') return g.by ? `нужно откладывать ${gel(gi.monthly)} в месяц (${mword(gi.months)})` : 'выберите месяц';
+  return gi.monthly > 0 ? `накопите к ${ymNameG(gi.eta)} · через ${mword(Math.max(1, ymDiff(ymOf(now), gi.eta) + 1))}` : '';
+}
+function monthIncome(d) {
+  // доход этого месяца (если в этом месяце больше ничего не придёт — следующего)
+  const ev = budgetEvents(d, endOfMonth(atDay(ymAdd(ymOf(now), 1), 1)), (a, c) => toGel(a, c) || 0).filter(e => e.kind === 'inc');
+  const cur = ev.filter(e => ymOf(e.date) === ymOf(now));
+  return (cur.length ? cur : ev).reduce((t, e) => t + e.gel, 0);
+}
 
 function showWiz(anim) {
   const el = document.getElementById('quick'); if (!el || !wiz) return;
@@ -1247,78 +1418,111 @@ function showWiz(anim) {
   if (st === 'hello') {
     b = `<div class="qhello"><div class="qwave" aria-hidden="true">👋</div>
       <div class="qh">Здравствуйте!<br>Давайте спланируем ваш бюджет.</div>
-      <p class="qp">Пять коротких вопросов, и я покажу, сколько можно спокойно тратить каждый день и хватит ли денег до зарплаты.</p>
-      <ol class="qlist"><li>Сколько денег у вас есть сейчас</li><li>Сколько денег вы получите</li><li>Какого числа они придут</li><li>Какие траты запланированы</li><li>Сколько отложить на непредвиденное</li></ol>
+      <p class="qp">Несколько коротких вопросов, и я покажу, сколько можно спокойно тратить каждый день, сколько откладывать на цели и когда они накопятся.</p>
+      <ol class="qlist"><li>Сколько денег у вас есть сейчас</li><li>Какие доходы будут</li><li>Когда они придут</li><li>Обязательные траты каждый месяц</li><li>Крупные разовые траты</li><li>На что вы копите</li><li>Запас на непредвиденное</li></ol>
       <button class="qnext" data-w="next">Начнём&nbsp; →</button></div>`;
   } else if (st === 'have') {
     b = `<div class="qk">Деньги сейчас</div><div class="qh">Сколько денег у вас есть прямо сейчас?</div>
-      <p class="qp">На карте, наличными, на счетах — всё, что можно потратить.</p>
+      <p class="qp">На карте, наличными, на счетах — всё, что можно потратить. Накопления на цели впишем отдельно.</p>
       <div class="qmoney"><input id="wHave" class="qamt num" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(d.have.a)}" aria-label="Сумма"><span class="qsym">${CUR[d.have.c].s}</span></div>
       <div class="seg qcur">${BCUR.map(c => `<button data-w="hcur" data-c="${c}" class="${d.have.c === c ? 'on' : ''}">${CUR[c].s} ${c}</button>`).join('')}</div>
       <div class="qeq" id="wHaveEq">${eqTxt(d.have.a, d.have.c)}</div>
       <button class="qnext" data-w="next">${wiz.only ? 'Пересчитать план' : 'Дальше'}</button>`;
   } else if (st === 'inc') {
     const used = d.inc.map(x => x.n);
-    b = `<div class="qk">Поступления</div><div class="qh">Сколько денег вы планируете получить?</div>
-      <p class="qp">Зарплата, аванс, подработка — всё, что придёт в ближайший месяц. Можно несколько.</p>
+    b = `<div class="qk">Доходы</div><div class="qh">Какие деньги вы будете получать?</div>
+      <p class="qp">Зарплата приходит каждый месяц, аренду квартиры платят, например, 6 месяцев, премия — разово.</p>
       ${d.inc.map(x => `<div class="qrow" data-id="${x.id}">
-        <input class="qname" data-k="inc" data-id="${x.id}" data-f="n" value="${esc(x.n)}" placeholder="откуда деньги" aria-label="Название">
-        <div class="qrv"><input class="qnum num" data-k="inc" data-id="${x.id}" data-f="a" inputmode="decimal" autocomplete="off" placeholder="сумма" value="${esc(x.a)}" aria-label="Сумма">${curSel('inc', x)}
-        <button class="qrm" data-w="rm" data-k="inc" data-id="${x.id}" aria-label="Убрать">✕</button></div>
-        <i class="qeqs" data-eq="${x.id}">${eqTxt(x.a, x.c)}</i></div>`).join('')}
-      <div class="qchips">${INC_HINTS.filter(n => !used.includes(n)).map(n => `<button data-w="addinc" data-n="${n}">+ ${n}</button>`).join('')}<button data-w="addinc" data-n="" class="own">+ другое</button></div>
+        <div class="qrt"><input class="qname" data-k="inc" data-id="${x.id}" data-f="n" value="${esc(x.n)}" placeholder="откуда деньги" aria-label="Название">
+          <button class="qrm" data-w="rm" data-k="inc" data-id="${x.id}" aria-label="Убрать">✕</button></div>
+        <div class="qrv"><input class="qnum num" data-k="inc" data-id="${x.id}" data-f="a" inputmode="decimal" autocomplete="off" placeholder="сумма" value="${esc(x.a)}" aria-label="Сумма">${curSel('inc', x)}</div>
+        <i class="qeqs" data-eq="${x.id}">${eqTxt(x.a, x.c)}</i>
+        ${repSeg('inc', x, ['m', 'n', 'once'])}${cntBox('inc', x, 'в течение')}</div>`).join('')}
+      <div class="qchips">${INC_HINTS.filter(([n]) => !used.includes(n)).map(([n, r]) => `<button data-w="addinc" data-n="${n}" data-r="${r}">+ ${n}</button>`).join('')}<button data-w="addinc" data-n="" data-r="once" class="own">+ другое</button></div>
       <button class="qnext" data-w="next">Дальше</button>`;
   } else if (st === 'dates') {
     const list = d.inc.filter(x => amtOf(x) > 0);
-    b = `<div class="qk">Даты поступлений</div><div class="qh">Какого числа вы их получите?</div>
-      ${list.length ? `<p class="qp">Нажмите на число или выберите дату в календаре.</p>` + list.map(x => `<div class="qdate">
-        <div class="qdt"><b>${esc(x.n || 'Поступление')}</b><span class="num">${money(amtOf(x), 0)} ${CUR[x.c].s}</span></div>
+    const when = x => {
+      if (!x.date) return 'дата не выбрана — посчитаю, что деньги придут сегодня';
+      const first = x.date === now ? 'сегодня' : `${shortDate(x.date)} · ${whenWord(x.date)}`;
+      if (x.rep === 'm') return `каждый месяц ${ymd(x.date)[2]}-го, первый раз ${x.date === now ? 'сегодня' : shortDate(x.date)}`;
+      if (x.rep === 'n') { const n = Math.max(1, +x.cnt || 1); return `${ymd(x.date)[2]}-го числа, ${mword(n)}: с ${shortDate(x.date)} по ${shortDate(atDay(ymAdd(ymOf(x.date), n - 1), ymd(x.date)[2]))}`; }
+      return first;
+    };
+    b = `<div class="qk">Даты</div><div class="qh">Когда придут деньги?</div>
+      ${list.length ? `<p class="qp">Нажмите на число или выберите дату. Для регулярных доходов — ближайшая выплата.</p>` + list.map(x => `<div class="qdate">
+        <div class="qdt"><b>${esc(x.n || 'Доход')}</b><span class="num">${money(amtOf(x), 0)} ${CUR[x.c].s}<em>${x.rep === 'n' ? `${mword(+x.cnt || 1)}` : REP[x.rep || 'once']}</em></span></div>
         <div class="qdays">${[1, 5, 10, 15, 20, 25].map(n => `<button data-w="day" data-id="${x.id}" data-n="${n}" class="${x.date && x.date === nextDay(n) ? 'on' : ''}">${n}</button>`).join('')}
           <input type="date" class="qdin" data-k="inc" data-id="${x.id}" data-f="date" min="${now}" value="${x.date || ''}" aria-label="Дата"></div>
-        <i class="qwhen">${x.date ? (x.date === now ? 'сегодня' : `${shortDate(x.date)} · ${whenWord(x.date)}`) : 'дата не выбрана — посчитаю, что деньги придут сегодня'}</i></div>`).join('')
-      : `<p class="qp">Поступлений нет — этот шаг можно пропустить.</p>`}
+        <i class="qwhen">${when(x)}</i></div>`).join('')
+      : `<p class="qp">Доходов нет — этот шаг можно пропустить.</p>`}
       <button class="qnext" data-w="next">Дальше</button>`;
-  } else if (st === 'exp') {
-    const used = d.exp.map(x => x.n), sum = d.exp.reduce((t, x) => t + (toGel(amtOf(x) || 0, x.c) || 0), 0);
-    b = `<div class="qk">Траты</div><div class="qh">Какие траты у вас запланированы?</div>
-      <p class="qp">Нажмите на подсказку, чтобы добавить. Продукты и мелочи можно не вписывать: на них пойдут «деньги на каждый день».</p>
-      <div class="qchips">${EXP_HINTS.map(([e, n]) => `<button data-w="addexp" data-n="${n}" class="${used.includes(n) ? 'on' : ''}">${e} ${n}</button>`).join('')}<button data-w="addexp" data-n="" class="own">+ своя</button></div>
-      <div id="wExp">${d.exp.map(x => `<div class="qrow exp" data-id="${x.id}">
-        <div class="qrt"><span class="qico" aria-hidden="true">${expIcon(x.n)}</span><input class="qname" data-k="exp" data-id="${x.id}" data-f="n" value="${esc(x.n)}" placeholder="на что" aria-label="Название">
+  } else if (st === 'exp' || st === 'big') {
+    const big = st === 'big', mine = d.exp.filter(x => big ? x.rep === 'once' : x.rep !== 'once'), used = mine.map(x => x.n);
+    const sum = mine.reduce((t, x) => t + (toGel(amtOf(x) || 0, x.c) || 0), 0);
+    b = big ? `<div class="qk">Разовые траты</div><div class="qh">Будут ли крупные разовые траты?</div>
+      <p class="qp">Ремонт, отпуск, новая техника. Укажите, когда — я подскажу, сколько откладывать заранее. Если нет, просто нажмите «Дальше».</p>`
+      : `<div class="qk">Обязательные траты</div><div class="qh">Какие траты у вас каждый месяц?</div>
+      <p class="qp">Аренда, коммуналка, кредит. Продукты и мелочи не вписывайте: на них пойдут «деньги на каждый день». Рассрочка на несколько месяцев — «N месяцев».</p>`;
+    b += `<div class="qchips">${(big ? BIG_HINTS : EXP_HINTS).map(([e, n]) => `<button data-w="addexp" data-n="${n}" data-r="${big ? 'once' : 'm'}" class="${used.includes(n) ? 'on' : ''}">${e} ${n}</button>`).join('')}<button data-w="addexp" data-n="" data-r="${big ? 'once' : 'm'}" class="own">+ своя</button></div>
+      <div id="wExp">${mine.map(x => `<div class="qrow exp" data-id="${x.id}">
+        <div class="qrt"><span class="qico" aria-hidden="true">${iconOf(x.n)}</span><input class="qname" data-k="exp" data-id="${x.id}" data-f="n" value="${esc(x.n)}" placeholder="на что" aria-label="Название">
           <button class="qrm" data-w="rm" data-k="exp" data-id="${x.id}" aria-label="Убрать">✕</button></div>
         <div class="qrv"><input class="qnum num" data-k="exp" data-id="${x.id}" data-f="a" inputmode="decimal" autocomplete="off" placeholder="сумма" value="${esc(x.a)}" aria-label="Сумма">${curSel('exp', x)}
-          <label class="qday"><input class="num" data-k="exp" data-id="${x.id}" data-f="day" inputmode="numeric" maxlength="2" placeholder="—" value="${x.day || ''}" aria-label="Какого числа"><span>числа</span></label></div></div>`).join('')}</div>
-      <div class="qsum" id="wExpSum">${d.exp.length ? `Всего: <b class="num">${gel(sum)}</b>` : ''}</div>
-      <button class="qnext" data-w="next">Дальше</button>`;
+          ${big ? '' : `<label class="qday"><input class="num" data-k="exp" data-id="${x.id}" data-f="day" inputmode="numeric" maxlength="2" placeholder="—" value="${x.day || ''}" aria-label="Какого числа"><span>числа</span></label>`}</div>
+        ${big ? `<label class="qwhenin"><span>когда</span><input type="date" class="qdin" data-k="exp" data-id="${x.id}" data-f="date" min="${now}" value="${x.date || ''}" aria-label="Когда"></label>
+          <i class="qwhen">${x.date ? `${shortDate(x.date)} · ${whenWord(x.date)}` : 'без даты — посчитаю, что сегодня'}</i>`
+          : `${repSeg('exp', x, ['m', 'n'])}${cntBox('exp', x, 'ещё')}`}</div>`).join('')}</div>
+      <div class="qsum" id="wExpSum">${mine.length ? `${big ? 'Всего' : 'В месяц'}: <b class="num">${gel(sum)}</b>` : ''}</div>
+      <button class="qnext" data-w="next">${mine.length || !big ? 'Дальше' : 'Разовых трат нет'}</button>`;
+  } else if (st === 'goals') {
+    const used = d.goals.map(g => g.n);
+    b = `<div class="qk">Цели</div><div class="qh">На что вы копите?</div>
+      <p class="qp">Машина, первоначальный взнос, подушка безопасности. На цели будем откладывать в первую очередь, сразу после зарплаты. Целей может быть несколько.</p>
+      <div class="qchips">${GOAL_HINTS.filter(([, n]) => !used.includes(n)).map(([e, n]) => `<button data-w="addgoal" data-n="${n}">${e} ${n}</button>`).join('')}<button data-w="addgoal" data-n="" class="own">+ своя цель</button></div>
+      <div id="wGoals">${d.goals.map(g => `<div class="qrow goal" data-id="${g.id}">
+        <div class="qrt"><span class="qico" aria-hidden="true">${goalIcon(g.n)}</span><input class="qname" data-k="goals" data-id="${g.id}" data-f="n" value="${esc(g.n)}" placeholder="на что копим" aria-label="Название">
+          <button class="qrm" data-w="rm" data-k="goals" data-id="${g.id}" aria-label="Убрать">✕</button></div>
+        <div class="qlab">Сколько нужно</div>
+        <div class="qrv"><input class="qnum num" data-k="goals" data-id="${g.id}" data-f="a" inputmode="decimal" autocomplete="off" placeholder="сумма" value="${esc(g.a)}" aria-label="Сколько нужно">${curSel('goals', g)}</div>
+        <div class="qlab">Уже накоплено</div>
+        <div class="qrv"><input class="qnum num small" data-k="goals" data-id="${g.id}" data-f="s" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(g.s || '')}" aria-label="Уже накоплено"><span class="qcs">${CUR[g.c].s}</span></div>
+        <div class="seg small qrep">${[['m', 'Откладывать в месяц'], ['by', 'Накопить к сроку']].map(([k, l]) => `<button data-w="gmode" data-id="${g.id}" data-m="${k}" class="${(g.mode || 'm') === k ? 'on' : ''}">${l}</button>`).join('')}</div>
+        ${(g.mode || 'm') === 'm' ? `<div class="qrv"><input class="qnum num small" data-k="goals" data-id="${g.id}" data-f="m" inputmode="decimal" autocomplete="off" placeholder="сколько в месяц" value="${esc(g.m || '')}" aria-label="Сколько в месяц"><span class="qcs">${CUR[g.c].s} в месяц</span></div>`
+          : `<label class="qwhenin"><span>к какому месяцу</span><input type="month" class="qdin" data-k="goals" data-id="${g.id}" data-f="by" min="${ymOf(now)}" value="${g.by || ''}" aria-label="К какому месяцу"></label>`}
+        <i class="qghint" data-gh="${g.id}">${goalHint(g)}</i></div>`).join('')}</div>
+      <button class="qnext" data-w="next">${d.goals.length ? 'Дальше' : 'Пока ни на что не коплю'}</button>`;
   } else if (st === 'res') {
-    const base = (toGel(fxNum(d.have.a) || 0, d.have.c) || 0) + d.inc.reduce((t, x) => t + (toGel(amtOf(x) || 0, x.c) || 0), 0);
+    const base = (toGel(fxNum(d.have.a) || 0, d.have.c) || 0) + monthIncome(d);
     const opts = [[0, 'Ничего не откладывать', ''], [5, '5%', ''], [10, '10%', 'советую'], [15, '15%', ''], ['own', 'Своя сумма', '']];
     const cols = ['#C9584B', '#D9A040', '#7DAF55', '#5F9E55', 'var(--acc)'];
-    b = `<div class="qk">Запас</div><div class="qh">Сколько денег отложить на непредвиденные траты?</div>
-      <p class="qp">Заболел зуб, сломался телефон, забытый день рождения. Запас не входит в ежедневный бюджет.</p>
+    b = `<div class="qk">Запас</div><div class="qh">Сколько держать на непредвиденные траты?</div>
+      <p class="qp">Заболел зуб, сломался телефон, забытый день рождения. Запас лежит нетронутым и не входит в ежедневный бюджет.</p>
       ${opts.map(([k, l, tag], j) => `<button class="qopt ${String(d.res.k) === String(k) ? 'on' : ''}" style="--c:${cols[j]}" data-w="res" data-k="${k}">
         <span>${l}${typeof k === 'number' && k ? ` · <span class="num">${gel(base * k / 100)}</span>` : ''}</span>${tag ? `<em>${tag}</em>` : ''}</button>`).join('')}
       <div class="qmoney small" id="wOwn" ${d.res.k === 'own' ? '' : 'hidden'}><input id="wResOwn" class="qamt num" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(d.res.a)}" aria-label="Своя сумма"><span class="qsym">₾</span></div>
       ${d.res.k === 'own' ? `<button class="qnext" data-w="next">Дальше</button>` : ''}`;
   } else {
-    const c = budgetCalc(d), s0 = c.segs[0], s1 = c.segs[1];
+    const c = budgetCalc(d), s0 = c.segs[0], gm = c.goals.reduce((t, x) => t + (x.gi.done ? 0 : x.gi.monthly), 0);
     b = `<div class="qdone"><div class="qk">Готово!</div><div class="qh">Можно тратить</div>
       <div class="qbig num" id="wBig">${gel(s0.rate)}<span> в день</span></div>
-      <p class="qp">${s1 ? `до ${shortDate(s0.stop)} включительно. С ${shortDate(s1.start)} — ${gel(s1.rate)} в день.` : `до ${shortDate(c.end)} включительно.`}</p>
+      <p class="qp">${c.segs[1] && c.segs[1].start <= c.end ? `до ${shortDate(s0.stop)} включительно. Потом — ${gel(c.segs[1].rate)} в день.` : `до ${shortDate(s0.stop)} включительно.`}</p>
+      ${gm ? `<p class="qp">На цели — <b class="num">${gel(gm)}</b> в месяц, сразу после зарплаты.</p>` : ''}
       ${c.short ? `<p class="qwarn">Не хватает ${gel(c.short)}. В плане подскажу, где именно.</p>` : c.res ? `<p class="qp">И ещё ${gel(c.res)} лежит в запасе на непредвиденное.</p>` : ''}
       <button class="qnext" data-w="finish">Посмотреть план</button></div>`;
   }
-  const q = i >= 1 && i <= 5;
+  const q = i >= 1 && i <= QN;
   el.innerHTML = `<div class="qtop"><button class="qx" data-w="close" aria-label="Закрыть">✕</button>
       <div class="qbar"><i style="width:${i / (WSTEPS.length - 1) * 100}%"></i></div>
       ${q && !wiz.only ? `<button class="qskip" data-w="skip">Пропустить</button>` : '<span style="width:52px"></span>'}</div>
-    <div class="qcount">${q && !wiz.only ? `вопрос ${i} из 5` : '&nbsp;'}</div>
+    <div class="qcount">${q && !wiz.only ? `вопрос ${i} из ${QN}` : '&nbsp;'}</div>
     <div class="qbody ${anim ? wiz.fwd ? 'fwd' : 'back' : ''}"><div>${b}</div></div>
     <div class="qbottom">${i > 0 && !wiz.only ? `<button class="qprev" data-w="prev">‹ Назад</button>` : ''}</div>`;
   if (st === 'have' && anim) setTimeout(() => { const f = document.getElementById('wHave'); if (f && !f.value) f.focus(); }, 380);
   if (st === 'done' && anim) setTimeout(() => popButton({ el: document.getElementById('wBig'), stars: true, color: 'acc' }), 420);
 }
 function wizItem(t) { const k = t.dataset.k; return k && wiz.d[k] ? wiz.d[k].find(x => x.id === t.dataset.id) : null; }
+function wizRedraw() { const bd = document.querySelector('#quick .qbody'), keep = bd ? bd.scrollTop : 0; showWiz(false); const nb = document.querySelector('#quick .qbody'); if (nb) nb.scrollTop = keep; }
 function wizInput(ev) {
   const t = ev.target, d = wiz.d;
   if (t.id === 'wHave') { d.have.a = t.value; $('#wHaveEq').textContent = eqTxt(t.value, d.have.c); return; }
@@ -1326,16 +1530,19 @@ function wizInput(ev) {
   const x = wizItem(t); if (!x) return;
   const f = t.dataset.f;
   if (f === 'day') { const n = parseInt(t.value, 10); x.day = n >= 1 && n <= 31 ? n : ''; }
+  else if (f === 'cnt') { const n = parseInt(t.value, 10); x.cnt = n >= 1 ? Math.min(n, 360) : ''; }
   else x[f] = t.value;
-  if (f === 'c' || f === 'date') { const keep = document.querySelector('#quick .qbody').scrollTop; showWiz(false); document.querySelector('#quick .qbody').scrollTop = keep; return; }
+  if (ev.type === 'change' && (f === 'c' || f === 'date' || f === 'by' || f === 'cnt')) return wizRedraw();
   if (t.dataset.k === 'inc' && f === 'a') { const e = document.querySelector(`[data-eq="${x.id}"]`); if (e) e.textContent = eqTxt(x.a, x.c); }
-  if (t.dataset.k === 'exp') { const s = d.exp.reduce((z, y) => z + (toGel(amtOf(y) || 0, y.c) || 0), 0); $('#wExpSum').innerHTML = `Всего: <b class="num">${gel(s)}</b>`; }
+  if (t.dataset.k === 'goals') { const e = document.querySelector(`[data-gh="${x.id}"]`); if (e) e.textContent = goalHint(x); }
+  if (t.dataset.k === 'exp') {
+    const big = WSTEPS[wiz.i] === 'big', s = d.exp.filter(y => big ? y.rep === 'once' : y.rep !== 'once').reduce((z, y) => z + (toGel(amtOf(y) || 0, y.c) || 0), 0);
+    $('#wExpSum').innerHTML = `${big ? 'Всего' : 'В месяц'}: <b class="num">${gel(s)}</b>`;
+  }
 }
-function wizAdd(k, n) {
-  const x = k === 'inc' ? { id: newId(), n, a: '', c: 'GEL', date: '' } : { id: newId(), n, a: '', c: 'GEL', day: '' };
-  wiz.d[k].push(x); showWiz(false);
-  const f = document.querySelector(`#quick [data-id="${x.id}"][data-f="${n ? 'a' : 'n'}"]`);
-  if (f) { f.focus(); f.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+function wizFocus(id, f) {
+  const el = document.querySelector(`#quick [data-id="${id}"][data-f="${f}"]`);
+  if (el) { el.focus(); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
 }
 function wizClick(ev) {
   const t = ev.target.closest('[data-w]'); if (!t || !wiz) return;
@@ -1346,15 +1553,26 @@ function wizClick(ev) {
     case 'prev': return wizGo(wiz.i - 1);
     case 'finish': return wizFinish();
     case 'hcur': d.have.c = t.dataset.c; showWiz(false); return;
-    case 'addinc': return wizAdd('inc', t.dataset.n);
-    case 'addexp': {
-      const ex = d.exp.find(x => x.n && x.n === t.dataset.n);
-      if (ex) { const f = document.querySelector(`#quick [data-id="${ex.id}"][data-f="a"]`); if (f) { f.focus(); f.scrollIntoView({ block: 'center', behavior: 'smooth' }); } return; }
-      popButton({ el: t, stars: true, color: 'acc' });
-      return wizAdd('exp', t.dataset.n);
+    case 'addinc': {
+      const x = { id: newId(), n: t.dataset.n, a: '', c: 'GEL', date: '', rep: t.dataset.r || 'm', cnt: 6 };
+      d.inc.push(x); wizRedraw(); return wizFocus(x.id, x.n ? 'a' : 'n');
     }
-    case 'rm': { const k = t.dataset.k; d[k] = d[k].filter(x => x.id !== t.dataset.id); showWiz(false); return; }
-    case 'day': { const x = d.inc.find(y => y.id === t.dataset.id); x.date = nextDay(+t.dataset.n); showWiz(false);
+    case 'addexp': {
+      const ex = d.exp.find(x => x.n && x.n === t.dataset.n && (x.rep === 'once') === (t.dataset.r === 'once'));
+      if (ex) return wizFocus(ex.id, 'a');
+      popButton({ el: t, stars: true, color: 'acc' });
+      const x = { id: newId(), n: t.dataset.n, a: '', c: 'GEL', day: '', rep: t.dataset.r, cnt: 12, from: ymOf(now), date: '' };
+      d.exp.push(x); wizRedraw(); return wizFocus(x.id, x.n ? 'a' : 'n');
+    }
+    case 'addgoal': {
+      popButton({ el: t, stars: true, color: 'acc' });
+      const g = { id: newId(), n: t.dataset.n, a: '', c: 'GEL', s: '', mode: 'm', m: '', by: '', log: [] };
+      d.goals.push(g); wizRedraw(); return wizFocus(g.id, g.n ? 'a' : 'n');
+    }
+    case 'rep': { const x = d[t.dataset.k].find(y => y.id === t.dataset.id); x.rep = t.dataset.r; if (x.rep === 'n' && !x.cnt) x.cnt = 6; wizRedraw(); if (x.rep === 'n') wizFocus(x.id, 'cnt'); return; }
+    case 'gmode': { const g = d.goals.find(y => y.id === t.dataset.id); g.mode = t.dataset.m; wizRedraw(); return wizFocus(g.id, g.mode === 'm' ? 'm' : 'by'); }
+    case 'rm': { const k = t.dataset.k; d[k] = d[k].filter(x => x.id !== t.dataset.id); wizRedraw(); return; }
+    case 'day': { const x = d.inc.find(y => y.id === t.dataset.id); x.date = nextDay(+t.dataset.n); wizRedraw();
       popButton({ el: document.querySelector(`#quick [data-w="day"][data-id="${x.id}"][data-n="${t.dataset.n}"]`), stars: true, color: 'acc' }); return; }
     case 'res': {
       const k = t.dataset.k === 'own' ? 'own' : +t.dataset.k;
@@ -1369,14 +1587,41 @@ function wizClick(ev) {
   }
 }
 
+/* ---------- окно цели: «Отложил» и «Снять» ---------- */
+let goalEdit = null;
+function openGoal(id) {
+  const g = budget.goals.find(x => x.id === id); if (!g) return;
+  const gi = goalInfo(g, payday(budget), undefined, budget.start || now);
+  goalEdit = g;
+  const log = [...(g.log || [])].reverse().slice(0, 8);
+  $modal.innerHTML = `<div class="dlg" role="dialog" aria-label="${esc(g.n)}"><div class="dh"><b>${goalIcon(g.n)} ${esc(g.n || 'Цель')}</b><button class="x" data-act="close" aria-label="Закрыть">✕</button></div>
+    <div class="gprog"><div class="gbar2"><i style="width:${gi.t ? Math.min(100, gi.saved / gi.t * 100) : 0}%"></i></div>
+      <div class="gnums"><span>накоплено <b class="num">${gel(gi.saved)}</b></span><span>из <b class="num">${gel(gi.t)}</b></span></div></div>
+    <p class="hint" style="margin:10px 0 0">${goalLine(g, gi)}${gi.loggedNow ? ` · в этом месяце уже отложено ${gel(gi.loggedNow)}` : ''}</p>
+    <label class="fld"><span>Сколько, ₾</span><input class="in big num" id="gAmt" inputmode="decimal" value="${gi.thisM > 0 ? Math.round(gi.thisM) : gi.monthly > 0 && !gi.done ? Math.round(Math.min(gi.monthly, gi.left)) : ''}" placeholder="0"></label>
+    <div class="two" style="margin-top:12px"><button class="btn outline" data-act="gput" data-s="-1" style="margin:0">Снять с цели</button><button class="btn primary" data-act="gput" data-s="1" style="margin:0">Отложил</button></div>
+    ${log.length ? `<h2 class="hl" style="margin-top:20px">История</h2>${log.map(l => `<div class="glog"><span>${shortDate(l.d)}${ymd(l.d)[0] !== ymd(now)[0] ? ' ' + ymd(l.d)[0] : ''}</span><b class="num ${l.g < 0 ? 'neg' : ''}">${l.g > 0 ? '+' : '−'}${gel(Math.abs(l.g))}</b><button class="rm" data-act="glogrm" data-t="${l.t}" aria-label="Удалить запись">✕</button></div>`).join('')}` : ''}
+    <p class="hint" style="margin:14px 0 0">Если деньги ушли с карты на накопительный счёт, обновите в плане, сколько у вас сейчас.</p></div>`;
+  $modal.classList.add('open');
+}
+function goalPut(sign) {
+  const g = goalEdit, v = fxNum($('#gAmt').value);
+  if (!(v > 0)) { toast('Впишите сумму'); $('#gAmt').focus(); return; }
+  g.log = g.log || [];
+  g.log.push({ d: now, g: r2(v * sign), t: Date.now() });
+  saveBudget(); closeModal(); goalEdit = null; render();
+  if (sign > 0) { toast(`Отложено ${gel(v)} на «${g.n}»`); setTimeout(() => popButton({ el: document.querySelector(`.goalc[data-id="${g.id}"] .gbar2`), stars: true, color: 'acc' }), 120); }
+  else toast(`Снято ${gel(v)} с «${g.n}»`);
+}
+
 /* ---------- экран плана ---------- */
 function renderPlan() {
   if (!budget) {
     $main.innerHTML = `
-      <div class="jhead" style="--d:0ms"><div class="t"><div class="big">План</div><div class="sub">бюджет до зарплаты и на месяц</div></div></div>
+      <div class="jhead" style="--d:0ms"><div class="t"><div class="big">План</div><div class="sub">бюджет, цели и прогноз на год</div></div></div>
       <div class="card bhello" style="--d:40ms"><div class="qwave" aria-hidden="true">👋</div>
         <h3>Здравствуйте!</h3>
-        <p>Давайте спланируем ваш бюджет. Пять коротких вопросов: сколько денег есть, сколько и когда придёт, какие траты впереди и сколько отложить на непредвиденное.</p>
+        <p>Давайте спланируем ваш бюджет. Несколько коротких вопросов: сколько денег есть, какие доходы и обязательные траты каждый месяц, крупные покупки, на что копите и сколько отложить на непредвиденное.</p>
         <button class="fix" data-act="bwiz">Начать</button></div>
       <p class="hint" style="margin:12px 24px">Всё считается в лари по курсу НБГ на сегодня. Ответы можно поменять в любой момент.</p>`;
     return;
@@ -1386,82 +1631,129 @@ function renderPlan() {
   const ring = (p, over) => { const R = 34, L = 2 * Math.PI * R;
     return `<svg viewBox="0 0 84 84" class="bring" aria-hidden="true"><circle cx="42" cy="42" r="${R}" fill="none" stroke="color-mix(in srgb, var(--acc) 16%, transparent)" stroke-width="10"/>
       <circle cx="42" cy="42" r="${R}" fill="none" stroke="${over ? 'var(--danger)' : 'var(--acc)'}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${L * p} ${L}" ${p <= 0.005 ? 'visibility="hidden"' : ''} transform="rotate(-90 42 42)"/></svg>`; };
+  const pSegs = c.segs.filter(s => s.start <= c.end), next = pSegs[1];
 
   // предупреждения
   const warns = [];
-  for (const s of c.segs) if (s.short) warns.push(`До ${shortDate(s.stop)} не хватает <b class="num">${gel(s.short)}</b>. ${s.exp.length ? `Можно перенести «${esc(s.exp[s.exp.length - 1].n)}» на после зарплаты, взять из запаса или урезать траты.` : 'Можно взять из запаса.'}`);
-  if (c.past.length) warns.push(`${c.past.map(x => `«${esc(x.n || 'Поступление')}» (${shortDate(x.date)})`).join(', ')} — дата уже прошла, в плане не учтено. Если деньги пришли, обновите, сколько у вас сейчас.`);
+  for (const s of pSegs) if (s.short) warns.push(`До ${shortDate(s.stop < c.end ? s.stop : c.end)} не хватает <b class="num">${gel(s.short)}</b>. ${s.out.length ? `Можно перенести «${esc(s.out[s.out.length - 1].n)}» на после зарплаты, взять из запаса или урезать траты.` : 'Можно взять из запаса.'}`);
+  for (const m of c.months.slice(1)) if (m.short > 1) warns.push(`${ymName(m.ym)}: не хватит <b class="num">${gel(m.short)}</b>${m.onceList.length ? ` — из-за «${esc(m.onceList.map(e => e.n).join('», «'))}»` : ''}. Уменьшите взносы на цели или перенесите трату.`);
+  for (const { g, gi } of c.goals) if (!gi.done && !(gi.monthly > 0)) warns.push(`Для цели «${esc(g.n)}» не задано, сколько откладывать в месяц.`);
+  if (c.past.length) warns.push(`${c.past.map(x => `«${esc(x.n || 'Доход')}» (${shortDate(x.date)})`).join(', ')} — дата уже прошла, в плане не учтено. Если деньги пришли, обновите, сколько у вас сейчас.`);
   if (c.noRate) warns.push('Для некоторых валют пока нет курса НБГ, они посчитаны как ноль.');
 
   // таймлайн «до зарплаты»
-  const maxRate = Math.max(...c.segs.map(s => s.rate), 1);
+  const maxRate = Math.max(...pSegs.map(s => s.rate), 1);
+  const evRow = e => `<span><em style="background:${e.kind === 'goal' ? e.color : e.color || C_NEED}"></em>${tinyDate(e.date)} · ${e.kind === 'goal' ? '🎯 ' : ''}${esc(e.n)} <b class="num">${gel(e.gel)}</b></span>`;
   let tl = `<div class="tli"><span class="dot now"></span><div><b>Сегодня, ${shortDate(now)}</b><i class="num">на руках ${gel(c.have)}</i></div></div>`;
-  c.segs.forEach((s, k) => {
-    if (k > 0) tl += `<div class="tli inc"><span class="dot">+</span><div><b>${shortDate(s.start)} · ${s.inc.map(x => esc(x.n || 'Поступление')).join(', ')}</b><i class="plus num">+${gel(s.incGel)}</i></div></div>`;
-    tl += `<div class="tls ${s.short ? 'bad' : ''}"><div class="tlr"><b class="num">${gel(s.rate)}</b> в день<span>${s.n} ${plural(s.n, 'день', 'дня', 'дней')}</span></div>
+  pSegs.forEach((s, k) => {
+    const stop = s.stop < c.end ? s.stop : c.end, n = daysTo(s.start, stop) + 1, out = s.out.filter(e => e.date <= c.end);
+    if (k > 0) tl += `<div class="tli inc"><span class="dot">+</span><div><b>${shortDate(s.start)} · ${s.inc.map(e => esc(e.n || 'Доход')).join(', ')}</b><i class="plus num">+${gel(s.incGel)}</i></div></div>`;
+    tl += `<div class="tls ${s.short ? 'bad' : ''}"><div class="tlr"><b class="num">${gel(s.rate)}</b> в день<span>${n} ${plural(n, 'день', 'дня', 'дней')}</span></div>
       <div class="tlbar"><i style="width:${Math.max(3, s.rate / maxRate * 100)}%"></i></div>
-      ${s.exp.length ? `<div class="tlexp">${s.exp.map(x => `<span><em style="background:${x.color}"></em>${tinyDate(x.date)} · ${esc(x.n)} <b class="num">${gel(x.gel)}</b></span>`).join('')}</div>` : ''}
+      ${out.length ? `<div class="tlexp">${out.map(evRow).join('')}</div>` : ''}
       ${s.short ? `<div class="tlwarn">не хватает ${gel(s.short)}</div>` : ''}</div>`;
   });
-  tl += `<div class="tli end"><span class="dot"></span><div><b>${shortDate(c.end)}</b><i>${c.res ? `в запасе останется <span class="num">${gel(c.res)}</span>` : 'конец плана'}</i></div></div>`;
+  tl += `<div class="tli end"><span class="dot"></span><div><b>${shortDate(c.end)}</b><i>${c.res ? `в запасе <span class="num">${gel(c.res)}</span>` : 'конец периода'}${c.pKeep > 1 ? ` · на следующие месяцы <span class="num">${gel(c.pKeep)}</span>` : ''}</i></div></div>`;
 
-  // куда пойдут деньги — кольцо
-  const parts = [...c.exp.map(x => ({ n: x.n, ic: expIcon(x.n), v: x.gel, col: x.color })),
+  // куда пойдут деньги в этом периоде — кольцо
+  const merged = {};
+  for (const e of c.pOut) { const k = e.kind + '|' + e.id; if (!merged[k]) merged[k] = { n: e.n, ic: e.kind === 'goal' ? goalIcon(e.n) : iconOf(e.n), v: 0, col: e.color || C_NEED, kind: e.kind }; merged[k].v += e.gel; }
+  const parts = [...Object.values(merged).sort((a, b) => (a.kind === 'goal') - (b.kind === 'goal') || b.v - a.v),
     ...(c.res ? [{ n: 'Запас на непредвиденное', ic: '🛟', v: c.res, col: C_RES }] : []),
-    ...(c.free > 0 ? [{ n: 'На каждый день', ic: '☕', v: c.free, col: C_FREE }] : [])];
+    ...(c.pLife > 0 ? [{ n: 'На каждый день', ic: '☕', v: c.pLife, col: C_FREE }] : []),
+    ...(c.pKeep > 1 ? [{ n: 'На следующие месяцы', ic: '📅', v: c.pKeep, col: '#9AA5B1' }] : [])];
   const ptot = parts.reduce((t, x) => t + x.v, 0) || 1;
   let acc = 0;
   const R = 52, L = 2 * Math.PI * R, gap = parts.length > 1 ? 2.5 : 0;
   const arcs = parts.map(x => { const len = x.v / ptot * L, a = `<circle cx="70" cy="70" r="${R}" fill="none" stroke="${x.col}" stroke-width="20" stroke-dasharray="${Math.max(len - gap, .1)} ${L}" stroke-dashoffset="${-acc}" transform="rotate(-90 70 70)"/>`; acc += len; return a; }).join('');
 
-  // траты по датам
-  const expRows = c.exp.map(x => `<tr><td><span class="tic" style="--c:${x.color}">${expIcon(x.n)}</span></td><td class="tn"><b>${esc(x.n)}</b><i>${x.date === now ? 'сегодня' : `${shortDate(x.date)} · ${whenWord(x.date).replace(/, .*/, '')}`}</i></td>
-    <td class="tv num">${gel(x.gel)}${x.c !== 'GEL' ? `<i>${money(amtOf(x), 0)} ${CUR[x.c].s}</i>` : ''}</td></tr>`).join('');
+  // цели
+  const goalsHtml = c.goals.map(({ g, gi, color }) => {
+    const p = gi.t ? Math.min(100, gi.saved / gi.t * 100) : 0, pPlan = gi.t ? Math.min(100, (gi.saved + gi.thisM) / gi.t * 100) : 0;
+    const late = g.mode === 'by' && g.by && gi.eta && ymDiff(g.by, gi.eta) > 0;
+    return `<div class="goalc" data-id="${g.id}" style="--c:${color}">
+      <div class="gtop"><span class="tic" style="--c:${color}">${goalIcon(g.n)}</span><div class="gt"><b>${esc(g.n || 'Цель')}</b><i>${goalLine(g, gi)}</i></div>
+        ${gi.done ? '' : `<button class="gsave" data-act="goal" data-id="${g.id}">Отложил</button>`}</div>
+      <div class="gbar2"><i class="plan" style="width:${pPlan}%"></i><i style="width:${p}%"></i></div>
+      <div class="gnums"><span><b class="num">${gel(gi.saved)}</b> из <span class="num">${gel(gi.t)}</span></span><span class="num">${money(p, 0)}%</span></div>
+      ${!gi.done && gi.monthly > 0 ? `<div class="gmonth">${gi.skip && gi.contrib[0] ? `первый взнос ${shortDate(gi.contrib[0].date)}` : gi.loggedNow >= gi.monthly - .5 ? '✓ в этом месяце отложено' : gi.loggedNow ? `в этом месяце: ${gel(gi.loggedNow)} из ${gel(gi.monthly)}` : `в этом месяце отложить ${gel(gi.thisM)}${gi.contrib[0] ? ` · ${gi.contrib[0].date === now ? 'сегодня' : shortDate(gi.contrib[0].date)}` : ''}`}</div>` : ''}
+      ${late ? `<div class="tlwarn">к сроку не успеваете</div>` : ''}</div>`;
+  }).join('');
+  const gMonthly = c.goals.reduce((t, x) => t + (x.gi.done ? 0 : x.gi.monthly), 0);
 
-  const tiles = [['Будет денег', c.total, 'var(--acc)'], ['Траты', c.expSum, PAL[0]], ['Запас', c.res, C_RES], ['На жизнь', Math.max(c.free, 0), C_FREE]];
-  const stack = c.total > 0 ? [[c.expSum, PAL[0]], [c.res, C_RES], [Math.max(c.free, 0), C_FREE]].map(([v, col]) => v > 0 ? `<i style="flex:${v};background:${col}"></i>` : '').join('') : '';
+  // прогноз на год: столбики по месяцам
+  const F = c.months, W = 340, H = 170, top = 16, bot = 24, bw = 17, step = (W - 16) / 12;
+  const fmax = Math.max(...F.map(m => Math.max(m.inc, m.need + m.once + m.goal + m.life)), 1);
+  const yv = v => (H - top - bot) * v / fmax;
+  const fbars = F.map((m, i) => {
+    const x = 8 + step * i + (step - bw) / 2;
+    let y = H - bot, out = '';
+    for (const [v, col] of [[m.need, C_NEED], [m.once, C_ONCE], [m.goal, C_GOAL], [m.life, C_FREE]]) {
+      if (v <= 0) continue; const h = Math.max(1.5, yv(v)); y -= h;
+      out += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${col}"/>`;
+    }
+    const iy = H - bot - yv(m.inc);
+    return `<g><clipPath id="fc${i}"><rect x="${x}" y="${top - 4}" width="${bw}" height="${H - bot - top + 4}" rx="5"/></clipPath><g clip-path="url(#fc${i})">${out}</g>
+      ${m.inc ? `<line x1="${x - 3}" x2="${x + bw + 3}" y1="${iy}" y2="${iy}" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>` : ''}
+      ${m.short > 1 ? `<circle cx="${x + bw / 2}" cy="${top - 2}" r="4" fill="var(--danger)"/>` : ''}
+      <text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle" class="gt">${MONTHS_S[+m.ym.slice(5) - 1]}</text></g>`;
+  }).join('') + [.5, 1].map(k => `<line x1="4" x2="${W - 4}" y1="${H - bot - (H - top - bot) * k}" y2="${H - bot - (H - top - bot) * k}" class="gl"/><text x="${W - 4}" y="${H - bot - (H - top - bot) * k - 3}" text-anchor="end" class="gt">${money(fmax * k / 1000, 1)}k</text>`).join('');
+  const yearGoals = F.reduce((t, m) => t + m.goal, 0);
+  const frows = F.map(m => `<tr class="${m.short > 1 ? 'bad' : ''}"><td class="tn"><b>${ymName(m.ym)}</b>${m.onceList.length ? `<i>${m.onceList.map(e => `${iconOf(e.n)} ${esc(e.n)}`).join(', ')}</i>` : ''}</td>
+    <td class="tv num">${m.inc ? '+' + money(m.inc, 0) : '—'}</td><td class="tv num">${money(m.need + m.once, 0)}</td><td class="tv num">${m.goal ? money(m.goal, 0) : '—'}</td><td class="tv num"><b>${money(m.perDay, 0)}</b></td></tr>`).join('');
+
+  // траты текущего периода по датам
+  const expRows = c.pOut.map(e => `<tr><td><span class="tic" style="--c:${e.color || C_NEED}">${e.kind === 'goal' ? goalIcon(e.n) : iconOf(e.n)}</span></td><td class="tn"><b>${esc(e.n)}</b><i>${e.date === now ? 'сегодня' : `${shortDate(e.date)} · ${whenWord(e.date).replace(/, .*/, '')}`}${e.kind === 'goal' ? ' · на цель' : e.kind === 'once' ? ' · разово' : ''}</i></td>
+    <td class="tv num">${gel(e.gel)}</td></tr>`).join('');
+  const tiles = [['Будет денег', c.total, 'var(--acc)'], ['Обязательные и разовые', c.pNeed, C_NEED], ['На цели', c.pGoal, C_GOAL], ['На жизнь', c.pLife, C_FREE]];
+  const stack = c.total > 0 ? [[c.pNeed, C_NEED], [c.pGoal, C_GOAL], [c.res, C_RES], [c.pLife, C_FREE], [c.pKeep, '#9AA5B1']].map(([v, col]) => v > 0.5 ? `<i style="flex:${v};background:${col}"></i>` : '').join('') : '';
 
   $main.innerHTML = `
-    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">План</div><div class="sub">до ${shortDate(c.end)} · ${c.N} ${plural(c.N, 'день', 'дня', 'дней')}</div></div>
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">План</div><div class="sub">до ${shortDate(c.end)} · прогноз на год</div></div>
       <button class="rbtn" data-act="bwiz" aria-label="Изменить ответы"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></svg></button></div>
     <div class="card bhero" style="--d:40ms">
       <div class="bh"><div class="bt"><div class="k">Можно тратить в день</div><div class="v num">${money(s0.rate, 0)}<small> ₾</small></div>
-        <div class="s">${c.segs[1] ? `до ${shortDate(s0.stop)} включительно` : `до ${shortDate(c.end)}`}</div></div>
+        <div class="s">до ${shortDate(s0.stop < c.end ? s0.stop : c.end)} включительно</div></div>
         <div class="bg">${ring(1 - pToday, c.spentToday > s0.rate)}<div class="bgt"><b class="num">${money(left, 0)}</b><i>осталось<br>сегодня</i></div></div></div>
       ${c.spentToday ? `<div class="btoday">Сегодня по учёту расходов потрачено <b class="num">${gel(c.spentToday)}</b>${c.spentToday > s0.rate ? ` — это на ${gel(c.spentToday - s0.rate)} больше дневного` : ''}.</div>` : `<div class="btoday">Записывайте траты во вкладке «Расходы» — тут будет видно, сколько осталось на сегодня.</div>`}
-      ${c.segs[1] ? `<div class="bnext">С ${shortDate(c.segs[1].start)} — <b class="num">${gel(c.segs[1].rate)}</b> в день</div>` : ''}
+      <div class="bchips">${next ? `<span class="bnext">С ${shortDate(next.start)} — <b class="num">${gel(next.rate)}</b> в день</span>` : ''}${gMonthly ? `<span class="bnext goal">🎯 на цели <b class="num">${gel(gMonthly)}</b> в месяц</span>` : ''}</div>
     </div>
     ${warns.map((w, k) => `<div class="bwarn" style="--d:${60 + k * 20}ms"><span aria-hidden="true">⚠️</span><div>${w}</div></div>`).join('')}
     ${c.past.length ? `<button class="btn outline" data-act="bwizhave" style="width:calc(100% - 20px);margin:10px 10px 0">Обновить, сколько денег сейчас</button>` : ''}
 
-    <div class="card" style="--d:80ms"><h2 class="hl">До зарплаты</h2><div class="tl">${tl}</div></div>
+    ${c.goals.length ? `<div class="card" style="--d:80ms"><h2 class="hl">Цели</h2>${goalsHtml}
+      <button class="addrow" data-act="bwizgoals">+ добавить цель</button></div>` : ''}
+
+    <div class="card" style="--d:100ms"><h2 class="hl">До зарплаты</h2><div class="tl">${tl}</div></div>
 
     <div class="card chart" style="--d:120ms"><h2 class="hl">Деньги по дням</h2>
       <div class="lgnd"><span><em style="background:var(--acc)"></em>на счёте, если тратить по плану</span>${c.res ? `<span><em class="dash"></em>запас</span>` : ''}</div>
       <div class="lc" id="lc">${lineChart(c)}<div class="lctip" id="lctip" hidden></div></div></div>
 
-    ${parts.length ? `<div class="card" style="--d:160ms"><h2 class="hl">Куда пойдут деньги</h2>
+    <div class="card chart" style="--d:140ms"><h2 class="hl">Прогноз на год</h2>
+      <div class="lgnd"><span><em style="background:${C_NEED}"></em>обязательные</span><span><em style="background:${C_ONCE}"></em>разовые</span><span><em style="background:${C_GOAL}"></em>цели</span><span><em style="background:${C_FREE}"></em>на жизнь</span><span><em style="background:var(--ink);height:2px"></em>доход</span></div>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Прогноз по месяцам">${fbars}</svg>
+      ${yearGoals ? `<div class="pline sum"><span>за год отложите на цели</span><b class="num">${gel(yearGoals)}</b></div>` : ''}
+      <table class="ftable fc"><thead><tr><th>Месяц</th><th>Доход</th><th>Траты</th><th>Цели</th><th>В день</th></tr></thead><tbody>${frows}</tbody></table>
+      <p class="hint" style="margin:8px 0 0">«В день» — сколько остаётся на жизнь после обязательных трат, целей и накоплений на крупные покупки.</p></div>
+
+    ${parts.length ? `<div class="card" style="--d:160ms"><h2 class="hl">Куда пойдут деньги до ${shortDate(c.end)}</h2>
       <div class="donut"><svg viewBox="0 0 140 140" role="img" aria-label="Распределение денег">${arcs}
         <text x="70" y="66" text-anchor="middle" class="dv num">${money(c.total, 0)}</text><text x="70" y="84" text-anchor="middle" class="dk">₾ всего</text></svg></div>
       <table class="ftable"><tbody>${parts.map(x => `<tr><td><span class="tic" style="--c:${x.col}">${x.ic}</span></td><td class="tn"><b>${esc(x.n)}</b>
-        <span class="pbar"><i style="width:${x.v / ptot * 100}%;background:${x.col}"></i></span></td><td class="tv num">${gel(x.v)}<i>${money(x.v / ptot * 100, 0)}%</i></td></tr>`).join('')}</tbody></table></div>` : ''}
-
-    <div class="card" style="--d:200ms"><h2 class="hl">Весь период</h2>
+        <span class="pbar"><i style="width:${x.v / ptot * 100}%;background:${x.col}"></i></span></td><td class="tv num">${gel(x.v)}<i>${money(x.v / ptot * 100, 0)}%</i></td></tr>`).join('')}</tbody></table>
       <div class="tiles">${tiles.map(([k, v, col]) => `<div style="--c:${col}"><span>${k}</span><b class="num">${gel(v)}</b></div>`).join('')}</div>
-      ${stack ? `<div class="stack">${stack}</div>` : ''}
-      <div class="pline sum"><span>в среднем на каждый день</span><b class="num ${c.free < 0 ? 'neg' : ''}">${gel(c.avg)}</b></div>
-      <p class="hint" style="margin:6px 0 0">С ${shortDate(now)} по ${shortDate(c.end)}: есть ${gel(c.have)}, придёт ${gel(c.incSum)}, траты ${gel(c.expSum)}, запас ${gel(c.res)}.</p>
-      <label class="bend"><span>План до</span><input class="in" type="date" id="bEnd" min="${c.inc.length ? c.inc[c.inc.length - 1].date : shift(now, 1)}" value="${c.end}"></label></div>
+      ${stack ? `<div class="stack">${stack}</div>` : ''}</div>` : ''}
 
-    ${c.exp.length ? `<div class="card" style="--d:240ms"><h2 class="hl">Траты по датам</h2>
-      <table class="ftable"><tbody>${expRows}</tbody><tfoot><tr><td></td><td class="tn"><b>Всего</b></td><td class="tv num">${gel(c.expSum)}</td></tr></tfoot></table></div>` : ''}
+    ${c.pOut.length ? `<div class="card" style="--d:200ms"><h2 class="hl">Траты по датам</h2>
+      <table class="ftable"><tbody>${expRows}</tbody><tfoot><tr><td></td><td class="tn"><b>Всего</b></td><td class="tv num">${gel(c.pNeed + c.pGoal)}</td></tr></tfoot></table></div>` : ''}
 
-    <div class="section" style="--d:280ms">
+    <div class="section" style="--d:240ms">
       <button class="btn primary" data-act="bwizhave" style="margin-top:18px">Обновить, сколько денег сейчас</button>
       <button class="btn outline" data-act="bwiz">Изменить ответы</button>
+      ${c.goals.length ? '' : '<button class="btn outline" data-act="bwizgoals">Добавить цель накопления</button>'}
       <button class="btn quiet" data-act="bnew">Начать план заново</button><div id="bnewBox"></div></div>
-    <p class="hint" style="margin:12px 24px">Траты без числа считаются сегодняшними. Суммы в валюте пересчитаны по курсу НБГ на ${longDate(fx && fx.valid || now)}.</p>`;
-  $('#bEnd').onchange = e => { budget.end = e.target.value; saveBudget(); render(); };
+    <p class="hint" style="margin:12px 24px">Ежемесячные траты без числа считаются сегодняшними, в следующих месяцах — 1-го числа. Взносы на цели — в день зарплаты. Суммы в валюте пересчитаны по курсу НБГ на ${longDate(fx && fx.valid || now)}.</p>`;
   lineTip(c);
 }
 
@@ -1477,8 +1769,10 @@ function lineChart(c) {
   const grid = [0, .5, 1].map(k => { const v = lo + span * k; return `<line x1="${l}" x2="${W - r}" y1="${Y(v)}" y2="${Y(v)}" class="gl"/><text x="${W - r}" y="${Y(v) - 4}" text-anchor="end" class="gt">${money(v, 0)}</text>`; }).join('');
   const zero = lo < 0 ? `<line x1="${l}" x2="${W - r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--danger)" stroke-width="1.2"/>` : '';
   const resL = c.res ? `<line x1="${l}" x2="${W - r}" y1="${Y(c.res)}" y2="${Y(c.res)}" stroke="${C_RES}" stroke-width="1.6" stroke-dasharray="5 4"/>` : '';
-  const incs = c.inc.filter(x => x.date > now).map(x => { const i = daysTo(now, x.date), p = s[i]; return `<circle cx="${X(i)}" cy="${Y(p.bal)}" r="5.5" fill="${C_FREE}" stroke="var(--page)" stroke-width="2"/>`; }).join('');
-  const big = c.exp.filter(x => x.gel >= c.expSum * .15).map(x => { const i = daysTo(now, x.date), p = s[i]; return `<circle cx="${X(i)}" cy="${Y(p.bal)}" r="4.5" fill="${x.color}" stroke="var(--page)" stroke-width="2"/>`; }).join('');
+  const at = d => { const i = daysTo(now, d); return i >= 0 && i < s.length ? i : -1; };
+  const incs = c.pInc.filter(e => e.date > now).map(e => { const i = at(e.date); return i < 0 ? '' : `<circle cx="${X(i)}" cy="${Y(s[i].bal)}" r="5.5" fill="${C_FREE}" stroke="var(--page)" stroke-width="2"/>`; }).join('');
+  const bigSum = c.pOut.reduce((z, e) => z + e.gel, 0);
+  const big = c.pOut.filter(e => e.gel >= bigSum * .12).map(e => { const i = at(e.date); return i < 0 ? '' : `<circle cx="${X(i)}" cy="${Y(s[i].bal)}" r="4.5" fill="${e.color || C_NEED}" stroke="var(--page)" stroke-width="2"/>`; }).join('');
   const ticks = [...new Set([0, Math.floor((s.length - 1) / 2), s.length - 1])].map(i => `<text x="${X(i)}" y="${H - 6}" text-anchor="${i === 0 ? 'start' : i === s.length - 1 ? 'end' : 'middle'}" class="gt">${tinyDate(s[i].d)}</text>`).join('');
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Остаток денег по дням" id="lcsvg" data-w="${W}" data-l="${l}" data-r="${r}">
     <defs><linearGradient id="lgA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--acc);stop-opacity:.32"/><stop offset="1" style="stop-color:var(--acc);stop-opacity:0"/></linearGradient></defs>
@@ -1497,7 +1791,7 @@ function lineTip(c) {
     const cx = l + (W - l - r) * (s.length > 1 ? i / (s.length - 1) : .5), cy = 22 + (170 - 22 - 26) * (1 - (p.bal - lo) / span);
     $('#lcx').setAttribute('x1', cx); $('#lcx').setAttribute('x2', cx); $('#lcx').setAttribute('visibility', 'visible');
     $('#lcd').setAttribute('cx', cx); $('#lcd').setAttribute('cy', cy); $('#lcd').setAttribute('visibility', 'visible');
-    const ev2 = [...c.inc.filter(x => x.date === p.d && p.d > now).map(x => `+${gel(x.gel)} ${esc(x.n)}`), ...c.exp.filter(x => x.date === p.d).map(x => `−${gel(x.gel)} ${esc(x.n)}`)];
+    const ev2 = [...c.pInc.filter(e => e.date === p.d && p.d > now).map(e => `+${gel(e.gel)} ${esc(e.n)}`), ...c.pOut.filter(e => e.date === p.d).map(e => `−${gel(e.gel)} ${e.kind === 'goal' ? '🎯 ' : ''}${esc(e.n)}`)];
     const tip = $('#lctip'); tip.hidden = false;
     tip.innerHTML = `<b>${p.d === now ? 'Сегодня' : shortDate(p.d)}</b> · <span class="num">${gel(p.bal)}</span>${ev2.length ? `<i>${ev2.join('<br>')}</i>` : ''}`;
     const px = cx / W * rc.width; tip.style.left = Math.max(4, Math.min(rc.width - tip.offsetWidth - 4, px - tip.offsetWidth / 2)) + 'px';
@@ -1948,6 +2242,10 @@ document.addEventListener('click', e => {
     case 'bnewno': $('#bnewBox').innerHTML = ''; break;
     case 'bnewyes': budget = null; store.set('budget', null); wizDraft = null; render(); openWizard(0); break;
     case 'skin': applySkin(el.dataset.id); render(); break;
+    case 'bwizgoals': openWizard(WSTEPS.indexOf('goals')); break;
+    case 'goal': openGoal(el.dataset.id); break;
+    case 'gput': goalPut(+el.dataset.s); break;
+    case 'glogrm': if (goalEdit) { goalEdit.log = goalEdit.log.filter(l => String(l.t) !== el.dataset.t); saveBudget(); render(); openGoal(goalEdit.id); } break;
     case 'theme': if (skin !== 'classic') applySkin('classic'); applyTheme(el.dataset.id); render(); break;
     case 'export': exportCsv(); break;
     case 'import': $('#importFile').click(); break;
