@@ -1072,6 +1072,39 @@ html.skin-apple { --leaf: #8ed24a; --leaf-soft: #c5e8a6; --leaf-ink: #3f7a1f; --
 .skin-apple .tmt b, .skin-apple .kpi b { font-family: var(--ah); font-weight: 400; color: var(--leaf-ink); }
 .skin-apple .kpi span, .skin-apple .kpi i, .skin-apple .tmt i { font-style: normal; }
 @media (max-width: 560px) { .jhead { flex-wrap: wrap; row-gap: 6px; } .jhead .t { flex-basis: 100%; } .jhead .vcur span { display: none; } }
+/* колонки таблиц выравниваются сами (без дыр) */
+.tcols { display: block; columns: 2 460px; column-gap: 14px; margin-top: 14px; }
+.tcols > .tcardx { display: block; break-inside: avoid; margin: 0 0 14px; width: 100%; }
+.tcols > .tcardx .tadd { display: inline-block; }
+.tfull { margin-top: 0; }
+/* накопления по месяцам */
+.sscroll { position: relative; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 6px; }
+.schart { width: 100%; height: auto; display: block; }
+.schart .sb { fill: transparent; cursor: pointer; }
+.schart .sb.hov { fill: color-mix(in srgb, var(--acc) 10%, transparent); }
+.schart .sb.sel { fill: color-mix(in srgb, var(--acc) 18%, transparent); }
+
+.sdet { margin-top: 10px; padding: 12px 14px; border-radius: 16px; background: var(--paper); }
+.sdh { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.sdh > b { font-size: 17px; font-weight: 600; }
+.sdh > span { font-size: 13.5px; color: var(--soft); } .sdh > span b { color: var(--ink); font-weight: 600; }
+.sdh .pos { color: #3E9A62; } .sdh .neg { color: var(--danger); }
+.sdg { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin-top: 10px; }
+.sdi { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--page); border: 1px solid var(--rule); }
+.sdi.cur { border-color: var(--c); box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 25%, transparent); }
+.sdi.wait { opacity: .65; }
+.sdi .tic { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; flex: none; background: color-mix(in srgb, var(--c) 18%, var(--page)); }
+.sdi > div { flex: 1; min-width: 0; } .sdi b { font-weight: 500; font-size: 14px; }
+.sdi .pbar { display: block; height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--ink) 8%, transparent); margin: 4px 0 3px; overflow: hidden; }
+.sdi .pbar i { display: block; height: 100%; border-radius: 3px; }
+.sdi > div > i { font-size: 12px; color: var(--soft); }
+.srow { cursor: pointer; }
+.ftable.fc tr.srow.sel td { background: color-mix(in srgb, var(--acc) 16%, var(--page)); }
+.ftable.fc tr.srow:hover td { background: color-mix(in srgb, var(--acc) 9%, var(--paper)); }
+.skin-paper .sdet, .skin-paper .sdi { border-radius: 2px; }
+.skin-paper .sdi > div > i, .skin-paper .sdh > span { font-style: normal; }
+.skin-apple .sdet { background: #fff; border: 2px dashed var(--leaf-soft); }
+.skin-apple .sdi { border-width: 2px; border-radius: 20px 16px 22px 18px; }
 </style>
 </head>
 <body>
@@ -2075,6 +2108,7 @@ function renderPlan() {
       <button class="btn quiet" data-act="bnew">Начать план заново</button><div id="bnewBox"></div></div>
     <p class="hint" style="margin:12px 24px">Ежемесячные траты без числа считаются сегодняшними, в следующих месяцах — 1-го числа. Взносы на цели — в день зарплаты. Суммы в валюте пересчитаны по курсу НБГ на ${longDate(fx && fx.valid || now)}.</p>`;
   lineTip(c);
+  saveBind();
 }
 
 // линия остатка по дням: мягкая заливка, точки поступлений и крупных трат
@@ -2188,7 +2222,7 @@ function saveSim(c) {
   for (let i = 0; i < 120; i++) {
     const m = M[i] || { ym: ymAdd(cur, i), free: avgFree, goalPlan: avgPlan };
     S += m.free; P += m.goalPlan;
-    pts.push({ ym: ymAdd(cur, i + 1), max: S, plan: P, free: m.free, i: i + 1 });
+    pts.push({ ym: m.ym, max: S, plan: P, free: m.free, i: i + 1 });   // конец месяца m
     if (doneAt == null && targets.length && targets.every(t => S >= t.cum)) doneAt = i;
     if (i >= 11 && (!targets.length || doneAt != null && i >= doneAt + 2)) break;   // год, а если цели дальше — пока не закроются (до 10 лет)
   }
@@ -2200,19 +2234,10 @@ function savingsCard(c) {
   if (!s.src) return `<div class="card" style="--d:150ms"><h2 class="hl">Накопления: всё свободное — в копилку</h2>
     <p class="hint" style="margin:8px 0 10px">Чтобы посчитать, сколько можно копить, если все свободные деньги откладывать, задайте повседневные траты по статьям (продукты, кафе, транспорт) — или записывайте траты во вкладке «Расходы».</p>
     <button class="btn outline" data-act="bwizdaily" style="margin:0">Задать повседневные траты</button></div>`;
-  const W = 340, H = 190, l = 8, r = 8, t = 16, b = 24, pts = s.pts, n = pts.length - 1;
-  const hi = Math.max(...pts.map(p => Math.max(p.max, p.plan)), ...s.targets.map(x => x.cum), 1), lo = Math.min(0, ...pts.map(p => p.max));
-  const X = i => l + (W - l - r) * i / Math.max(1, n), Y = v => t + (H - t - b) * (1 - (v - lo) / (hi - lo || 1));
-  const line = k => pts.map((p, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(p[k]).toFixed(1)).join('');
-  const area = line('max') + `L${X(n)} ${Y(lo)}L${X(0)} ${Y(lo)}Z`;
-  const step = n <= 7 ? 1 : n <= 14 ? 2 : n <= 24 ? 3 : n <= 36 ? 6 : 12;
-  const ticks = pts.filter(p => p.i % step === 0 && n - p.i >= step * .6 || p.i === n).map(p => `<text x="${X(p.i)}" y="${H - 7}" text-anchor="${p.i === 0 ? 'start' : p.i === n ? 'end' : 'middle'}" class="gt">${MONTHS_S[+p.ym.slice(5) - 1]}${p.ym.slice(5) === '01' || p.i === 0 ? ' ' + p.ym.slice(2, 4) : ''}</text>`).join('');
-  const tl = s.targets.map(x => { const y = Y(x.cum), hit = x.etaMax ? pts.find(p => p.ym === x.etaMax) : null;
-    return `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" stroke="${x.color}" stroke-width="1.3" stroke-dasharray="4 4" opacity=".8"/>
-      <text x="${l + 2}" y="${y - 4}" class="gt" style="fill:${x.color};font-weight:600">${goalIcon(x.g.n)} ${esc(x.g.n)} · ${money(x.cum / bK() / 1000, 1)}k</text>
-      ${hit ? `<circle cx="${X(hit.i)}" cy="${y}" r="5" fill="${x.color}" stroke="var(--page)" stroke-width="2"/>` : ''}`; }).join('');
+  const pts = s.pts, n = pts.length - 1;
+  lastSave = s; if (savSel > n) savSel = Math.min(n, 1);
   const rows = s.months.map((m, i) => { const p = s.pts[i + 1], done = s.targets.filter(x => x.etaMax === p.ym);
-    return `<tr class="${m.free < 0 ? 'bad' : ''}"><td class="tn"><b>${ymName(m.ym)}</b>${done.length ? `<i>🎉 ${done.map(x => esc(x.g.n)).join(', ')}</i>` : ''}</td><td class="tv num">${bm(m.inc)}</td><td class="tv num">${money(m.out + m.daily, 0)}</td>
+    return `<tr class="srow ${m.free < 0 ? 'bad' : ''} ${i + 1 === savSel ? 'sel' : ''}" data-si="${i + 1}"><td class="tn"><b>${ymName(m.ym)}</b>${done.length ? `<i>🎉 ${done.map(x => esc(x.g.n)).join(', ')}</i>` : ''}</td><td class="tv num">${bm(m.inc)}</td><td class="tv num">${bm(m.out + m.daily)}</td>
       <td class="tv num ${m.free < 0 ? 'neg' : 'pos'}">${m.free >= 0 ? '+' : ''}${bm(m.free)}</td><td class="tv num"><b>${bm(p.max)}</b></td></tr>`; }).join('');
   const year = s.pts[Math.min(12, n)];
   return `<div class="card chart scard" style="--d:150ms"><h2 class="hl">Накопления: всё свободное — в копилку</h2>
@@ -2223,19 +2248,82 @@ function savingsCard(c) {
       <div style="--c:var(--acc)"><span>Сейчас</span><b class="num">${gel(s.start)}</b><i>на целях ${gel(s.saved0)} + свободное на счетах</i></div></div>
     ${(() => { const planM = s.months.slice(1).reduce((t, m) => t + m.goalPlan, 0) / Math.max(1, s.months.length - 1), over = planM - s.avgFree;
       return over > 1 ? `<div class="bwarn" style="margin:12px 0 0"><span aria-hidden="true">⚠️</span><div>Взносы на цели по плану (${gel(planM)} в месяц) больше, чем остаётся после повседневных трат (${gel(s.avgFree)}). Чтобы так копить, повседневные траты придётся урезать на <b class="num">${gel(over)}</b> в месяц — или уменьшить взносы.</div></div>` : ''; })()}
-    <div class="lgnd" style="margin-top:12px"><span><em style="background:${C_GOAL}"></em>всё свободное в копилку</span><span><em class="dash2"></em>по плану взносов</span></div>
-    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Накопления по месяцам">
-      <defs><linearGradient id="sgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${C_GOAL};stop-opacity:.28"/><stop offset="1" style="stop-color:${C_GOAL};stop-opacity:0"/></linearGradient></defs>
-      ${lo < 0 ? `<line x1="${l}" x2="${W - r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--danger)" stroke-width="1"/>` : ''}
-      <path d="${area}" fill="url(#sgS)"/>${tl}
-      <path d="${line('plan')}" fill="none" stroke="var(--soft)" stroke-width="1.8" stroke-dasharray="5 4"/>
-      <path d="${line('max')}" fill="none" stroke="${C_GOAL}" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>${ticks}</svg>
+    <div class="lgnd" style="margin-top:12px"><span><em style="background:${C_GOAL}"></em>накоплено</span><span><em style="background:${C_FREE}"></em>добавилось за месяц</span><span><em class="dash2"></em>по плану взносов</span><span>наведите или нажмите на месяц</span></div>
+    <div class="sscroll">${saveChart(s)}<div class="lctip" id="stip" hidden></div></div>
+    <div class="sdet" id="sdet">${saveDetail(s, savSel)}</div>
     ${s.targets.length ? `<div class="sgoals">${s.targets.map(x => `<div class="feta" style="--c:${x.color}"><span class="tic" style="--c:${x.color}">${goalIcon(x.g.n)}</span>
       <div class="ft"><b>${esc(x.g.n)}</b><i>${gel(x.gi.left)} из ${gel(x.gi.t)} ещё копить</i></div>
       <div class="fw"><b>${x.etaMax ? (x.etaMax === ymOf(now) ? 'уже хватает' : `к ${ymNameG(x.etaMax)}`) : 'больше 10 лет'}</b><i>${x.gi.eta ? `по плану взносов — к ${ymNameG(x.gi.eta)}` : 'по плану взносов не задано'}</i></div></div>`).join('')}</div>`
       : `<p class="hint">Целей пока нет — график показывает, сколько накопится. <button class="addrow" data-act="bwizgoals" style="margin:0;padding:0">+ добавить цель</button></p>`}
     <table class="ftable fc"><thead><tr><th>Месяц</th><th>Доход</th><th>Траты</th><th>Свободно</th><th>Накоплено</th></tr></thead><tbody>${rows}</tbody></table>
     <p class="hint" style="margin:8px 0 0">Это сценарий «всё, что не потратили, — в копилку». Взносы по плану остаются как есть; кнопка «Отложил» у цели записывает, сколько вы реально положили.</p></div>`;
+}
+
+// столбики накоплений по месяцам: подсветка при наведении, выбор по клику
+let lastSave = null, savSel = 1;
+function saveAlloc(s, v) {      // цели наполняются по очереди
+  return s.targets.map(x => { const prev = x.cum - x.gi.t, have = Math.max(0, Math.min(x.gi.t, v - prev));
+    return { x, have, state: have >= x.gi.t - .5 ? 'done' : v > prev ? 'cur' : 'wait' }; });
+}
+function saveChart(s) {
+  const pts = s.pts, n = pts.length - 1, B = n + 1;
+  const wide = wideScreen(), W = wide ? Math.max(900, B * 24 + 50) : Math.max(340, B * 18 + 46), H = wide ? 300 : 230, l = 40, r = 6, t = 22, b = 26, bw = (W - l - r) / B;
+  const hi = Math.max(...pts.map(p => Math.max(p.max, p.plan)), ...s.targets.map(x => x.cum), 1), lo = Math.min(0, ...pts.map(p => p.max));
+  const Y = v => t + (H - t - b) * (1 - (v - lo) / (hi - lo || 1)), y0 = Y(Math.max(lo, 0));
+  const cx = i => l + bw * (i + .5), w = Math.max(3, bw * .64);
+  const grid = [0, .25, .5, .75, 1].map(k => { const v = lo + (hi - lo) * k; return `<line x1="${l}" x2="${W - r}" y1="${Y(v)}" y2="${Y(v)}" class="gl"/><text x="${l - 5}" y="${Y(v) + 3}" text-anchor="end" class="gt">${money(v / bK() / 1000, v / bK() >= 10000 || v === 0 ? 0 : 1)}k</text>`; }).join('');
+  const bands = pts.map((p, i) => {
+    const x0 = l + bw * i, yearStart = i > 0 && p.ym.slice(5) === '01';
+    return `${i > 0 ? `<line x1="${x0}" x2="${x0}" y1="${t - 6}" y2="${H - b}" stroke="${yearStart ? 'var(--soft)' : 'var(--rule)'}" stroke-width="${yearStart ? 1.2 : .7}" ${yearStart ? '' : 'opacity=".8"'}/>` : ''}
+      ${yearStart ? `<text x="${x0 + 3}" y="${t - 9}" class="gt" style="font-weight:600">${p.ym.slice(0, 4)}</text>` : ''}`; }).join('');
+  const bars = pts.map((p, i) => {
+    const top = Y(Math.max(p.max, lo)), add = i > 0 ? p.free : 0;
+    let h = '';
+    if (p.max > 0) h += `<rect x="${cx(i) - w / 2}" y="${top}" width="${w}" height="${Math.max(1, y0 - top)}" rx="${Math.min(4, w / 3)}" fill="${C_GOAL}" opacity="${i === 0 ? .55 : .88}"/>`;
+    if (add > 0 && p.max > 0) { const yb = Y(Math.max(p.max - add, 0)); h += `<rect x="${cx(i) - w / 2}" y="${top}" width="${w}" height="${Math.max(1.5, yb - top)}" rx="${Math.min(4, w / 3)}" fill="${C_FREE}"/>`; }
+    if (add < 0) { const yb = Y(p.max - add); h += `<rect x="${cx(i) - w / 2}" y="${yb}" width="${w}" height="${Math.max(1.5, top - yb)}" fill="var(--danger)" opacity=".55"/>`; }
+    return h; }).join('');
+  const plan = pts.map((p, i) => (i ? 'L' : 'M') + cx(i).toFixed(1) + ' ' + Y(p.plan).toFixed(1)).join('');
+  const tl = s.targets.map(x => { const y = Y(x.cum), hit = x.etaMax ? pts.find(p => p.ym === x.etaMax) : null;
+    return `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" stroke="${x.color}" stroke-width="1.4" stroke-dasharray="5 4"/>
+      <text x="${l + 4}" y="${y - 5}" class="gt" style="fill:${x.color};font-weight:600">${goalIcon(x.g.n)} ${esc(x.g.n)} · ${money(x.cum / bK() / 1000, 1)}k</text>
+      ${hit ? `<circle cx="${cx(hit.i)}" cy="${y}" r="5.5" fill="${x.color}" stroke="var(--page)" stroke-width="2"/>` : ''}`; }).join('');
+  const step = bw >= 26 ? 1 : bw >= 13 ? 2 : bw >= 9 ? 3 : 6;
+  const ticks = pts.filter(p => p.i % step === 0).map(p => `<text x="${cx(p.i)}" y="${H - 8}" text-anchor="middle" class="gt">${p.i === 0 ? 'сейчас' : MONTHS_S[+p.ym.slice(5) - 1]}</text>`).join('');
+  const hits = pts.map((p, i) => `<rect class="sb ${i === savSel ? 'sel' : ''}" data-si="${i}" x="${l + bw * i}" y="${t - 6}" width="${bw}" height="${H - b - t + 6}"/>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" class="schart" style="min-width:${Math.min(W, B * 15 + 46)}px" role="img" aria-label="Накопления по месяцам" data-l="${l}" data-bw="${bw}" data-w="${W}">
+    ${grid}${hits}${bands}${lo < 0 ? `<line x1="${l}" x2="${W - r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--danger)"/>` : ''}${bars}${tl}
+    <path d="${plan}" fill="none" stroke="var(--ink)" stroke-opacity=".55" stroke-width="1.6" stroke-dasharray="5 4"/>${ticks}</svg>`;
+}
+function saveDetail(s, i) {
+  const p = s.pts[i]; if (!p) return '';
+  const al = saveAlloc(s, p.max), cur = al.find(a => a.state === 'cur');
+  return `<div class="sdh"><b>${i === 0 ? 'Сейчас' : ymName(p.ym)}</b><span>накоплено <b class="num">${gel(p.max)}</b>${i ? ` · <span class="${p.free < 0 ? 'neg' : 'pos'}">${p.free >= 0 ? '+' : ''}${gel(p.free)}</span> за месяц` : ''} · по плану взносов ${gel(p.plan)}</span></div>
+    ${al.length ? `<div class="sdg">${al.map(a => `<div class="sdi ${a.state}" style="--c:${a.x.color}"><span class="tic" style="--c:${a.x.color}">${goalIcon(a.x.g.n)}</span>
+      <div><b>${esc(a.x.g.n)}</b><span class="pbar"><i style="width:${a.x.gi.t ? a.have / a.x.gi.t * 100 : 0}%;background:${a.x.color}"></i></span>
+      <i>${gel(a.have)} из ${gel(a.x.gi.t)} · ${a.state === 'done' ? 'набрано ✓' : a.state === 'cur' ? 'копится сейчас' : 'ждёт очереди'}</i></div></div>`).join('')}</div>` : ''}
+    ${cur ? `<p class="hint" style="margin:6px 0 0">В ${i === 0 ? 'этом месяце' : ymNameP(p.ym)} деньги идут на «${esc(cur.x.g.n)}»: осталось ${gel(cur.x.gi.t - cur.have)}.</p>` : ''}`;
+}
+function saveBind() {
+  const svg = document.querySelector('.schart'); if (!svg || !lastSave) return;
+  const s = lastSave, l = +svg.dataset.l, bw = +svg.dataset.bw, W = +svg.dataset.w, tip = $('#stip'), n = s.pts.length - 1;
+  const idx = ev => { const rc = svg.getBoundingClientRect(); return Math.max(0, Math.min(n, Math.floor(((ev.clientX - rc.left) / rc.width * W - l) / bw))); };
+  const mark = (cls, i) => { svg.querySelectorAll('.sb.' + cls).forEach(e => e.classList.remove(cls)); if (i != null) { const r = svg.querySelector(`.sb[data-si="${i}"]`); if (r) r.classList.add(cls); } };
+  const select = i => {
+    savSel = i; mark('sel', i); $('#sdet').innerHTML = saveDetail(s, i);
+    document.querySelectorAll('.srow').forEach(r => r.classList.toggle('sel', +r.dataset.si === i));
+  };
+  svg.addEventListener('pointermove', ev => {
+    const i = idx(ev), p = s.pts[i]; mark('hov', i);
+    const al = saveAlloc(s, p.max), cur = al.find(a => a.state === 'cur');
+    tip.hidden = false;
+    tip.innerHTML = `<b>${i === 0 ? 'Сейчас' : ymName(p.ym)}</b> · <span class="num">${gel(p.max)}</span><i>${i ? `${p.free >= 0 ? '+' : ''}${gel(p.free)} за месяц` : 'на целях и свободное на счетах'}${cur ? ` · копится: ${goalIcon(cur.x.g.n)} ${esc(cur.x.g.n)}` : al.length && al.every(a => a.state === 'done') ? ' · все цели набраны 🎉' : ''}</i>`;
+    const rc = svg.getBoundingClientRect(), box = svg.parentNode.getBoundingClientRect(), px = (l + bw * (i + .5)) / W * rc.width + rc.left - box.left + svg.parentNode.scrollLeft;
+    tip.style.left = Math.max(4, Math.min(svg.parentNode.scrollWidth - tip.offsetWidth - 4, px - tip.offsetWidth / 2)) + 'px';
+  });
+  svg.addEventListener('pointerleave', () => { mark('hov', null); tip.hidden = true; });
+  svg.addEventListener('click', ev => select(idx(ev)));
+  document.querySelectorAll('.srow').forEach(r => r.addEventListener('click', () => { select(+r.dataset.si); svg.parentNode.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }));
 }
 /* ---------- вид плана: карточки (телефон) или таблицы (компьютер) ---------- */
 const wideScreen = () => window.matchMedia && matchMedia('(min-width: 900px)').matches;
@@ -2505,21 +2593,18 @@ function renderTables() {
         ${tcard('Доходы', G_HC, donut(incParts, bm(incParts.reduce((t, x) => t + x.v, 0), 0), S + ' за месяц'))}
       </div>
       <div class="tcols">
-        <div class="tcol">
-          ${tcard('Доходы', G_HC, incT)}
-          ${tcard('Обязательные платежи', P_HC, billT)}
-          ${tcard('Крупные разовые траты', P_HC, onceT)}
-        </div>
-        <div class="tcol">
-          ${tcard('Счета', G_HC, accT)}
-          ${tcard('Расходы · лимиты', P_HC, catT)}
-          ${tcard('Приходы по месяцам', G_HC, mincT(ym))}
-        </div>
+        ${tcard('Доходы', G_HC, incT)}
+        ${tcard('Счета', G_HC, accT)}
+        ${tcard('Обязательные платежи', P_HC, billT)}
+        ${tcard('Расходы · лимиты', P_HC, catT)}
+        ${tcard('Крупные разовые траты', P_HC, onceT)}
+        ${tcard('Приходы по месяцам', G_HC, mincT(ym))}
       </div>
       <div class="tfull">${tcard('Цели · накопления', G_HC, goalT)}</div>
       <div class="tfc">${forecastHtml(c)}${savingsCard(c)}</div>
     </div>
     <p class="hint" style="margin:12px 24px">Суммы — в валюте плана (${CUR[baseCur()].n.toLowerCase()}, по курсу НБГ). «План» в строке меняется для всех месяцев. «Факт» заполняется сам: доходы — из «Приходов», расходы — из «Расходов», платежи — галочкой «оплачено». Любой факт можно вписать вручную, а чтобы вернуть автоматический — очистите ячейку.</p>`;
+  saveBind();
 }
 
 // выбор основной валюты плана
