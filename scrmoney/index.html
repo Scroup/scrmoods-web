@@ -55,6 +55,16 @@ input, textarea, select { font: inherit; color: inherit; }
 .syncjoin, .syncinv { margin-top: 8px; }
 .syncjoin .in { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; }
 .syncinv .in { font-size: 13px; margin-bottom: 8px; }
+.members { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 4px; }
+.mem { padding: 4px 12px; border-radius: 999px; background: var(--wash); color: var(--ink); font-size: 14px; }
+.mem.me { background: var(--acc); color: var(--on-acc); }
+.syncwho .seg { flex-wrap: wrap; }
+.whoseg { margin: 0 0 12px; }
+.inc .who { font-size: 12px; font-style: italic; color: var(--soft); background: var(--wash); border-radius: 999px; padding: 1px 8px; vertical-align: 2px; font-family: inherit; }
+.bkrow { display: block; width: 100%; text-align: left; border: 1px solid var(--rule); border-radius: 14px; background: var(--page); padding: 10px 14px; margin: 6px 0; cursor: pointer; color: var(--ink); }
+.bkrow b { display: block; font-weight: 500; } .bkrow i { font-size: 13px; color: var(--soft); }
+.confirm small { color: var(--soft); }
+#bkList:not(:empty) { margin: 4px 0 10px; }
 
 /* нижняя навигация */
 #nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; background: var(--paper); border-top: 1px solid var(--rule);
@@ -1143,14 +1153,14 @@ html.skin-apple { --leaf: #8ed24a; --leaf-soft: #c5e8a6; --leaf-ink: #3f7a1f; --
 
 <div id="modal"></div>
 <div id="toast" role="status" aria-live="polite"></div>
-<input type="file" id="importFile" accept=".csv,text/csv,text/plain" hidden>
+<input type="file" id="importFile" accept=".csv,.json,text/csv,text/plain,application/json" hidden>
 
 <script>
 'use strict';
 const $ = s => document.querySelector(s);
 const $main = $('#main'), $modal = $('#modal');
-// эти ключи уходят в общий бюджет (rows и rates — только как суммы приходов по месяцам)
-const SYNC_KEYS = { budget: 1, spend: 1, minc: 1, spCatsUser: 1, rows: 1, rates: 1 };
+// эти ключи уходят в общий бюджет; у каждой правки запоминается время (см. «совместный бюджет»)
+const SYNC_KEYS = { budget: 1, spend: 1, minc: 1, spCatsUser: 1, rows: 1, members: 1 };
 var syncReady = false;
 const store = {
   get(k, d) { try { const v = localStorage.getItem('scrmoney.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -1258,8 +1268,11 @@ function getRate(date, cur = 'USD') {
 }
 
 /* ---------- данные ---------- */
+// id прихода — строка: приходы общие для нескольких устройств, номера 1, 2, 3 совпали бы
+const rowSalt = store.get('rowSalt', null) || (() => { const x = Math.random().toString(36).slice(2, 7); store.set('rowSalt', x); return x; })();
+const rowsFix = list => list.map(r => typeof r.id === 'number' ? { ...r, id: 'r' + rowSalt + r.id } : r);
 let rows = store.get('rows', []);
-let nextId = rows.reduce((m, r) => Math.max(m, r.id), 0) + 1;
+if (rows.some(r => typeof r.id === 'number')) { rows = rowsFix(rows); store.set('rows', rows); }
 let failed = {};                                  // дата -> текст ошибки
 const save = () => store.set('rows', rows);
 const curOf = r => r.cur || 'USD';
@@ -1341,7 +1354,7 @@ const arrow = d => `<svg viewBox="0 0 24 24"><path d="${d ? 'M9 6l6 6-6 6' : 'M1
 
 function renderIncome() {
   const key = `${viewY}-${String(viewM).padStart(2, '0')}`;
-  const list = rows.filter(r => r.date.startsWith(key)).sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const list = rows.filter(r => r.date.startsWith(key) && whoOk(r)).sort((a, b) => b.date.localeCompare(a.date) || (b.ts || 0) - (a.ts || 0) || String(b.id).localeCompare(String(a.id)));
   const gel = list.reduce((s, r) => s + (gelOf(r) || 0), 0);
   const missing = list.some(r => gelOf(r) == null);
   const isNow = key === now.slice(0, 7);
@@ -1359,9 +1372,10 @@ function renderIncome() {
       <div class="sub">${viewY} · ${list.length ? list.length + ' ' + plural(list.length, 'приход', 'прихода', 'приходов') : 'приходов пока нет'}</div></div>
       <button class="rbtn" data-act="prev" aria-label="Предыдущий месяц">${arrow(0)}</button>
       <button class="rbtn" data-act="next" aria-label="Следующий месяц" ${isNow ? 'disabled' : ''}>${arrow(1)}</button></div>
+    ${whoAskHtml()}${whoSeg()}
     <div class="rate" style="--d:40ms"><span class="qm">₾</span><div>${rateHtml}</div></div>
     <button class="sumbtn" data-act="add" style="--d:80ms"><span><b>Записать приход</b><i>доллары или евро, по курсу на день прихода</i></span><span class="plus">+</span></button>
-    <div class="card" style="--d:120ms"><h2 class="hl">Приходы за месяц</h2>
+    <div class="card" style="--d:120ms"><h2 class="hl">${whoWord() ? 'Приходы: ' + esc(whoWord()) : 'Приходы за месяц'}</h2>
       ${list.length ? list.map(r => {
         const k = rateOf(r), g = gelOf(r), [, , d] = ymd(r.date);
         const sub = r.manual ? `<i class="manual">курс вручную ${k.toFixed(4).replace('.', ',')}</i>`
@@ -1369,7 +1383,7 @@ function renderIncome() {
           : failed[rkey(r.date, curOf(r))] ? `<i class="bad">курс не загрузился</i>` : `<i>курс загружается…</i>`;
         return `<button class="inc" data-act="edit" data-id="${r.id}">
           <span class="d"><b class="num">${d}</b><i>${wd(r.date)}</i></span>
-          <span class="m"><div class="usd num">${money(r.usd)} ${symOf(r)}</div><div class="note">${r.note ? esc(r.note) : '&nbsp;'}</div></span>
+          <span class="m"><div class="usd num">${money(r.usd)} ${symOf(r)}${multi() && incWho !== 'me' ? ` <span class="who">${esc(memberName(r.by || meId()))}</span>` : ''}</div><div class="note">${r.note ? esc(r.note) : '&nbsp;'}</div></span>
           <span class="g"><b class="num">${g != null ? money(g) + ' ₾' : '—'}</b>${sub}</span></button>`;
       }).join('') + `<div class="total"><span>Итого за ${MONTHS[viewM - 1].toLowerCase()}</span><b class="num">${money(gel)} ₾</b></div>
         <div class="hint" style="text-align:right;margin-top:2px">${byCur(list)}${missing ? ' · есть приходы без курса' : ''}</div>`
@@ -1378,7 +1392,7 @@ function renderIncome() {
 }
 
 function renderYear() {
-  const list = rows.filter(r => r.date.startsWith(yearY + '-'));
+  const list = rows.filter(r => r.date.startsWith(yearY + '-') && whoOk(r));
   const byM = Array.from({ length: 12 }, () => ({ list: [], gel: 0, n: 0 }));
   for (const r of list) { const m = ymd(r.date)[1] - 1; byM[m].list.push(r); byM[m].gel += gelOf(r) || 0; byM[m].n++; }
   const gel = r2(byM.reduce((s, x) => s + x.gel, 0));
@@ -1402,9 +1416,11 @@ function renderYear() {
     + [.5, 1].map(k => `<line x1="4" x2="${W - 4}" y1="${H - bot - (H - top - bot) * k}" y2="${H - bot - (H - top - bot) * k}" class="gl"/>`).join('') + `<line x1="4" x2="${W - 4}" y1="${H - bot}" y2="${H - bot}" stroke="var(--rule)"/>`;
 
   $main.innerHTML = `
-    <div class="jhead" style="--d:0ms"><div class="t"><div class="big num">${yearY}</div><div class="sub">доход в лари для декларации</div></div>
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big num">${yearY}</div><div class="sub">${whoWord() ? esc(whoWord()) + ' · ' : ''}доход в лари для декларации</div></div>
       <button class="rbtn" data-act="yprev" aria-label="Предыдущий год" ${yearY <= minY ? 'disabled' : ''}>${arrow(0)}</button>
       <button class="rbtn" data-act="ynext" aria-label="Следующий год" ${yearY >= maxY ? 'disabled' : ''}>${arrow(1)}</button></div>
+    ${whoSeg()}
+    ${multi() && incWho === 'all' ? '<p class="hint" style="margin:4px 8px 8px">Налог и лимит — у каждого свои. Выберите человека, чтобы посчитать его налог.</p>' : ''}
     <div class="card" style="--d:40ms">
       <div class="yearbig"><div class="k">Доход за год</div><div class="v num">${money(gel)} <small>₾</small></div></div>
       <div class="pair">
@@ -1492,7 +1508,7 @@ const haveGel = (B, G = (a, c) => toGel(a, c) || 0) => (B.accts || []).reduce((t
 let minc = store.get('minc', {});
 const saveMinc = () => { _avgC = null; store.set('minc', minc); };
 const mincGel = ym => minc[ym] && fxNum(minc[ym].a) > 0 ? toGel(fxNum(minc[ym].a), minc[ym].c || 'GEL') || 0 : 0;
-const recGel = ym => rows.filter(r => r.date.startsWith(ym)).reduce((t, r) => t + (gelOf(r) || 0), 0) + otherRecv(ym);   // + «Приходы» партнёра (общий бюджет)
+const recGel = ym => rows.filter(r => r.date.startsWith(ym)).reduce((t, r) => t + (gelOf(r) || 0), 0);   // в плане — приходы всех участников
 const incomeOfMonth = ym => recGel(ym) + mincGel(ym);
 // средний доход = итог столбца «Факт» таблицы «Доходы» за все прошлые месяцы, где что-то пришло;
 // число — как чаще всего приходили деньги. Считается один раз на перерисовку.
@@ -1502,7 +1518,7 @@ function avgIncome() {
   if (_avgC) return _avgC;
   const cur = ymOf(now);
   if (!budget) return { v: 0, n: 0, from: null, to: null, day: 5, months: [] };
-  const keys = [...rows.map(r => r.date.slice(0, 7)), ...Object.keys(minc), ...Object.keys(budget.fact || {}), ...Object.values(syncRecv).flatMap(o => Object.keys(o || {}))];
+  const keys = [...rows.map(r => r.date.slice(0, 7)), ...Object.keys(minc), ...Object.keys(budget.fact || {})];
   const st = ymOf(budget.start || now);
   for (let k = 1; k <= 24 && ymDiff(ymAdd(cur, -k), st) <= 0; k++) keys.push(ymAdd(cur, -k));
   const ms = [...new Set(keys)].filter(ym => ym < cur).sort();
@@ -2001,7 +2017,7 @@ function goalPut(sign) {
   const g = goalEdit, v = fxNum($('#gAmt').value);
   if (!(v > 0)) { toast('Впишите сумму'); $('#gAmt').focus(); return; }
   g.log = g.log || [];
-  g.log.push({ d: now, g: r2(v * bK() * sign), t: Date.now() });
+  g.log.push({ id: newId(), d: now, g: r2(v * bK() * sign), t: Date.now() });
   saveBudget(); closeModal(); goalEdit = null; render();
   if (sign > 0) { toast(`Отложено ${gel(v)} на «${g.n}»`); setTimeout(() => popButton({ el: document.querySelector(`.goalc[data-id="${g.id}"] .gbar2`), stars: true, color: 'acc' }), 120); }
   else toast(`Снято ${gel(v)} с «${g.n}»`);
@@ -2720,13 +2736,14 @@ function renderSettings() {
       <label class="setrow"><span class="l">Ставка налога, %<i>1% — малый бизнес, 20% — обычный ИП</i></span>
         <input class="in num" id="taxIn" type="number" inputmode="decimal" step="0.1" min="0" value="${taxRate}"></label></div>
     <div class="section" style="--d:60ms"><h2 class="hl">Общий бюджет</h2>${syncSection()}</div>
+    <div class="section" style="--d:70ms"><h2 class="hl">Резервные копии</h2>${backupSection()}</div>
     <div class="section" style="--d:80ms"><h2 class="hl">Данные</h2>
-      <p class="hint" style="margin:6px 0 8px">${syncCfg ? 'Приходы хранятся только на этом устройстве, план и расходы — ещё и в общем бюджете (зашифрованно).' : 'Приходы и расходы хранятся только на этом устройстве.'} Время от времени сохраняйте копию.</p>
+      <p class="hint" style="margin:6px 0 8px">${syncCfg ? 'Данные хранятся на этом устройстве и в общем бюджете (зашифрованно).' : 'Приходы и расходы хранятся только на этом устройстве.'} Время от времени сохраняйте копию.</p>
       <button class="btn primary" data-act="export">Сохранить приходы в CSV</button>
       <button class="btn primary" data-act="exportsp">Сохранить расходы в CSV</button>
       <button class="btn outline" data-act="import">Загрузить из CSV</button>
       <p class="hint" style="margin:0 0 6px;text-align:center">приходы или расходы — приложение поймёт само</p>
-      <button class="btn quiet" data-act="wipe">Удалить все приходы</button>
+      <button class="btn quiet" data-act="wipe">${multi() ? 'Удалить все мои приходы' : 'Удалить все приходы'}</button>
       <div id="wipeBox"></div>
     </div>
     <p class="hint" style="margin:20px 24px">Курс берётся с nbg.gov.ge — официальный курс доллара, действующий на дату прихода. В выходные действует курс последнего рабочего дня.</p>`;
@@ -2870,7 +2887,7 @@ function openEdit(r) {
   // в прошлом месяце новый приход по умолчанию — последним днём того месяца
   const key = `${viewY}-${String(viewM).padStart(2, '0')}`;
   const defDate = key === now.slice(0, 7) ? now : shift(`${viewM === 12 ? viewY + 1 : viewY}-${String(viewM === 12 ? 1 : viewM + 1).padStart(2, '0')}-01`, -1);
-  edit = r ? { ...r, cur: curOf(r) } : { id: null, date: defDate, usd: '', note: '', rate: null, manual: false, cur: store.get('lastCur', 'USD') };
+  edit = r ? { ...r, cur: curOf(r), by: r.by || meId() } : { id: null, date: defDate, usd: '', note: '', rate: null, manual: false, cur: store.get('lastCur', 'USD'), by: incWho !== 'me' && incWho !== 'all' && members[incWho] ? incWho : meId() };
   $modal.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dt">
     <div class="dh"><b id="dt">${r ? 'Приход' : 'Новый приход'}</b><button class="x" data-act="close" aria-label="Закрыть">✕</button></div>
     <div class="seg" style="margin-top:12px">${Object.entries(INC_CUR).map(([c, v]) => `<button data-act="fcur" data-c="${c}" class="${edit.cur === c ? 'on' : ''}">${v.s} ${v.n}</button>`).join('')}</div>
@@ -2880,6 +2897,7 @@ function openEdit(r) {
       <input class="in" id="fDate" type="date" max="${now}" value="${edit.date}" style="margin-top:8px">
       <div class="dayword" id="fDay"></div></div>
     <label class="fld"><span id="fRateL">Курс, ₾ за ${INC_CUR[edit.cur].s} — если хотите вписать сами</span><input class="in num" id="fRate" type="number" inputmode="decimal" step="0.0001" min="0" placeholder="авто"></label>
+    ${multi() ? `<div class="fld"><span style="display:block;font-size:14px;font-style:italic;color:var(--soft);margin-bottom:6px">Чей приход</span><div class="seg small">${Object.keys(members).map(id => `<button data-act="fby" data-id="${id}" class="${edit.by === id ? 'on' : ''}">${esc(memberName(id))}${id === meId() ? ' (я)' : ''}</button>`).join('')}</div></div>` : ''}
     <label class="fld"><span>От кого или за что</span><input class="in" id="fNote" type="text" maxlength="120" value="${esc(edit.note || '')}" placeholder="например, клиент из Берлина"></label>
     <div class="preview"><div class="pv num" id="pv">—</div><div class="ps" id="ps">&nbsp;</div></div>
     <button class="btn primary" data-act="save" style="margin-top:16px">${r ? 'Сохранить' : 'Записать'}</button>
@@ -2971,7 +2989,9 @@ function fromCsv(text) {
     const note = c[5] || '';
     if (rows.some(r => r.date === date && r.usd === usd && curOf(r) === cur && (r.note || '') === note)) continue;
     const manual = c[4] === 'вручную', rate = parseFloat((c[2] || '').replace(',', '.'));
-    rows.push({ id: nextId++, date, usd, note, rate: manual ? rate : null, manual: manual && rate > 0, cur });
+    const rec = { id: newId(), ts: Date.now(), date, usd, note, rate: manual ? rate : null, manual: manual && rate > 0, cur };
+    if (meId()) rec.by = meId();
+    rows.push(rec);
     added++;
   }
   return added;
@@ -3083,13 +3103,16 @@ document.addEventListener('click', e => {
     case 'ynext': yearY++; render(); break;
     case 'month': viewY = yearY; viewM = +el.dataset.m; tab = 'income'; render(); window.scrollTo(0, 0); break;
     case 'add': openEdit(null); break;
-    case 'edit': openEdit(rows.find(r => r.id === +el.dataset.id)); break;
+    case 'edit': openEdit(rows.find(r => String(r.id) === el.dataset.id)); break;
+    case 'fby': edit.by = el.dataset.id; document.querySelectorAll('[data-act=fby]').forEach(b => b.classList.toggle('on', b.dataset.id === edit.by)); break;
+    case 'who': incWho = el.dataset.v; store.set('incWho', incWho); render(); break;
     case 'close': closeModal(); break;
     case 'save': {
       const usd = parseFloat($('#fUsd').value), date = $('#fDate').value;
       if (!(usd > 0)) { $('#fUsd').focus(); toast('Впишите сумму'); break; }
       if (!date) { toast('Выберите дату'); break; }
-      const rec = { id: edit.id || nextId++, date, usd: r2(usd), note: $('#fNote').value.trim(), rate: edit.manual ? edit.rate : null, manual: !!edit.manual, cur: edit.cur };
+      const rec = { id: edit.id || newId(), ts: edit.ts || Date.now(), date, usd: r2(usd), note: $('#fNote').value.trim(), rate: edit.manual ? edit.rate : null, manual: !!edit.manual, cur: edit.cur };
+      if (edit.by) rec.by = edit.by;
       const i = rows.findIndex(r => r.id === rec.id);
       if (i >= 0) rows[i] = rec; else rows.push(rec);
       save(); closeModal();
@@ -3170,178 +3193,300 @@ document.addEventListener('click', e => {
     case 'theme': if (skin !== 'classic') applySkin('classic'); applyTheme(el.dataset.id); render(); break;
     case 'export': exportCsv(); break;
     case 'import': $('#importFile').click(); break;
-    case 'wipe': $('#wipeBox').innerHTML = `<div class="confirm">Удалить все ${rows.length} ${plural(rows.length, 'запись', 'записи', 'записей')}? Сначала сохраните CSV.<div class="row"><button class="btn outline" data-act="wipeno">Нет</button><button class="btn primary" data-act="wipeyes">Удалить всё</button></div></div>`; break;
+    case 'wipe': $('#wipeBox').innerHTML = `<div class="confirm">Удалить все ${multi() ? 'свои ' : ''}${rowsMine().length} ${plural(rowsMine().length, 'запись', 'записи', 'записей')}? Сначала сохраните CSV.<div class="row"><button class="btn outline" data-act="wipeno">Нет</button><button class="btn primary" data-act="wipeyes">Удалить всё</button></div></div>`; break;
     case 'wipeno': $('#wipeBox').innerHTML = ''; break;
-    case 'wipeyes': rows = []; save(); render(); toast('Все записи удалены'); break;
+    case 'wipeyes': { const mine = new Set(rowsMine().map(r => r.id)); rows = rows.filter(r => !mine.has(r.id)); save(); render(); toast('Записи удалены'); break; }
   }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && wiz) closeWizard(); else if (e.key === 'Escape' && $modal.classList.contains('open')) closeModal(); });
 $('#importFile').onchange = e => {
   const f = e.target.files[0]; if (!f) return;
   const rd = new FileReader();
-  rd.onload = () => { const n = fromCsv(String(rd.result)); save(); render(); toast(n ? `Добавлено записей: ${n}` : 'Новых записей нет'); loadMissing(); e.target.value = ''; };
+  rd.onload = () => {
+    const txt = String(rd.result).replace(/^\uFEFF/, ''); e.target.value = '';
+    if (txt.trim()[0] === '{') {
+      try { const o = JSON.parse(txt); if (!o || o.app !== 'scrmoney' || !o.d) throw 0; restoreDoc(o.d, 'Копия из файла загружена'); loadMissing(); }
+      catch (err) { toast('Это не файл копии scrmoney'); }
+      return;
+    }
+    const n = fromCsv(String(rd.result)); save(); render(); toast(n ? `Добавлено записей: ${n}` : 'Новых записей нет'); loadMissing();
+  };
   rd.readAsText(f, 'utf-8');
 };
 
-/* ---------- совместный бюджет: синхронизация через свой Cloudflare Worker ----------
-   Общие: План (budget, minc), Расходы (spend) и свои категории (spCatsUser).
-   «Приходы» остаются на устройстве; в общий план уходят только их суммы по месяцам в лари (recv[устройство]).
-   Всё шифруется AES-GCM ключом из кода синхронизации; сервер хранит шифр и номер версии.
-   Слияние трёхстороннее: base (что было при прошлой синхронизации) / это устройство / сервер.
-   Статьи с id сливаются по id, списки без id (журнал «Отложил») — как множества, спорное значение —
-   у того, чья правка позже. */
+/* ---------- совместный бюджет: синхронизация через свой Cloudflare Worker (формат 2) ----------
+   Общие: План (budget, minc), Расходы (spend, spCatsUser), Приходы (rows, у каждого прихода владелец by)
+   и участники (members). Всё шифруется AES-GCM ключом из кода синхронизации; сервер хранит шифр.
+
+   Как не терять данные:
+   • Данные раскладываются на «поля»: статья/расход/приход целиком, поле объекта, порядок списка.
+   • У каждого поля время последней правки. Время ставится ТОЛЬКО когда правку делает человек
+     в этой вкладке (store.set сравнивает с тем, что вкладка видела раньше). Поле, изменённое не так
+     (устаревшая вкладка, старая версия приложения), получает время 0 и проигрывает свежему.
+   • Запись исчезает только после явного удаления (надгробие с временем). Просто «нет в списке» —
+     не удаление: запись вернётся с сервера или с другого устройства.
+   • Побеждает самая поздняя правка поля. Перед любым удалением с другого устройства — резервная копия.
+   • Вкладки слушают друг друга (storage), синхронизирует одна вкладка за раз (navigator.locks).
+   • Ключ формата 2 другой, поэтому старые версии приложения не могут ни прочитать, ни перезаписать данные. */
 const SYNC_SERVER = '';            // адрес Worker'а по умолчанию; пусто — спрашиваем в настройках
 const CROCK = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
-let syncCfg = store.get('sync', null);          // { code, server, dev, v, localT, ok, err }
-let syncRecv = store.get('syncRecv', {});       // суммы «Приходов» с других устройств: { dev: { ym: ₾ } }
-let syncKeyC = null, syncBusy = false, syncAgain = false, syncWait = false, syncTimer = null, syncState = '', syncJoin = null;
-syncReady = true;
+const SK2D = { budget: 'budget', spend: 'spend', minc: 'minc', spCatsUser: 'cats', rows: 'rows', members: 'members' };
+const D2SK = Object.fromEntries(Object.entries(SK2D).map(([a, b]) => [b, a]));
+const KEYED = new Set(['budget.accts', 'budget.inc', 'budget.exp', 'budget.goals', 'budget.goals[].log', 'spend', 'cats', 'rows']);
+const TOMB_DAYS = 180;
+let syncCfg = store.get('sync', null);          // { code, server, dev, me, v, ok, err }
+let members = store.get('members', {});         // { id: { n: имя } }
+let syncKeyC = {}, syncBusy = false, syncAgain = false, syncWait = false, syncTimer = null, syncState = '', syncJoin = null, syncRenderWait = false;
+let syncHist = null;                            // версии на сервере для окна восстановления
+// старые ключи формата 1 больше не нужны
+try { localStorage.removeItem('scrmoney.syncBase'); localStorage.removeItem('scrmoney.syncRecv'); } catch (e) {}
 
 const syncNorm = s => String(s || '').toUpperCase().replace(/O/g, '0').replace(/[IL]/g, '1').replace(/[^0-9A-Z]/g, '').split('').filter(c => CROCK.includes(c)).join('');
 const syncFmt = c => c.match(/.{1,4}/g).join('-');
 const syncNewCode = () => { const b = crypto.getRandomValues(new Uint8Array(20)); return [...b].map(x => CROCK[x & 31]).join(''); };
 const syncSrv = () => ((syncCfg && syncCfg.server) || store.get('syncServer', '') || SYNC_SERVER).replace(/\/+$/, '');
-const syncSave = () => store.set('sync', syncCfg);
-const b64 = u => btoa(String.fromCharCode(...u));
+const syncSave = () => syncSetLocal('sync', syncCfg);
+const b64 = u => { let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000)); return btoa(s); };
 const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 const utf8 = s => new TextEncoder().encode(s);
+const netErr = e => /Failed to fetch|NetworkError|Load failed|network/i.test(e && e.message || '') ? 'нет связи с сервером' : (e && e.message) || 'ошибка';
 async function syncRoom(code) { const h = new Uint8Array(await crypto.subtle.digest('SHA-256', utf8('scrmoney-room-v1:' + code))); return [...h].map(x => x.toString(16).padStart(2, '0')).join(''); }
-async function syncKey(code) {
-  if (syncKeyC && syncKeyC.code === code) return syncKeyC.key;
+async function syncKey(code, ver = 2) {
+  const id = ver + ':' + code;
+  if (syncKeyC[id]) return syncKeyC[id];
   const raw = await crypto.subtle.importKey('raw', utf8(code), 'PBKDF2', false, ['deriveKey']);
-  const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: utf8('scrmoney-sync-v1'), iterations: 150000, hash: 'SHA-256' }, raw, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
-  syncKeyC = { code, key }; return key;
+  return syncKeyC[id] = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: utf8(ver === 2 ? 'scrmoney-sync-v2' : 'scrmoney-sync-v1'), iterations: 150000, hash: 'SHA-256' }, raw, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
 }
 async function syncEnc(code, obj) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await syncKey(code), utf8(JSON.stringify(obj))));
-  // большие строки — кусками, чтобы не упереться в лимит аргументов
-  let s = ''; for (let i = 0; i < ct.length; i += 0x8000) s += String.fromCharCode(...ct.subarray(i, i + 0x8000));
-  return b64(iv) + '.' + btoa(s);
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await syncKey(code, 2), utf8(JSON.stringify(obj))));
+  return '2.' + b64(iv) + '.' + b64(ct);
 }
+// формат 2 → { f: Map путь→{t,v}, z: Map путь→t }; формат 1 (v23) переводится с временем 0: только заполняет пробелы
 async function syncDec(code, d) {
-  const [iv, ct] = String(d).split('.');
-  try { return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(iv) }, await syncKey(code), unb64(ct)))); }
+  const parts = String(d).split('.');
+  const v2 = parts[0] === '2', iv = v2 ? parts[1] : parts[0], ct = v2 ? parts[2] : parts[1];
+  let obj;
+  try { obj = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(iv) }, await syncKey(code, v2 ? 2 : 1), unb64(ct)))); }
   catch (e) { throw new Error('не удалось расшифровать — проверьте код'); }
+  if (v2) return { f: new Map(obj.f.map(([p, t, v]) => [p, { t, v }])), z: new Map(obj.z || []) };
+  const doc = obj.doc || {}, f = new Map();
+  for (const [p, v] of flatDoc({ budget: doc.budget || null, spend: doc.spend || [], minc: doc.minc || {}, cats: doc.cats || [] })) f.set(p, { t: 0, v });
+  return { f, z: new Map() };
 }
 
-// одинаковая запись для сравнения: ключи по алфавиту
+// ---------- поля ----------
 const canon = x => x === undefined ? 'u' : JSON.stringify(x, (k, v) => v && typeof v === 'object' && !Array.isArray(v) ? Object.keys(v).sort().reduce((o, kk) => (o[kk] = v[kk], o), {}) : v);
 const same = (a, b) => canon(a) === canon(b);
 const isObj = x => x !== null && typeof x === 'object' && !Array.isArray(x);
-// копия без пустых объектов (их на лету создаёт factOf) — чтобы не гонять пустые правки
+const fnv = s => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); };
+const hv = v => fnv(canon(v));
+// копия без пустых объектов (их на лету создаёт factOf)
 function clean(x) {
   if (Array.isArray(x)) return x.map(clean);
   if (isObj(x)) { const o = {}; for (const k of Object.keys(x)) { if (x[k] === undefined) continue; const v = clean(x[k]); if (isObj(v) && !Object.keys(v).length) continue; o[k] = v; } return o; }
   return x;
 }
-function merge3(b, l, r, pl) {
-  if (same(l, r)) return l;
-  if (same(l, b)) return r;
-  if (same(r, b)) return l;
-  if (isObj(l) && isObj(r)) {
-    const B = isObj(b) ? b : {}, out = {};
-    for (const k of new Set([...Object.keys(l), ...Object.keys(r)])) { const v = merge3(B[k], l[k], r[k], pl); if (v !== undefined) out[k] = v; }
-    return out;
-  }
-  if (Array.isArray(l) && Array.isArray(r)) {
-    const B = Array.isArray(b) ? b : [];
-    const withId = a => a.every(x => isObj(x) && x.id != null);
-    if (withId(l) && withId(r) && withId(B)) {
-      const map = a => new Map(a.map(x => [String(x.id), x])), bm = map(B), lm = map(l), rm = map(r);
-      const ids = a => a.map(x => String(x.id));
-      // порядок: если здесь его не меняли — как на сервере, иначе как здесь; новые с другой стороны — в конец
-      const first = same(ids(l).filter(id => bm.has(id)), ids(B).filter(id => lm.has(id))) ? r : l, second = first === r ? l : r;
-      const order = [...ids(first), ...ids(second).filter(id => !(first === r ? rm : lm).has(id))];
-      const out = [];
-      for (const id of order) { const v = merge3(bm.get(id), lm.get(id), rm.get(id), pl); if (v !== undefined) out.push(v); }
-      return out;
+const pk = segs => JSON.stringify(segs);
+const normPath = segs => segs.reduce((s, x) => x[0] === '@' ? s + '[]' : s ? s + '.' + x : x, '');
+function flatten(x, segs, out) {
+  if (x === undefined) return;
+  if (Array.isArray(x) && KEYED.has(normPath(segs))) {
+    const ord = [];
+    for (const el of x) {
+      if (!isObj(el)) continue;
+      const id = el.id != null ? String(el.id) : 'h' + hv(el);
+      if (ord.includes(id)) continue;
+      ord.push(id);
+      const s2 = [...segs, '@' + id], leaf = {};
+      for (const k of Object.keys(el)) {
+        if (el[k] === undefined) continue;
+        if (Array.isArray(el[k]) && KEYED.has(normPath([...s2, k]))) flatten(el[k], [...s2, k], out); else leaf[k] = el[k];
+      }
+      out.set(pk(s2), leaf);
     }
-    const bs = new Set(B.map(canon)), ls = new Set(l.map(canon)), rs = new Set(r.map(canon));
-    const out = l.filter(x => rs.has(canon(x)) || !bs.has(canon(x)));
-    for (const x of r) if (!ls.has(canon(x)) && !bs.has(canon(x))) out.push(x);
-    return out;
+    out.set(pk([...segs, '#']), ord);
+    return;
   }
-  return pl ? l : r;
+  if (isObj(x)) { for (const k of Object.keys(x)) flatten(x[k], [...segs, k], out); return; }
+  out.set(pk(segs), x);
+}
+const flatDoc = D => { const out = new Map(); for (const k of Object.keys(D)) flatten(D[k], [k], out); return out; };
+const flatKey = (dk, v) => { const out = new Map(); flatten(v, [dk], out); return out; };
+function unflatten(map) {
+  const root = {}, KC = Symbol('keyed');
+  const entries = [...map].map(([p, v]) => [JSON.parse(p), v]).sort((a, b) => a[0].length - b[0].length);
+  for (const [segs, val] of entries) {
+    let node = root;
+    for (let i = 0; i < segs.length; i++) {
+      const s = segs[i], last = i === segs.length - 1, next = segs[i + 1];
+      if (s[0] === '@') {
+        const id = s.slice(1); let it = node.items.get(id);
+        if (!it) { it = {}; node.items.set(id, it); }
+        if (last) { Object.assign(it, isObj(val) ? val : {}); it[KC] = true; } else node = it;
+      } else if (s === '#') { node.order = Array.isArray(val) ? val : []; }
+      else if (next !== undefined && (next[0] === '@' || next === '#')) {
+        if (!node[s] || !node[s].items) node[s] = { items: new Map(), order: null, [KC]: 'list' };
+        node = node[s];
+      } else if (last) { if (!(isObj(node[s]) && Object.keys(node[s]).length)) node[s] = val; }
+      else { if (!isObj(node[s]) || node[s].items) node[s] = {}; node = node[s]; }
+    }
+  }
+  const fin = x => {
+    if (x && x[KC] === 'list') {
+      const ids = [...(x.order || []).filter(id => x.items.has(id)), ...[...x.items.keys()].filter(id => !(x.order || []).includes(id))];
+      return [...new Set(ids)].map(id => x.items.get(id)).filter(it => it[KC]).map(fin);
+    }
+    if (Array.isArray(x)) return x;
+    if (isObj(x)) { const o = {}; for (const k of Object.keys(x)) o[k] = fin(x[k]); return o; }
+    return x;
+  };
+  return fin(root);
 }
 
-// суммы «Приходов» этого устройства по месяцам, ₾
-function myRecv() {
-  const t = {};
-  for (const r of rows) { const g = gelOf(r); if (g) t[r.date.slice(0, 7)] = r2((t[r.date.slice(0, 7)] || 0) + g); }
-  return t;
+// ---------- время правок: что изменил человек в этой вкладке ----------
+let syncLast = {};                              // ключ хранилища → Map полей, какими их видела эта вкладка
+const readClk = () => store.get('syncClk', {}), readTomb = () => store.get('syncTomb', {});
+// чтение из хранилища; приходы — всегда со строковыми id (старая вкладка могла записать числовые)
+const getK = k => k === 'rows' ? rowsFix(store.get('rows', [])) : store.get(k, k === 'budget' ? null : k === 'minc' || k === 'members' ? {} : []);
+function syncSeen(k, v) { syncLast[k] = flatKey(SK2D[k], v); }
+function syncRecord(k, v) {
+  const nf = flatKey(SK2D[k], v), of = syncLast[k] || new Map(), t = Date.now();
+  const clk = readClk(), tomb = readTomb(); let ch = false;
+  for (const [p, val] of nf) { const o = of.get(p); if (!of.has(p) || canon(o) !== canon(val)) { clk[p] = [t, hv(val)]; delete tomb[p]; ch = true; } }
+  for (const p of of.keys()) if (!nf.has(p)) { tomb[p] = t; delete clk[p]; ch = true; }
+  syncLast[k] = nf;
+  if (ch) { syncSetLocal('syncClk', clk); syncSetLocal('syncTomb', tomb); }
+  return ch;
 }
-const otherRecv = ym => { let s = 0; for (const d in syncRecv) if (!syncCfg || d !== syncCfg.dev) s += (syncRecv[d] && syncRecv[d][ym]) || 0; return s; };
-const localDoc = () => clean({ budget, spend: spends, minc, cats: userCats, recv: { ...syncRecv, [syncCfg.dev]: myRecv() } });
 function syncSetLocal(k, v) { try { localStorage.setItem('scrmoney.' + k, JSON.stringify(v)); } catch (e) {} }
-function applyDoc(M) {
-  const C = JSON.parse(JSON.stringify(M));
-  budget = C.budget ? budgetAccts(budgetMigrate(C.budget)) : null;
-  spends = C.spend || []; minc = C.minc || {};
-  const oldU = new Set(userCats.map(c => c.id));
-  userCats = C.cats || [];
-  const base = CATS.filter(c => !oldU.has(c.id)), other = base.pop();
-  CATS.splice(0, CATS.length, ...base, ...userCats, other);
-  syncRecv = C.recv || {}; delete syncRecv[syncCfg.dev];
-  syncSetLocal('budget', budget); syncSetLocal('spend', spends); syncSetLocal('minc', minc); syncSetLocal('spCatsUser', userCats); syncSetLocal('syncRecv', syncRecv);
+function syncTouch(k) {
+  if (!SK2D[k]) return;
+  const changed = syncRecord(k, getK(k));
+  if (changed && syncCfg) syncSoon(3000);
+}
+// данные из хранилища (общие для всех вкладок)
+const storeDoc = () => ({ budget: getK('budget'), spend: getK('spend'), minc: getK('minc'), cats: getK('spCatsUser'), rows: getK('rows'), members: getK('members') });
+
+// ---------- память вкладки ← хранилище ----------
+function syncLoadMem(k, v) {
+  if (k === 'budget') budget = v ? budgetAccts(budgetMigrate(v)) : null;
+  else if (k === 'spend') spends = v || [];
+  else if (k === 'minc') minc = v || {};
+  else if (k === 'rows') rows = rowsFix(v || []);
+  else if (k === 'members') members = v || {};
+  else if (k === 'spCatsUser') {
+    const oldU = new Set(userCats.map(c => c.id));
+    userCats = v || [];
+    const base = CATS.filter(c => !oldU.has(c.id)), other = base.pop();
+    CATS.splice(0, CATS.length, ...base, ...userCats, other);
+  }
   _avgC = null;
 }
-// нельзя менять данные под рукой: открыта анкета, окно или курсор в поле ввода
+// другая вкладка что-то сохранила — подхватываем, не считая это своей правкой
+window.addEventListener('storage', e => {
+  if (!e.key || !e.key.startsWith('scrmoney.')) return;
+  const k = e.key.slice(9);
+  if (k === 'sync') { syncCfg = store.get('sync', null); syncStatus(syncState); return; }
+  if (!SK2D[k]) return;
+  const v = getK(k);
+  syncLoadMem(k, v); syncSeen(k, v);
+  if (syncCanApply()) render(); else syncRenderWait = true;
+});
+
+// ---------- слияние ----------
+// побеждает больший (время, значение раньше надгробия, детерминированно по тексту)
+function syncMerge(A, B) {
+  const f = new Map(), z = new Map(), paths = new Set([...A.f.keys(), ...A.z.keys(), ...B.f.keys(), ...B.z.keys()]);
+  const cutoff = Date.now() - TOMB_DAYS * 864e5;
+  for (const p of paths) {
+    const c = [];
+    for (const S of [A, B]) { if (S.f.has(p)) c.push({ t: S.f.get(p).t, v: S.f.get(p).v, val: 1 }); if (S.z.has(p)) c.push({ t: S.z.get(p), val: 0 }); }
+    c.sort((x, y) => y.t - x.t || y.val - x.val || (canon(y.v) > canon(x.v) ? 1 : canon(y.v) < canon(x.v) ? -1 : 0));
+    const w = c[0];
+    if (w.val) f.set(p, { t: w.t, v: w.v }); else if (w.t > cutoff) z.set(p, w.t);
+  }
+  return { f, z };
+}
+const sigOf = S => canon([[...S.f].map(([p, e]) => [p, e.t, e.v]).sort((a, b) => a[0] < b[0] ? -1 : 1), [...S.z].sort((a, b) => a[0] < b[0] ? -1 : 1)]);
+function localState(D) {
+  const clk = readClk(), tomb = readTomb(), f = new Map();
+  for (const [p, v] of flatDoc(D)) { const c = clk[p]; f.set(p, { t: c && c[1] === hv(v) ? c[0] : 0, v }); }
+  return { f, z: new Map(Object.entries(tomb).filter(([p]) => !f.has(p))) };
+}
+const docOf = S => { const m = new Map(); for (const [p, e] of S.f) m.set(p, e.v); const u = unflatten(m); return { budget: u.budget || null, spend: u.spend || [], minc: u.minc || {}, cats: u.cats || [], rows: u.rows || [], members: u.members || {} }; };
+const flatSig = D => canon([...flatDoc(D)].sort((a, b) => a[0] < b[0] ? -1 : 1));
+const countOf = D => ({ rows: (D.rows || []).length, spend: (D.spend || []).length, plan: D.budget ? (D.budget.inc || []).length + (D.budget.exp || []).length + (D.budget.goals || []).length + (D.budget.accts || []).length : 0 });
+// записать итог слияния в хранилище и память, не считая это своей правкой
+function syncApply(M, D, write = true) {
+  if (write) for (const dk of Object.keys(D)) { const k = D2SK[dk]; syncSetLocal(k, D[dk]); syncLoadMem(k, D[dk]); syncSeen(k, D[dk]); }
+  const clk = {}; for (const [p, e] of M.f) clk[p] = [e.t, hv(e.v)];
+  syncSetLocal('syncClk', clk); syncSetLocal('syncTomb', Object.fromEntries(M.z));
+}
+
+// ---------- синхронизация ----------
 function syncCanApply() {
   const a = document.activeElement;
-  return !wiz && !$modal.classList.contains('open') && !(a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName));
+  return !wiz && !$modal.classList.contains('open') && !(a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName) && !a.readOnly);
 }
 function syncStatus(s, err) {
   syncState = s;
-  if (syncCfg) { if (s === 'ok') { syncCfg.ok = Date.now(); syncCfg.err = ''; } if (s === 'err') syncCfg.err = err; syncSave(); }
+  if (syncCfg && (s === 'ok' || s === 'err')) { const c = store.get('sync', null) || syncCfg; if (s === 'ok') { c.ok = Date.now(); c.err = ''; } else c.err = err; c.v = Math.max(c.v || 0, syncCfg.v || 0); syncCfg = { ...syncCfg, ok: c.ok, err: c.err, v: c.v }; syncSave(); }
   const el = $('#cloud'); if (!el) return;
   el.hidden = !syncCfg;
   el.className = 'cloud ' + s;
   el.title = !syncCfg ? '' : s === 'busy' ? 'Синхронизация…' : s === 'err' ? 'Не синхронизировано: ' + err : s === 'wait' ? 'Синхронизация чуть позже' : 'Общий бюджет синхронизирован';
   const box = $('#syncInfo'); if (box) box.innerHTML = syncInfoHtml();
 }
-function syncSoon(ms = 4000) { if (!syncCfg) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, ms); }
-function syncTouch(k) {
-  if (!syncReady || !syncCfg) return;
-  if (k !== 'rates' && k !== 'rows') { syncCfg.localT = Date.now(); try { localStorage.setItem('scrmoney.sync', JSON.stringify(syncCfg)); } catch (e) {} }
-  syncSoon(k === 'rates' ? 8000 : 4000);
-}
+function syncSoon(ms = 3000) { if (!syncCfg) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, ms); }
 async function syncNow() {
   if (!syncCfg) return;
   if (syncBusy) { syncAgain = true; return; }
   if (!navigator.onLine) { syncStatus('wait'); return; }
   if (!syncCanApply()) { syncWait = true; return; }
+  // одна вкладка за раз
+  if (navigator.locks && navigator.locks.request) {
+    return navigator.locks.request('scrmoney-sync', { ifAvailable: true }, async lock => { if (!lock) { syncSoon(4000); return; } await syncRun(); });
+  }
+  return syncRun();
+}
+async function syncRun() {
   syncBusy = true; syncWait = false; syncStatus('busy');
+  syncCfg = store.get('sync', null) || syncCfg;
   const cfg = syncCfg;
   try {
     const url = syncSrv() + '/r/' + await syncRoom(cfg.code);
     for (let tries = 0; tries < 4; tries++) {
       const res = await fetch(url, { cache: 'no-store' });
-      let R = null, rv = 0, rt = 0;
+      let R = { f: new Map(), z: new Map() }, rv = 0, have = false;
       if (res.status === 200) {
         const j = await res.json(); rv = j.v;
         if (rv < (cfg.v || 0)) { syncStatus('wait'); syncSoon(15000); return; }      // сервер ещё не догнал нашу запись
-        const p = await syncDec(cfg.code, j.d); R = p.doc; rt = p.t || 0;
+        R = await syncDec(cfg.code, j.d); have = true;
       } else if (res.status !== 404) throw new Error('сервер ответил ' + res.status);
       else if (cfg.v > 0) { syncStatus('wait'); syncSoon(15000); return; }
-      if (syncCfg !== cfg) return;
+      if (store.get('sync', null) === null || syncCfg !== cfg) return;
       if (!syncCanApply()) { syncWait = true; syncStatus('wait'); return; }
-      const L = localDoc(), B = store.get('syncBase', null);
-      const M = R ? clean(merge3(B, L, R, (cfg.localT || 0) >= rt)) : L;
-      const mine = L.recv && L.recv[cfg.dev];
-      M.recv = { ...(M.recv || {}) }; if (mine) M.recv[cfg.dev] = mine; else delete M.recv[cfg.dev];
-      if (!Object.keys(M.recv).length) delete M.recv;
-      const changed = !same({ ...M, recv: 0 }, { ...L, recv: 0 }), recvChanged = !same(M.recv, L.recv);
-      if (changed || recvChanged) { applyDoc(M); render(); if (changed) toast('Обновлено с другого устройства'); }
-      if (R && same(M, R)) { cfg.v = rv; syncSetLocal('syncBase', M); syncStatus('ok'); return; }
-      const put = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ v: rv, d: await syncEnc(cfg.code, { doc: M, t: Math.max(cfg.localT || 0, rt) }) }) });
+      // дальше до записи — без await: правки не могут вклиниться
+      const Ld = storeDoc(), L = localState(Ld), M = syncMerge(L, R), Md = docOf(M);
+      Md.budget = Md.budget ? budgetAccts(budgetMigrate(Md.budget)) : null;
+      const changed = flatSig(Md) !== flatSig(Ld);
+      if (changed) {
+        const a = countOf(Ld), b = countOf(Md);
+        if (b.rows < a.rows || b.spend < a.spend || b.plan < a.plan) backupMake('до удаления с другого устройства', Ld);
+        syncApply(M, Md); render();
+        toast('Обновлено с другого устройства');
+      } else syncApply(M, Ld, false);
+      if (have && sigOf(M) === sigOf(R)) { cfg.v = rv; syncStatus('ok'); return; }
+      const body = { v: rv, d: await syncEnc(cfg.code, { v: 2, f: [...M.f].map(([p, e]) => [p, e.t, e.v]), z: [...M.z] }) };
+      const put = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       if (put.status === 409) continue;
       if (!put.ok) throw new Error('сервер ответил ' + put.status);
-      cfg.v = (await put.json()).v; syncSetLocal('syncBase', M); syncStatus('ok'); return;
+      cfg.v = (await put.json()).v; syncStatus('ok'); return;
     }
     throw new Error('много правок одновременно, попробую ещё раз');
   } catch (e) {
-    syncStatus('err', /Failed to fetch|NetworkError|Load failed|network/i.test(e.message) ? 'нет связи с сервером' : e.message);
+    syncStatus('err', netErr(e));
     syncSoon(30000);
   } finally {
     syncBusy = false;
@@ -3349,41 +3494,113 @@ async function syncNow() {
   }
 }
 
-// создать общий бюджет: новый код, текущие данные этого устройства — на сервер
-async function syncCreate(server) {
-  const code = syncNewCode();
-  syncCfg = { code, server, dev: syncCfg && syncCfg.dev || newId(), v: 0, localT: Date.now() };
-  syncSetLocal('syncBase', null); syncRecv = {}; syncSetLocal('syncRecv', syncRecv);
-  syncSave(); await syncNow();
-  return syncCfg && syncState === 'ok';
+// ---------- резервные копии на этом устройстве ----------
+function backupMake(why, D = storeDoc()) {
+  let list = store.get('backups', []);
+  if (list.length && same(list[0].d, D)) return;
+  list.unshift({ t: Date.now(), why, d: D });
+  list = list.slice(0, 12);
+  while (list.length) {
+    try { localStorage.setItem('scrmoney.backups', JSON.stringify(list)); return; } catch (e) { list.pop(); }
+  }
 }
-// подключиться по коду: сначала смотрим, что на сервере
+// вернуть данные как новую правку — уйдёт на все устройства
+function restoreDoc(D, why) {
+  backupMake('перед восстановлением');
+  for (const dk of Object.keys(SK2D).map(k => SK2D[k])) {
+    if (!(dk in D) || dk === 'members') continue;      // участников не откатываем
+    const k = D2SK[dk], v = dk === 'budget' ? (D.budget || null) : D[dk] || (dk === 'minc' || dk === 'members' ? {} : []);
+    syncLoadMem(k, v); store.set(k, v);
+  }
+  if (rows.some(r => !r.by) && syncCfg && syncCfg.me) { rows.forEach(r => { if (!r.by) r.by = syncCfg.me; }); save(); }
+  render(); toast(why || 'Данные возвращены'); syncSoon(500);
+}
+const backupWord = D => { const c = countOf(D); return `${c.rows} ${plural(c.rows, 'приход', 'прихода', 'приходов')}, ${c.spend} ${plural(c.spend, 'расход', 'расхода', 'расходов')}, ${D.budget ? `план (${c.plan} ${plural(c.plan, 'строка', 'строки', 'строк')})` : 'без плана'}`; };
+const atWord = t => { const d = new Date(t), s = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; return `${s === today() ? 'сегодня' : longDate(s)}, ${hm(t)}`; };
+function backupFile() {
+  const blob = new Blob([JSON.stringify({ app: 'scrmoney', t: Date.now(), d: storeDoc() }, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `scrmoney-копия-${today()}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+// раз в день — копия на всякий случай
+(function () { const l = store.get('backups', []); if (!l.length || Date.now() - l[0].t > 20 * 3600e3) backupMake('ежедневная'); })();
+
+// ---------- участники и приходы ----------
+const meId = () => syncCfg && syncCfg.me;
+const memberName = id => String(id || '').startsWith('d:') ? 'не указан' : (members[id] && members[id].n) || (id === meId() ? 'Я' : 'Участник');
+const rowsMine = () => rows.filter(r => !multi() || (r.by || meId()) === meId());
+const multi = () => !!syncCfg && !!meId() && Object.keys(members).length > 1;
+let incWho = store.get('incWho', 'me');         // 'me' | 'all' | id участника
+const whoOk = r => !multi() || incWho === 'all' || (incWho === 'me' ? (r.by || meId()) === meId() : r.by === incWho);
+const whoWord = () => !multi() || incWho === 'all' ? '' : incWho === 'me' ? memberName(meId()) : memberName(incWho);
+const whoSeg = () => multi() ? `<div class="seg small whoseg" style="--d:20ms">${[['me', 'Мои'], ...Object.keys(members).filter(id => id !== meId()).map(id => [id, esc(memberName(id))]), ['all', 'Все']].map(([v, l]) => `<button data-act="who" data-v="${v}" class="${incWho === v ? 'on' : ''}">${l}</button>`).join('')}</div>` : '';
+// приходы без владельца или помеченные этим устройством (до ответа «кто вы») — мои
+function syncAssignRows() { if (!meId()) return; const dm = 'd:' + syncCfg.dev; let ch = false; for (const r of rows) if (!r.by || r.by === dm) { r.by = meId(); ch = true; } if (ch) save(); }
+// общий бюджет из версии 23: один раз спрашиваем, кто вы (одно и то же лицо может быть на двух устройствах)
+function whoAskHtml() {
+  if (!syncCfg || meId()) return '';
+  const ids = Object.keys(members).filter(id => members[id] && members[id].n);
+  return `<div class="card whoask" style="--d:0ms"><h2 class="hl">Кто вы в общем бюджете?</h2>
+    <p class="hint" style="margin:4px 0 8px">Теперь приходы тоже общие, и у каждого есть владелец — чтобы каждый считал свой налог. Ответьте один раз на этом устройстве.</p>
+    ${ids.length ? `<div class="seg small" style="flex-wrap:wrap">${ids.map(id => `<button data-act="syncwhome" data-id="${id}">Я — ${esc(members[id].n)}</button>`).join('')}</div><p class="hint" style="margin:8px 0 4px">или новый участник:</p>` : ''}
+    <input class="in" id="whoNewName" maxlength="24" placeholder="Ваше имя">
+    <button class="btn primary" data-act="syncwhonew" style="margin-top:8px">Это я</button></div>`;
+}
+
+// ---------- подключение ----------
 async function syncPeek(code, server) {
   const res = await fetch(server + '/r/' + await syncRoom(code), { cache: 'no-store' });
   if (res.status === 404) throw new Error('по этому коду ничего нет — проверьте код и адрес сервера');
   if (!res.ok) throw new Error('сервер ответил ' + res.status);
-  const j = await res.json();
-  return (await syncDec(code, j.d)).doc;
+  const j = await res.json(), R = await syncDec(code, j.d);
+  return { R, D: docOf(R) };
 }
-async function syncConnect(code, server, R) {
-  syncCfg = { code, server, dev: newId(), v: 0, localT: 0 };
-  // общий план заменяет здешний; расходы, вписанные суммы и категории объединяются
-  if (R.budget) { budget = budgetAccts(budgetMigrate(JSON.parse(JSON.stringify(R.budget)))); syncSetLocal('budget', budget); }
-  syncSetLocal('syncBase', null); syncRecv = {}; syncSetLocal('syncRecv', syncRecv);
-  syncSave(); await syncNow();
+async function syncCreate(server, name) {
+  const me = newId();
+  syncCfg = { code: syncNewCode(), server, dev: newId(), me, v: 0 };
+  syncSave();
+  members = { [me]: { n: name } }; store.set('members', members);
+  syncAssignRows();
+  await syncNow();
+  return syncState === 'ok';
 }
-function syncOff() { syncCfg = null; store.set('sync', null); syncSetLocal('syncBase', null); syncRecv = {}; syncSetLocal('syncRecv', {}); syncStatus(''); }
+// mode: 'theirs' — взять общий план, 'mine' — свой план в общий
+async function syncConnect(j, mode) {
+  const me = j.me || newId();
+  syncCfg = { code: j.code, server: j.server, dev: newId(), me, v: 0 };
+  syncSave();
+  if (j.D.budget && mode === 'theirs') {
+    // общий план заменяет здешний: без своих отметок времени, чтобы не перебить общий
+    const clk = readClk(), tomb = readTomb();
+    for (const p of Object.keys(clk)) if (p.startsWith('["budget"')) delete clk[p];
+    for (const p of Object.keys(tomb)) if (p.startsWith('["budget"')) delete tomb[p];
+    syncSetLocal('syncClk', clk); syncSetLocal('syncTomb', tomb);
+    const b = JSON.parse(JSON.stringify(j.D.budget));
+    syncSetLocal('budget', b); syncLoadMem('budget', b); syncSeen('budget', b);
+  } else if (j.D.budget && budget && mode === 'mine') {
+    // свой план — новее: отмечаем все его поля сейчас, а лишнее из общего — удалённым
+    const t = Date.now(), clk = readClk(), tomb = readTomb(), mine = flatKey('budget', budget);
+    for (const [p, v] of mine) clk[p] = [t, hv(v)];
+    for (const p of j.R.f.keys()) if (p.startsWith('["budget"') && !mine.has(p)) tomb[p] = t;
+    syncSetLocal('syncClk', clk); syncSetLocal('syncTomb', tomb);
+  }
+  members = { ...(j.D.members || {}), ...(j.me ? {} : { [me]: { n: j.name || 'Участник' } }) }; store.set('members', members);
+  syncAssignRows();
+  await syncNow();
+}
+function syncOff() { syncCfg = null; try { localStorage.removeItem('scrmoney.sync'); } catch (e) {} syncStatus(''); }
 const hm = t => { const d = new Date(t); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
 function syncInfoHtml() {
   if (!syncCfg) return '';
-  const s = syncState === 'busy' ? 'синхронизирую…' : syncState === 'err' ? `<b class="syncerr">не синхронизировано:</b> ${esc(syncCfg.err || '')}` : syncState === 'wait' ? 'синхронизирую чуть позже' : syncCfg.ok ? `синхронизировано в ${hm(syncCfg.ok)}${new Date(syncCfg.ok).toDateString() !== new Date().toDateString() ? ', ' + longDate(new Date(syncCfg.ok).toISOString().slice(0, 10)) : ''}` : 'ещё не синхронизировано';
-  return s;
+  return syncState === 'busy' ? 'синхронизирую…' : syncState === 'err' ? `<b class="syncerr">не синхронизировано:</b> ${esc(syncCfg.err || '')}` : syncState === 'wait' ? 'синхронизирую чуть позже' : syncCfg.ok ? `синхронизировано: ${atWord(syncCfg.ok)}` : 'ещё не синхронизировано';
 }
 const syncLink = () => `${location.origin}${location.pathname}#join=${syncFmt(syncCfg.code)}${syncSrv() !== SYNC_SERVER ? '&s=' + encodeURIComponent(syncSrv()) : ''}`;
 function syncSection() {
+  if (syncCfg && !meId()) return whoAskHtml().replace('class="card whoask"', 'class="whoask"').replace(/<h2[^>]*>.*?<\/h2>/, '') + `<p class="synci" id="syncInfo">${syncInfoHtml()}</p>`;
   if (syncCfg) return `
-    <p class="hint" style="margin:6px 0 4px">План и расходы общие для всех устройств с этим кодом. Приходы для налогов остаются на каждом устройстве, в план уходят только их суммы по месяцам.</p>
+    <p class="hint" style="margin:6px 0 4px">План, расходы и приходы общие для всех устройств с этим кодом. У каждого прихода есть владелец, налог каждый считает по своим.</p>
     <p class="synci" id="syncInfo">${syncInfoHtml()}</p>
+    <div class="members">${Object.keys(members).filter(id => id === meId() || (members[id] && members[id].n)).map(id => `<span class="mem ${id === meId() ? 'me' : ''}">${esc(memberName(id))}${id === meId() ? ' · вы' : ''}</span>`).join('')}</div>
+    <label class="setrow"><span class="l">Ваше имя<i>его видят другие участники</i></span><input class="in" id="syncNameIn" maxlength="24" value="${esc(members[meId()] ? members[meId()].n : '')}" style="width:150px;text-align:left"></label>
     <div class="synccode"><span>Код</span><b>${syncFmt(syncCfg.code)}</b></div>
     <p class="hint" style="margin:0 0 8px">Код — это и ключ шифрования. Давайте его только тем, с кем ведёте бюджет.</p>
     <button class="btn primary" data-act="syncinvite">Пригласить: отправить ссылку</button>
@@ -3392,45 +3609,69 @@ function syncSection() {
     <div id="syncBox"></div>`;
   const need = !SYNC_SERVER;
   return `
-    <p class="hint" style="margin:6px 0 8px">Ведите план и расходы вместе с партнёром на разных устройствах. Данные шифруются прямо на телефоне кодом синхронизации — сервер видит только шифр. Приходы для налогов остаются у каждого свои.</p>
+    <p class="hint" style="margin:6px 0 8px">Ведите план, расходы и приходы вместе на разных устройствах. Данные шифруются прямо на телефоне кодом синхронизации — сервер видит только шифр.</p>
     ${need ? `<label class="setrow syncsrv"><span class="l">Адрес сервера<i>ваш Cloudflare Worker, как его завести — в SYNC.md</i></span></label>
       <input class="in" id="syncSrvIn" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://scrmoney-sync….workers.dev" value="${esc(store.get('syncServer', ''))}">` : ''}
-    <button class="btn primary" data-act="synccreate" style="margin-top:10px">Создать общий бюджет</button>
+    <label class="setrow"><span class="l">Ваше имя<i>чтобы было видно, чей приход</i></span><input class="in" id="syncNameIn" maxlength="24" placeholder="Имя" style="width:150px;text-align:left"></label>
+    <button class="btn primary" data-act="synccreate" style="margin-top:6px">Создать общий бюджет</button>
     <button class="btn outline" data-act="syncjoin">Подключиться по коду</button>
-    <div id="syncBox">${syncJoin ? syncJoinHtml() : ''}</div>`;
+    <div id="syncBox">${syncJoin && !syncJoin.D ? syncJoinHtml() : ''}</div>`;
 }
-const syncJoinHtml = () => `<div class="syncjoin"><input class="in" id="syncCodeIn" autocomplete="off" spellcheck="false" autocapitalize="characters" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" value="${esc(syncJoin && syncJoin.code || '')}" aria-label="Код синхронизации">
+const syncJoinHtml = () => `<div class="syncjoin"><input class="in" id="syncCodeIn" autocomplete="off" spellcheck="false" autocapitalize="characters" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" value="${esc(syncJoin && syncJoin.code ? syncFmt(syncJoin.code) : '')}" aria-label="Код синхронизации">
   <button class="btn primary" data-act="syncjoingo">Подключиться</button></div>`;
+// после проверки кода: кто вы и чей план брать
+function syncWhoHtml() {
+  const j = syncJoin, ids = Object.keys(j.D.members || {});
+  const planQ = j.D.budget && budget && !same(clean(budget), clean(j.D.budget));
+  const tR = Math.max(0, ...[...j.R.f].filter(([p]) => p.startsWith('["budget"')).map(([, e]) => e.t));
+  const clk = readClk(), tL = Math.max(0, ...Object.entries(clk).filter(([p]) => p.startsWith('["budget"')).map(([, c]) => c[0]));
+  const newer = tL > tR ? 'mine' : 'theirs';
+  return `<div class="syncwho">
+    ${ids.length ? `<p class="hint" style="margin:8px 0 6px">Кто вы?</p><div class="seg small">${ids.map(id => `<button data-act="syncme" data-id="${id}" class="${j.me === id ? 'on' : ''}">${esc((j.D.members[id] || {}).n || 'Участник')}</button>`).join('')}<button data-act="syncme" data-id="" class="${!j.me ? 'on' : ''}">Новый участник</button></div>` : ''}
+    ${!j.me ? `<input class="in" id="syncJoinName" maxlength="24" placeholder="Ваше имя" value="${esc(j.name || '')}" style="margin-top:8px">` : ''}
+    ${planQ ? `<p class="hint" style="margin:10px 0 6px">На этом устройстве свой план. Какой оставить?</p>
+      <div class="seg small"><button data-act="syncplan" data-v="theirs" class="${(j.plan || newer) === 'theirs' ? 'on' : ''}">Общий${tR ? ` · ${atWord(tR)}` : ''}${newer === 'theirs' ? ' (новее)' : ''}</button><button data-act="syncplan" data-v="mine" class="${(j.plan || newer) === 'mine' ? 'on' : ''}">Мой${tL ? ` · ${atWord(tL)}` : ''}${newer === 'mine' ? ' (новее)' : ''}</button></div>
+      <p class="hint" style="margin:6px 0 0">Расходы и приходы объединятся в любом случае. Перед этим сделаю резервную копию.</p>` : ''}
+    <button class="btn primary" data-act="syncjoinyes" style="margin-top:10px">Подключиться</button>
+    <button class="btn outline" data-act="syncjoinno">Отмена</button></div>`;
+}
 const syncServerIn = () => { const i = $('#syncSrvIn'); const v = (i ? i.value.trim() : syncSrv()).replace(/\/+$/, ''); if (i) store.set('syncServer', v); return v; };
 const syncBox = h => { const b = $('#syncBox'); if (b) b.innerHTML = h; };
-async function syncAct(act) {
-  if (document.activeElement && document.activeElement.blur && act !== 'syncjoin') document.activeElement.blur();
+const okServer = s => /^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)/.test(s);
+async function syncAct(act, el) {
+  if (document.activeElement && document.activeElement.blur && !['syncjoin', 'syncme', 'syncplan'].includes(act)) document.activeElement.blur();
   switch (act) {
     case 'synccreate': {
-      const s = syncServerIn();
-      if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)/.test(s)) { toast('Впишите адрес сервера'); $('#syncSrvIn') && $('#syncSrvIn').focus(); return; }
+      const s = syncServerIn(), name = ($('#syncNameIn').value || '').trim();
+      if (!okServer(s)) { toast('Впишите адрес сервера'); $('#syncSrvIn') && $('#syncSrvIn').focus(); return; }
+      if (!name) { toast('Впишите своё имя'); $('#syncNameIn').focus(); return; }
       syncBox('<p class="hint" style="text-align:center">создаю…</p>');
-      const ok = await syncCreate(s);
+      backupMake('перед созданием общего бюджета');
+      const ok = await syncCreate(s, name);
       if (!ok) { const e = syncCfg && syncCfg.err; syncOff(); render(); syncBox(`<p class="hint syncerr" style="text-align:center">Не получилось: ${esc(e || 'нет связи с сервером')}</p>`); return; }
       render(); toast('Общий бюджет создан'); syncBox(syncInviteHtml()); return;
     }
-    case 'syncjoin': syncJoin = syncJoin || {}; syncBox(syncJoinHtml()); $('#syncCodeIn').focus(); return;
+    case 'syncjoin': syncJoin = { code: (syncJoin && syncJoin.code) || '' }; syncBox(syncJoinHtml()); $('#syncCodeIn').focus(); return;
     case 'syncjoingo': {
       const code = syncNorm($('#syncCodeIn').value), s = syncServerIn();
       if (code.length !== 20) { toast('В коде 20 знаков'); return; }
-      if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)/.test(s)) { toast('Впишите адрес сервера'); return; }
-      syncJoin = { code, server: s };
+      if (!okServer(s)) { toast('Впишите адрес сервера'); return; }
+      syncJoin = { code, server: s, name: ($('#syncNameIn') && $('#syncNameIn').value || '').trim() };
       syncBox('<p class="hint" style="text-align:center">проверяю код…</p>');
-      try { syncJoin.R = await syncPeek(code, s); } catch (e) { syncBox(syncJoinHtml() + `<p class="hint syncerr" style="text-align:center">${esc(/Failed to fetch|NetworkError|Load failed/i.test(e.message) ? 'нет связи с сервером' : e.message)}</p>`); return; }
-      if (budget && syncJoin.R.budget && !same(clean(budget), clean(syncJoin.R.budget))) {
-        syncBox(`<div class="confirm">На этом устройстве уже есть свой план. Общий план его заменит, а расходы объединятся.<div class="row"><button class="btn outline" data-act="syncjoinno">Отмена</button><button class="btn primary" data-act="syncjoinyes">Взять общий</button></div></div>`);
-        return;
-      }
+      try { Object.assign(syncJoin, await syncPeek(code, s)); } catch (e) { syncBox(syncJoinHtml() + `<p class="hint syncerr" style="text-align:center">${esc(netErr(e))}</p>`); return; }
+      syncBox(syncWhoHtml()); return;
     }
-    // fallthrough
+    case 'syncme': syncJoin.name = ($('#syncJoinName') && $('#syncJoinName').value || syncJoin.name || '').trim(); syncJoin.me = el.dataset.id || null; syncBox(syncWhoHtml()); return;
+    case 'syncplan': syncJoin.name = ($('#syncJoinName') && $('#syncJoinName').value || syncJoin.name || '').trim(); syncJoin.plan = el.dataset.v; syncBox(syncWhoHtml()); return;
     case 'syncjoinyes': {
-      const j = syncJoin; syncJoin = null;
-      await syncConnect(j.code, j.server, j.R);
+      const j = syncJoin;
+      if (!j.me) { j.name = ($('#syncJoinName') && $('#syncJoinName').value || j.name || '').trim(); if (!j.name) { toast('Впишите своё имя'); return; } }
+      const planQ = j.D.budget && budget && !same(clean(budget), clean(j.D.budget));
+      let mode = j.plan;
+      if (!mode) { const tR = Math.max(0, ...[...j.R.f].filter(([p]) => p.startsWith('["budget"')).map(([, e]) => e.t)), tL = Math.max(0, ...Object.entries(readClk()).filter(([p]) => p.startsWith('["budget"')).map(([, c]) => c[0])); mode = tL > tR ? 'mine' : 'theirs'; }
+      if (planQ || budget) backupMake('перед подключением к общему бюджету');
+      syncJoin = null;
+      await syncConnect(j, planQ ? mode : 'theirs');
       tab = budget ? 'plan' : tab; render(); window.scrollTo(0, 0);
       toast(syncState === 'ok' ? 'Подключено к общему бюджету' : 'Подключено, синхронизация чуть позже');
       return;
@@ -3446,12 +3687,67 @@ async function syncAct(act) {
     case 'synccopy': try { await navigator.clipboard.writeText(syncLink()); toast('Ссылка скопирована'); } catch (e) { toast('Не удалось скопировать'); } return;
     case 'syncnow': syncNow(); return;
     case 'syncgo': tab = 'settings'; render(true); window.scrollTo(0, 0); return;
-    case 'syncoff': syncBox(`<div class="confirm">Отключить синхронизацию на этом устройстве? Данные останутся здесь, у партнёра всё сохранится.<div class="row"><button class="btn outline" data-act="syncoffno">Нет</button><button class="btn primary" data-act="syncoffyes">Отключить</button></div></div>`); return;
+    case 'syncoff': syncBox(`<div class="confirm">Отключить синхронизацию на этом устройстве? Данные останутся здесь, у других участников всё сохранится.<div class="row"><button class="btn outline" data-act="syncoffno">Нет</button><button class="btn primary" data-act="syncoffyes">Отключить</button></div></div>`); return;
     case 'syncoffno': syncBox(''); return;
     case 'syncoffyes': syncOff(); render(); toast('Синхронизация отключена'); return;
+    // резервные копии
+    case 'syncbk': {
+      const b = $('#bkList'); if (!b) return;
+      if (b.innerHTML) { b.innerHTML = ''; return; }
+      b.innerHTML = backupListHtml(); return;
+    }
+    case 'syncbkuse': { const l = store.get('backups', []), x = l[+el.dataset.i]; if (x) $('#bkList').innerHTML = backupAskHtml(x.d, x.t, 'syncbkyes', el.dataset.i); return; }
+    case 'syncbkyes': { const l = store.get('backups', []), x = l[+el.dataset.i]; if (x) { restoreDoc(x.d, 'Возвращена копия: ' + atWord(x.t)); } return; }
+    case 'syncbkno': $('#bkList').innerHTML = backupListHtml(); return;
+    case 'syncsrvh': {
+      const b = $('#bkList'); if (!b || !syncCfg) return;
+      b.innerHTML = '<p class="hint" style="text-align:center">загружаю версии с сервера…</p>';
+      try {
+        const res = await fetch(syncSrv() + '/r/' + await syncRoom(syncCfg.code) + '/h', { cache: 'no-store' });
+        if (res.status === 404) { b.innerHTML = '<p class="hint">На сервере старая версия Worker\'а без истории. Обновите его код из файла sync-worker.js (SYNC.md, шаг 3).</p>'; return; }
+        if (!res.ok) throw new Error('сервер ответил ' + res.status);
+        syncHist = (await res.json()).list || [];
+        b.innerHTML = syncHist.length ? `<p class="hint" style="margin:6px 0">Версии на сервере (раз в 10 минут, хранятся 30 дней):</p>` + syncHist.map((h, i) => `<button class="bkrow" data-act="syncsrvget" data-i="${i}"><b>${atWord(h.t)}</b><i>версия ${h.v}</i></button>`).join('') : '<p class="hint">Версий на сервере пока нет — они появляются после правок.</p>';
+      } catch (e) { b.innerHTML = `<p class="hint syncerr">${esc(netErr(e))}</p>`; }
+      return;
+    }
+    case 'syncsrvget': {
+      const h = syncHist && syncHist[+el.dataset.i]; if (!h) return;
+      const b = $('#bkList'); b.innerHTML = '<p class="hint" style="text-align:center">загружаю…</p>';
+      try {
+        const res = await fetch(syncSrv() + '/r/' + await syncRoom(syncCfg.code) + '/h/' + encodeURIComponent(h.k), { cache: 'no-store' });
+        if (!res.ok) throw new Error('сервер ответил ' + res.status);
+        const D = docOf(await syncDec(syncCfg.code, (await res.json()).d));
+        syncHist.D = D; b.innerHTML = backupAskHtml(D, h.t, 'syncsrvyes', el.dataset.i);
+      } catch (e) { b.innerHTML = `<p class="hint syncerr">${esc(netErr(e))}</p>`; }
+      return;
+    }
+    case 'syncsrvyes': if (syncHist && syncHist.D) restoreDoc(syncHist.D, 'Возвращена версия с сервера'); return;
+    case 'syncfile': backupFile(); return;
+    case 'syncwhome': case 'syncwhonew': {
+      let id = el.dataset.id;
+      if (act === 'syncwhonew') { const n = ($('#whoNewName').value || '').trim(); if (!n) { toast('Впишите своё имя'); $('#whoNewName').focus(); return; } id = newId(); members = { ...members, [id]: { n } }; store.set('members', members); }
+      syncCfg = { ...syncCfg, me: id }; syncSave(); syncAssignRows(); render(); toast('Готово: ' + memberName(id)); syncSoon(500); return;
+    }
+    case 'syncfilein': $('#importFile').click(); return;
   }
 }
-const syncInviteHtml = () => `<div class="syncinv"><p class="hint" style="margin:8px 0 6px">Отправьте эту ссылку партнёру — откроет её на своём телефоне и окажется в общем бюджете:</p>
+function backupListHtml() {
+  const l = store.get('backups', []);
+  return (l.length ? l.map((x, i) => `<button class="bkrow" data-act="syncbkuse" data-i="${i}"><b>${atWord(x.t)}</b><i>${esc(x.why)} · ${backupWord(x.d)}</i></button>`).join('') : '<p class="hint">Копий пока нет.</p>')
+    + (syncCfg ? '<button class="btn outline" data-act="syncsrvh" style="margin-top:8px">Версии на сервере</button>' : '');
+}
+const backupAskHtml = (D, t, act, i) => `<div class="confirm">Вернуть данные на ${atWord(t)}?<br><small>${backupWord(D)}. Сейчас: ${backupWord(storeDoc())}. Текущие данные сохраню в копию${syncCfg ? ', возвращённое уйдёт всем участникам' : ''}.</small>
+  <div class="row"><button class="btn outline" data-act="syncbkno">Нет</button><button class="btn primary" data-act="${act}" data-i="${i}">Вернуть</button></div></div>`;
+function backupSection() {
+  return `<p class="hint" style="margin:6px 0 8px">Приложение само делает копии раз в день и перед каждым удалением с другого устройства${syncCfg ? '; сервер хранит версии каждые 10 минут' : ''}.</p>
+    <button class="btn outline" data-act="syncbk">Резервные копии</button>
+    <div id="bkList"></div>
+    <button class="btn outline" data-act="syncfile">Сохранить всё в файл</button>
+    <button class="btn outline" data-act="syncfilein">Загрузить из файла</button>
+    <p class="hint" style="margin:0 0 6px;text-align:center">файл копии (.json) или CSV приходов и расходов</p>`;
+}
+const syncInviteHtml = () => `<div class="syncinv"><p class="hint" style="margin:8px 0 6px">Отправьте эту ссылку — человек откроет её у себя и окажется в общем бюджете:</p>
   <input class="in" readonly value="${esc(syncLink())}" onclick="this.select()" aria-label="Ссылка-приглашение">
   <button class="btn outline" data-act="synccopy">Скопировать ссылку</button></div>`;
 
@@ -3460,18 +3756,32 @@ const syncInviteHtml = () => `<div class="syncinv"><p class="hint" style="margin
   const h = new URLSearchParams(location.hash.slice(1)), code = syncNorm(h.get('join'));
   if (!code) return;
   history.replaceState(null, '', location.pathname + location.search);
-  if (syncCfg && syncCfg.code === code) { toast('Это устройство уже в общем бюджете'); return; }
+  if (syncCfg && syncCfg.code === code) { setTimeout(() => toast('Это устройство уже в общем бюджете'), 300); return; }
   if (h.get('s')) store.set('syncServer', h.get('s').replace(/\/+$/, ''));
   if (syncCfg) syncOff();
   syncJoin = { code };
   tab = 'settings';
   setTimeout(() => { const b = document.querySelector('[data-act=syncjoingo]'); if (b) b.click(); }, 50);
 })();
-document.addEventListener('click', e => { const el = e.target.closest('[data-act^=sync]'); if (el) syncAct(el.dataset.act); });
+document.addEventListener('click', e => { const el = e.target.closest('[data-act^=sync]'); if (el) syncAct(el.dataset.act, el); });
+document.addEventListener('change', e => {
+  if (e.target.id !== 'syncNameIn' || !syncCfg) return;
+  const n = e.target.value.trim(); if (!n) return;
+  members = { ...members, [meId()]: { n } }; store.set('members', members); toast('Имя сохранено');
+});
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncSoon(300); else if (syncCfg && !syncBusy) syncNow(); });
 window.addEventListener('online', () => syncSoon(300));
-document.addEventListener('focusout', () => { if (syncWait) syncSoon(1500); });
+document.addEventListener('focusout', () => setTimeout(() => {
+  if (syncRenderWait && syncCanApply()) { syncRenderWait = false; render(); }
+  if (syncWait) syncSoon(1500);
+}, 0));
 setInterval(() => { if (syncCfg && document.visibilityState === 'visible' && !syncBusy) syncNow(); }, 45000);
+// что вкладка видит сейчас — от этого считаются свои правки
+for (const k of Object.keys(SK2D)) syncSeen(k, getK(k));
+syncReady = true;
+// общий бюджет из версии 23: у устройства ещё нет участника — заводим, приходы — его
+if (syncCfg && !syncCfg.me) { const dm = 'd:' + syncCfg.dev; let ch = false; for (const r of rows) if (!r.by) { r.by = dm; ch = true; } if (ch) save(); }
+if (multi() && incWho !== 'me' && incWho !== 'all' && !members[incWho]) incWho = 'all';
 
 render(true);
 syncStatus('');
