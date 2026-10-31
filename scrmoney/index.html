@@ -39,6 +39,22 @@ input, textarea, select { font: inherit; color: inherit; }
 #top .row { height: 56px; display: flex; align-items: center; padding: 0 16px 0 24px; max-width: 620px; margin: 0 auto; }
 #top h1 { flex: 1; margin: 0; font-size: 21px; font-weight: 500; font-style: italic; color: var(--acc); }
 #top .sync { font-size: 13px; font-style: italic; color: var(--soft); }
+#top .cloud { width: 40px; height: 40px; margin-left: 4px; display: grid; place-items: center; border: 0; background: none; padding: 0; color: var(--good); cursor: pointer; }
+#top .cloud[hidden] { display: none; }
+#top .cloud svg { width: 22px; height: 22px; fill: currentColor; }
+#top .cloud.busy svg { animation: cloudp 1s ease-in-out infinite alternate; color: var(--soft); }
+#top .cloud.wait { color: var(--faint); }
+#top .cloud.err { color: var(--danger); }
+@keyframes cloudp { from { opacity: .35; } to { opacity: 1; } }
+.synci { margin: 4px 0 10px; font-size: 14px; font-style: italic; color: var(--soft); }
+.syncerr { color: var(--danger); }
+.synccode { display: flex; align-items: baseline; gap: 12px; padding: 12px 16px; margin-bottom: 6px; border: 1px dashed var(--rule); border-radius: 14px; background: var(--page); }
+.synccode span { font-size: 13px; color: var(--soft); font-style: italic; }
+.synccode b { font: 600 17px/1.3 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .04em; word-break: break-all; color: var(--ink); }
+.syncsrv { padding-bottom: 6px; }
+.syncjoin, .syncinv { margin-top: 8px; }
+.syncjoin .in { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; }
+.syncinv .in { font-size: 13px; margin-bottom: 8px; }
 
 /* нижняя навигация */
 #nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 10; background: var(--paper); border-top: 1px solid var(--rule);
@@ -1112,6 +1128,7 @@ html.skin-apple { --leaf: #8ed24a; --leaf-soft: #c5e8a6; --leaf-ink: #3f7a1f; --
 <div id="top"><div class="row">
   <h1>scrmoney</h1>
   <span class="sync" id="sync"></span>
+  <button class="cloud" id="cloud" data-act="syncgo" hidden aria-label="Общий бюджет"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg></button>
 </div></div>
 
 <main id="main"></main>
@@ -1132,9 +1149,12 @@ html.skin-apple { --leaf: #8ed24a; --leaf-soft: #c5e8a6; --leaf-ink: #3f7a1f; --
 'use strict';
 const $ = s => document.querySelector(s);
 const $main = $('#main'), $modal = $('#modal');
+// эти ключи уходят в общий бюджет (rows и rates — только как суммы приходов по месяцам)
+const SYNC_KEYS = { budget: 1, spend: 1, minc: 1, spCatsUser: 1, rows: 1, rates: 1 };
+var syncReady = false;
 const store = {
   get(k, d) { try { const v = localStorage.getItem('scrmoney.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem('scrmoney.' + k, JSON.stringify(v)); } catch (e) {} }
+  set(k, v) { try { localStorage.setItem('scrmoney.' + k, JSON.stringify(v)); } catch (e) {} if (syncReady && SYNC_KEYS[k]) syncTouch(k); }
 };
 
 /* ---------- темы: те же мягкие палитры, что в scrmoods ---------- */
@@ -1472,7 +1492,7 @@ const haveGel = (B, G = (a, c) => toGel(a, c) || 0) => (B.accts || []).reduce((t
 let minc = store.get('minc', {});
 const saveMinc = () => { _avgC = null; store.set('minc', minc); };
 const mincGel = ym => minc[ym] && fxNum(minc[ym].a) > 0 ? toGel(fxNum(minc[ym].a), minc[ym].c || 'GEL') || 0 : 0;
-const recGel = ym => rows.filter(r => r.date.startsWith(ym)).reduce((t, r) => t + (gelOf(r) || 0), 0);
+const recGel = ym => rows.filter(r => r.date.startsWith(ym)).reduce((t, r) => t + (gelOf(r) || 0), 0) + otherRecv(ym);   // + «Приходы» партнёра (общий бюджет)
 const incomeOfMonth = ym => recGel(ym) + mincGel(ym);
 // средний доход = итог столбца «Факт» таблицы «Доходы» за все прошлые месяцы, где что-то пришло;
 // число — как чаще всего приходили деньги. Считается один раз на перерисовку.
@@ -1482,7 +1502,7 @@ function avgIncome() {
   if (_avgC) return _avgC;
   const cur = ymOf(now);
   if (!budget) return { v: 0, n: 0, from: null, to: null, day: 5, months: [] };
-  const keys = [...rows.map(r => r.date.slice(0, 7)), ...Object.keys(minc), ...Object.keys(budget.fact || {})];
+  const keys = [...rows.map(r => r.date.slice(0, 7)), ...Object.keys(minc), ...Object.keys(budget.fact || {}), ...Object.values(syncRecv).flatMap(o => Object.keys(o || {}))];
   const st = ymOf(budget.start || now);
   for (let k = 1; k <= 24 && ymDiff(ymAdd(cur, -k), st) <= 0; k++) keys.push(ymAdd(cur, -k));
   const ms = [...new Set(keys)].filter(ym => ym < cur).sort();
@@ -1684,6 +1704,7 @@ function openWizard(start = 0, only = '') {
   showWiz(true);
 }
 function closeWizard(keep) {
+  if (syncWait) syncSoon(1200);
   if (wiz && !keep && !wiz.only) wizDraft = wiz.d;
   document.getElementById('quick')?.remove(); document.body.style.overflow = ''; wiz = null; render();
 }
@@ -2698,8 +2719,9 @@ function renderSettings() {
     <div class="section" style="--d:40ms"><h2 class="hl">Налог</h2>
       <label class="setrow"><span class="l">Ставка налога, %<i>1% — малый бизнес, 20% — обычный ИП</i></span>
         <input class="in num" id="taxIn" type="number" inputmode="decimal" step="0.1" min="0" value="${taxRate}"></label></div>
+    <div class="section" style="--d:60ms"><h2 class="hl">Общий бюджет</h2>${syncSection()}</div>
     <div class="section" style="--d:80ms"><h2 class="hl">Данные</h2>
-      <p class="hint" style="margin:6px 0 8px">Приходы и расходы хранятся только на этом устройстве. Время от времени сохраняйте копию.</p>
+      <p class="hint" style="margin:6px 0 8px">${syncCfg ? 'Приходы хранятся только на этом устройстве, план и расходы — ещё и в общем бюджете (зашифрованно).' : 'Приходы и расходы хранятся только на этом устройстве.'} Время от времени сохраняйте копию.</p>
       <button class="btn primary" data-act="export">Сохранить приходы в CSV</button>
       <button class="btn primary" data-act="exportsp">Сохранить расходы в CSV</button>
       <button class="btn outline" data-act="import">Загрузить из CSV</button>
@@ -2921,7 +2943,7 @@ function openSpend(x) {
   edit = { spend: x.id, cat: x.cat || 'other' };
   $modal.classList.add('open');
 }
-function closeModal() { $modal.classList.remove('open'); $modal.innerHTML = ''; edit = null; }
+function closeModal() { $modal.classList.remove('open'); $modal.innerHTML = ''; edit = null; if (syncWait) syncSoon(800); }
 
 /* ---------- CSV ---------- */
 function toCsv() {
@@ -3161,7 +3183,299 @@ $('#importFile').onchange = e => {
   rd.readAsText(f, 'utf-8');
 };
 
+/* ---------- совместный бюджет: синхронизация через свой Cloudflare Worker ----------
+   Общие: План (budget, minc), Расходы (spend) и свои категории (spCatsUser).
+   «Приходы» остаются на устройстве; в общий план уходят только их суммы по месяцам в лари (recv[устройство]).
+   Всё шифруется AES-GCM ключом из кода синхронизации; сервер хранит шифр и номер версии.
+   Слияние трёхстороннее: base (что было при прошлой синхронизации) / это устройство / сервер.
+   Статьи с id сливаются по id, списки без id (журнал «Отложил») — как множества, спорное значение —
+   у того, чья правка позже. */
+const SYNC_SERVER = '';            // адрес Worker'а по умолчанию; пусто — спрашиваем в настройках
+const CROCK = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+let syncCfg = store.get('sync', null);          // { code, server, dev, v, localT, ok, err }
+let syncRecv = store.get('syncRecv', {});       // суммы «Приходов» с других устройств: { dev: { ym: ₾ } }
+let syncKeyC = null, syncBusy = false, syncAgain = false, syncWait = false, syncTimer = null, syncState = '', syncJoin = null;
+syncReady = true;
+
+const syncNorm = s => String(s || '').toUpperCase().replace(/O/g, '0').replace(/[IL]/g, '1').replace(/[^0-9A-Z]/g, '').split('').filter(c => CROCK.includes(c)).join('');
+const syncFmt = c => c.match(/.{1,4}/g).join('-');
+const syncNewCode = () => { const b = crypto.getRandomValues(new Uint8Array(20)); return [...b].map(x => CROCK[x & 31]).join(''); };
+const syncSrv = () => ((syncCfg && syncCfg.server) || store.get('syncServer', '') || SYNC_SERVER).replace(/\/+$/, '');
+const syncSave = () => store.set('sync', syncCfg);
+const b64 = u => btoa(String.fromCharCode(...u));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const utf8 = s => new TextEncoder().encode(s);
+async function syncRoom(code) { const h = new Uint8Array(await crypto.subtle.digest('SHA-256', utf8('scrmoney-room-v1:' + code))); return [...h].map(x => x.toString(16).padStart(2, '0')).join(''); }
+async function syncKey(code) {
+  if (syncKeyC && syncKeyC.code === code) return syncKeyC.key;
+  const raw = await crypto.subtle.importKey('raw', utf8(code), 'PBKDF2', false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: utf8('scrmoney-sync-v1'), iterations: 150000, hash: 'SHA-256' }, raw, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  syncKeyC = { code, key }; return key;
+}
+async function syncEnc(code, obj) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await syncKey(code), utf8(JSON.stringify(obj))));
+  // большие строки — кусками, чтобы не упереться в лимит аргументов
+  let s = ''; for (let i = 0; i < ct.length; i += 0x8000) s += String.fromCharCode(...ct.subarray(i, i + 0x8000));
+  return b64(iv) + '.' + btoa(s);
+}
+async function syncDec(code, d) {
+  const [iv, ct] = String(d).split('.');
+  try { return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(iv) }, await syncKey(code), unb64(ct)))); }
+  catch (e) { throw new Error('не удалось расшифровать — проверьте код'); }
+}
+
+// одинаковая запись для сравнения: ключи по алфавиту
+const canon = x => x === undefined ? 'u' : JSON.stringify(x, (k, v) => v && typeof v === 'object' && !Array.isArray(v) ? Object.keys(v).sort().reduce((o, kk) => (o[kk] = v[kk], o), {}) : v);
+const same = (a, b) => canon(a) === canon(b);
+const isObj = x => x !== null && typeof x === 'object' && !Array.isArray(x);
+// копия без пустых объектов (их на лету создаёт factOf) — чтобы не гонять пустые правки
+function clean(x) {
+  if (Array.isArray(x)) return x.map(clean);
+  if (isObj(x)) { const o = {}; for (const k of Object.keys(x)) { if (x[k] === undefined) continue; const v = clean(x[k]); if (isObj(v) && !Object.keys(v).length) continue; o[k] = v; } return o; }
+  return x;
+}
+function merge3(b, l, r, pl) {
+  if (same(l, r)) return l;
+  if (same(l, b)) return r;
+  if (same(r, b)) return l;
+  if (isObj(l) && isObj(r)) {
+    const B = isObj(b) ? b : {}, out = {};
+    for (const k of new Set([...Object.keys(l), ...Object.keys(r)])) { const v = merge3(B[k], l[k], r[k], pl); if (v !== undefined) out[k] = v; }
+    return out;
+  }
+  if (Array.isArray(l) && Array.isArray(r)) {
+    const B = Array.isArray(b) ? b : [];
+    const withId = a => a.every(x => isObj(x) && x.id != null);
+    if (withId(l) && withId(r) && withId(B)) {
+      const map = a => new Map(a.map(x => [String(x.id), x])), bm = map(B), lm = map(l), rm = map(r);
+      const ids = a => a.map(x => String(x.id));
+      // порядок: если здесь его не меняли — как на сервере, иначе как здесь; новые с другой стороны — в конец
+      const first = same(ids(l).filter(id => bm.has(id)), ids(B).filter(id => lm.has(id))) ? r : l, second = first === r ? l : r;
+      const order = [...ids(first), ...ids(second).filter(id => !(first === r ? rm : lm).has(id))];
+      const out = [];
+      for (const id of order) { const v = merge3(bm.get(id), lm.get(id), rm.get(id), pl); if (v !== undefined) out.push(v); }
+      return out;
+    }
+    const bs = new Set(B.map(canon)), ls = new Set(l.map(canon)), rs = new Set(r.map(canon));
+    const out = l.filter(x => rs.has(canon(x)) || !bs.has(canon(x)));
+    for (const x of r) if (!ls.has(canon(x)) && !bs.has(canon(x))) out.push(x);
+    return out;
+  }
+  return pl ? l : r;
+}
+
+// суммы «Приходов» этого устройства по месяцам, ₾
+function myRecv() {
+  const t = {};
+  for (const r of rows) { const g = gelOf(r); if (g) t[r.date.slice(0, 7)] = r2((t[r.date.slice(0, 7)] || 0) + g); }
+  return t;
+}
+const otherRecv = ym => { let s = 0; for (const d in syncRecv) if (!syncCfg || d !== syncCfg.dev) s += (syncRecv[d] && syncRecv[d][ym]) || 0; return s; };
+const localDoc = () => clean({ budget, spend: spends, minc, cats: userCats, recv: { ...syncRecv, [syncCfg.dev]: myRecv() } });
+function syncSetLocal(k, v) { try { localStorage.setItem('scrmoney.' + k, JSON.stringify(v)); } catch (e) {} }
+function applyDoc(M) {
+  const C = JSON.parse(JSON.stringify(M));
+  budget = C.budget ? budgetAccts(budgetMigrate(C.budget)) : null;
+  spends = C.spend || []; minc = C.minc || {};
+  const oldU = new Set(userCats.map(c => c.id));
+  userCats = C.cats || [];
+  const base = CATS.filter(c => !oldU.has(c.id)), other = base.pop();
+  CATS.splice(0, CATS.length, ...base, ...userCats, other);
+  syncRecv = C.recv || {}; delete syncRecv[syncCfg.dev];
+  syncSetLocal('budget', budget); syncSetLocal('spend', spends); syncSetLocal('minc', minc); syncSetLocal('spCatsUser', userCats); syncSetLocal('syncRecv', syncRecv);
+  _avgC = null;
+}
+// нельзя менять данные под рукой: открыта анкета, окно или курсор в поле ввода
+function syncCanApply() {
+  const a = document.activeElement;
+  return !wiz && !$modal.classList.contains('open') && !(a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName));
+}
+function syncStatus(s, err) {
+  syncState = s;
+  if (syncCfg) { if (s === 'ok') { syncCfg.ok = Date.now(); syncCfg.err = ''; } if (s === 'err') syncCfg.err = err; syncSave(); }
+  const el = $('#cloud'); if (!el) return;
+  el.hidden = !syncCfg;
+  el.className = 'cloud ' + s;
+  el.title = !syncCfg ? '' : s === 'busy' ? 'Синхронизация…' : s === 'err' ? 'Не синхронизировано: ' + err : s === 'wait' ? 'Синхронизация чуть позже' : 'Общий бюджет синхронизирован';
+  const box = $('#syncInfo'); if (box) box.innerHTML = syncInfoHtml();
+}
+function syncSoon(ms = 4000) { if (!syncCfg) return; clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, ms); }
+function syncTouch(k) {
+  if (!syncReady || !syncCfg) return;
+  if (k !== 'rates' && k !== 'rows') { syncCfg.localT = Date.now(); try { localStorage.setItem('scrmoney.sync', JSON.stringify(syncCfg)); } catch (e) {} }
+  syncSoon(k === 'rates' ? 8000 : 4000);
+}
+async function syncNow() {
+  if (!syncCfg) return;
+  if (syncBusy) { syncAgain = true; return; }
+  if (!navigator.onLine) { syncStatus('wait'); return; }
+  if (!syncCanApply()) { syncWait = true; return; }
+  syncBusy = true; syncWait = false; syncStatus('busy');
+  const cfg = syncCfg;
+  try {
+    const url = syncSrv() + '/r/' + await syncRoom(cfg.code);
+    for (let tries = 0; tries < 4; tries++) {
+      const res = await fetch(url, { cache: 'no-store' });
+      let R = null, rv = 0, rt = 0;
+      if (res.status === 200) {
+        const j = await res.json(); rv = j.v;
+        if (rv < (cfg.v || 0)) { syncStatus('wait'); syncSoon(15000); return; }      // сервер ещё не догнал нашу запись
+        const p = await syncDec(cfg.code, j.d); R = p.doc; rt = p.t || 0;
+      } else if (res.status !== 404) throw new Error('сервер ответил ' + res.status);
+      else if (cfg.v > 0) { syncStatus('wait'); syncSoon(15000); return; }
+      if (syncCfg !== cfg) return;
+      if (!syncCanApply()) { syncWait = true; syncStatus('wait'); return; }
+      const L = localDoc(), B = store.get('syncBase', null);
+      const M = R ? clean(merge3(B, L, R, (cfg.localT || 0) >= rt)) : L;
+      const mine = L.recv && L.recv[cfg.dev];
+      M.recv = { ...(M.recv || {}) }; if (mine) M.recv[cfg.dev] = mine; else delete M.recv[cfg.dev];
+      if (!Object.keys(M.recv).length) delete M.recv;
+      const changed = !same({ ...M, recv: 0 }, { ...L, recv: 0 }), recvChanged = !same(M.recv, L.recv);
+      if (changed || recvChanged) { applyDoc(M); render(); if (changed) toast('Обновлено с другого устройства'); }
+      if (R && same(M, R)) { cfg.v = rv; syncSetLocal('syncBase', M); syncStatus('ok'); return; }
+      const put = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ v: rv, d: await syncEnc(cfg.code, { doc: M, t: Math.max(cfg.localT || 0, rt) }) }) });
+      if (put.status === 409) continue;
+      if (!put.ok) throw new Error('сервер ответил ' + put.status);
+      cfg.v = (await put.json()).v; syncSetLocal('syncBase', M); syncStatus('ok'); return;
+    }
+    throw new Error('много правок одновременно, попробую ещё раз');
+  } catch (e) {
+    syncStatus('err', /Failed to fetch|NetworkError|Load failed|network/i.test(e.message) ? 'нет связи с сервером' : e.message);
+    syncSoon(30000);
+  } finally {
+    syncBusy = false;
+    if (syncAgain) { syncAgain = false; syncSoon(800); }
+  }
+}
+
+// создать общий бюджет: новый код, текущие данные этого устройства — на сервер
+async function syncCreate(server) {
+  const code = syncNewCode();
+  syncCfg = { code, server, dev: syncCfg && syncCfg.dev || newId(), v: 0, localT: Date.now() };
+  syncSetLocal('syncBase', null); syncRecv = {}; syncSetLocal('syncRecv', syncRecv);
+  syncSave(); await syncNow();
+  return syncCfg && syncState === 'ok';
+}
+// подключиться по коду: сначала смотрим, что на сервере
+async function syncPeek(code, server) {
+  const res = await fetch(server + '/r/' + await syncRoom(code), { cache: 'no-store' });
+  if (res.status === 404) throw new Error('по этому коду ничего нет — проверьте код и адрес сервера');
+  if (!res.ok) throw new Error('сервер ответил ' + res.status);
+  const j = await res.json();
+  return (await syncDec(code, j.d)).doc;
+}
+async function syncConnect(code, server, R) {
+  syncCfg = { code, server, dev: newId(), v: 0, localT: 0 };
+  // общий план заменяет здешний; расходы, вписанные суммы и категории объединяются
+  if (R.budget) { budget = budgetAccts(budgetMigrate(JSON.parse(JSON.stringify(R.budget)))); syncSetLocal('budget', budget); }
+  syncSetLocal('syncBase', null); syncRecv = {}; syncSetLocal('syncRecv', syncRecv);
+  syncSave(); await syncNow();
+}
+function syncOff() { syncCfg = null; store.set('sync', null); syncSetLocal('syncBase', null); syncRecv = {}; syncSetLocal('syncRecv', {}); syncStatus(''); }
+const hm = t => { const d = new Date(t); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
+function syncInfoHtml() {
+  if (!syncCfg) return '';
+  const s = syncState === 'busy' ? 'синхронизирую…' : syncState === 'err' ? `<b class="syncerr">не синхронизировано:</b> ${esc(syncCfg.err || '')}` : syncState === 'wait' ? 'синхронизирую чуть позже' : syncCfg.ok ? `синхронизировано в ${hm(syncCfg.ok)}${new Date(syncCfg.ok).toDateString() !== new Date().toDateString() ? ', ' + longDate(new Date(syncCfg.ok).toISOString().slice(0, 10)) : ''}` : 'ещё не синхронизировано';
+  return s;
+}
+const syncLink = () => `${location.origin}${location.pathname}#join=${syncFmt(syncCfg.code)}${syncSrv() !== SYNC_SERVER ? '&s=' + encodeURIComponent(syncSrv()) : ''}`;
+function syncSection() {
+  if (syncCfg) return `
+    <p class="hint" style="margin:6px 0 4px">План и расходы общие для всех устройств с этим кодом. Приходы для налогов остаются на каждом устройстве, в план уходят только их суммы по месяцам.</p>
+    <p class="synci" id="syncInfo">${syncInfoHtml()}</p>
+    <div class="synccode"><span>Код</span><b>${syncFmt(syncCfg.code)}</b></div>
+    <p class="hint" style="margin:0 0 8px">Код — это и ключ шифрования. Давайте его только тем, с кем ведёте бюджет.</p>
+    <button class="btn primary" data-act="syncinvite">Пригласить: отправить ссылку</button>
+    <button class="btn outline" data-act="syncnow">Синхронизировать сейчас</button>
+    <button class="btn quiet" data-act="syncoff">Отключить на этом устройстве</button>
+    <div id="syncBox"></div>`;
+  const need = !SYNC_SERVER;
+  return `
+    <p class="hint" style="margin:6px 0 8px">Ведите план и расходы вместе с партнёром на разных устройствах. Данные шифруются прямо на телефоне кодом синхронизации — сервер видит только шифр. Приходы для налогов остаются у каждого свои.</p>
+    ${need ? `<label class="setrow syncsrv"><span class="l">Адрес сервера<i>ваш Cloudflare Worker, как его завести — в SYNC.md</i></span></label>
+      <input class="in" id="syncSrvIn" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://scrmoney-sync….workers.dev" value="${esc(store.get('syncServer', ''))}">` : ''}
+    <button class="btn primary" data-act="synccreate" style="margin-top:10px">Создать общий бюджет</button>
+    <button class="btn outline" data-act="syncjoin">Подключиться по коду</button>
+    <div id="syncBox">${syncJoin ? syncJoinHtml() : ''}</div>`;
+}
+const syncJoinHtml = () => `<div class="syncjoin"><input class="in" id="syncCodeIn" autocomplete="off" spellcheck="false" autocapitalize="characters" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" value="${esc(syncJoin && syncJoin.code || '')}" aria-label="Код синхронизации">
+  <button class="btn primary" data-act="syncjoingo">Подключиться</button></div>`;
+const syncServerIn = () => { const i = $('#syncSrvIn'); const v = (i ? i.value.trim() : syncSrv()).replace(/\/+$/, ''); if (i) store.set('syncServer', v); return v; };
+const syncBox = h => { const b = $('#syncBox'); if (b) b.innerHTML = h; };
+async function syncAct(act) {
+  if (document.activeElement && document.activeElement.blur && act !== 'syncjoin') document.activeElement.blur();
+  switch (act) {
+    case 'synccreate': {
+      const s = syncServerIn();
+      if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)/.test(s)) { toast('Впишите адрес сервера'); $('#syncSrvIn') && $('#syncSrvIn').focus(); return; }
+      syncBox('<p class="hint" style="text-align:center">создаю…</p>');
+      const ok = await syncCreate(s);
+      if (!ok) { const e = syncCfg && syncCfg.err; syncOff(); render(); syncBox(`<p class="hint syncerr" style="text-align:center">Не получилось: ${esc(e || 'нет связи с сервером')}</p>`); return; }
+      render(); toast('Общий бюджет создан'); syncBox(syncInviteHtml()); return;
+    }
+    case 'syncjoin': syncJoin = syncJoin || {}; syncBox(syncJoinHtml()); $('#syncCodeIn').focus(); return;
+    case 'syncjoingo': {
+      const code = syncNorm($('#syncCodeIn').value), s = syncServerIn();
+      if (code.length !== 20) { toast('В коде 20 знаков'); return; }
+      if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)/.test(s)) { toast('Впишите адрес сервера'); return; }
+      syncJoin = { code, server: s };
+      syncBox('<p class="hint" style="text-align:center">проверяю код…</p>');
+      try { syncJoin.R = await syncPeek(code, s); } catch (e) { syncBox(syncJoinHtml() + `<p class="hint syncerr" style="text-align:center">${esc(/Failed to fetch|NetworkError|Load failed/i.test(e.message) ? 'нет связи с сервером' : e.message)}</p>`); return; }
+      if (budget && syncJoin.R.budget && !same(clean(budget), clean(syncJoin.R.budget))) {
+        syncBox(`<div class="confirm">На этом устройстве уже есть свой план. Общий план его заменит, а расходы объединятся.<div class="row"><button class="btn outline" data-act="syncjoinno">Отмена</button><button class="btn primary" data-act="syncjoinyes">Взять общий</button></div></div>`);
+        return;
+      }
+    }
+    // fallthrough
+    case 'syncjoinyes': {
+      const j = syncJoin; syncJoin = null;
+      await syncConnect(j.code, j.server, j.R);
+      tab = budget ? 'plan' : tab; render(); window.scrollTo(0, 0);
+      toast(syncState === 'ok' ? 'Подключено к общему бюджету' : 'Подключено, синхронизация чуть позже');
+      return;
+    }
+    case 'syncjoinno': syncJoin = null; syncBox(''); return;
+    case 'syncinvite': {
+      const link = syncLink(), text = 'Общий бюджет в scrmoney: откройте ссылку на своём телефоне';
+      if (navigator.share) { try { await navigator.share({ title: 'scrmoney', text, url: link }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+      syncBox(syncInviteHtml());
+      try { await navigator.clipboard.writeText(link); toast('Ссылка скопирована'); } catch (e) {}
+      return;
+    }
+    case 'synccopy': try { await navigator.clipboard.writeText(syncLink()); toast('Ссылка скопирована'); } catch (e) { toast('Не удалось скопировать'); } return;
+    case 'syncnow': syncNow(); return;
+    case 'syncgo': tab = 'settings'; render(true); window.scrollTo(0, 0); return;
+    case 'syncoff': syncBox(`<div class="confirm">Отключить синхронизацию на этом устройстве? Данные останутся здесь, у партнёра всё сохранится.<div class="row"><button class="btn outline" data-act="syncoffno">Нет</button><button class="btn primary" data-act="syncoffyes">Отключить</button></div></div>`); return;
+    case 'syncoffno': syncBox(''); return;
+    case 'syncoffyes': syncOff(); render(); toast('Синхронизация отключена'); return;
+  }
+}
+const syncInviteHtml = () => `<div class="syncinv"><p class="hint" style="margin:8px 0 6px">Отправьте эту ссылку партнёру — откроет её на своём телефоне и окажется в общем бюджете:</p>
+  <input class="in" readonly value="${esc(syncLink())}" onclick="this.select()" aria-label="Ссылка-приглашение">
+  <button class="btn outline" data-act="synccopy">Скопировать ссылку</button></div>`;
+
+// приглашение по ссылке: #join=КОД&s=адрес
+(function syncFromHash() {
+  const h = new URLSearchParams(location.hash.slice(1)), code = syncNorm(h.get('join'));
+  if (!code) return;
+  history.replaceState(null, '', location.pathname + location.search);
+  if (syncCfg && syncCfg.code === code) { toast('Это устройство уже в общем бюджете'); return; }
+  if (h.get('s')) store.set('syncServer', h.get('s').replace(/\/+$/, ''));
+  if (syncCfg) syncOff();
+  syncJoin = { code };
+  tab = 'settings';
+  setTimeout(() => { const b = document.querySelector('[data-act=syncjoingo]'); if (b) b.click(); }, 50);
+})();
+document.addEventListener('click', e => { const el = e.target.closest('[data-act^=sync]'); if (el) syncAct(el.dataset.act); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') syncSoon(300); else if (syncCfg && !syncBusy) syncNow(); });
+window.addEventListener('online', () => syncSoon(300));
+document.addEventListener('focusout', () => { if (syncWait) syncSoon(1500); });
+setInterval(() => { if (syncCfg && document.visibilityState === 'visible' && !syncBusy) syncNow(); }, 45000);
+
 render(true);
+syncStatus('');
+syncSoon(600);
 // сначала один запрос всех валют на сегодня, из него же берётся курс доллара
 loadFx([...new Set([...fxList, 'USD', 'EUR', 'RUB'])]).finally(() => {
   render();
