@@ -1420,6 +1420,16 @@ html.skin-apple { --leaf: #8ed24a; --leaf-soft: #c5e8a6; --leaf-ink: #3f7a1f; --
 .cfpop .btn { display: inline-flex; width: auto; margin: 0; padding: 0 14px; min-height: 38px; align-items: center; }
 .cfpop .btn.ink { background: var(--ink); color: var(--page); }
 @media (min-width: 900px) { .wide #top .row { max-width: 1320px; } }
+.mcheck { margin: 12px 10px 0; padding: 12px 14px; font-size: 14px; line-height: 1.45; background: var(--st-lemon); box-shadow: 2px 4px 10px rgba(60,50,30,.15); }
+.book .mcheck { margin: 22px 0 0; }
+.mcheck.over { background: var(--st-pink); } .mcheck.ok { background: var(--st-mint); }
+.mcheck .wbtn, .wacts .wbtn { display: inline-block; margin: 8px 8px 0 0; font: inherit; font-size: 13.5px; padding: 6px 12px; border: 1.4px solid var(--ink); background: var(--page); color: var(--ink); cursor: pointer; }
+.wacts { display: block; }
+.istack { display: flex; height: 18px; margin-top: 12px; border: 1.4px solid var(--ink); }
+.istack i { display: block; height: 100%; }
+.clg .sqd { display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; }
+.sub3 { margin: 24px 0 4px; font-family: var(--hand); font-weight: 700; font-size: 25px; }
+.cmpb i { display: block; font-style: normal; font-size: 12.5px; color: var(--soft); margin-top: 4px; }
 .pv .sb { display: none; }
 @media (max-width: 899px) {
   .book .bhead .hello { font-size: 30px; }
@@ -2010,7 +2020,21 @@ function budgetCalc(B) {
     s.short = cash - s.spend < 0 ? -(cash - s.spend) : 0;
     cash = cash - s.spend - s.rate * s.n;
   });
-  const rateOn = d => (segs.find(s => d >= s.start && d <= s.stop) || { rate: 0 }).rate;
+  /* План по лимитам (v27): если лимиты повседневных трат заданы, тратим ровно по ним — «в день» = лимиты месяца / дни месяца,
+     а всё, что остаётся после платежей, разовых трат и лимитов, копится. «Не хватает» — когда остаток на счетах опускается ниже запаса. */
+  const limMode = limActive(B), dimOf = ym => new Date(+ym.slice(0, 4), +ym.slice(5), 0).getDate();
+  const limDay = d => limSumFor(ymOf(d), B) / dimOf(ymOf(d));
+  if (limMode) segs.forEach(s => { s.rate = limDay(s.start); s.short = 0; });
+  const rateOn = d => limMode ? limDay(d) : (segs.find(s => d >= s.start && d <= s.stop) || { rate: 0 }).rate;
+  const shortM = {};
+  if (limMode) {
+    const byD = {}; for (const e of ev) byD[e.date] = (byD[e.date] || 0) + (e.kind === 'inc' ? e.gel : -e.gel);
+    let bal = have - res, low = 0;
+    for (let d = now; d <= hEnd; d = shift(d, 1)) {
+      bal += (byD[d] || 0) - limDay(d);
+      if (bal < low - 0.5) { shortM[ymOf(d)] = (shortM[ymOf(d)] || 0) + (low - bal); low = bal; }
+    }
+  }
 
   // остаток на счёте по дням текущего периода, если тратить по плану
   const series = [];
@@ -2026,24 +2050,27 @@ function budgetCalc(B) {
     const ym = ymAdd(cur, i), from = i === 0 ? now : `${ym}-01`, to = endOfMonth(`${ym}-01`);
     const inM = e => ymOf(e.date) === ym, sum = (k) => ev.filter(e => e.kind === k && inM(e)).reduce((t, e) => t + e.gel, 0);
     let life = 0;
-    for (const s of segs) { const a = s.start > from ? s.start : from, b = s.stop < to ? s.stop : to; if (a <= b) life += s.rate * (daysTo(a, b) + 1); }
     const days = daysTo(from, to) + 1;
-    return { ym, inc: sum('inc'), need: sum('need'), once: sum('once'), goal: sum('goal'), life, perDay: life / days, days,
-      short: segs.filter(s => ymOf(s.start) === ym).reduce((t, s) => t + s.short, 0), onceList: ev.filter(e => e.kind === 'once' && inM(e)) };
+    if (limMode) life = limSumFor(ym, B) / dimOf(ym) * days;
+    else for (const s of segs) { const a = s.start > from ? s.start : from, b = s.stop < to ? s.stop : to; if (a <= b) life += s.rate * (daysTo(a, b) + 1); }
+    const inc = sum('inc'), need = sum('need'), once = sum('once'), goal = sum('goal');
+    return { ym, inc, need, once, goal, life, perDay: life / days, days, avail: inc - need - once - goal, save: inc - need - once - life,
+      short: limMode ? shortM[ym] || 0 : segs.filter(s => ymOf(s.start) === ym).reduce((t, s) => t + s.short, 0), onceList: ev.filter(e => e.kind === 'once' && inM(e)) };
   });
 
   // текущий период целиком
   const pOut = outs.filter(e => e.date <= pEnd);
   const pNeed = pOut.filter(e => e.kind !== 'goal').reduce((t, e) => t + e.gel, 0), pGoal = pOut.filter(e => e.kind === 'goal').reduce((t, e) => t + e.gel, 0);
   let pLife = 0;
-  for (const s of segs) { const b = s.stop < pEnd ? s.stop : pEnd; if (s.start <= b) pLife += s.rate * (daysTo(s.start, b) + 1); }
+  if (limMode) for (let d = now; d <= pEnd; d = shift(d, 1)) pLife += limDay(d);
+  else for (const s of segs) { const b = s.stop < pEnd ? s.stop : pEnd; if (s.start <= b) pLife += s.rate * (daysTo(s.start, b) + 1); }
   const pKeep = Math.max(0, have + pIncSum - pNeed - pGoal - pLife - res);
   const pd = payday(B);
   const goals = B.goals.map((g, i) => ({ g, gi: goalInfo(g, pd, G, B.start || now), color: GPAL[i % GPAL.length] }));
   const spentToday = spends.filter(x => x.date === now).reduce((t, x) => t + x.gel, 0);
-  return { have, past, res, end: pEnd, N, segs, series, months, goals, pd, noRate, spentToday,
+  return { have, past, res, end: pEnd, N, segs, series, months, goals, pd, noRate, spentToday, limMode,
     pInc, pIncSum, pOut, pNeed, pGoal, pLife, pKeep, total: have + pIncSum,
-    short: segs.filter(s => s.start <= pEnd).reduce((t, s) => t + s.short, 0) };
+    short: limMode ? months.filter(m => m.ym <= ymOf(pEnd)).reduce((t, m) => t + m.short, 0) : segs.filter(s => s.start <= pEnd).reduce((t, s) => t + s.short, 0) };
 }
 
 /* ---------- анкета ---------- */
@@ -2238,11 +2265,11 @@ function showWiz(anim) {
 }
 const haveTot = d => { const t = haveGel(d); return d.accts.length > 1 || d.accts.some(x => x.c !== 'GEL') ? `Всего на счетах: <b class="num">${gel(t)}</b>` : ''; };
 function limHint(d) {
-  const c = budgetCalc(d), m = c.months[1] || c.months[0], life = m.life, sum = Object.values(d.lim || {}).reduce((t, v) => t + (+v || 0), 0);
-  const base = `В месяц после обязательных трат и целей остаётся ≈ <b class="num">${gel(life)}</b>. Распределено <b class="num">${gel(sum)}</b>.`;
-  if (sum > life + 1) return base + ` <span class="w">Это больше на ${gel(sum - life)} — уменьшите траты или взносы на цели.</span>`;
-  if (life - sum > 1 && sum > 0) return base + ` Ещё свободно <b class="num">${gel(life - sum)}</b> — на мелочи или можно добавить к целям.`;
-  return base;
+  const c = budgetCalc(d), m = c.months[1] || c.months[0], life = m.avail, sum = Object.entries(d.lim || {}).filter(([k]) => k !== 'home').reduce((t, [, v]) => t + (+v || 0), 0);
+  const base = `В месяц после обязательных трат и взносов на цели остаётся ≈ <b class="num">${gel(life)}</b>. По лимитам — <b class="num">${gel(sum)}</b>.`;
+  if (sum > life + 1) return base + ` <span class="w">Это больше на ${gel(sum - life)} — уменьшите лимиты или взносы на цели.</span>`;
+  if (life - sum > 1 && sum > 0) return base + ` Остальное — <b class="num">${gel(life - sum)}</b> в месяц — пойдёт в копилку.`;
+  return base + ' Всё, что не распределите по лимитам, будет копиться.';
 }
 function avgRowW(x) {
   const a = avgIncome();
@@ -2372,7 +2399,19 @@ function goalPut(sign) {
 function planWarns(c, pSegs = c.segs.filter(s => s.start <= c.end)) {
   const warns = [];
   for (const s of pSegs) if (s.short) warns.push(`До ${shortDate(s.stop < c.end ? s.stop : c.end)} не хватает <b class="num">${gel(s.short)}</b>. ${s.out.length ? `Можно перенести «${esc(s.out[s.out.length - 1].n)}» на после зарплаты, взять из запаса или урезать траты.` : 'Можно взять из запаса.'}`);
-  for (const m of c.months.slice(1)) if (m.short > 1) warns.push(`${ymName(m.ym)}: не хватит <b class="num">${gel(m.short)}</b>${m.onceList.length ? ` — из-за «${esc(m.onceList.map(e => e.n).join('», «'))}»` : ''}. Уменьшите взносы на цели или перенесите трату.`);
+  if (c.limMode) {
+    // постоянная нехватка: лимиты + платежи + взносы больше дохода почти каждый месяц — одно предупреждение на все месяцы
+    const tail = c.months.slice(1), lack = tail.filter(m => m.avail - m.life < -1);
+    const gaps = lack.map(m => m.life - m.avail).sort((x, y) => x - y), steady = lack.length >= Math.min(6, tail.length) ? gaps[Math.floor(gaps.length / 2)] : 0;   // медиана: крупные разовые траты не в счёт
+    if (steady > 1) warns.push(`<b>Каждый месяц не хватает ≈ ${gel(steady)}</b>: лимиты (${gel(limSumFor(tail[0].ym))}), платежи и взносы на цели больше дохода.
+      <span class="wacts"><button class="wbtn" data-act="limcutall" data-v="${r2(steady)}">Урезать лимиты на ${gel(Math.min(steady, limSumFor(tail[0].ym)))} в месяц</button>${c.goals.some(x => !x.gi.done && x.gi.monthly > 0) ? '<button class="wbtn" data-act="bwizgoals">Уменьшить взносы на цели</button>' : ''}</span>`);
+    // разовая нехватка: крупная трата, на которую не успели накопить
+    const spike = c.months.filter(m => m.short > Math.max(1, steady * 1.5)).sort((x, y) => y.short - x.short)[0];
+    if (spike) { const L = limSumFor(spike.ym), cut = Math.min(spike.short, L);
+      warns.push(`<b>${ymName(spike.ym)}: не хватит ${gel(spike.short)}</b>${spike.onceList.length ? ` — из-за «${esc(spike.onceList.map(e => e.n).join('», «'))}»` : ''}${c.res ? ' (запас не считаем)' : ''}.
+      <span class="wacts">${L > 0 ? `<button class="wbtn" data-act="limcut" data-ym="${spike.ym}" data-v="${r2(cut)}">Урезать лимиты ${ymNameP(spike.ym).replace(/^/, 'в ')} на ${gel(cut)}${cut < spike.short - 1 ? ` (и не хватит ещё ${gel(spike.short - cut)})` : ''}</button>` : ''}${c.goals.some(x => !x.gi.done && x.gi.monthly > 0) ? '<button class="wbtn" data-act="bwizgoals">Уменьшить взносы на цели</button>' : ''}</span>`); }
+  }
+  else for (const m of c.months.slice(1)) if (m.short > 1) warns.push(`${ymName(m.ym)}: не хватит <b class="num">${gel(m.short)}</b>${m.onceList.length ? ` — из-за «${esc(m.onceList.map(e => e.n).join('», «'))}»` : ''}. Уменьшите взносы на цели или перенесите трату.`);
   for (const { g, gi } of c.goals) if (!gi.done && !(gi.monthly > 0)) warns.push(`Для цели «${esc(g.n)}» не задано, сколько откладывать в месяц.`);
   if (c.past.length) warns.push(`${c.past.map(x => `«${esc(x.n || 'Доход')}» (${shortDate(x.date)})`).join(', ')} — дата уже прошла, в плане не учтено. Если деньги пришли, обновите, сколько у вас сейчас.`);
   if (c.noRate) warns.push('Для некоторых валют пока нет курса НБГ, они посчитаны как ноль.');
@@ -2453,10 +2492,11 @@ function renderPlan() {
       ${viewSeg()}<button class="rbtn" data-act="bwiz" aria-label="Изменить ответы"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></svg></button></div>
     <div class="card bhero" style="--d:40ms">
       <div class="bh"><div class="bt"><div class="k">Можно тратить в день</div><div class="v num">${bm(s0.rate)}<small> ${bS()}</small></div>
-        <div class="s">до ${shortDate(s0.stop < c.end ? s0.stop : c.end)} включительно</div></div>
+        <div class="s">${c.limMode ? `по лимитам · ${MONTHS[ymd(now)[1] - 1].toLowerCase()}` : `до ${shortDate(s0.stop < c.end ? s0.stop : c.end)} включительно`}</div></div>
         <div class="bg">${ring(1 - pToday, c.spentToday > s0.rate)}<div class="bgt"><b class="num">${bm(left)}</b><i>осталось<br>сегодня</i></div></div></div>
-      ${c.spentToday ? `<div class="btoday">Сегодня по учёту расходов потрачено <b class="num">${gel(c.spentToday)}</b>${c.spentToday > s0.rate ? ` — это на ${gel(c.spentToday - s0.rate)} больше дневного` : ''}.</div>` : `<div class="btoday">Записывайте траты во вкладке «Расходы» — тут будет видно, сколько осталось на сегодня.</div>`}
-      <div class="bchips">${next ? `<span class="bnext">С ${shortDate(next.start)} — <b class="num">${gel(next.rate)}</b> в день</span>` : ''}${gMonthly ? `<span class="bnext goal">🎯 на цели <b class="num">${gel(gMonthly)}</b> в месяц</span>` : ''}</div>
+      ${c.spentToday ? `<div class="btoday">Сегодня по учёту расходов потрачено <b class="num">${gel(c.spentToday)}</b>${c.spentToday > s0.rate ? ` — это на ${gel(c.spentToday - s0.rate)} больше дневного` : ''}.</div>` : c.limMode ? `<div class="btoday">Это лимиты месяца (<b class="num">${gel(limSumFor(ymOf(now)))}</b>), поделённые на дни. Всё сверх них копится: в этом месяце ≈ <b class="num">${gel(Math.max(0, c.months[0].save))}</b>.</div>` : `<div class="btoday">Записывайте траты во вкладке «Расходы» — тут будет видно, сколько осталось на сегодня.</div>`}
+      ${monthCheckHtml(c)}
+      <div class="bchips">${c.limMode ? (c.months[1] && Math.abs(c.months[1].perDay - s0.rate) > .5 ? `<span class="bnext">С 1 ${MONTHS_G[+c.months[1].ym.slice(5) - 1]} — <b class="num">${gel(c.months[1].perDay)}</b> в день</span>` : '') : next ? `<span class="bnext">С ${shortDate(next.start)} — <b class="num">${gel(next.rate)}</b> в день</span>` : ''}${gMonthly ? `<span class="bnext goal">🎯 на цели <b class="num">${gel(gMonthly)}</b> в месяц</span>` : ''}</div>
     </div>
     ${warns.map((w, k) => `<div class="bwarn" style="--d:${60 + k * 20}ms"><span aria-hidden="true">⚠️</span><div>${w}</div></div>`).join('')}
     ${c.past.length ? `<button class="btn outline" data-act="bwizhave" style="width:calc(100% - 20px);margin:10px 10px 0">Обновить, сколько денег сейчас</button>` : ''}
@@ -2554,7 +2594,7 @@ function dailyCard(c) {
   const spent = id => spends.filter(x => x.date.startsWith(ym) && (x.cat || 'other') === id).reduce((t, x) => t + x.gel, 0);
   const list = catSorted(CATS.filter(k => limFor(k.id, ym) > 0 || spent(k.id) > 0 && k.id !== 'home')).map((k, i) => ({ k, lim: limFor(k.id, ym), sp: spent(k.id), col: PAL[CATS.indexOf(k) % PAL.length] }));
   const limSum = list.reduce((t, r) => t + r.lim, 0), spSum = list.reduce((t, r) => t + r.sp, 0);
-  const life = (c.months[1] || c.months[0]).life;
+  const life = (c.months[1] || c.months[0]).avail;
   if (!limSum) return `<div class="card" style="--d:90ms"><h2 class="hl">Повседневные траты</h2>
     <p class="hint" style="margin:8px 0 10px">Сейчас на продукты, кафе, транспорт и мелочи остаётся ≈ <b class="num">${gel(life)}</b> в месяц одной суммой. Распределите по статьям — будет видно, сколько осталось на каждую.</p>
     <button class="btn outline" data-act="bwizdaily" style="margin:0">Распределить по статьям</button></div>`;
@@ -2930,7 +2970,7 @@ function monthTable(c, ym) {
   });
   const sum = (a, k) => a.reduce((t, r) => t + (r[k] || 0), 0);
   const mi = ymDiff(ymOf(now), ym), mrow = mi >= 0 && mi < c.months.length ? c.months[mi] : null;
-  const life = mrow ? mrow.life : Math.max(0, sum(inc, 'plan') - sum(bills, 'plan') - sum(once, 'plan') - sum(goals, 'plan'));
+  const life = mrow ? mrow.avail : Math.max(0, sum(inc, 'plan') - sum(bills, 'plan') - sum(once, 'plan') - sum(goals, 'plan'));
   const limSum = cats.reduce((t, r) => t + r.lim, 0);
   const P = { inc: sum(inc, 'plan'), bills: sum(bills, 'plan'), once: sum(once, 'plan'), exp: limSum || life, goals: sum(goals, 'plan') };
   const A = { inc: IF.total, bills: sum(bills, 'fact'), once: sum(once, 'fact'), exp: cats.reduce((t, r) => t + r.fact, 0), goals: sum(goals, 'fact') };
@@ -3299,6 +3339,7 @@ function cfSet(id, ym, a, c) {
   (budget.cf[ym] = budget.cf[ym] || {})[id] = { a: String(a), c };
 }
 function limFor(k, ym, B = budget) { const m = B && B.limM && B.limM[ym]; return m && m[k] != null ? +m[k] || 0 : +((B && B.lim) || {})[k] || 0; }
+function limActive(B = budget) { return !!B && (Object.entries(B.lim || {}).some(([k, v]) => k !== 'home' && +v > 0) || Object.values(B.limM || {}).some(o => Object.keys(o).length)); }
 function limSumFor(ym, B = budget) {
   if (!B) return 0;
   const ks = new Set([...Object.keys(B.lim || {}), ...Object.keys((B.limM || {})[ym] || {})].filter(k => k !== 'home'));
@@ -3310,6 +3351,50 @@ const goTab = t => { tab = t; render(true); window.scrollTo(0, 0); };
 const handNote = (t, cls = '') => `<span class="hand ${cls}">${t}</span>`;
 const daysWord = n => `${n} ${plural(n, 'день', 'дня', 'дней')}`;
 const accAgo = () => budget && budget.accAt ? daysTo(budget.accAt, now) : null;
+
+
+/* ---------- проверка раз в месяц: по остаткам на счетах, без записи трат ----------
+   На жизнь ушло ≈ остаток в начале месяца + доходы − платежи и разовые − взносы на цели − остаток в конце. */
+function balAt(ym) {      // снимок остатков ближе всего к 1-му числу (за 3 дня до — по 5-е: точно, до ±10 дней — примерно)
+  const B = (budget && budget.bal) || {}, first = `${ym}-01`;
+  let best = null;
+  for (const d of Object.keys(B)) { const k = Math.abs(daysTo(first, d)); if (k <= 10 && (!best || k < best.k)) best = { d, v: B[d], k }; }
+  if (!best) return null;
+  best.exact = daysTo(first, best.d) >= -3 && daysTo(first, best.d) <= 4;
+  return best;
+}
+function planOutOf(ym) {
+  let t = 0;
+  for (const x of budget.exp) {
+    const o = cfGet(x.id, ym);
+    if (o) { t += G0(o.a, o.c); continue; }
+    if (x.rep === 'once' ? ymOf(x.date || now) === ym : occursIn(x, ym, 'exp')) t += G0(x.a, x.c);
+  }
+  return t;
+}
+function planIncOf(ym) {
+  let t = 0;
+  for (const x of budget.inc) { if (x.off) continue; const o = cfGet(x.id, ym); if (o) { t += G0(o.a, o.c); continue; } if (occursIn(x, ym, 'inc')) t += isAvg(x) ? incA(x) : G0(x.a, x.c); }
+  return t;
+}
+function monthFact(ym) {
+  const a = balAt(ym), b = balAt(ymAdd(ym, 1));
+  if (!a || !b || a.d >= b.d) return null;
+  const fi = incFactOf(ym).total, inc = fi > 0 ? fi : planIncOf(ym), out = planOutOf(ym);
+  let goals = 0, goalsPlan = false;
+  for (const g of budget.goals) goals += (g.log || []).filter(l => ymOf(l.d) === ym).reduce((t, l) => t + l.g, 0);
+  if (!goals) { const m = budgetCalc(budget).months.find(q => q.ym === ym); if (m) { goals = m.goal; goalsPlan = goals > 0; } }
+  const life = a.v + inc - out - goals - b.v, lim = limSumFor(ym);
+  return { ym, life, lim, diff: life - lim, inc, incPlan: !(fi > 0), out, goals, goalsPlan, approx: !a.exact || !b.exact, from: a.d, to: b.d };
+}
+function monthCheckHtml(c) {
+  if (!budget || !limActive()) return '';
+  const cur = ymOf(now), day = ymd(now)[2], prev = ymAdd(cur, -1), haveNow = balAt(cur), f = monthFact(prev);
+  if (day <= 7 && !(haveNow && haveNow.d >= shift(`${cur}-01`, -1))) return `<div class="mcheck ask"><b>Начало месяца — обновите остатки на счетах.</b> По ним посчитаю, уложились ли вы в лимиты ${MONTHS_G[+prev.slice(5) - 1]}, — записывать траты не нужно. <button class="wbtn" data-act="bwizhave">Обновить остатки</button></div>`;
+  if (f && day <= 20 && f.life < 0) return `<div class="mcheck"><b>${MONTHS[+prev.slice(5) - 1]}: остатки выросли больше, чем по плану.</b> Похоже, пришло больше денег, чем записано, — проверьте доходы во вкладке «Приходы» или в таблице.</div>`;
+  if (f && day <= 20) return `<div class="mcheck ${f.diff > 1 ? 'over' : 'ok'}"><b>${MONTHS[+prev.slice(5) - 1]}: ${f.diff > 1 ? `перерасход ${gel(f.diff)}` : `экономия ${gel(-f.diff)} ✓`}</b> — на жизнь ушло ≈ ${gel(f.life)} при лимитах ${gel(f.lim)}.${f.approx ? ' Примерно: остатки обновлены не в начале месяца.' : ''}${f.incPlan ? ' Доходы — по плану.' : ''}${f.goalsPlan ? ' Взносы на цели — по плану.' : ''}</div>`;
+  return '';
+}
 
 /* ---------- «Блокнот»: план на компьютере ---------- */
 let calView = store.get('calView', 'year'), calYm = ymOf(now);
@@ -3402,7 +3487,7 @@ function renderBook() {
   const by = calEvents(), warns = planWarns(c), s = saveSim(c), cur = ymOf(now);
   if (calYm < cur || ymDiff(cur, calYm) > 11) calYm = cur;
   const dTo = next ? daysTo(now, next.start) : null;
-  const hello = next ? `${next.inc.map(e => e.n || 'Доход').slice(0, 2).join(' и ')} — через ${dTo === 1 ? 'день' : daysWord(dTo)}${c.short ? '.' : '. Всё под контролем.'}` : 'План на год вперёд.';
+  const hello = next ? `${next.inc.map(e => e.n || 'Доход').slice(0, 2).join(' и ')} — через ${dTo === 1 ? 'день' : daysWord(dTo)}${warns.length ? '.' : '. Всё под контролем.'}` : 'План на год вперёд.';
   const cal = calView === 'year' ? calYear(c, by, s) : calMonth(c, by, calYm);
   const tight = c.series.length ? c.series.reduce((a, b) => b.bal < a.bal ? b : a) : null;
   $main.innerHTML = `
@@ -3413,12 +3498,13 @@ function renderBook() {
       <div class="blay">
         <div class="bmain">
           <section class="btd">
-            <div><div class="cap">сегодня можно ещё</div><div class="big num"><span class="hl">${bm(left)} ${bS()}</span></div>
-              <div>из ${gel(s0.rate)} на день${c.spentToday ? ` · потрачено ${gel(c.spentToday)}` : ''}</div></div>
+            <div><div class="cap">${c.spentToday ? 'сегодня можно ещё' : c.limMode ? 'можно тратить в день' : 'сегодня можно'}</div><div class="big num"><span class="hl">${bm(left)} ${bS()}</span></div>
+              <div>${c.spentToday ? `из ${gel(s0.rate)} на день · записано ${gel(c.spentToday)}` : c.limMode ? `лимиты ${MONTHS_G[ymd(now)[1] - 1]} — ${gel(limSumFor(cur))}` : `до ${shortDate(s0.stop)}`}</div></div>
             <div class="bnote"><svg class="arr" viewBox="0 0 70 40" aria-hidden="true"><path d="M66 8C46 2 22 6 8 30M8 30 6 18M8 30l11-4"/></svg>
-              ${handNote(c.spentToday > s0.rate ? `Сегодня на ${gel(c.spentToday - s0.rate)} больше дневного — завтра будет чуть меньше.` : next ? `С ${shortDate(next.start)} — ${gel(next.rate)} в день.` : `До ${shortDate(s0.stop)} — по ${gel(s0.rate)} в день.`, 'pen big2')}
+              ${handNote(c.limMode ? `Тратим по лимитам, остальное — на цели и в копилку: ≈ ${gel(Math.max(0, (c.months[1] || c.months[0]).save))} в месяц.` : c.spentToday > s0.rate ? `Сегодня на ${gel(c.spentToday - s0.rate)} больше дневного — завтра будет чуть меньше.` : next ? `С ${shortDate(next.start)} — ${gel(next.rate)} в день.` : `До ${shortDate(s0.stop)} — по ${gel(s0.rate)} в день.`, 'pen big2')}
               <div class="row2"><button class="btn ink" data-act="gotab" data-tab="spend">+ записать расход</button><button class="btn outline" data-act="pview" data-v="table">таблица месяцев</button></div></div>
           </section>
+          ${monthCheckHtml(c)}${!c.limMode ? `<section class="sticky lemon warnn"><h2 class="t">Задайте лимиты</h2><p>Пока «в день» — это все свободные деньги. Распределите повседневные траты по лимитам (продукты, кафе, транспорт…) — остальное будет копиться.</p><button class="btn ink" data-act="bwizdaily">Задать лимиты</button></section>` : ''}
           ${warns.length ? `<section class="sticky pink warnn"><h2 class="t">Обратите внимание</h2>${warns.map(w => `<p>${w}</p>`).join('')}</section>` : ''}
           <section class="bcal">
             <div class="bsh"><h2>${calView === 'year' ? 'Год' : `${MONTHS[+calYm.slice(5) - 1]} ${calYm.slice(0, 4) !== cur.slice(0, 4) ? calYm.slice(0, 4) : ''}`} ${handNote(calView === 'year' ? `— ${ymName(cur, true).toLowerCase()} … ${ymName(ymAdd(cur, 11), true).toLowerCase()}` : '— что и когда', 'soft')}</h2>
@@ -3446,18 +3532,27 @@ function renderBook() {
 let pgGoal = null, pgExtra = 0, pgCuts = {};
 const pgSteps = () => ({ GEL: [0, 100, 200, 500], USD: [0, 50, 100, 200], EUR: [0, 50, 100, 200], RUB: [0, 5000, 10000, 20000] }[baseCur()] || [0, 50, 100, 200]);
 function cutList(c) {
-  const av = catAvg(), cur = ymOf(now), day = ymd(now)[2], dim = daysTo(`${cur}-01`, endOfMonth(now)) + 1;
+  const cur = ymOf(now), nx = ymAdd(cur, 1), incM = (c.months[1] || c.months[0]).inc || 0;
   const spent = id => spends.filter(x => x.date.startsWith(cur) && (x.cat || 'other') === id).reduce((t, x) => t + x.gel, 0);
-  const rows = CATS.filter(k => k.id !== 'home' && (av[k.id] > 0 || spent(k.id) > 0 || limFor(k.id, cur) > 0)).map(k => {
-    const a = av[k.id] || 0, sp = spent(k.id), proj = day >= 5 ? sp / day * dim : null, lim = limFor(k.id, cur);
-    return { k, avg: a, sp, proj, lim, over: proj != null && a > 40 && proj > a * 1.2 && proj - a > 20 };
-  }).sort((x, y) => y.avg + y.sp - (x.avg + x.sp));
-  const nice = v => { const b = bK(), u = baseCur() === 'RUB' ? 500 : 5; return Math.max(u, Math.round(v / b / u) * u) * b; };
-  const cuts = rows.filter(r => !['health'].includes(r.k.id) && (r.avg > 0 || r.lim > 0)).slice(0, 5).map(r => {
-    const base = r.lim || r.avg, cut = nice(base * (r.over ? .25 : .15));
-    return { id: r.k.id, n: r.k.n, s: r.k.s, cut, base, why: r.over ? `в этом месяце идёт к ${gel(r.proj)} — обычно ${gel(r.avg)}` : r.avg ? `обычно ${gel(r.avg)} в месяц` : `лимит ${gel(r.lim)}` };
-  });
-  return { rows, cuts };
+  const rows = catSorted(CATS.filter(k => k.id !== 'home' && limFor(k.id, nx) + limFor(k.id, cur) > 0)).map(k => ({ k, lim: limFor(k.id, nx) || limFor(k.id, cur), sp: spent(k.id) }));
+  const nice = v => { const b = bK(), u = baseCur() === 'RUB' ? 500 : baseCur() === 'GEL' ? 10 : 5; return Math.max(u, Math.round(v / b / u) * u) * b; };
+  const cuts = rows.filter(r => r.k.id !== 'health').sort((x, y) => y.lim - x.lim).slice(0, 5).map(r => ({ id: r.k.id, n: r.k.n, s: r.k.s, cut: nice(r.lim * .15), base: r.lim,
+    why: `лимит ${gel(r.lim)}${incM > 0 ? ` — ${money(r.lim / incM * 100, 0)}% дохода` : ''}` }));
+  return { rows, cuts, incM };
+}
+// насколько раньше накопится цель, если откладывать ещё cut в месяц
+function cutEffect(gi, cut, extra) {
+  if (gi.done || !(gi.monthly + extra > 0)) return '';
+  const n0 = Math.ceil((gi.left - .5) / (gi.monthly + extra)), n1 = Math.ceil((gi.left - .5) / (gi.monthly + extra + cut)), d = n0 - n1;
+  return d > 0 ? ` → цель на ${mword(d)} раньше` : '';
+}
+// итоги прошлых месяцев по остаткам
+function monthFactsHtml() {
+  if (!budget || !limActive()) return '';
+  const cur = ymOf(now), list = Array.from({ length: 12 }, (_, i) => monthFact(ymAdd(cur, -1 - i))).filter(Boolean);
+  if (!list.length) return `<p class="bline hint">Итоги по месяцам появятся, когда вы обновите остатки на счетах в начале следующего месяца: «перерасход» или «экономия» против лимитов — без записи трат.</p>`;
+  return `<h3 class="sub3">Уложились ли в лимиты — по остаткам</h3>${list.map(f => `<div class="crow"><div><b>${ymName(f.ym)}</b><i>${f.approx ? 'примерно' : 'по остаткам на 1-е число'}</i></div>
+    <div class="num">${f.life < 0 ? 'остатки выросли больше плана — проверьте доходы' : `на жизнь ≈ ${gel(f.life)} · лимиты ${gel(f.lim)}`}</div><div class="num rt">${f.life < 0 ? '—' : `<b class="${f.diff > 1 ? 'neg' : 'pos'}">${f.diff > 1 ? '+' + gel(f.diff) : '−' + gel(-f.diff)}</b><i>${f.diff > 1 ? 'перерасход' : 'экономия'}</i>`}</div></div>`).join('')}`;
 }
 function renderPiggy() {
   if (!budget) {
@@ -3503,18 +3598,19 @@ function renderPiggy() {
       <section class="bsav">${savings}</section>
       <div class="blay">
         <section class="bmain bspend">
-          <div class="bsh"><h2>Куда уходят деньги ${handNote(`— ${MONTHS[+cur.slice(5) - 1].toLowerCase()} против обычного`, 'soft')}</h2><button class="lnk" data-act="gotab" data-tab="spend">все расходы →</button></div>
-          <div class="clg"><span><i class="u"></i>обычно (среднее за 3 месяца)</span><span><i class="f"></i>в этом месяце${ymd(now)[2] >= 5 ? ', с прогнозом до конца' : ''}</span><span><i class="lm"></i>лимит</span></div>
-          ${CL.rows.length ? CL.rows.map(r => `<div class="crow"><div><b>${r.k.s} ${esc(r.k.n)}</b><i>${r.lim ? `лимит ${gel(r.lim)}` : 'без лимита'}</i></div>
-            <div class="cmpb"><span class="u" style="width:${r.avg / mx * 100}%"></span><span class="f ${r.over ? 'bad' : ''}" style="width:${proj(r) / mx * 100}%"></span>${r.lim ? `<span class="lm" style="left:${r.lim / mx * 100}%"></span>` : ''}
-              ${r.over ? handNote(`идёт к ${gel(r.proj)} — на ${money((r.proj / r.avg - 1) * 100, 0)}% больше обычного`, 'red') : r.proj != null && r.avg > 0 && r.proj < r.avg * .8 ? handNote('меньше обычного 👍', 'green') : ''}</div>
-            <div class="num rt"><b>${gel(r.sp)}</b><i>${r.avg ? `обычно ${gel(r.avg)}` : 'новое'}</i></div></div>`).join('')
-            : '<p class="hint">Записывайте траты во вкладке «Расходы» — здесь будет видно, на что уходит больше обычного.</p>'}
-          <p class="bline">Обязательные платежи — <b class="num">${gel(needM)}</b> в месяц${incM > 0 ? `, ${money(needM / incM * 100, 0)}% дохода` : ''}. <button class="lnk" data-act="pview" data-v="table" data-go="plan">проверить в таблице →</button></p>
+          <div class="bsh"><h2>Куда идут деньги ${handNote(`— план на ${MONTHS[+(c.months[1] || c.months[0]).ym.slice(5) - 1].toLowerCase()}`, 'soft')}</h2><button class="lnk" data-act="pview" data-v="table" data-go="plan">таблица по месяцам →</button></div>
+          ${(() => { const m = c.months[1] || c.months[0], inc = m.inc || 1, parts = [['Обязательные платежи', m.need + m.once, '#E8795F'], ['Повседневное по лимитам', m.life, '#D9B26A'], ['Взносы на цели', m.goal, 'var(--pen)'], ['Копилка', Math.max(0, m.save - m.goal), '#5E8C61']];
+            return `<div class="istack" role="img" aria-label="Распределение дохода">${parts.filter(p => p[1] > 0.5).map(p => `<i style="flex:${p[1]};background:${p[2]}" title="${p[0]}"></i>`).join('')}</div>
+              <div class="clg">${parts.map(p => `<span><i class="sqd" style="background:${p[2]}"></i>${p[0]} <b class="num">${gel(p[1])}</b>${m.inc > 0 ? ` · ${money(p[1] / inc * 100, 0)}%` : ''}</span>`).join('')}</div>`; })()}
+          ${CL.rows.length ? (() => { const mx = Math.max(...CL.rows.map(r => r.lim), 1); return `<h3 class="sub3">Лимиты повседневных трат</h3>${CL.rows.slice().sort((x, y) => y.lim - x.lim).map(r => `<div class="crow"><div><b>${r.k.s} ${esc(r.k.n)}</b><i>${CL.incM > 0 ? `${money(r.lim / CL.incM * 100, 1)}% дохода` : ''}</i></div>
+            <div class="cmpb"><span class="f" style="width:${r.lim / mx * 100}%"></span>${r.sp > 0 ? `<i>записано в «Расходах»: ${gel(r.sp)}</i>` : ''}</div>
+            <div class="num rt"><b>${gel(r.lim)}</b><i>${gel(r.lim / 30.4)} в день</i></div></div>`).join('')}`; })()
+            : '<p class="hint">Лимитов на повседневные траты пока нет. <button class="lnk" data-act="bwizdaily">Задать лимиты</button></p>'}
+          ${monthFactsHtml()}
         </section>
         <aside class="bside"><section class="sticky pink"><span class="tape" aria-hidden="true"></span><h2 class="t">Что можно сократить</h2>
           ${CL.cuts.length ? `${handNote('отметьте — пересчитаю срок цели', 'sub')}
-            ${CL.cuts.map(x => `<div class="cut"><button class="tick" data-act="pgcut" data-id="${x.id}" aria-pressed="${!!pgCuts[x.id]}" aria-label="Сократить: ${esc(x.n)}">${pgCuts[x.id] ? '✓' : ''}</button><div><b>${esc(x.n)}</b><i>${x.why}</i></div><b class="num">−${gel(x.cut)}</b></div>`).join('')}
+            ${CL.cuts.map(x => { x.why += sel ? cutEffect(sel.gi, x.cut, extra) : ''; return x; }).map(x => `<div class="cut"><button class="tick" data-act="pgcut" data-id="${x.id}" aria-pressed="${!!pgCuts[x.id]}" aria-label="Сократить: ${esc(x.n)}">${pgCuts[x.id] ? '✓' : ''}</button><div><b>${esc(x.n)}</b><i>${x.why}</i></div><b class="num">−${gel(x.cut)}</b></div>`).join('')}
             <div class="r tot"><span>вместе в месяц</span><b class="num">+${gel(cutSum)}</b></div>
             ${sel && cutSum ? handNote(`${esc(sel.g.n)}: см. срок наверху`, 'pen big2') : ''}
             <button class="btn ink" data-act="pgcutapply" ${cutSum ? '' : 'disabled'}>Урезать лимиты в плане</button>`
@@ -3545,7 +3641,7 @@ function cashModel(c) {
   const catIds = new Set([...Object.keys(budget.lim || {}), ...Object.values(budget.limM || {}).flatMap(o => Object.keys(o))]);
   const cats = catSorted(CATS.filter(k => k.id !== 'home' && (catIds.has(k.id) || spentCur(k.id) > 0))).map(k => ({ x: { id: k.id }, k, kind: 'cat', n: `${k.s} ${k.n}`,
     cells: yms.map(ym => { const lim = limFor(k.id, ym), ovr = !!(budget.limM && budget.limM[ym] && budget.limM[ym][k.id] != null);
-      if (ym === cur) { const sp = spentCur(k.id); return { v: Math.max(lim, sp), sp, lim, fact: true, cur: true, ovr }; }
+      if (ym === cur) { const sp = spentCur(k.id); return { v: lim, sp, lim, cur: true, ovr }; }
       return { v: lim, ovr }; }) }));
   const av = catAvg(), avSum = Object.entries(av).filter(([k]) => k !== 'home').reduce((t, [, v]) => t + v, 0);
   if (!hasLim && avSum) cats.push({ x: { id: 'avg' }, kind: 'ro', n: 'Повседневное · среднее', src: 'из «Расходов»', cells: yms.map(() => ({ v: avSum })) });
@@ -3564,7 +3660,7 @@ function cashModel(c) {
 function renderCash() {
   const c = budgetCalc(budget), M = cashModel(c), cur = M.cur, collapsed = !!layout().col['cf:daily'];
   const cell = (r, i) => { const q = r.cells[i], ym = M.yms[i], cls = [q.fact ? 'fact' : 'plan', ym === cur ? 'curm' : '', q.ovr ? 'ovr' : '', q.off ? 'offc' : '', q.v < 0 ? 'neg' : ''].join(' ');
-    const txt = q.cur && q.sp != null ? `${bm(q.sp)}<small>/${bm(q.lim)}</small>` : q.v ? bm(q.v) : q.none || q.off ? '' : '—';
+    const txt = q.cur && q.sp ? `${bm(q.lim)}<small> · ${bm(q.sp)}</small>` : q.v ? bm(q.v) : q.none || q.off ? '' : '—';
     return r.kind === 'ro' ? `<td class="${cls}">${txt}</td>` : `<td class="${cls}"><button class="cfc" data-act="cfcell" data-k="${r.kind}" data-id="${r.x.id}" data-ym="${ym}" aria-label="${esc(r.n)}, ${ymName(ym)}">${txt || '<span class="z">·</span>'}</button></td>`; };
   const rowHtml = r => `<tr class="${r.x.off ? 'offr' : ''}"><th scope="row">${r.kind === 'ro' ? `<span class="rn">${esc(r.n)}</span>` : `<button class="rn" data-act="${r.kind === 'goal' ? 'goal' : 'cfrow'}" data-k="${r.kind}" data-id="${r.x.id}">${esc(r.n)}</button>`}${r.src ? `<span class="src">${esc(r.src)}</span>` : ''}</th>${r.cells.map((_, i) => cell(r, i)).join('')}<td class="tot num">${bm(r.cells.reduce((t, q) => t + (q.v || 0), 0))}</td></tr>`;
   const band = (n, cls, extra = '') => `<tr class="band ${cls}"><th scope="rowgroup" colspan="14">${n}${extra}</th></tr>`;
@@ -3574,9 +3670,9 @@ function renderCash() {
     : M.cats.map(rowHtml).join('');
   $main.innerHTML = `
     <article class="book cash">
-      <div class="bhead"><div><div class="cap">план · движение денег на 12 месяцев</div>${handNote(`${MONTHS[+cur.slice(5) - 1]} — по факту, дальше — план.`, 'hello pen')}<p class="hint" style="margin:6px 0 0">Щёлкните по синей сумме, чтобы вписать свою — только в этот месяц или с него и дальше. По названию строки — поменять статью.</p>${''}</div>
+      <div class="bhead"><div><div class="cap">план · движение денег на 12 месяцев</div>${handNote(`${MONTHS[+cur.slice(5) - 1]} и дальше — план: траты по лимитам, остальное копится.`, 'hello pen')}<p class="hint" style="margin:6px 0 0">Щёлкните по синей сумме, чтобы вписать свою — только в этот месяц или с него и дальше. По названию строки — поменять статью.</p>${''}</div>
         <div class="bacts">${viewSeg()}<button class="btn outline" data-act="cfcsv">Скачать CSV</button><button class="btn outline" data-act="gotab" data-tab="year">прошлые месяцы — «Год»</button></div></div>
-      <div class="clg"><span class="num">1 000 — план</span><span class="num fact">1 000 — факт</span><span><i class="dot"></i> изменено вручную</span><span class="curl">${MONTHS[+cur.slice(5) - 1].toLowerCase()} — идёт</span><span class="num">47<small>/406</small> — потрачено / лимит</span></div>
+      <div class="clg"><span class="num">1 000 — план</span><span class="num fact">1 000 — факт</span><span><i class="dot"></i> изменено вручную</span><span class="curl">${MONTHS[+cur.slice(5) - 1].toLowerCase()} — идёт</span><span class="num">406<small> · 88</small> — лимит · записано в «Расходах»</span></div>
       <div class="cfw"><table class="cft">
         <thead><tr><th scope="col">Статья</th>${M.yms.map(ym => `<th scope="col" class="${ym === cur ? 'curm' : ''}"><b>${MONTHS_S[+ym.slice(5) - 1]}${ym.slice(5) === '01' || ym === cur ? ` ’${ym.slice(2, 4)}` : ''}</b><i>${ym === cur ? 'идёт' : 'план'}</i></th>`).join('')}<th scope="col" class="tot"><b>Итого</b><i>12 мес</i></th></tr></thead>
         <tbody>
@@ -3751,6 +3847,14 @@ document.addEventListener('click', e => {
     case 'cfcat': openCatRow('new'); break;
     case 'cfdaily': { const L = layout(); if (L.col['cf:daily']) delete L.col['cf:daily']; else L.col['cf:daily'] = true; store.set('planLayout', L); const sy = y(); render(); window.scrollTo(0, sy); break; }
     case 'cfcsv': cashCsv(); break;
+    case 'limcutall': { const v = +el.dataset.v, cur = ymOf(now), L = limSumFor(ymAdd(cur, 1)); if (!(L > 0)) break; const k = Math.max(0, (L - v) / L);
+      for (const id of Object.keys(budget.lim || {})) if (id !== 'home') budget.lim[id] = r2(budget.lim[id] * k);
+      for (const ym of Object.keys(budget.limM || {})) if (ym > cur) for (const id of Object.keys(budget.limM[ym])) limSet(id, ym, budget.limM[ym][id] * k);
+      saveBudget(); const sy = y(); render(); window.scrollTo(0, sy); toast(`Лимиты урезаны на ${gel(Math.min(v, L))} в месяц`); break; }
+    case 'limcut': { const ym = el.dataset.ym, need = +el.dataset.v, L = limSumFor(ym); if (!(L > 0)) break;
+      const k = Math.max(0, (L - need) / L), ids = new Set([...Object.keys(budget.lim || {}), ...Object.keys((budget.limM || {})[ym] || {})].filter(x => x !== 'home'));
+      for (const id of ids) limSet(id, ym, limFor(id, ym) * k);
+      saveBudget(); const sy = y(); render(); window.scrollTo(0, sy); toast(`Лимиты ${ymNameP(ym).replace(/^/, 'в ')} урезаны на ${gel(Math.min(need, L))}`); break; }
     case 'pview': if (el.dataset.go) goTab(el.dataset.go); break;
     case 'rerep': { if (!rowEdit) break; rowEdit.x.n = $('#reN').value; rowEdit.x.a = $('#reA').value; rowEdit.x.c = $('#reC').value; rowEdit.x.rep = el.dataset.v; if (el.dataset.v === 'once' && !rowEdit.x.date) rowEdit.x.date = now; openRow(rowEdit.k, rowEdit.isNew ? 'new' : rowEdit.x.id); break; }
     case 'resave': rowSave(); break;
