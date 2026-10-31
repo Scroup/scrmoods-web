@@ -1,7 +1,7 @@
 // Offline support: serve the app from the cache, refresh the cache in the background.
 // Exchange rates from nbg.gov.ge always go to the network (the app keeps its own rate cache).
 // Bump VERSION when files change so phones pick up the new version on the next launch.
-const VERSION = 'scrmoney-v16';
+const VERSION = 'scrmoney-v17';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   '../lora_regular.woff', '../lora_medium.woff', '../lora_italic.woff', '../lora_medium_italic.woff'];
 

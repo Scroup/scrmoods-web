@@ -852,6 +852,115 @@ html.skin-apple { --leaf: #8ed24a; --leaf-soft: #c5e8a6; --leaf-ink: #3f7a1f; --
 .skinb b { font-size: 13.5px; font-weight: 500; }
 .themes.off { opacity: .45; }
 .skin-paper #nav.five button { font-size: 10px; padding: 8px 4px 0; overflow: hidden; text-overflow: ellipsis; }
+/* ===== вид «Таблицы» на плане ===== */
+.wide #main { max-width: 1320px; }
+.jhead .vseg { flex: none; margin-bottom: 4px; }
+.jhead .vseg button { padding: 4px 12px; min-height: 36px; font-size: 13.5px; }
+.fseg { margin: 10px 0 4px; max-width: 320px; }
+.tdash { padding: 6px 12px 0; }
+.tgrid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); margin-top: 14px; align-items: start; }
+.tgrid.top { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); align-items: stretch; }
+.tgrid.tables { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
+@media (max-width: 520px) { .tgrid.tables { grid-template-columns: 1fr; } .tdash { padding: 6px 8px 0; } }
+.tmonth { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 10px; }
+.tmn { font-size: 38px; line-height: 42px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
+.tmy { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); margin-top: 4px; }
+.tmarr { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.tlink { color: var(--acc); font-style: italic; font-size: 14px; }
+.tcardx { background: var(--page); border: 1px solid var(--rule); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,.03); }
+.tcardx > header { background: color-mix(in srgb, var(--hc) 75%, var(--page)); color: #fff; text-align: center; font-size: 12.5px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; padding: 9px 10px; text-shadow: 0 1px 0 rgba(0,0,0,.08); }
+.tcardx > :not(header) { margin-left: 12px; margin-right: 12px; }
+.tbig { font-size: 40px; line-height: 48px; font-weight: 500; text-align: center; margin-top: 18px; }
+.tsub { text-align: center; font-size: 13.5px; font-style: italic; color: var(--soft); margin-bottom: 16px; }
+.tkv { width: auto; border-collapse: collapse; font-size: 14px; margin-top: 8px; margin-bottom: 10px; }
+.tkv td { padding: 6px 4px; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
+.tkv td:first-child { color: var(--soft); font-style: italic; } .tkv td:last-child { text-align: right; font-weight: 500; }
+.tkv tr:last-child td { border-bottom: 0; }
+/* таблицы */
+.tt { width: calc(100% - 24px); border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums lining-nums; margin-top: 6px; }
+.tt th { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--soft); text-align: right; padding: 8px 4px 6px; border-bottom: 1.5px solid color-mix(in srgb, var(--hc) 55%, transparent); white-space: nowrap; }
+.tt th:nth-child(2), .tt.flow th:first-child, .tt th:first-child:not(.ck) { text-align: left; }
+.tt td { padding: 3px 4px; border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent); vertical-align: middle; }
+.tt td.num { text-align: right; white-space: nowrap; }
+.tt tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--hc) 6%, transparent); }
+.tt tbody tr:hover td { background: color-mix(in srgb, var(--hc) 14%, transparent); }
+.tt tfoot td { font-weight: 600; padding: 9px 4px; border-bottom: 0; background: color-mix(in srgb, var(--hc) 16%, var(--page)); }
+.tt tfoot td:first-child { border-radius: 10px 0 0 10px; } .tt tfoot td:last-child { border-radius: 0 10px 10px 0; }
+.tt .ck { width: 26px; text-align: center; }
+.tt .ck input { width: 17px; height: 17px; accent-color: var(--hc); vertical-align: middle; cursor: pointer; }
+.tt tr.done td:nth-child(2) .tin { color: var(--soft); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--soft) 60%, transparent); }
+.tt .nw { white-space: nowrap; text-align: right; }
+.tt .rp { display: block; font-size: 11px; color: var(--faint); margin: -3px 0 2px 6px; }
+.tt .ti { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; margin-right: 4px; font-size: 13px; vertical-align: middle; background: var(--wash); }
+.tsc { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 !important; padding: 0 12px; }
+.tsc .tt { width: 100%; }
+.tt td.tcn { min-width: 160px; width: 100%; }
+.tcw { display: flex; align-items: center; flex-wrap: wrap; }
+.tcw .tin { flex: 1; min-width: 70px; }
+.tcw .tl { flex: 1; min-width: 0; padding: 5px 2px; }
+.tcw .rp { flex-basis: 100%; margin: -3px 0 2px 6px; }
+.tt td.tcn .mbar { margin-left: 30px; }
+@media (min-width: 900px) { .tgrid.tables .span2 { grid-column: span 2; } }
+.tin { width: 100%; min-width: 0; border: 1px solid transparent; border-radius: 8px; background: transparent; padding: 5px 6px; font: inherit; color: var(--ink); }
+.tin:hover { border-color: var(--rule); background: var(--page); }
+.tin:focus { outline: none; border-color: var(--hc, var(--acc)); background: var(--page); box-shadow: 0 0 0 3px color-mix(in srgb, var(--hc, var(--acc)) 22%, transparent); }
+.tin.num { text-align: right; width: 74px; }
+.tin.day { width: 46px; text-align: center; }
+.tin.dt { width: 132px; font-size: 13px; }
+.tin.auto { color: var(--soft); }
+.tin.ovr { color: var(--acc); font-weight: 600; }
+.tin::placeholder { color: var(--faint); }
+.cs { font-size: 12px; color: var(--soft); margin-left: 1px; }
+.tdel { width: 24px; height: 24px; border-radius: 50%; color: var(--faint); font-size: 12px; opacity: 0; transition: opacity .15s; }
+.tt tr:hover .tdel, .tdel:focus-visible { opacity: 1; }
+@media (hover: none) { .tdel { opacity: .6; } }
+.tdel:hover { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+.tadd { align-self: flex-start; margin: 8px 12px 4px; padding: 6px 12px; border-radius: 999px; border: 1px dashed color-mix(in srgb, var(--hc) 70%, transparent); color: color-mix(in srgb, var(--hc) 60%, var(--ink)); font-size: 13.5px; background: transparent; }
+.tadd:hover { background: color-mix(in srgb, var(--hc) 12%, transparent); }
+.tadd.sel { font: inherit; font-size: 13.5px; cursor: pointer; }
+.tnote { font-size: 12.5px; line-height: 17px; font-style: italic; color: var(--soft); margin: 6px 12px 12px; }
+.tnote b { font-style: normal; color: var(--ink); }
+.tt td.pos { color: #3E9A62; } .tt td.neg, .tt .neg, .tbig.neg { color: var(--danger); }
+.tt .z { color: var(--faint); }
+.tt .sg { display: inline-block; width: 16px; color: var(--soft); }
+.mbar { display: block; flex-basis: 100%; height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--ink) 7%, transparent); margin: 2px 0 4px 30px; overflow: hidden; }
+.mbar i { display: block; height: 100%; border-radius: 2px; }
+.tt td:not(.tcn) .mbar { margin-left: 0; min-width: 90px; }
+.gnum { font-size: 12.5px; white-space: nowrap; }
+.okm { color: #3E9A62; font-weight: 700; }
+.tsave { margin-left: 6px; padding: 3px 9px; border-radius: 999px; font-size: 12px; background: color-mix(in srgb, var(--hc) 22%, var(--page)); color: color-mix(in srgb, var(--hc) 45%, var(--ink)); }
+.hb { width: calc(100% - 24px); height: auto; display: block; margin: 6px auto 12px; }
+.dwrap { display: flex; align-items: center; gap: 12px; padding: 10px 0 14px; }
+.dn { width: 130px; height: 130px; flex: none; }
+.dn .dv { font-size: 19px; font-weight: 500; fill: var(--ink); } .dn .dk { font-size: 10px; font-style: italic; fill: var(--soft); }
+.dl { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.dl span { display: flex; align-items: center; gap: 6px; } .dl em { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.dl b { margin-left: auto; font-weight: 500; color: var(--soft); }
+.tfc .card { margin: 14px 0 0; }
+.wide .tfc .fcard svg { max-height: 300px; }
+.wide .tfc .ftable.fc { max-width: 100%; }
+/* прогноз по среднему */
+.ftiles { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.ftiles i { display: block; font-size: 11.5px; line-height: 15px; color: var(--soft); margin-top: 2px; }
+.fh { font-size: 15px; font-weight: 500; margin: 16px 0 4px; }
+.feta { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent); }
+.feta .tic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 17px; flex: none; background: color-mix(in srgb, var(--c) 18%, var(--page)); }
+.feta .ft { flex: 1; min-width: 0; } .feta .ft b { display: block; font-weight: 500; } .feta .ft i { font-size: 12.5px; color: var(--soft); }
+.feta .fw { text-align: right; } .feta .fw b { display: block; color: var(--c); font-weight: 600; } .feta .fw i { font-size: 12px; color: var(--soft); }
+.fetas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.fetas span { padding: 5px 11px; border-radius: 999px; font-size: 13px; background: color-mix(in srgb, var(--c) 13%, var(--page)); }
+.fetas b { color: var(--c); }
+/* стили */
+.skin-paper .tcardx { border: 0; border-radius: 2px; box-shadow: 0 3px 8px rgba(0,0,0,.24), 0 1px 2px rgba(0,0,0,.16); }
+.skin-paper .tcardx > header { border-radius: 0; font-family: var(--pf-head); color: var(--ink); background: color-mix(in srgb, var(--hc) 45%, var(--page)); letter-spacing: .14em; }
+.skin-paper .tmn, .skin-paper .tbig { font-family: var(--pf-head); font-weight: 700; }
+.skin-paper .tin, .skin-paper .tadd, .skin-paper .tsave, .skin-paper .tt tfoot td { border-radius: 2px !important; }
+.skin-paper .tsub, .skin-paper .tkv td:first-child, .skin-paper .tnote, .skin-paper .tlink { font-style: normal; }
+.skin-apple .tcardx { position: relative; isolation: isolate; background: transparent; border: 0; overflow: visible; }
+.skin-apple .tcardx::before { content: ""; position: absolute; inset: 0; z-index: -1; border: 2.5px solid var(--leaf); border-radius: 26px 20px 28px 22px / 22px 28px 20px 26px; background: var(--sheet); filter: url(#pencil); }
+.skin-apple .tcardx > header { background: transparent; color: var(--leaf-mid); font-family: var(--ah); font-weight: 400; font-size: 17px; letter-spacing: .04em; text-transform: none; text-shadow: none; border-bottom: 2px dashed var(--leaf-soft); margin: 0 12px; }
+.skin-apple .tmn, .skin-apple .tbig { font-family: var(--ah); font-weight: 400; color: var(--leaf-ink); letter-spacing: .06em; }
+.skin-apple .tsub, .skin-apple .tkv td:first-child, .skin-apple .tnote, .skin-apple .tlink { font-style: normal; }
 </style>
 </head>
 <body>
@@ -1626,6 +1735,7 @@ function renderPlan() {
       <p class="hint" style="margin:12px 24px">Всё считается в лари по курсу НБГ на сегодня. Ответы можно поменять в любой момент.</p>`;
     return;
   }
+  if (planView() === 'table') return renderTables();
   const c = budgetCalc(budget), s0 = c.segs[0];
   const left = Math.max(0, s0.rate - c.spentToday), pToday = s0.rate ? Math.min(1, c.spentToday / s0.rate) : c.spentToday ? 1 : 0;
   const ring = (p, over) => { const R = 34, L = 2 * Math.PI * R;
@@ -1681,26 +1791,6 @@ function renderPlan() {
   }).join('');
   const gMonthly = c.goals.reduce((t, x) => t + (x.gi.done ? 0 : x.gi.monthly), 0);
 
-  // прогноз на год: столбики по месяцам
-  const F = c.months, W = 340, H = 170, top = 16, bot = 24, bw = 17, step = (W - 16) / 12;
-  const fmax = Math.max(...F.map(m => Math.max(m.inc, m.need + m.once + m.goal + m.life)), 1);
-  const yv = v => (H - top - bot) * v / fmax;
-  const fbars = F.map((m, i) => {
-    const x = 8 + step * i + (step - bw) / 2;
-    let y = H - bot, out = '';
-    for (const [v, col] of [[m.need, C_NEED], [m.once, C_ONCE], [m.goal, C_GOAL], [m.life, C_FREE]]) {
-      if (v <= 0) continue; const h = Math.max(1.5, yv(v)); y -= h;
-      out += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${col}"/>`;
-    }
-    const iy = H - bot - yv(m.inc);
-    return `<g><clipPath id="fc${i}"><rect x="${x}" y="${top - 4}" width="${bw}" height="${H - bot - top + 4}" rx="5"/></clipPath><g clip-path="url(#fc${i})">${out}</g>
-      ${m.inc ? `<line x1="${x - 3}" x2="${x + bw + 3}" y1="${iy}" y2="${iy}" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>` : ''}
-      ${m.short > 1 ? `<circle cx="${x + bw / 2}" cy="${top - 2}" r="4" fill="var(--danger)"/>` : ''}
-      <text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle" class="gt">${MONTHS_S[+m.ym.slice(5) - 1]}</text></g>`;
-  }).join('') + [.5, 1].map(k => `<line x1="4" x2="${W - 4}" y1="${H - bot - (H - top - bot) * k}" y2="${H - bot - (H - top - bot) * k}" class="gl"/><text x="${W - 4}" y="${H - bot - (H - top - bot) * k - 3}" text-anchor="end" class="gt">${money(fmax * k / 1000, 1)}k</text>`).join('');
-  const yearGoals = F.reduce((t, m) => t + m.goal, 0);
-  const frows = F.map(m => `<tr class="${m.short > 1 ? 'bad' : ''}"><td class="tn"><b>${ymName(m.ym)}</b>${m.onceList.length ? `<i>${m.onceList.map(e => `${iconOf(e.n)} ${esc(e.n)}`).join(', ')}</i>` : ''}</td>
-    <td class="tv num">${m.inc ? '+' + money(m.inc, 0) : '—'}</td><td class="tv num">${money(m.need + m.once, 0)}</td><td class="tv num">${m.goal ? money(m.goal, 0) : '—'}</td><td class="tv num"><b>${money(m.perDay, 0)}</b></td></tr>`).join('');
 
   // траты текущего периода по датам
   const expRows = c.pOut.map(e => `<tr><td><span class="tic" style="--c:${e.color || C_NEED}">${e.kind === 'goal' ? goalIcon(e.n) : iconOf(e.n)}</span></td><td class="tn"><b>${esc(e.n)}</b><i>${e.date === now ? 'сегодня' : `${shortDate(e.date)} · ${whenWord(e.date).replace(/, .*/, '')}`}${e.kind === 'goal' ? ' · на цель' : e.kind === 'once' ? ' · разово' : ''}</i></td>
@@ -1710,7 +1800,7 @@ function renderPlan() {
 
   $main.innerHTML = `
     <div class="jhead" style="--d:0ms"><div class="t"><div class="big">План</div><div class="sub">до ${shortDate(c.end)} · прогноз на год</div></div>
-      <button class="rbtn" data-act="bwiz" aria-label="Изменить ответы"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></svg></button></div>
+      ${viewSeg()}<button class="rbtn" data-act="bwiz" aria-label="Изменить ответы"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></svg></button></div>
     <div class="card bhero" style="--d:40ms">
       <div class="bh"><div class="bt"><div class="k">Можно тратить в день</div><div class="v num">${money(s0.rate, 0)}<small> ₾</small></div>
         <div class="s">до ${shortDate(s0.stop < c.end ? s0.stop : c.end)} включительно</div></div>
@@ -1730,12 +1820,7 @@ function renderPlan() {
       <div class="lgnd"><span><em style="background:var(--acc)"></em>на счёте, если тратить по плану</span>${c.res ? `<span><em class="dash"></em>запас</span>` : ''}</div>
       <div class="lc" id="lc">${lineChart(c)}<div class="lctip" id="lctip" hidden></div></div></div>
 
-    <div class="card chart" style="--d:140ms"><h2 class="hl">Прогноз на год</h2>
-      <div class="lgnd"><span><em style="background:${C_NEED}"></em>обязательные</span><span><em style="background:${C_ONCE}"></em>разовые</span><span><em style="background:${C_GOAL}"></em>цели</span><span><em style="background:${C_FREE}"></em>на жизнь</span><span><em style="background:var(--ink);height:2px"></em>доход</span></div>
-      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Прогноз по месяцам">${fbars}</svg>
-      ${yearGoals ? `<div class="pline sum"><span>за год отложите на цели</span><b class="num">${gel(yearGoals)}</b></div>` : ''}
-      <table class="ftable fc"><thead><tr><th>Месяц</th><th>Доход</th><th>Траты</th><th>Цели</th><th>В день</th></tr></thead><tbody>${frows}</tbody></table>
-      <p class="hint" style="margin:8px 0 0">«В день» — сколько остаётся на жизнь после обязательных трат, целей и накоплений на крупные покупки.</p></div>
+    ${forecastHtml(c)}
 
     ${parts.length ? `<div class="card" style="--d:160ms"><h2 class="hl">Куда пойдут деньги до ${shortDate(c.end)}</h2>
       <div class="donut"><svg viewBox="0 0 140 140" role="img" aria-label="Распределение денег">${arcs}
@@ -1799,6 +1884,310 @@ function lineTip(c) {
   svg.addEventListener('pointermove', show);
   svg.addEventListener('pointerdown', show);
   svg.addEventListener('pointerleave', () => { $('#lctip').hidden = true; $('#lcx').setAttribute('visibility', 'hidden'); $('#lcd').setAttribute('visibility', 'hidden'); });
+}
+
+/* ---------- вид плана: карточки (телефон) или таблицы (компьютер) ---------- */
+const wideScreen = () => window.matchMedia && matchMedia('(min-width: 900px)').matches;
+const planView = () => store.get('planView', wideScreen() ? 'table' : 'cards');
+const viewSeg = () => `<div class="seg small vseg" role="group" aria-label="Вид">${[['cards', 'Карточки'], ['table', 'Таблицы']].map(([k, l]) => `<button data-act="pview" data-v="${k}" class="${planView() === k ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+const avg = a => a.length ? a.reduce((t, x) => t + x, 0) / a.length : 0;
+
+/* столбики по месяцам: parts — [[сумма, цвет], …] снизу вверх, inc — линия дохода */
+function monthBars(F, W = 340, H = 170) {
+  const top = 16, bot = 24, bw = 17, step = (W - 16) / F.length;
+  const fmax = Math.max(...F.map(m => Math.max(m.inc, m.parts.reduce((t, p) => t + Math.max(p[0], 0), 0))), 1);
+  const yv = v => (H - top - bot) * v / fmax;
+  return F.map((m, i) => {
+    const x = 8 + step * i + (step - bw) / 2;
+    let y = H - bot, out = '';
+    for (const [v, col] of m.parts) { if (v <= 0) continue; const h = Math.max(1.5, yv(v)); y -= h; out += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${col}"/>`; }
+    const iy = H - bot - yv(m.inc), id = 'fc' + Math.random().toString(36).slice(2, 7);
+    return `<g><clipPath id="${id}"><rect x="${x}" y="${top - 4}" width="${bw}" height="${H - bot - top + 4}" rx="5"/></clipPath><g clip-path="url(#${id})">${out}</g>
+      ${m.inc ? `<line x1="${x - 3}" x2="${x + bw + 3}" y1="${iy}" y2="${iy}" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>` : ''}
+      ${m.short > 1 ? `<circle cx="${x + bw / 2}" cy="${top - 2}" r="4" fill="var(--danger)"/>` : ''}
+      <text x="${x + bw / 2}" y="${H - 8}" text-anchor="middle" class="gt">${MONTHS_S[+m.ym.slice(5) - 1]}</text></g>`;
+  }).join('') + [.5, 1].map(k => `<line x1="4" x2="${W - 4}" y1="${H - bot - (H - top - bot) * k}" y2="${H - bot - (H - top - bot) * k}" class="gl"/><text x="${W - 4}" y="${H - bot - (H - top - bot) * k - 3}" text-anchor="end" class="gt">${money(fmax * k / 1000, 1)}k</text>`).join('');
+}
+
+/* ---------- прогноз на год: по плану или по среднему доходу и тратам из записей ---------- */
+function avgFacts(c) {
+  const cur = ymOf(now), d0 = ymd(now)[2], dim = daysTo(`${cur}-01`, endOfMonth(now)) + 1;
+  const prev = [1, 2, 3].map(k => ymAdd(cur, -k)), inM = (d, ym) => d.slice(0, 7) === ym;
+  const incV = prev.filter(ym => rows.some(r => inM(r.date, ym))).map(ym => rows.filter(r => inM(r.date, ym)).reduce((t, r) => t + (gelOf(r) || 0), 0));
+  const spV = prev.filter(ym => spends.some(x => inM(x.date, ym))).map(ym => spends.filter(x => inM(x.date, ym)).reduce((t, x) => t + x.gel, 0));
+  const curSp = spends.filter(x => inM(x.date, cur)).reduce((t, x) => t + x.gel, 0);
+  const part = d0 >= 7 && curSp > 0;
+  if (part) spV.push(curSp / d0 * dim);                        // этот месяц — пересчитан на целый месяц
+  const ahead = c.months.slice(1);
+  return {
+    inc: incV.length ? avg(incV) : avg(ahead.map(m => m.inc)), incN: incV.length,
+    sp: spV.length ? avg(spV) : avg(ahead.map(m => m.life)), spN: spV.length - (part ? 1 : 0), part,
+    bills: avg(ahead.map(m => m.need + m.once))
+  };
+}
+function avgForecast(c) {
+  const a = avgFacts(c);
+  const homeAvg = avg([1, 2, 3].map(k => ymAdd(ymOf(now), -k)).filter(ym => spends.some(x => x.date.startsWith(ym))).map(ym => spends.filter(x => x.date.startsWith(ym) && x.cat === 'home').reduce((t, x) => t + x.gel, 0)));
+  const withBills = budget.fBills != null ? budget.fBills : !(a.bills > 0 && homeAvg >= a.bills * 0.5);
+  const surplus = a.inc - a.sp - (withBills ? a.bills : 0);
+  const gs = c.goals.filter(x => !x.gi.done && x.gi.t > 0).map(x => ({ ...x, left: x.gi.left, want: x.gi.monthly > 0 ? x.gi.monthly : 0 }));
+  const wantSum = gs.reduce((t, g) => t + g.want, 0);
+  for (const g of gs) g.get = surplus <= 0 ? 0 : wantSum ? Math.min(g.want, g.want * surplus / wantSum) : surplus / gs.length;
+  // если взносы по плану меньше, чем остаётся, — лишнее остаётся свободным; цели, которые накопились, отдают свой взнос в «остаётся»
+  const cur = ymOf(now), months = [];
+  let savedAll = gs.reduce((t, g) => t + g.gi.saved, 0);
+  for (const g of gs) { g.rest = g.left; g.eta = null; }
+  for (let i = 1; i <= 600; i++) {
+    let goal = 0;
+    for (const g of gs) { if (g.rest <= 0.005 || g.get <= 0) continue; const v = Math.min(g.get, g.rest); g.rest -= v; goal += v; if (g.rest <= 0.005 && !g.eta) g.eta = ymAdd(cur, i); }
+    savedAll += goal;
+    if (i <= 12) months.push({ ym: ymAdd(cur, i), inc: a.inc, sp: a.sp, bills: withBills ? a.bills : 0, goal, free: surplus - goal, saved: savedAll });
+    if (i > 12 && gs.every(g => g.rest <= 0.005 || g.get <= 0)) break;
+  }
+  return { a, withBills, surplus, gs, months };
+}
+function forecastHtml(c) {
+  const mode = budget.fmode || 'plan';
+  const seg = `<div class="seg small fseg">${[['plan', 'По плану'], ['avg', 'По среднему']].map(([k, l]) => `<button data-act="fmode" data-v="${k}" class="${mode === k ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+  const head = `<div class="card chart fcard" style="--d:140ms"><h2 class="hl">Прогноз на год</h2>${seg}`;
+  if (mode === 'avg') {
+    const f = avgForecast(c), a = f.a;
+    const src = (n, what) => n ? `среднее за ${n} ${plural(n, 'месяц', 'месяца', 'месяцев')}${what === 'sp' && a.part ? ' и этот месяц' : ''}` : (what === 'sp' && a.part ? 'по этому месяцу' : 'записей пока нет — взято из плана');
+    const tiles = [['Средний доход', a.inc, 'var(--acc)', src(a.incN, 'inc') + (a.incN ? ' · вкладка «Приходы»' : '')], ['Средние траты', a.sp, C_NEED, src(a.spN, 'sp') + (a.spN || a.part ? ' · вкладка «Расходы»' : '')],
+      ...(f.withBills ? [['Обязательные из плана', a.bills, C_ONCE, 'аренда, коммуналка, разовые — в среднем']] : []), ['Остаётся в месяц', f.surplus, f.surplus >= 0 ? C_FREE : 'var(--danger)', 'можно отложить на цели']];
+    const F = f.months.map(m => ({ ym: m.ym, inc: m.inc, short: m.free < -1 ? -m.free : 0, parts: [[m.sp, C_NEED], [m.bills, C_ONCE], [m.goal, C_GOAL], [m.free, C_FREE]] }));
+    return head + `
+      <div class="tiles ftiles">${tiles.map(([k, v, col, s]) => `<div style="--c:${col}"><span>${k}</span><b class="num ${v < 0 ? 'neg' : ''}">${gel(v)}</b><i>${s}</i></div>`).join('')}</div>
+      <label class="toggle"><input type="checkbox" data-act="fbills" ${f.withBills ? 'checked' : ''}> Добавить обязательные траты из плана (${gel(a.bills)} в месяц) — если аренду и коммуналку вы не записываете в «Расходы»${budget.fBills == null && !f.withBills ? '. Сейчас выключено: в «Расходах» уже есть траты на дом' : ''}</label>
+      ${f.surplus <= 0 ? `<div class="bwarn" style="margin:12px 0 0"><span aria-hidden="true">⚠️</span><div>При таком среднем доходе и тратах на цели ничего не остаётся. Чтобы копить, нужно тратить меньше на <b class="num">${gel(-f.surplus + 1)}</b> в месяц или больше зарабатывать.</div></div>` : ''}
+      ${f.gs.length ? `<h3 class="fh">Когда накопится</h3>${f.gs.map(g => `<div class="feta" style="--c:${g.color}"><span class="tic" style="--c:${g.color}">${goalIcon(g.g.n)}</span>
+        <div class="ft"><b>${esc(g.g.n)}</b><i>${g.get > 0 ? `по <span class="num">${gel(g.get)}</span> в месяц${g.get < g.want - 1 ? ` (по плану ${gel(g.want)} — не хватает)` : ''}` : 'взносов нет'}</i></div>
+        <div class="fw"><b>${g.eta ? `к ${ymNameG(g.eta)}` : g.get > 0 ? 'дольше 50 лет' : 'не накопится'}</b><i>${g.gi.eta ? `по плану: к ${ymNameG(g.gi.eta)}` : ''}</i></div></div>`).join('')}` : `<p class="hint">Целей пока нет. Добавьте цель — покажу, когда она накопится при ваших средних доходах и тратах.</p>`}
+      <div class="lgnd" style="margin-top:14px"><span><em style="background:${C_NEED}"></em>траты</span>${f.withBills ? `<span><em style="background:${C_ONCE}"></em>обязательные</span>` : ''}<span><em style="background:${C_GOAL}"></em>на цели</span><span><em style="background:${C_FREE}"></em>остаётся</span><span><em style="background:var(--ink);height:2px"></em>доход</span></div>
+      <svg viewBox="0 0 340 170" role="img" aria-label="Прогноз по среднему">${monthBars(F)}</svg>
+      <table class="ftable fc"><thead><tr><th>Месяц</th><th>Доход</th><th>Траты</th><th>Цели</th><th>На целях</th></tr></thead><tbody>${f.months.map(m => `<tr class="${m.free < -1 ? 'bad' : ''}"><td class="tn"><b>${ymName(m.ym)}</b></td>
+        <td class="tv num">+${money(m.inc, 0)}</td><td class="tv num">${money(m.sp + m.bills, 0)}</td><td class="tv num">${m.goal ? money(m.goal, 0) : '—'}</td><td class="tv num"><b>${money(m.saved, 0)}</b></td></tr>`).join('')}</tbody></table>
+      <p class="hint" style="margin:8px 0 0">Прогноз по вашим записям: средний доход минус средние траты. Остаток делится между целями в той же пропорции, что взносы по плану. Чем больше месяцев записей, тем точнее.</p></div>`;
+  }
+  const F = c.months.map(m => ({ ym: m.ym, inc: m.inc, short: m.short, parts: [[m.need, C_NEED], [m.once, C_ONCE], [m.goal, C_GOAL], [m.life, C_FREE]] }));
+  const yearGoals = c.months.reduce((t, m) => t + m.goal, 0);
+  const frows = c.months.map(m => `<tr class="${m.short > 1 ? 'bad' : ''}"><td class="tn"><b>${ymName(m.ym)}</b>${m.onceList.length ? `<i>${m.onceList.map(e => `${iconOf(e.n)} ${esc(e.n)}`).join(', ')}</i>` : ''}</td>
+    <td class="tv num">${m.inc ? '+' + money(m.inc, 0) : '—'}</td><td class="tv num">${money(m.need + m.once, 0)}</td><td class="tv num">${m.goal ? money(m.goal, 0) : '—'}</td><td class="tv num"><b>${money(m.perDay, 0)}</b></td></tr>`).join('');
+  return head + `
+      <div class="lgnd"><span><em style="background:${C_NEED}"></em>обязательные</span><span><em style="background:${C_ONCE}"></em>разовые</span><span><em style="background:${C_GOAL}"></em>цели</span><span><em style="background:${C_FREE}"></em>на жизнь</span><span><em style="background:var(--ink);height:2px"></em>доход</span></div>
+      <svg viewBox="0 0 340 170" role="img" aria-label="Прогноз по месяцам">${monthBars(F)}</svg>
+      ${yearGoals ? `<div class="pline sum"><span>за год отложите на цели</span><b class="num">${gel(yearGoals)}</b></div>` : ''}
+      ${c.goals.length ? `<div class="fetas">${c.goals.map(({ g, gi, color }) => `<span style="--c:${color}">${goalIcon(g.n)} ${esc(g.n)}: <b>${gi.done ? 'накоплено' : gi.eta ? `к ${ymNameG(gi.eta)}` : 'нет взносов'}</b></span>`).join('')}</div>` : ''}
+      <table class="ftable fc"><thead><tr><th>Месяц</th><th>Доход</th><th>Траты</th><th>Цели</th><th>В день</th></tr></thead><tbody>${frows}</tbody></table>
+      <p class="hint" style="margin:8px 0 0">«В день» — сколько остаётся на жизнь после обязательных трат, целей и накоплений на крупные покупки.</p></div>`;
+}
+
+/* ---------- таблицы на месяц, как в бюджетной таблице Excel ---------- */
+let tblYm = ymOf(now);
+const factOf = ym => { budget.fact = budget.fact || {}; const F = budget.fact[ym] = budget.fact[ym] || {}; for (const k of ['inc', 'got', 'bill', 'paid', 'cat']) F[k] = F[k] || {}; return F; };
+function occursIn(x, ym, kind) {
+  if (kind === 'inc') {
+    const start = x.date || budget.start || now;
+    if (x.rep === 'once' || !x.rep) return ymOf(start) === ym;
+    const k = ymDiff(ymOf(start), ym); return k >= 0 && (x.rep !== 'n' || k < (+x.cnt || 1));
+  }
+  if (x.rep === 'once') return ymOf(x.date || budget.start || now) === ym;
+  const k = ymDiff(x.from || ymOf(budget.start || now), ym);
+  return k >= 0 && (x.rep !== 'n' || k < (+x.cnt || 1));
+}
+function monthTable(c, ym) {
+  const G = (a, cc) => toGel(fxNum(a) || 0, cc) || 0, F = factOf(ym), inM = d => d.slice(0, 7) === ym;
+  const inc = budget.inc.filter(x => occursIn(x, ym, 'inc')).map(x => ({ x, plan: G(x.a, x.c), day: ymd(x.date || budget.start || now)[2] }));
+  // факт доходов: из вкладки «Приходы» (раскладываем по статьям, крупные регулярные первыми), можно поправить
+  const recInc = rows.filter(r => inM(r.date)).reduce((t, r) => t + (gelOf(r) || 0), 0);
+  let pool = recInc;
+  [...inc].sort((a, b) => (a.x.rep === 'once') - (b.x.rep === 'once') || b.plan - a.plan).forEach((r, i, arr) => { const v = i === arr.length - 1 ? pool : Math.min(pool, r.plan); r.auto = v > 0.005 ? v : null; pool -= v > 0 ? v : 0; });
+  for (const r of inc) r.fact = F.inc[r.x.id] != null ? F.inc[r.x.id] : F.got[r.x.id] ? r.plan : r.auto;
+  const extra = inc.length ? Math.max(0, pool) : recInc;    // записано в «Приходах», но статьи в плане нет
+  const bills = budget.exp.filter(x => x.rep !== 'once' && occursIn(x, ym, 'exp')).map(x => ({ x, plan: G(x.a, x.c) }));
+  const once = budget.exp.filter(x => x.rep === 'once' && occursIn(x, ym, 'exp')).map(x => ({ x, plan: G(x.a, x.c) }));
+  for (const r of [...bills, ...once]) r.fact = F.bill[r.x.id] != null ? F.bill[r.x.id] : F.paid[r.x.id] ? r.plan : null;
+  const lim = budget.lim || {};
+  const spentBy = id => spends.filter(x => inM(x.date) && (x.cat || 'other') === id).reduce((t, x) => t + x.gel, 0);
+  const cats = CATS.filter(k => lim[k.id] != null || spentBy(k.id) > 0).map((k, i) => {
+    const auto = spentBy(k.id), fact = F.cat[k.id] != null ? F.cat[k.id] : auto;
+    return { k, lim: lim[k.id] || 0, auto, fact, ovr: F.cat[k.id] != null, color: PAL[CATS.indexOf(k) % PAL.length] };
+  });
+  const goals = c.goals.map(({ g, gi, color }) => {
+    const started = ym >= ymOf(budget.start || now), until = gi.eta ? ym <= gi.eta : !gi.done;
+    const plan = started && until && !(gi.done && ym > ymOf(now)) ? (ym === ymOf(now) ? (gi.skip ? 0 : gi.monthly) : gi.monthly) : 0;
+    const fact = (g.log || []).filter(l => inM(l.d)).reduce((t, l) => t + l.g, 0);
+    return { g, gi, color, plan, fact };
+  });
+  const sum = (a, k) => a.reduce((t, r) => t + (r[k] || 0), 0);
+  const mi = ymDiff(ymOf(now), ym), mrow = mi >= 0 && mi < c.months.length ? c.months[mi] : null;
+  const life = mrow ? mrow.life : Math.max(0, sum(inc, 'plan') - sum(bills, 'plan') - sum(once, 'plan') - sum(goals, 'plan'));
+  const limSum = cats.reduce((t, r) => t + r.lim, 0);
+  const P = { inc: sum(inc, 'plan'), bills: sum(bills, 'plan'), once: sum(once, 'plan'), exp: limSum || life, goals: sum(goals, 'plan') };
+  const A = { inc: sum(inc, 'fact') + (inc.length ? 0 : recInc), bills: sum(bills, 'fact'), once: sum(once, 'fact'), exp: cats.reduce((t, r) => t + r.fact, 0), goals: sum(goals, 'fact') };
+  return { F, inc, recInc, extra, bills, once, cats, goals, life, limSum, P, A };
+}
+
+const tin = (tb, id, v, cls = '', ph = '') => `<input class="tin ${cls}" data-tb="${tb}" data-id="${id}" value="${esc(v)}" placeholder="${ph}" ${/num/.test(cls) ? 'inputmode="decimal"' : ''} aria-label="${ph || tb}">`;
+const tnum = v => v == null ? '' : String(Math.round(v * 100) / 100).replace('.', ',');
+function tcard(title, hc, body, extra = '') {
+  return `<section class="tcardx" style="--hc:${hc}"><header>${title}</header>${body}${extra}</section>`;
+}
+function hbars(rowsH) {   // план (зелёный) против факта (розовый)
+  const W = 300, rowH = 34, H = rowsH.length * rowH + 8, l = 70, mx = Math.max(...rowsH.flatMap(r => [r[1], r[2]]), 1), sc = v => (W - l - 10) * v / mx;
+  return `<svg viewBox="0 0 ${W} ${H}" class="hb" role="img" aria-label="План и факт">${rowsH.map(([n, p, a], i) => { const y = 6 + i * rowH;
+    return `<text x="${l - 8}" y="${y + 16}" text-anchor="end" class="gt" style="font-size:11px">${n}</text>
+      <rect x="${l}" y="${y + 3}" width="${Math.max(2, sc(p))}" height="10" rx="5" fill="${C_FREE}"/><rect x="${l}" y="${y + 16}" width="${Math.max(a ? 2 : 0, sc(a))}" height="10" rx="5" fill="#E8A5A0"/>`; }).join('')}
+    <line x1="${l}" x2="${l}" y1="2" y2="${H - 2}" stroke="var(--rule)"/></svg>`;
+}
+function donut(parts, center, label) {
+  const tot = parts.reduce((t, x) => t + x.v, 0);
+  if (!(tot > 0)) return `<div class="empty" style="padding:30px 8px">пока пусто</div>`;
+  let acc = 0; const R = 50, L = 2 * Math.PI * R, gap = parts.length > 1 ? 2 : 0;
+  return `<div class="dwrap"><svg viewBox="0 0 140 140" class="dn">${parts.map(x => { const len = x.v / tot * L, s = `<circle cx="70" cy="70" r="${R}" fill="none" stroke="${x.col}" stroke-width="18" stroke-dasharray="${Math.max(len - gap, .1)} ${L}" stroke-dashoffset="${-acc}" transform="rotate(-90 70 70)"/>`; acc += len; return s; }).join('')}
+    <text x="70" y="68" text-anchor="middle" class="dv num">${center}</text><text x="70" y="84" text-anchor="middle" class="dk">${label}</text></svg>
+    <div class="dl">${parts.map(x => `<span><em style="background:${x.col}"></em>${esc(x.n)}<b class="num">${money(x.v / tot * 100, 0)}%</b></span>`).join('')}</div></div>`;
+}
+
+function renderTables() {
+  const c = budgetCalc(budget), ym = tblYm, T = monthTable(c, ym), cur = ymOf(now);
+  const [y, m] = ym.split('-').map(Number), dim = new Date(y, m, 0).getDate();
+  const daysLeft = ym === cur ? dim - ymd(now)[2] + 1 : ym > cur ? dim : 0;
+  const leftToSpend = T.P.exp - T.A.exp;
+  const cell = v => v ? money(v, 0) : '<span class="z">—</span>';
+  const flow = [['Доходы', T.P.inc, T.A.inc, '+'], ['Счета', T.P.bills, T.A.bills, '−'], ['Разовые', T.P.once, T.A.once, '−'], ['Расходы', T.P.exp, T.A.exp, '−'], ['Цели', T.P.goals, T.A.goals, '−']];
+  const restP = T.P.inc - T.P.bills - T.P.once - T.P.exp - T.P.goals, restA = T.A.inc - T.A.bills - T.A.once - T.A.exp - T.A.goals;
+  const G_HC = '#8FBFA0', P_HC = '#E7B3AC';
+
+  const incT = `<div class="tsc"><table class="tt"><thead><tr><th class="ck"></th><th>Статья</th><th>Число</th><th>План</th><th>Факт ₾</th><th></th></tr></thead><tbody>
+    ${T.inc.map(r => `<tr><td class="ck"><input type="checkbox" data-tb="incGot" data-id="${r.x.id}" ${T.F.got[r.x.id] || r.fact != null && r.fact >= r.plan - .5 ? 'checked' : ''} aria-label="Получено"></td>
+      <td class="tcn"><div class="tcw">${tin('incN', r.x.id, r.x.n, '', 'название')}<i class="rp">${r.x.rep === 'n' ? mword(+r.x.cnt || 1) : REP[r.x.rep || 'once']}</i></div></td>
+      <td>${tin('incDay', r.x.id, r.day, 'num day', 'число')}</td>
+      <td class="nw">${tin('incA', r.x.id, r.x.a, 'num', '0')}<span class="cs">${CUR[r.x.c].s}</span></td>
+      <td>${tin('incFact', r.x.id, tnum(r.fact), 'num ' + (T.F.inc[r.x.id] != null ? 'ovr' : r.auto != null && !T.F.got[r.x.id] ? 'auto' : ''), '—')}</td>
+      <td><button class="tdel" data-act="tdel" data-k="inc" data-id="${r.x.id}" aria-label="Удалить">✕</button></td></tr>`).join('')}
+    ${T.extra > 0.5 && !T.inc.length ? `<tr><td class="ck"><span class="okm">✓</span></td><td class="tcn"><div class="tcw"><span class="tl">Из вкладки «Приходы»</span><i class="rp">без статьи в плане</i></div></td><td></td><td class="num"><span class="z">—</span></td><td class="num">${money(T.extra, 0)}</td><td></td></tr>` : ''}</tbody>
+    <tfoot><tr><td></td><td>Всего</td><td></td><td class="num">${gel(T.P.inc)}</td><td class="num">${gel(T.A.inc)}</td><td></td></tr></tfoot></table></div>
+    <button class="tadd" data-act="tadd" data-k="inc">+ доход</button>${T.recInc ? `<p class="tnote">Во вкладке «Приходы» за месяц: <b class="num">${gel(T.recInc)}</b> — разложено по статьям автоматически.</p>` : ''}`;
+
+  const billRows = (list, k) => list.map(r => `<tr class="${T.F.paid[r.x.id] || r.fact != null ? 'done' : ''}"><td class="ck"><input type="checkbox" data-tb="billPaid" data-id="${r.x.id}" ${T.F.paid[r.x.id] || r.fact != null ? 'checked' : ''} aria-label="Оплачено"></td>
+      <td class="tcn"><div class="tcw"><span class="ti">${iconOf(r.x.n)}</span>${tin('billN', r.x.id, r.x.n, '', 'название')}${r.x.rep === 'n' ? `<i class="rp">${mword(+r.x.cnt || 1)}</i>` : ''}</div></td>
+      <td>${k === 'once' ? `<input type="date" class="tin dt" data-tb="onceDate" data-id="${r.x.id}" value="${r.x.date || ''}" aria-label="Дата">` : tin('billDay', r.x.id, r.x.day || '', 'num day', '—')}</td>
+      <td class="nw">${tin('billA', r.x.id, r.x.a, 'num', '0')}<span class="cs">${CUR[r.x.c].s}</span></td>
+      <td>${tin('billFact', r.x.id, tnum(r.fact), 'num ' + (T.F.bill[r.x.id] != null ? 'ovr' : ''), '—')}</td>
+      <td><button class="tdel" data-act="tdel" data-k="exp" data-id="${r.x.id}" aria-label="Удалить">✕</button></td></tr>`).join('');
+  const billT = `<div class="tsc"><table class="tt"><thead><tr><th class="ck"></th><th>Счёт</th><th>Число</th><th>План</th><th>Факт ₾</th><th></th></tr></thead><tbody>${billRows(T.bills, 'bill')}</tbody>
+    <tfoot><tr><td></td><td>Всего</td><td></td><td class="num">${gel(T.P.bills)}</td><td class="num">${gel(T.A.bills)}</td><td></td></tr></tfoot></table></div>
+    <button class="tadd" data-act="tadd" data-k="bill">+ счёт</button>`;
+  const onceT = `<div class="tsc"><table class="tt"><thead><tr><th class="ck"></th><th>Трата</th><th>Дата</th><th>План</th><th>Факт ₾</th><th></th></tr></thead><tbody>${billRows(T.once, 'once')}</tbody>
+    ${T.once.length ? `<tfoot><tr><td></td><td>Всего</td><td></td><td class="num">${gel(T.P.once)}</td><td class="num">${gel(T.A.once)}</td><td></td></tr></tfoot>` : ''}</table></div>
+    ${T.once.length ? '' : '<p class="tnote">В этом месяце крупных разовых трат нет.</p>'}<button class="tadd" data-act="tadd" data-k="once">+ разовая трата</button>`;
+
+  const freeCats = CATS.filter(k => !T.cats.some(r => r.k.id === k.id));
+  const catT = `<div class="tsc"><table class="tt"><thead><tr><th>Категория</th><th>Лимит ₾</th><th>Факт ₾</th><th>Осталось</th><th></th></tr></thead><tbody>
+    ${T.cats.map(r => { const left = r.lim - r.fact, p = r.lim ? Math.min(1, r.fact / r.lim) : r.fact ? 1 : 0;
+      return `<tr><td class="tcn"><div class="tcw"><span class="ti" style="background:color-mix(in srgb, ${r.color} 22%, var(--page))">${r.k.s}</span><span class="tl">${esc(r.k.n)}</span></div><span class="mbar"><i style="width:${p * 100}%;background:${left < 0 ? 'var(--danger)' : r.color}"></i></span></td>
+        <td>${tin('catLim', r.k.id, tnum(r.lim || null), 'num', '0')}</td>
+        <td>${tin('catFact', r.k.id, tnum(r.fact || null), 'num ' + (r.ovr ? 'ovr' : 'auto'), '—')}</td>
+        <td class="num ${left < 0 ? 'neg' : 'pos'}">${r.lim || r.fact ? money(left, 0) : '—'}</td>
+        <td><button class="tdel" data-act="tdel" data-k="cat" data-id="${r.k.id}" aria-label="Убрать">✕</button></td></tr>`; }).join('')}</tbody>
+    <tfoot><tr><td>Всего</td><td class="num">${gel(T.limSum)}</td><td class="num">${gel(T.A.exp)}</td><td class="num ${T.limSum - T.A.exp < 0 ? 'neg' : ''}">${money(T.limSum - T.A.exp, 0)}</td><td></td></tr></tfoot></table></div>
+    ${freeCats.length ? `<select class="tadd sel" data-tb="addCat" data-id="new" aria-label="Добавить категорию"><option value="">+ категория</option>${freeCats.map(k => `<option value="${k.id}">${k.s} ${esc(k.n)}</option>`).join('')}</select>` : ''}
+    <p class="tnote">${T.limSum ? (Math.abs(T.life - T.limSum) < 1 ? 'Все деньги «на жизнь» распределены.' : T.life > T.limSum ? `Не распределено <b class="num">${gel(T.life - T.limSum)}</b> из ${gel(T.life)} «на жизнь».` : `Лимиты больше денег «на жизнь» (${gel(T.life)}) на <b class="num">${gel(T.limSum - T.life)}</b>.`) : `На жизнь в этом месяце — <b class="num">${gel(T.life)}</b>. Задайте лимиты, чтобы распределить по категориям.`} Факт — из вкладки «Расходы».</p>`;
+
+  const goalT = `<div class="tsc"><table class="tt"><thead><tr><th class="ck"></th><th>Цель</th><th>План</th><th>Факт ₾</th><th>Накоплено</th><th>Срок</th></tr></thead><tbody>
+    ${T.goals.map(r => `<tr class="${r.plan && r.fact >= r.plan - .5 ? 'done' : ''}"><td class="ck">${r.plan && r.fact >= r.plan - .5 ? '<span class="okm">✓</span>' : ''}</td>
+      <td class="tcn"><div class="tcw"><span class="ti" style="background:color-mix(in srgb, ${r.color} 22%, var(--page))">${goalIcon(r.g.n)}</span><span class="tl">${esc(r.g.n)}</span></div></td>
+      <td class="num">${cell(r.plan)}</td><td class="num">${r.fact ? money(r.fact, 0) : '<span class="z">—</span>'}<button class="tsave" data-act="goal" data-id="${r.g.id}">Отложил</button></td>
+      <td><span class="gnum num">${money(r.gi.saved, 0)} / ${money(r.gi.t, 0)}</span><span class="mbar"><i style="width:${r.gi.t ? Math.min(100, r.gi.saved / r.gi.t * 100) : 0}%;background:${r.color}"></i></span></td>
+      <td class="nw">${r.gi.done ? 'готово 🎉' : r.gi.eta ? ymName(r.gi.eta, true) : '—'}</td></tr>`).join('')}</tbody>
+    <tfoot><tr><td></td><td>Всего</td><td class="num">${gel(T.P.goals)}</td><td class="num">${gel(T.A.goals)}</td><td></td><td></td></tr></tfoot></table></div>
+    <button class="tadd" data-act="bwizgoals">+ цель</button>`;
+
+  const spentCats = T.cats.filter(r => r.fact > 0).map(r => ({ n: r.k.n, v: r.fact, col: r.color }));
+  const actualParts = [{ n: 'Счета', v: T.A.bills, col: C_NEED }, { n: 'Разовые', v: T.A.once, col: C_ONCE }, { n: 'Расходы', v: T.A.exp, col: '#E68AB0' }, { n: 'Цели', v: T.A.goals, col: C_GOAL }].filter(x => x.v > 0);
+  const incParts = T.inc.map((r, i) => ({ n: r.x.n, v: r.fact != null ? r.fact : r.plan, col: ['#4E8F6A', '#7DB894', '#A9D3B8', '#5FA37E', '#C5E3CF'][i % 5] })).filter(x => x.v > 0);
+  if (T.extra > 0.5 && !T.inc.length) incParts.push({ n: 'Из «Приходов»', v: T.extra, col: '#4E8F6A' });
+
+  $main.innerHTML = `
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">План</div><div class="sub">таблицы по месяцам</div></div>${viewSeg()}
+      <button class="rbtn" data-act="bwiz" aria-label="Пройти вопросы"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></svg></button></div>
+    <div class="tdash">
+      <div class="tgrid top">
+        <section class="tmonth"><div class="tmn">${MONTHS[m - 1]}</div><div class="tmy">${y} · бюджет на месяц</div>
+          <div class="tmarr"><button class="rbtn" data-act="tprev" aria-label="Предыдущий месяц">${arrow(0)}</button>${ym !== cur ? `<button class="tlink" data-act="tnow">сегодня</button>` : ''}<button class="rbtn" data-act="tnext" aria-label="Следующий месяц">${arrow(1)}</button></div></section>
+        ${tcard('Обзор', G_HC, `<table class="tkv"><tr><td>Период</td><td>1 – ${dim} ${MONTHS_G[m - 1]}</td></tr><tr><td>Валюта</td><td>лари ₾ · курс НБГ</td></tr>
+          <tr><td>На руках сейчас</td><td class="num">${gel(c.have)}</td></tr><tr><td>Запас</td><td class="num">${gel(c.res)}</td></tr></table>`)}
+        ${tcard('Осталось на расходы', P_HC, `<div class="tbig num ${leftToSpend < 0 ? 'neg' : ''}">${gel(leftToSpend)}</div><div class="tsub">из ${gel(T.P.exp)} ${T.limSum ? 'по лимитам' : 'на жизнь'}</div>`)}
+        ${tcard('Дней осталось', P_HC, `<div class="tbig num">${daysLeft}</div><div class="tsub">${daysLeft && ym <= cur ? `≈ ${gel(Math.max(0, leftToSpend) / daysLeft)} в день` : ym > cur ? 'месяц ещё впереди' : 'месяц прошёл'}</div>`)}
+      </div>
+      <div class="tgrid">
+        ${tcard('Движение денег', P_HC, `<table class="tt flow"><thead><tr><th></th><th>План</th><th>Факт</th></tr></thead><tbody>
+          ${flow.map(([n, p, a, s]) => `<tr><td><span class="sg">${s}</span>${n}</td><td class="num">${cell(p)}</td><td class="num">${cell(a)}</td></tr>`).join('')}</tbody>
+          <tfoot><tr><td>Остаток</td><td class="num ${restP < 0 ? 'neg' : ''}">${money(restP, 0)}</td><td class="num ${restA < 0 ? 'neg' : ''}">${money(restA, 0)}</td></tr></tfoot></table>`)}
+        ${tcard('План и факт', G_HC, `<div class="lgnd" style="justify-content:center"><span><em style="background:${C_FREE}"></em>план</span><span><em style="background:#E8A5A0"></em>факт</span></div>${hbars([['Доходы', T.P.inc, T.A.inc], ['Счета', T.P.bills + T.P.once, T.A.bills + T.A.once], ['Расходы', T.P.exp, T.A.exp], ['Цели', T.P.goals, T.A.goals]])}`)}
+        ${tcard('На что ушли деньги', P_HC, donut(spentCats.length ? spentCats : actualParts, money(spentCats.length ? T.A.exp : T.A.bills + T.A.once + T.A.exp + T.A.goals, 0), spentCats.length ? '₾ расходы' : '₾ факт'))}
+        ${tcard('Доходы', G_HC, donut(incParts, money(incParts.reduce((t, x) => t + x.v, 0), 0), '₾ за месяц'))}
+      </div>
+      <div class="tgrid tables">
+        ${tcard('Доходы', G_HC, incT)}
+        ${tcard('Счета · каждый месяц', P_HC, billT)}
+        ${tcard('Расходы · лимиты', P_HC, catT)}
+        ${tcard('Цели · накопления', G_HC, goalT).replace('<section class="tcardx"', '<section class="tcardx span2"')}
+        ${tcard('Крупные разовые траты', P_HC, onceT)}
+      </div>
+      <div class="tfc">${forecastHtml(c)}</div>
+    </div>
+    <p class="hint" style="margin:12px 24px">Сумма в столбце «План» меняется для всех месяцев. «Факт» заполняется сам: доходы — из «Приходов», расходы — из «Расходов», счета — галочкой «оплачено». Любой факт можно вписать вручную, а чтобы вернуть автоматический — очистите ячейку.</p>`;
+}
+
+// правка ячейки таблицы
+function tblEdit(t) {
+  const f = t.dataset.tb, id = t.dataset.id, F = factOf(tblYm), v = t.type === 'checkbox' ? t.checked : t.value;
+  const num = s => { const n = fxNum(s); return isFinite(n) ? r2(n) : null; };
+  const inc = budget.inc.find(x => x.id === id), exp = budget.exp.find(x => x.id === id);
+  switch (f) {
+    case 'incN': inc.n = v.trim() || 'Доход'; break;
+    case 'incA': inc.a = num(v) == null ? '' : String(num(v)); break;
+    case 'incDay': { const d = parseInt(v, 10); if (d >= 1 && d <= 31) inc.date = atDay(ymOf(inc.date || now), d); break; }
+    case 'incGot': if (v) F.got[id] = true; else { delete F.got[id]; delete F.inc[id]; } break;
+    case 'incFact': if (String(v).trim() === '') delete F.inc[id]; else F.inc[id] = num(v); break;
+    case 'billN': exp.n = v.trim() || 'Счёт'; break;
+    case 'billA': exp.a = num(v) == null ? '' : String(num(v)); break;
+    case 'billDay': { const d = parseInt(v, 10); exp.day = d >= 1 && d <= 31 ? d : ''; break; }
+    case 'onceDate': exp.date = v; break;
+    case 'billPaid': if (v) F.paid[id] = true; else { delete F.paid[id]; delete F.bill[id]; } break;
+    case 'billFact': if (String(v).trim() === '') delete F.bill[id]; else F.bill[id] = num(v); break;
+    case 'catLim': budget.lim = budget.lim || {}; budget.lim[id] = num(v) || 0; break;
+    case 'catFact': if (String(v).trim() === '') delete F.cat[id]; else F.cat[id] = num(v); break;
+    case 'addCat': if (v) { budget.lim = budget.lim || {}; budget.lim[v] = 0; } break;
+    default: return;
+  }
+  saveBudget();
+  // перерисовать, но не потерять ячейку, в которую перешли по Tab
+  setTimeout(() => {
+    const a = document.activeElement, key = a && a.dataset && a.dataset.tb ? [a.dataset.tb, a.dataset.id] : null;
+    const y = window.scrollY; render(); window.scrollTo(0, y);
+    const n = f === 'addCat' ? ['catLim', v] : key;
+    if (n) { const el = document.querySelector(`[data-tb="${n[0]}"][data-id="${n[1]}"]`); if (el) { el.focus(); el.select && el.select(); } }
+  }, 0);
+}
+document.addEventListener('change', e => { const t = e.target.closest && e.target.closest('[data-tb]'); if (t && budget && tab === 'plan') tblEdit(t); });
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches && e.target.matches('.tin')) { e.preventDefault(); e.target.blur(); } });
+function tblAdd(k) {
+  const y = window.scrollY, ym = tblYm < ymOf(now) ? ymOf(now) : tblYm;
+  let x, f;
+  if (k === 'inc') { x = { id: newId(), n: '', a: '', c: 'GEL', date: atDay(ym, ym === ymOf(now) ? ymd(now)[2] : 1), rep: 'm', cnt: 6 }; budget.inc.push(x); f = 'incN'; }
+  else { x = { id: newId(), n: '', a: '', c: 'GEL', day: '', rep: k === 'once' ? 'once' : 'm', cnt: 12, from: ym, date: k === 'once' ? atDay(ym, 15) < now ? now : atDay(ym, 15) : '' }; budget.exp.push(x); f = 'billN'; }
+  saveBudget(); render(); window.scrollTo(0, y);
+  const el = document.querySelector(`[data-tb="${f}"][data-id="${x.id}"]`); if (el) el.focus();
+}
+function tblDel(k, id) {
+  const y = window.scrollY;
+  if (k === 'inc') budget.inc = budget.inc.filter(x => x.id !== id);
+  else if (k === 'exp') budget.exp = budget.exp.filter(x => x.id !== id);
+  else if (k === 'cat' && budget.lim) delete budget.lim[id];
+  saveBudget(); render(); window.scrollTo(0, y); toast('Удалено');
 }
 
 function renderSettings() {
@@ -1945,6 +2334,7 @@ function updateSpend(src) {
 function render(anim) {
   $main.classList.toggle('intro', !!anim);
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  document.body.classList.toggle('wide', tab === 'plan' && !!budget && planView() === 'table');
   if (tab === 'income') renderIncome(); else if (tab === 'year') renderYear(); else if (tab === 'spend') renderSpend(); else if (tab === 'plan') renderPlan(); else renderSettings();
 }
 
@@ -2243,6 +2633,14 @@ document.addEventListener('click', e => {
     case 'bnewyes': budget = null; store.set('budget', null); wizDraft = null; render(); openWizard(0); break;
     case 'skin': applySkin(el.dataset.id); render(); break;
     case 'bwizgoals': openWizard(WSTEPS.indexOf('goals')); break;
+    case 'pview': store.set('planView', el.dataset.v); render(); window.scrollTo(0, 0); break;
+    case 'fmode': { const y = window.scrollY; budget.fmode = el.dataset.v; saveBudget(); render(); window.scrollTo(0, y); break; }
+    case 'fbills': { const y = window.scrollY; budget.fBills = el.checked; saveBudget(); render(); window.scrollTo(0, y); break; }
+    case 'tprev': tblYm = ymAdd(tblYm, -1); render(); break;
+    case 'tnext': tblYm = ymAdd(tblYm, 1); render(); break;
+    case 'tnow': tblYm = ymOf(now); render(); break;
+    case 'tadd': tblAdd(el.dataset.k); break;
+    case 'tdel': tblDel(el.dataset.k, el.dataset.id); break;
     case 'goal': openGoal(el.dataset.id); break;
     case 'gput': goalPut(+el.dataset.s); break;
     case 'glogrm': if (goalEdit) { goalEdit.log = goalEdit.log.filter(l => String(l.t) !== el.dataset.t); saveBudget(); render(); openGoal(goalEdit.id); } break;
