@@ -594,6 +594,13 @@ b.neg { color: var(--danger); }
 .skin-paper .tsw, .skin-paper .tsw i { border-radius: 2px; }
 .skin-paper .incsug, .skin-paper .qrow.avgrow { border-radius: 2px; }
 .skin-apple .tsw.on { background: var(--leaf); }
+.qmp { flex-wrap: wrap; }
+.qmp .qsel { flex: 1; min-width: 110px; font-size: 15px; color: var(--ink); }
+.qyrs { margin: 8px 0 0; }
+.qyrs button { padding: 6px 11px; font-size: 13.5px; }
+.lgnd em.dash2 { background: repeating-linear-gradient(90deg, var(--soft) 0 5px, transparent 5px 8px); height: 2px; }
+.scard .sgoals { margin-top: 6px; }
+.wide .tfc .scard svg { max-height: 320px; }
 
 /* ===================== Paper style: stacked paper, folder tabs, typewriter labels ===================== */
 html.skin-paper {
@@ -1718,7 +1725,7 @@ function showWiz(anim) {
         <div class="qrv"><input class="qnum num small" data-k="goals" data-id="${g.id}" data-f="s" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(g.s || '')}" aria-label="Уже накоплено"><span class="qcs">${CUR[g.c].s}</span></div>
         <div class="seg small qrep">${[['m', 'Откладывать в месяц'], ['by', 'Накопить к сроку']].map(([k, l]) => `<button data-w="gmode" data-id="${g.id}" data-m="${k}" class="${(g.mode || 'm') === k ? 'on' : ''}">${l}</button>`).join('')}</div>
         ${(g.mode || 'm') === 'm' ? `<div class="qrv"><input class="qnum num small" data-k="goals" data-id="${g.id}" data-f="m" inputmode="decimal" autocomplete="off" placeholder="сколько в месяц" value="${esc(g.m || '')}" aria-label="Сколько в месяц"><span class="qcs">${CUR[g.c].s} в месяц</span></div>`
-          : `<label class="qwhenin"><span>к какому месяцу</span><input type="month" class="qdin" data-k="goals" data-id="${g.id}" data-f="by" min="${ymOf(now)}" value="${g.by || ''}" aria-label="К какому месяцу"></label>`}
+          : monthPick(g)}
         <i class="qghint" data-gh="${g.id}">${goalHint(g)}</i></div>`).join('')}</div>
       <button class="qnext" data-w="next">${d.goals.length ? 'Дальше' : 'Пока ни на что не коплю'}</button>`;
   } else if (st === 'daily') {
@@ -1776,6 +1783,14 @@ function avgRowW(x) {
       <button class="qrm" data-w="rm" data-k="inc" data-id="${x.id}" aria-label="Убрать">✕</button></div>
     <div class="qavg"><b class="num">≈ ${gel(a.v)}</b> каждый месяц<i>${avgWord(a)} — по столбцу «Факт» в таблице «Доходы» за прошлые месяцы. Пересчитывается сам, когда вы вписываете новые приходы.</i></div></div>`;
 }
+// выбор месяца для цели: два списка и быстрые варианты «через год, два, три, пять»
+function monthPick(g) {
+  const [y0, m0] = (g.by || '').split('-').map(Number), cy = ymd(now)[0];
+  return `<div class="qwhenin qmp"><span>к какому месяцу</span>
+      <select class="qsel" data-k="goals" data-id="${g.id}" data-f="byM" aria-label="Месяц"><option value="">месяц</option>${MONTHS.map((n, i) => `<option value="${i + 1}" ${m0 === i + 1 ? 'selected' : ''}>${n}</option>`).join('')}</select>
+      <select class="qsel" data-k="goals" data-id="${g.id}" data-f="byY" aria-label="Год"><option value="">год</option>${Array.from({ length: 31 }, (_, i) => cy + i).map(y => `<option value="${y}" ${y0 === y ? 'selected' : ''}>${y}</option>`).join('')}</select></div>
+    <div class="qchips qyrs">${[1, 2, 3, 5, 10].map(k => { const ym = ymAdd(ymOf(now), k * 12); return `<button data-w="gby" data-id="${g.id}" data-ym="${ym}" class="${g.by === ym ? 'on' : ''}">через ${k} ${plural(k, 'год', 'года', 'лет')}</button>`; }).join('')}</div>`;
+}
 function wizItem(t) { const k = t.dataset.k; return k && wiz.d[k] ? wiz.d[k].find(x => x.id === t.dataset.id) : null; }
 function wizRedraw() { const bd = document.querySelector('#quick .qbody'), keep = bd ? bd.scrollTop : 0; showWiz(false); const nb = document.querySelector('#quick .qbody'); if (nb) nb.scrollTop = keep; }
 function wizInput(ev) {
@@ -1786,6 +1801,15 @@ function wizInput(ev) {
   const f = t.dataset.f;
   if (f === 'day') { const n = parseInt(t.value, 10); x.day = n >= 1 && n <= 31 ? n : ''; }
   else if (f === 'cnt') { const n = parseInt(t.value, 10); x.cnt = n >= 1 ? Math.min(n, 360) : ''; }
+  else if (f === 'byM' || f === 'byY') {
+    // месяц и год выбираются двумя списками: поле type="month" не работает в Firefox и Safari на компьютере
+    const [y0, m0] = (x.by || '').split('-'), cy = ymd(now)[0], cm = ymd(now)[1];
+    let y = f === 'byY' ? +t.value : +y0 || 0, m = f === 'byM' ? +t.value : +m0 || 0;
+    if (!y && m) y = m >= cm ? cy : cy + 1;
+    if (y && !m) m = y === cy ? Math.min(12, cm + 1) : 12;
+    x.by = y && m ? (ymDiff(ymOf(now), `${y}-${String(m).padStart(2, '0')}`) < 0 ? ymOf(now) : `${y}-${String(m).padStart(2, '0')}`) : '';
+    return wizRedraw();
+  }
   else x[f] = t.value;
   if (ev.type === 'change' && (f === 'c' || f === 'date' || f === 'by' || f === 'cnt')) return wizRedraw();
   if (f === 'a') { const e = document.querySelector(`[data-eq="${x.id}"]`); if (e) e.textContent = eqTxt(x.a, x.c); }
@@ -1831,7 +1855,8 @@ function wizClick(ev) {
       d.goals.push(g); wizRedraw(); return wizFocus(g.id, g.n ? 'a' : 'n');
     }
     case 'rep': { const x = d[t.dataset.k].find(y => y.id === t.dataset.id); x.rep = t.dataset.r; if (x.rep === 'n' && !x.cnt) x.cnt = 6; wizRedraw(); if (x.rep === 'n') wizFocus(x.id, 'cnt'); return; }
-    case 'gmode': { const g = d.goals.find(y => y.id === t.dataset.id); g.mode = t.dataset.m; wizRedraw(); return wizFocus(g.id, g.mode === 'm' ? 'm' : 'by'); }
+    case 'gby': { const g = d.goals.find(y => y.id === t.dataset.id); g.by = t.dataset.ym; wizRedraw(); return; }
+    case 'gmode': { const g = d.goals.find(y => y.id === t.dataset.id); g.mode = t.dataset.m; wizRedraw(); return wizFocus(g.id, g.mode === 'm' ? 'm' : 'byM'); }
     case 'rm': { const k = t.dataset.k; d[k] = d[k].filter(x => x.id !== t.dataset.id); wizRedraw(); return; }
     case 'day': { const x = d.inc.find(y => y.id === t.dataset.id); x.date = nextDay(+t.dataset.n); wizRedraw();
       popButton({ el: document.querySelector(`#quick [data-w="day"][data-id="${x.id}"][data-n="${t.dataset.n}"]`), stars: true, color: 'acc' }); return; }
@@ -1977,6 +2002,7 @@ function renderPlan() {
       <div class="lc" id="lc">${lineChart(c)}<div class="lctip" id="lctip" hidden></div></div></div>
 
     ${forecastHtml(c)}
+    ${savingsCard(c)}
 
     ${parts.length ? `<div class="card" style="--d:160ms"><h2 class="hl">Куда пойдут деньги до ${shortDate(c.end)}</h2>
       <div class="donut"><svg viewBox="0 0 140 140" role="img" aria-label="Распределение денег">${arcs}
@@ -2085,6 +2111,78 @@ function incomeCard(c) {
         <b class="iv num">${v > 0 ? `${money(v, 0)} ${CUR[cur].s}` : '—'}</b>${swBtn(x)}</div>`; }).join('')}
     ${!hasAvg && a.n ? `<button class="incsug" data-act="addavg"><span>📈</span><span><b>Средний доход по факту ≈ <span class="num">${gel(a.v)}</span></b><i>${avgWord(a)}. Добавить в план как ежемесячный доход</i></span><span class="plus">+</span></button>` : ''}
     <p class="hint" style="margin:8px 0 0">Выключенный доход не учитывается в плане, графиках и таблицах. Можно, например, выключить зарплату и включить средний доход по факту.</p></div>`;
+}
+
+/* ---------- накопления: всё свободное — в копилку ---------- */
+/* Каждый месяц: доход − обязательные платежи − разовые траты − повседневные траты (лимиты, а без них — средние из «Расходов»).
+   Весь остаток идёт в накопления. Цели закрываются по очереди, как они стоят в списке. Для сравнения — взносы по плану. */
+function saveSim(c) {
+  const lim = budget.lim || {}, limSum = Object.values(lim).reduce((t, v) => t + (+v || 0), 0);
+  const av = catAvg(), avSum = Object.entries(av).filter(([k]) => k !== 'home').reduce((t, [, v]) => t + v, 0);
+  const daily = limSum || avSum, src = limSum ? 'lim' : avSum ? 'avg' : '';
+  const goals = c.goals.filter(x => x.gi.t > 0);
+  const saved0 = goals.reduce((t, x) => t + x.gi.saved, 0);
+  const cur = ymOf(now), dim = daysTo(`${cur}-01`, endOfMonth(now)) + 1, restK = (dim - ymd(now)[2] + 1) / dim;
+  const M = c.months.map((m, i) => ({ ym: m.ym, inc: m.inc, out: m.need + m.once, daily: daily * (i === 0 ? restK : 1), goalPlan: m.goal }));
+  for (const m of M) m.free = m.inc - m.out - m.daily;
+  const tail = M.slice(1), avgFree = tail.reduce((t, m) => t + m.free, 0) / Math.max(1, tail.length), avgPlan = tail.reduce((t, m) => t + m.goalPlan, 0) / Math.max(1, tail.length);
+  const start = saved0 + Math.max(0, c.have - c.res);            // уже накоплено на целях + свободные деньги на счетах сверх запаса
+  // сколько месяцев показывать: пока не закроются все цели (до 10 лет), но не меньше года
+  const targets = []; let acc = 0;
+  for (const x of goals) { acc += x.gi.t; targets.push({ ...x, cum: acc }); }
+  const pts = [{ ym: cur, max: start, plan: saved0, i: 0 }];
+  let S = start, P = saved0, doneAt = targets.length && targets.every(t => S >= t.cum) ? 0 : null;
+  for (let i = 0; i < 120; i++) {
+    const m = M[i] || { ym: ymAdd(cur, i), free: avgFree, goalPlan: avgPlan };
+    S += m.free; P += m.goalPlan;
+    pts.push({ ym: ymAdd(cur, i + 1), max: S, plan: P, free: m.free, i: i + 1 });
+    if (doneAt == null && targets.length && targets.every(t => S >= t.cum)) doneAt = i;
+    if (i >= 11 && (!targets.length || doneAt != null && i >= doneAt + 2)) break;   // год, а если цели дальше — пока не закроются (до 10 лет)
+  }
+  for (const t of targets) { const hit = pts.find(p => p.max >= t.cum); t.etaMax = hit ? hit.ym : null; const hp = pts.find(p => p.plan >= t.cum); t.etaPlanCum = hp ? hp.ym : null; }
+  return { daily, src, limSum, avSum, start, saved0, pts, targets, avgFree, months: M };
+}
+function savingsCard(c) {
+  const s = saveSim(c);
+  if (!s.src) return `<div class="card" style="--d:150ms"><h2 class="hl">Накопления: всё свободное — в копилку</h2>
+    <p class="hint" style="margin:8px 0 10px">Чтобы посчитать, сколько можно копить, если все свободные деньги откладывать, задайте повседневные траты по статьям (продукты, кафе, транспорт) — или записывайте траты во вкладке «Расходы».</p>
+    <button class="btn outline" data-act="bwizdaily" style="margin:0">Задать повседневные траты</button></div>`;
+  const W = 340, H = 190, l = 8, r = 8, t = 16, b = 24, pts = s.pts, n = pts.length - 1;
+  const hi = Math.max(...pts.map(p => Math.max(p.max, p.plan)), ...s.targets.map(x => x.cum), 1), lo = Math.min(0, ...pts.map(p => p.max));
+  const X = i => l + (W - l - r) * i / Math.max(1, n), Y = v => t + (H - t - b) * (1 - (v - lo) / (hi - lo || 1));
+  const line = k => pts.map((p, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(p[k]).toFixed(1)).join('');
+  const area = line('max') + `L${X(n)} ${Y(lo)}L${X(0)} ${Y(lo)}Z`;
+  const step = n <= 13 ? 1 : n <= 24 ? 3 : n <= 36 ? 6 : 12;
+  const ticks = pts.filter(p => p.i % step === 0 && n - p.i >= step * .6 || p.i === n).map(p => `<text x="${X(p.i)}" y="${H - 7}" text-anchor="${p.i === 0 ? 'start' : p.i === n ? 'end' : 'middle'}" class="gt">${MONTHS_S[+p.ym.slice(5) - 1]}${p.ym.slice(5) === '01' || p.i === 0 ? ' ' + p.ym.slice(2, 4) : ''}</text>`).join('');
+  const tl = s.targets.map(x => { const y = Y(x.cum), hit = x.etaMax ? pts.find(p => p.ym === x.etaMax) : null;
+    return `<line x1="${l}" x2="${W - r}" y1="${y}" y2="${y}" stroke="${x.color}" stroke-width="1.3" stroke-dasharray="4 4" opacity=".8"/>
+      <text x="${l + 2}" y="${y - 4}" class="gt" style="fill:${x.color};font-weight:600">${goalIcon(x.g.n)} ${esc(x.g.n)} · ${money(x.cum / 1000, 1)}k</text>
+      ${hit ? `<circle cx="${X(hit.i)}" cy="${y}" r="5" fill="${x.color}" stroke="var(--page)" stroke-width="2"/>` : ''}`; }).join('');
+  const rows = s.months.map((m, i) => { const p = s.pts[i + 1], done = s.targets.filter(x => x.etaMax === p.ym);
+    return `<tr class="${m.free < 0 ? 'bad' : ''}"><td class="tn"><b>${ymName(m.ym)}</b>${done.length ? `<i>🎉 ${done.map(x => esc(x.g.n)).join(', ')}</i>` : ''}</td><td class="tv num">${money(m.inc, 0)}</td><td class="tv num">${money(m.out + m.daily, 0)}</td>
+      <td class="tv num ${m.free < 0 ? 'neg' : 'pos'}">${m.free >= 0 ? '+' : ''}${money(m.free, 0)}</td><td class="tv num"><b>${money(p.max, 0)}</b></td></tr>`; }).join('');
+  const year = s.pts[Math.min(12, n)];
+  return `<div class="card chart scard" style="--d:150ms"><h2 class="hl">Накопления: всё свободное — в копилку</h2>
+    <p class="hint" style="margin:4px 0 8px">Каждый месяц после обязательных платежей, разовых трат и повседневных трат (${s.src === 'lim' ? `по лимитам: ${gel(s.limSum)} в месяц` : `в среднем по «Расходам»: ${gel(s.avSum)} в месяц`}) весь остаток откладывается. Цели закрываются по очереди.</p>
+    <div class="tiles ftiles">
+      <div style="--c:${C_GOAL}"><span>Свободно в месяц</span><b class="num ${s.avgFree < 0 ? 'neg' : ''}">${gel(s.avgFree)}</b><i>в среднем за год</i></div>
+      <div style="--c:${C_FREE}"><span>Через год будет</span><b class="num">${gel(year.max)}</b><i>по плану взносов — ${gel(year.plan)}</i></div>
+      <div style="--c:var(--acc)"><span>Сейчас</span><b class="num">${gel(s.start)}</b><i>на целях ${gel(s.saved0)} + свободное на счетах</i></div></div>
+    ${(() => { const planM = s.months.slice(1).reduce((t, m) => t + m.goalPlan, 0) / Math.max(1, s.months.length - 1), over = planM - s.avgFree;
+      return over > 1 ? `<div class="bwarn" style="margin:12px 0 0"><span aria-hidden="true">⚠️</span><div>Взносы на цели по плану (${gel(planM)} в месяц) больше, чем остаётся после повседневных трат (${gel(s.avgFree)}). Чтобы так копить, повседневные траты придётся урезать на <b class="num">${gel(over)}</b> в месяц — или уменьшить взносы.</div></div>` : ''; })()}
+    <div class="lgnd" style="margin-top:12px"><span><em style="background:${C_GOAL}"></em>всё свободное в копилку</span><span><em class="dash2"></em>по плану взносов</span></div>
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Накопления по месяцам">
+      <defs><linearGradient id="sgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${C_GOAL};stop-opacity:.28"/><stop offset="1" style="stop-color:${C_GOAL};stop-opacity:0"/></linearGradient></defs>
+      ${lo < 0 ? `<line x1="${l}" x2="${W - r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--danger)" stroke-width="1"/>` : ''}
+      <path d="${area}" fill="url(#sgS)"/>${tl}
+      <path d="${line('plan')}" fill="none" stroke="var(--soft)" stroke-width="1.8" stroke-dasharray="5 4"/>
+      <path d="${line('max')}" fill="none" stroke="${C_GOAL}" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>${ticks}</svg>
+    ${s.targets.length ? `<div class="sgoals">${s.targets.map(x => `<div class="feta" style="--c:${x.color}"><span class="tic" style="--c:${x.color}">${goalIcon(x.g.n)}</span>
+      <div class="ft"><b>${esc(x.g.n)}</b><i>${gel(x.gi.left)} из ${gel(x.gi.t)} ещё копить</i></div>
+      <div class="fw"><b>${x.etaMax ? (x.etaMax === ymOf(now) ? 'уже хватает' : `к ${ymNameG(x.etaMax)}`) : 'больше 10 лет'}</b><i>${x.gi.eta ? `по плану взносов — к ${ymNameG(x.gi.eta)}` : 'по плану взносов не задано'}</i></div></div>`).join('')}</div>`
+      : `<p class="hint">Целей пока нет — график показывает, сколько накопится. <button class="addrow" data-act="bwizgoals" style="margin:0;padding:0">+ добавить цель</button></p>`}
+    <table class="ftable fc"><thead><tr><th>Месяц</th><th>Доход</th><th>Траты</th><th>Свободно</th><th>Накоплено</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="hint" style="margin:8px 0 0">Это сценарий «всё, что не потратили, — в копилку». Взносы по плану остаются как есть; кнопка «Отложил» у цели записывает, сколько вы реально положили.</p></div>`;
 }
 /* ---------- вид плана: карточки (телефон) или таблицы (компьютер) ---------- */
 const wideScreen = () => window.matchMedia && matchMedia('(min-width: 900px)').matches;
@@ -2349,7 +2447,7 @@ function renderTables() {
         ${tcard('Цели · накопления', G_HC, goalT).replace('<section class="tcardx"', '<section class="tcardx span2"')}
         ${tcard('Крупные разовые траты', P_HC, onceT)}
       </div>
-      <div class="tfc">${forecastHtml(c)}</div>
+      <div class="tfc">${forecastHtml(c)}${savingsCard(c)}</div>
     </div>
     <p class="hint" style="margin:12px 24px">Сумма в столбце «План» меняется для всех месяцев. «Факт» заполняется сам: доходы — из «Приходов», расходы — из «Расходов», счета — галочкой «оплачено». Любой факт можно вписать вручную, а чтобы вернуть автоматический — очистите ячейку.</p>`;
 }
