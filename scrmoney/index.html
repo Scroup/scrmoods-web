@@ -545,6 +545,55 @@ b.neg { color: var(--danger); }
 .skin-apple .gbar2 { height: 14px; background: #fff; border: 2px solid var(--leaf-soft); }
 .skin-apple .gt b { font-family: var(--ah); font-weight: 400; font-size: 18px; }
 .skin-apple .gt i, .skin-apple .gmonth, .skin-apple .qlab, .skin-apple .qcnt, .skin-apple .qwhenin, .skin-apple .ftable.fc th { font-style: normal; }
+/* ===== счета, пропуск анкеты, повседневные траты ===== */
+#quick .qbottom { display: flex; justify-content: space-between; align-items: center; }
+#quick .qtab { margin-left: auto; margin-right: -12px; font-size: 14px; }
+.qalt { display: block; width: 100%; margin-top: 10px; padding: 12px; border-radius: 999px; color: var(--soft); font-style: italic; font-size: 15px; }
+.qalt:hover { color: var(--acc); background: color-mix(in srgb, var(--acc) 8%, transparent); }
+.qrv .qnum.big { font-size: 24px; min-height: 52px; }
+.qcats { display: flex; flex-direction: column; gap: 6px; }
+.qcat { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 16px; background: var(--page); border: 1px solid var(--rule); }
+.qcn { flex: 1; min-width: 0; font-size: 16px; } .qcn i { display: block; font-size: 12.5px; color: var(--soft); }
+.qcat .qnum { flex: none; width: 108px; min-height: 42px; border: 1px solid var(--rule); border-radius: 12px; background: var(--paper); padding: 4px 10px; font-size: 18px; font-weight: 500; text-align: right; }
+.qcat .qnum:focus { outline: none; border-color: var(--acc); }
+.qlimsum { margin-top: 12px; padding: 10px 12px; border-radius: 14px; background: var(--wash); font-size: 14px; line-height: 20px; }
+.qlimsum b { font-weight: 600; } .qlimsum .w { color: var(--danger); display: block; margin-top: 4px; }
+.qdl { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 6px; }
+.qdl span { padding: 5px 11px; border-radius: 999px; background: var(--page); border: 1px solid var(--rule); font-size: 14px; }
+.qdl b { font-weight: 600; color: var(--acc); }
+.dtab th { font-weight: 400; font-style: italic; color: var(--soft); font-size: 12px; text-align: right; padding: 2px 6px; }
+.dtab th:nth-child(2) { text-align: left; }
+.dtab .tn > i { margin-top: 3px; }
+.ftable td.pos { color: #3E9A62; } .ftable td.neg { color: var(--danger); }
+.skin-paper .qcat, .skin-paper .qlimsum, .skin-paper .qdl span { border-radius: 2px; }
+.skin-paper .qalt, .skin-paper .qcn i { font-style: normal; }
+.skin-apple .qcat { background: #fff; border: 2px solid var(--leaf-soft); border-radius: 22px 18px 24px 20px; }
+.skin-apple .qalt { font-style: normal; font-weight: 700; }
+/* ===== выключатели доходов, средний по факту ===== */
+.tsw { position: relative; width: 38px; height: 22px; flex: none; border-radius: 11px; background: color-mix(in srgb, var(--ink) 18%, var(--page)); transition: background .2s; margin-right: 6px; }
+.tsw i { position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .2s; }
+.tsw.on { background: #58B37E; } .tsw.on i { transform: translateX(16px); }
+.incr { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid color-mix(in srgb, var(--rule) 60%, transparent); }
+.incr .tic { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 17px; flex: none; background: color-mix(in srgb, var(--c) 16%, var(--page)); }
+.incr .it { flex: 1; min-width: 0; } .incr .it b { display: block; font-weight: 500; } .incr .it i { display: block; font-size: 12.5px; color: var(--soft); }
+.incr .iv { font-weight: 500; white-space: nowrap; }
+.incr.off .it, .incr.off .iv, .incr.off .tic { opacity: .45; } .incr.off .iv { text-decoration: line-through; }
+.incr .tsw { margin-right: 0; }
+.incsug { display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 10px; padding: 10px 12px; border-radius: 16px; border: 1.5px dashed #58B37E; background: color-mix(in srgb, #58B37E 8%, var(--page)); text-align: left; }
+.incsug > span:first-child { font-size: 20px; } .incsug > span:nth-child(2) { flex: 1; } .incsug b { display: block; font-weight: 500; } .incsug i { font-size: 12.5px; color: var(--soft); }
+.incsug .plus { width: 30px; height: 30px; border-radius: 50%; background: #58B37E; color: #fff; display: grid; place-items: center; font-size: 20px; }
+.qavg { margin-top: 6px; font-size: 15px; } .qavg b { font-size: 22px; font-weight: 500; color: #3E9A62; } .qavg i { display: block; font-size: 12.5px; line-height: 17px; color: var(--soft); margin-top: 2px; }
+.qrow.avgrow { border-color: #58B37E; background: color-mix(in srgb, #58B37E 7%, var(--page)); }
+.qrow.avgrow .qname { padding: 4px 2px; }
+.qchips .avgc { border-color: #58B37E; color: #2F7F55; background: color-mix(in srgb, #58B37E 10%, var(--page)); font-weight: 500; }
+.tt tr.off td { opacity: .55; } .tt tr.off .tsw { opacity: 1; }
+.tt tr.off td:nth-child(4) { text-decoration: line-through; }
+.tro { padding: 5px 6px; display: inline-block; color: #2F7F55; font-weight: 500; }
+.tt.minc tr.sel td { background: color-mix(in srgb, var(--hc) 18%, transparent) !important; }
+.tt.minc tr.cur .tl { font-style: italic; }
+.skin-paper .tsw, .skin-paper .tsw i { border-radius: 2px; }
+.skin-paper .incsug, .skin-paper .qrow.avgrow { border-radius: 2px; }
+.skin-apple .tsw.on { background: var(--leaf); }
 
 /* ===================== Paper style: stacked paper, folder tabs, typewriter labels ===================== */
 html.skin-paper {
@@ -860,7 +909,7 @@ html.skin-apple { --leaf: #8ed24a; --leaf-soft: #c5e8a6; --leaf-ink: #3f7a1f; --
 .tdash { padding: 6px 12px 0; }
 .tgrid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); margin-top: 14px; align-items: start; }
 .tgrid.top { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); align-items: stretch; }
-.tgrid.tables { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); }
+.tgrid.tables { grid-template-columns: repeat(auto-fill, minmax(min(100%, 500px), 1fr)); }
 @media (max-width: 520px) { .tgrid.tables { grid-template-columns: 1fr; } .tdash { padding: 6px 8px 0; } }
 .tmonth { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 10px; }
 .tmn { font-size: 38px; line-height: 42px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
@@ -961,6 +1010,16 @@ html.skin-apple { --leaf: #8ed24a; --leaf-soft: #c5e8a6; --leaf-ink: #3f7a1f; --
 .skin-apple .tcardx > header { background: transparent; color: var(--leaf-mid); font-family: var(--ah); font-weight: 400; font-size: 17px; letter-spacing: .04em; text-transform: none; text-shadow: none; border-bottom: 2px dashed var(--leaf-soft); margin: 0 12px; }
 .skin-apple .tmn, .skin-apple .tbig { font-family: var(--ah); font-weight: 400; color: var(--leaf-ink); letter-spacing: .06em; }
 .skin-apple .tsub, .skin-apple .tkv td:first-child, .skin-apple .tnote, .skin-apple .tlink { font-style: normal; }
+.tkv .acr td { padding: 2px 0; }
+.tkv .acr td:first-child { font-style: normal; color: var(--ink); }
+.tkv .acr .tin { padding: 4px 6px; }
+.tkv .acr .tin.num { width: 80px; }
+.tin.cur { width: auto; padding: 4px 2px; color: var(--soft); font-size: 13px; }
+.tkv tr.tot td { font-weight: 600; color: var(--ink); font-style: normal; border-top: 1.5px solid var(--rule); }
+.tkv .tdel { opacity: .5; }
+.tlink2 { font: inherit; color: inherit; text-decoration: underline dotted color-mix(in srgb, var(--soft) 60%, transparent); text-underline-offset: 3px; }
+.tlink2:hover { color: var(--acc); }
+.tt.minc tr.sel td { background: color-mix(in srgb, var(--hc) 20%, transparent) !important; }
 </style>
 </head>
 <body>
@@ -1313,7 +1372,50 @@ const amtOf = x => fxNum(x.a);
 const mword = n => `${n} ${plural(n, 'месяц', 'месяца', 'месяцев')}`;
 
 /* ---------- данные ---------- */
-const emptyBudget = () => ({ v: 2, start: now, have: { a: '', c: 'GEL' }, inc: [], exp: [], goals: [], res: { k: 10, a: '' } });
+const emptyBudget = () => ({ v: 2, start: now, have: { a: '', c: 'GEL' }, accts: [], inc: [], exp: [], goals: [], lim: {}, res: { k: 10, a: '' } });
+const ACC_HINTS = [['💳', 'Карта'], ['💵', 'Наличные'], ['🏦', 'Вклад'], ['💳', 'Вторая карта'], ['💶', 'Наличные в валюте']];
+const acIcon = n => (ACC_HINTS.find(h => h[1] === n) || ['👛'])[0];
+// деньги на всех счетах, в лари
+const haveGel = (B, G = (a, c) => toGel(a, c) || 0) => (B.accts || []).reduce((t, x) => t + G(fxNum(x.a) || 0, x.c), 0);
+/* ---------- фактические приходы по месяцам и средний доход ---------- */
+// вписанные вручную приходы за месяц: { 'ГГГГ-ММ': { a, c } } — дополняют вкладку «Приходы»
+let minc = store.get('minc', {});
+const saveMinc = () => { _avgC = null; store.set('minc', minc); };
+const mincGel = ym => minc[ym] && fxNum(minc[ym].a) > 0 ? toGel(fxNum(minc[ym].a), minc[ym].c || 'GEL') || 0 : 0;
+const recGel = ym => rows.filter(r => r.date.startsWith(ym)).reduce((t, r) => t + (gelOf(r) || 0), 0);
+const incomeOfMonth = ym => recGel(ym) + mincGel(ym);
+// средний доход = итог столбца «Факт» таблицы «Доходы» за все прошлые месяцы, где что-то пришло;
+// число — как чаще всего приходили деньги. Считается один раз на перерисовку.
+let _avgC = null;
+const avgReset = () => { _avgC = null; };
+function avgIncome() {
+  if (_avgC) return _avgC;
+  const cur = ymOf(now);
+  if (!budget) return { v: 0, n: 0, from: null, to: null, day: 5, months: [] };
+  const keys = [...rows.map(r => r.date.slice(0, 7)), ...Object.keys(minc), ...Object.keys(budget.fact || {})];
+  const st = ymOf(budget.start || now);
+  for (let k = 1; k <= 24 && ymDiff(ymAdd(cur, -k), st) <= 0; k++) keys.push(ymAdd(cur, -k));
+  const ms = [...new Set(keys)].filter(ym => ym < cur).sort();
+  const tots = ms.map(ym => ({ ym, v: incFactOf(ym).total })).filter(m => m.v > 0.5);
+  const cnt = {}; for (const r of rows) { const dd = ymd(r.date)[2]; cnt[dd] = (cnt[dd] || 0) + 1; }
+  const reg = budget.inc.filter(x => !isAvg(x) && x.rep !== 'once' && x.date);
+  const day = reg.length ? ymd(reg[0].date)[2] : +(Object.entries(cnt).sort((a, b) => b[1] - a[1])[0] || [5])[0];
+  return _avgC = { v: tots.length ? tots.reduce((t, m) => t + m.v, 0) / tots.length : 0, n: tots.length, from: tots.length ? tots[0].ym : null, to: tots.length ? tots[tots.length - 1].ym : null, day, months: tots };
+}
+const isAvg = x => x.kind === 'avg';
+const incA = x => isAvg(x) ? avgIncome().v : amtOf(x);         // сумма дохода в его валюте (средний — в лари)
+const incC = x => isAvg(x) ? 'GEL' : x.c;
+const incLive = x => !x.off && incA(x) > 0;
+const avgItem = () => { const a = avgIncome(); return { id: newId(), n: 'Средний доход по факту', kind: 'avg', a: '', c: 'GEL', date: nextDay(a.day), rep: 'm', cnt: 6 }; };
+const avgWord = a => a.n ? `среднее за ${mword(a.n)}${a.n > 1 ? ` (${ymName(a.from, true)} – ${ymName(a.to, true)})` : ` (${ymName(a.from, true)})`}` : 'приходов пока нет';
+
+// средние повседневные траты по категориям из «Расходов» за последние 3 месяца
+function catAvg() {
+  const ms = [1, 2, 3].map(k => ymAdd(ymOf(now), -k)).filter(ym => spends.some(x => x.date.startsWith(ym)));
+  const out = {};
+  for (const k of CATS) { const v = ms.map(ym => spends.filter(x => x.date.startsWith(ym) && (x.cat || 'other') === k.id).reduce((t, x) => t + x.gel, 0)); const a = v.length ? v.reduce((t, x) => t + x, 0) / v.length : 0; if (a > 0) out[k.id] = a; }
+  return out;
+}
 // план первой версии → вторая: траты с числом стали ежемесячными, остальное — разовым
 function budgetMigrate(b) {
   if (!b) return null;
@@ -1325,13 +1427,19 @@ function budgetMigrate(b) {
   delete b.end; b.v = 2;
   return b;
 }
-let budget = budgetMigrate(store.get('budget', null));
-const saveBudget = () => store.set('budget', budget);
+// один счёт «деньги сейчас» → список счетов в разных валютах
+function budgetAccts(b) {
+  if (b && !b.accts) b.accts = fxNum(b.have && b.have.a) > 0 ? [{ id: newId(), n: 'Карта', a: b.have.a, c: b.have.c || 'GEL' }] : [];
+  if (b && !b.lim) b.lim = {};
+  return b;
+}
+let budget = budgetAccts(budgetMigrate(store.get('budget', null)));
+const saveBudget = () => { _avgC = null; store.set('budget', budget); };
 
 /* ---------- цели: сколько в месяц, когда накопится ---------- */
 // день, когда откладываем на цели: день первой регулярной зарплаты (сначала цели, потом всё остальное)
 function payday(B) {
-  const reg = B.inc.filter(x => x.rep !== 'once' && amtOf(x) > 0 && x.date).sort((a, b) => ymd(a.date)[2] - ymd(b.date)[2]);
+  const reg = B.inc.filter(x => x.rep !== 'once' && incLive(x) && x.date).sort((a, b) => ymd(a.date)[2] - ymd(b.date)[2]);
   return reg.length ? ymd(reg[0].date)[2] : 1;
 }
 function goalInfo(g, pd, G = (a, c) => toGel(a, c) || 0, start = now) {
@@ -1366,8 +1474,9 @@ function budgetEvents(B, to, G) {
   const out = [], cur = ymOf(now), last = ymOf(to);
   const add = (kind, x, date, g, extra) => { if (date >= now && date <= to && g > 0) out.push({ kind, id: x.id, n: x.n, date, gel: g, ...extra }); };
   for (const x of B.inc) {
-    const a = amtOf(x); if (!(a > 0)) continue;
-    const g = G(a, x.c), start = x.date || now;
+    if (x.off) continue;
+    const a = incA(x); if (!(a > 0)) continue;
+    const g = G(a, incC(x)), start = x.date || now;
     if (x.rep === 'once' || !x.rep) { add('inc', x, start, g); continue; }
     const m0 = ymOf(start), day = ymd(start)[2], cnt = x.rep === 'n' ? Math.max(1, +x.cnt || 1) : 1e4;
     for (let k = 0; k < cnt && ymDiff(ymAdd(m0, k), last) >= 0; k++) add('inc', x, atDay(ymAdd(m0, k), day), g);
@@ -1395,10 +1504,10 @@ function budgetCalc(B) {
   let noRate = false;
   const G = (a, c) => { const v = toGel(a || 0, c); if (v == null) { noRate = true; return 0; } return v; };
   const cur = ymOf(now), hEnd = endOfMonth(atDay(ymAdd(cur, 17), 1));    // считаем на 18 месяцев, показываем 12
-  const have = Math.max(0, G(fxNum(B.have.a) || 0, B.have.c));
+  const have = Math.max(0, haveGel(B, G));
   const ev = budgetEvents(B, hEnd, G);
   const incs = ev.filter(e => e.kind === 'inc'), outs = ev.filter(e => e.kind !== 'inc');
-  const past = B.inc.filter(x => (x.rep === 'once' || !x.rep) && amtOf(x) > 0 && x.date && x.date < now);
+  const past = B.inc.filter(x => !x.off && (x.rep === 'once' || !x.rep) && amtOf(x) > 0 && x.date && x.date < now);
   // текущий период: до конца месяца ближайшего поступления, но не меньше двух недель
   const firstInc = incs.find(e => e.date > now);
   let pEnd = endOfMonth(firstInc ? firstInc.date : now);
@@ -1467,11 +1576,13 @@ function budgetCalc(B) {
 }
 
 /* ---------- анкета ---------- */
-const WSTEPS = ['hello', 'have', 'inc', 'dates', 'exp', 'big', 'goals', 'res', 'done'];
+const WSTEPS = ['hello', 'have', 'inc', 'dates', 'exp', 'big', 'goals', 'daily', 'res', 'done'];
 const QN = WSTEPS.length - 2;    // вопросов
 let wiz = null, wizDraft = null;
 function openWizard(start = 0, only = '') {
   const d = wizDraft && !only ? wizDraft : JSON.parse(JSON.stringify(budget || emptyBudget()));
+  budgetAccts(d);
+  if (!d.accts.length) d.accts.push({ id: newId(), n: 'Карта', a: '', c: 'GEL' });
   if (!d.inc.length) d.inc.push({ id: newId(), n: 'Зарплата', a: '', c: 'GEL', date: '', rep: 'm', cnt: 6 });
   wiz = { d, i: start, fwd: true, only };
   const el = document.createElement('div'); el.id = 'quick'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', 'План бюджета');
@@ -1492,15 +1603,17 @@ function wizGo(to) {
 }
 function wizNext() { wizGo(wiz.i + 1); }
 function wizFinish() {
-  const d = wiz.d, only = wiz.only;
-  d.inc = d.inc.filter(x => amtOf(x) > 0);
+  const d = wiz.d, only = wiz.only, skip = wiz.skip;
+  d.inc = d.inc.filter(x => isAvg(x) || amtOf(x) > 0);
   d.exp = d.exp.filter(x => amtOf(x) > 0);
   d.goals = d.goals.filter(g => fxNum(g.a) > 0);
+  d.accts = (d.accts || []).filter(x => amtOf(x) > 0);
+  for (const k in d.lim || {}) if (!(d.lim[k] > 0)) delete d.lim[k];
   d.v = 2;
   if (!budget || !only) d.start = now;
   budget = d; saveBudget(); wizDraft = null;
   tab = 'plan'; closeWizard(true); window.scrollTo(0, 0);
-  toast(only ? 'План пересчитан' : 'План готов');
+  toast(only ? 'План пересчитан' : skip ? 'Заполните план прямо в таблицах' : 'План готов');
 }
 const curSel = (k, x, f = 'c') => `<select class="qsel" data-k="${k}" data-id="${x.id}" data-f="${f}" aria-label="Валюта">${BCUR.map(c => `<option value="${c}" ${x[f] === c ? 'selected' : ''}>${CUR[c].s}</option>`).join('')}</select>`;
 const eqTxt = (a, c) => { const v = fxNum(a); if (!(v > 0) || c === 'GEL') return ''; const g = toGel(v, c); return g == null ? 'курса НБГ пока нет' : `≈ ${gel(g)} по курсу НБГ`; };
@@ -1528,29 +1641,36 @@ function showWiz(anim) {
     b = `<div class="qhello"><div class="qwave" aria-hidden="true">👋</div>
       <div class="qh">Здравствуйте!<br>Давайте спланируем ваш бюджет.</div>
       <p class="qp">Несколько коротких вопросов, и я покажу, сколько можно спокойно тратить каждый день, сколько откладывать на цели и когда они накопятся.</p>
-      <ol class="qlist"><li>Сколько денег у вас есть сейчас</li><li>Какие доходы будут</li><li>Когда они придут</li><li>Обязательные траты каждый месяц</li><li>Крупные разовые траты</li><li>На что вы копите</li><li>Запас на непредвиденное</li></ol>
-      <button class="qnext" data-w="next">Начнём&nbsp; →</button></div>`;
+      <ol class="qlist"><li>Сколько денег на ваших счетах</li><li>Какие доходы будут</li><li>Когда они придут</li><li>Обязательные траты каждый месяц</li><li>Крупные разовые траты</li><li>На что вы копите</li><li>Продукты, кафе, транспорт и другое повседневное</li><li>Запас на непредвиденное</li></ol>
+      <button class="qnext" data-w="next">Начнём&nbsp; →</button>
+      <button class="qalt" data-w="totable">Пропустить анкету — заполню в таблицах</button></div>`;
   } else if (st === 'have') {
+    const used = d.accts.map(x => x.n);
     b = `<div class="qk">Деньги сейчас</div><div class="qh">Сколько денег у вас есть прямо сейчас?</div>
-      <p class="qp">На карте, наличными, на счетах — всё, что можно потратить. Накопления на цели впишем отдельно.</p>
-      <div class="qmoney"><input id="wHave" class="qamt num" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(d.have.a)}" aria-label="Сумма"><span class="qsym">${CUR[d.have.c].s}</span></div>
-      <div class="seg qcur">${BCUR.map(c => `<button data-w="hcur" data-c="${c}" class="${d.have.c === c ? 'on' : ''}">${CUR[c].s} ${c}</button>`).join('')}</div>
-      <div class="qeq" id="wHaveEq">${eqTxt(d.have.a, d.have.c)}</div>
+      <p class="qp">Впишите каждый счёт отдельно, в его валюте: карта, наличные, вклад. Накопления на цели впишем позже.</p>
+      <div id="wAcc">${d.accts.map(x => `<div class="qrow acct" data-id="${x.id}">
+        <div class="qrt"><span class="qico" aria-hidden="true">${acIcon(x.n)}</span><input class="qname" data-k="accts" data-id="${x.id}" data-f="n" value="${esc(x.n)}" placeholder="карта, наличные, вклад…" aria-label="Название счёта">
+          ${d.accts.length > 1 ? `<button class="qrm" data-w="rm" data-k="accts" data-id="${x.id}" aria-label="Убрать">✕</button>` : ''}</div>
+        <div class="qrv"><input class="qnum num big" data-k="accts" data-id="${x.id}" data-f="a" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(x.a)}" aria-label="Сумма">${curSel('accts', x)}</div>
+        <i class="qeqs" data-eq="${x.id}">${eqTxt(x.a, x.c)}</i></div>`).join('')}</div>
+      <div class="qchips">${ACC_HINTS.filter(([, n]) => !used.includes(n)).map(([e, n]) => `<button data-w="addacct" data-n="${n}">+ ${e} ${n}</button>`).join('')}<button data-w="addacct" data-n="" class="own">+ другой счёт</button></div>
+      <div class="qsum" id="wHaveSum">${haveTot(d)}</div>
       <button class="qnext" data-w="next">${wiz.only ? 'Пересчитать план' : 'Дальше'}</button>`;
   } else if (st === 'inc') {
     const used = d.inc.map(x => x.n);
     b = `<div class="qk">Доходы</div><div class="qh">Какие деньги вы будете получать?</div>
       <p class="qp">Зарплата приходит каждый месяц, аренду квартиры платят, например, 6 месяцев, премия — разово.</p>
-      ${d.inc.map(x => `<div class="qrow" data-id="${x.id}">
+      ${d.inc.map(x => isAvg(x) ? avgRowW(x) : `<div class="qrow" data-id="${x.id}">
         <div class="qrt"><input class="qname" data-k="inc" data-id="${x.id}" data-f="n" value="${esc(x.n)}" placeholder="откуда деньги" aria-label="Название">
           <button class="qrm" data-w="rm" data-k="inc" data-id="${x.id}" aria-label="Убрать">✕</button></div>
         <div class="qrv"><input class="qnum num" data-k="inc" data-id="${x.id}" data-f="a" inputmode="decimal" autocomplete="off" placeholder="сумма" value="${esc(x.a)}" aria-label="Сумма">${curSel('inc', x)}</div>
         <i class="qeqs" data-eq="${x.id}">${eqTxt(x.a, x.c)}</i>
         ${repSeg('inc', x, ['m', 'n', 'once'])}${cntBox('inc', x, 'в течение')}</div>`).join('')}
-      <div class="qchips">${INC_HINTS.filter(([n]) => !used.includes(n)).map(([n, r]) => `<button data-w="addinc" data-n="${n}" data-r="${r}">+ ${n}</button>`).join('')}<button data-w="addinc" data-n="" data-r="once" class="own">+ другое</button></div>
+      <div class="qchips">${!d.inc.some(isAvg) && avgIncome().n ? `<button data-w="addavg" class="avgc">+ 📈 Средний доход по факту ≈ ${gel(avgIncome().v)}</button>` : ''}${INC_HINTS.filter(([n]) => !used.includes(n)).map(([n, r]) => `<button data-w="addinc" data-n="${n}" data-r="${r}">+ ${n}</button>`).join('')}<button data-w="addinc" data-n="" data-r="once" class="own">+ другое</button></div>
+      ${avgIncome().n ? '' : '<p class="qp" style="margin:4px 0 0;font-size:13.5px">Чтобы взять средний доход по факту, запишите приходы во вкладке «Приходы» или впишите их по месяцам в «План → Таблицы».</p>'}
       <button class="qnext" data-w="next">Дальше</button>`;
   } else if (st === 'dates') {
-    const list = d.inc.filter(x => amtOf(x) > 0);
+    const list = d.inc.filter(x => !x.off && incA(x) > 0);
     const when = x => {
       if (!x.date) return 'дата не выбрана — посчитаю, что деньги придут сегодня';
       const first = x.date === now ? 'сегодня' : `${shortDate(x.date)} · ${whenWord(x.date)}`;
@@ -1560,7 +1680,7 @@ function showWiz(anim) {
     };
     b = `<div class="qk">Даты</div><div class="qh">Когда придут деньги?</div>
       ${list.length ? `<p class="qp">Нажмите на число или выберите дату. Для регулярных доходов — ближайшая выплата.</p>` + list.map(x => `<div class="qdate">
-        <div class="qdt"><b>${esc(x.n || 'Доход')}</b><span class="num">${money(amtOf(x), 0)} ${CUR[x.c].s}<em>${x.rep === 'n' ? `${mword(+x.cnt || 1)}` : REP[x.rep || 'once']}</em></span></div>
+        <div class="qdt"><b>${esc(x.n || 'Доход')}</b><span class="num">${money(incA(x), 0)} ${CUR[incC(x)].s}<em>${x.rep === 'n' ? `${mword(+x.cnt || 1)}` : REP[x.rep || 'once']}</em></span></div>
         <div class="qdays">${[1, 5, 10, 15, 20, 25].map(n => `<button data-w="day" data-id="${x.id}" data-n="${n}" class="${x.date && x.date === nextDay(n) ? 'on' : ''}">${n}</button>`).join('')}
           <input type="date" class="qdin" data-k="inc" data-id="${x.id}" data-f="date" min="${now}" value="${x.date || ''}" aria-label="Дата"></div>
         <i class="qwhen">${when(x)}</i></div>`).join('')
@@ -1572,7 +1692,7 @@ function showWiz(anim) {
     b = big ? `<div class="qk">Разовые траты</div><div class="qh">Будут ли крупные разовые траты?</div>
       <p class="qp">Ремонт, отпуск, новая техника. Укажите, когда — я подскажу, сколько откладывать заранее. Если нет, просто нажмите «Дальше».</p>`
       : `<div class="qk">Обязательные траты</div><div class="qh">Какие траты у вас каждый месяц?</div>
-      <p class="qp">Аренда, коммуналка, кредит. Продукты и мелочи не вписывайте: на них пойдут «деньги на каждый день». Рассрочка на несколько месяцев — «N месяцев».</p>`;
+      <p class="qp">Аренда, коммуналка, кредит, подписки. Продукты, кафе и транспорт спрошу отдельно, чуть позже. Рассрочка на несколько месяцев — «N месяцев».</p>`;
     b += `<div class="qchips">${(big ? BIG_HINTS : EXP_HINTS).map(([e, n]) => `<button data-w="addexp" data-n="${n}" data-r="${big ? 'once' : 'm'}" class="${used.includes(n) ? 'on' : ''}">${e} ${n}</button>`).join('')}<button data-w="addexp" data-n="" data-r="${big ? 'once' : 'm'}" class="own">+ своя</button></div>
       <div id="wExp">${mine.map(x => `<div class="qrow exp" data-id="${x.id}">
         <div class="qrt"><span class="qico" aria-hidden="true">${iconOf(x.n)}</span><input class="qname" data-k="exp" data-id="${x.id}" data-f="n" value="${esc(x.n)}" placeholder="на что" aria-label="Название">
@@ -1601,8 +1721,19 @@ function showWiz(anim) {
           : `<label class="qwhenin"><span>к какому месяцу</span><input type="month" class="qdin" data-k="goals" data-id="${g.id}" data-f="by" min="${ymOf(now)}" value="${g.by || ''}" aria-label="К какому месяцу"></label>`}
         <i class="qghint" data-gh="${g.id}">${goalHint(g)}</i></div>`).join('')}</div>
       <button class="qnext" data-w="next">${d.goals.length ? 'Дальше' : 'Пока ни на что не коплю'}</button>`;
+  } else if (st === 'daily') {
+    const av = catAvg(), has = Object.keys(av).length;
+    d.lim = d.lim || {};
+    if (!d.limInit) { d.limInit = true; for (const k in av) if (d.lim[k] == null && k !== 'home') d.lim[k] = Math.max(10, Math.round(av[k] / 10) * 10); }
+    const list = CATS.filter(k => k.id !== 'other' || d.lim.other != null || av.other);
+    b = `<div class="qk">Повседневные траты</div><div class="qh">Сколько в месяц уходит на повседневное?</div>
+      <p class="qp">${has ? 'Я подставил ваши средние траты из «Расходов» за последние месяцы — поправьте, если нужно.' : 'Впишите примерно, сколько в месяц уходит на каждую статью. Потом уточните по факту во вкладке «Расходы».'} Пустые строки можно не заполнять.</p>
+      <div class="qcats">${list.map(k => `<label class="qcat"><span class="qico" aria-hidden="true">${k.s}</span><span class="qcn">${esc(k.n)}${av[k.id] ? `<i>в среднем ${gel(av[k.id])}</i>` : ''}</span>
+        <input class="qnum num" data-lim="${k.id}" inputmode="decimal" autocomplete="off" placeholder="0" value="${d.lim[k.id] ? d.lim[k.id] : ''}" aria-label="${esc(k.n)} в месяц"><span class="qcs">₾</span></label>`).join('')}</div>
+      <div class="qlimsum" id="wLimSum">${limHint(d)}</div>
+      <button class="qnext" data-w="next">Дальше</button>`;
   } else if (st === 'res') {
-    const base = (toGel(fxNum(d.have.a) || 0, d.have.c) || 0) + monthIncome(d);
+    const base = haveGel(d) + monthIncome(d);
     const opts = [[0, 'Ничего не откладывать', ''], [5, '5%', ''], [10, '10%', 'советую'], [15, '15%', ''], ['own', 'Своя сумма', '']];
     const cols = ['#C9584B', '#D9A040', '#7DAF55', '#5F9E55', 'var(--acc)'];
     b = `<div class="qk">Запас</div><div class="qh">Сколько держать на непредвиденные траты?</div>
@@ -1612,10 +1743,11 @@ function showWiz(anim) {
       <div class="qmoney small" id="wOwn" ${d.res.k === 'own' ? '' : 'hidden'}><input id="wResOwn" class="qamt num" inputmode="decimal" autocomplete="off" placeholder="0" value="${esc(d.res.a)}" aria-label="Своя сумма"><span class="qsym">₾</span></div>
       ${d.res.k === 'own' ? `<button class="qnext" data-w="next">Дальше</button>` : ''}`;
   } else {
-    const c = budgetCalc(d), s0 = c.segs[0], gm = c.goals.reduce((t, x) => t + (x.gi.done ? 0 : x.gi.monthly), 0);
+    const c = budgetCalc(d), s0 = c.segs[0], gm = c.goals.reduce((t, x) => t + (x.gi.done ? 0 : x.gi.monthly), 0), lims = CATS.filter(k => d.lim && d.lim[k.id] > 0);
     b = `<div class="qdone"><div class="qk">Готово!</div><div class="qh">Можно тратить</div>
       <div class="qbig num" id="wBig">${gel(s0.rate)}<span> в день</span></div>
       <p class="qp">${c.segs[1] && c.segs[1].start <= c.end ? `до ${shortDate(s0.stop)} включительно. Потом — ${gel(c.segs[1].rate)} в день.` : `до ${shortDate(s0.stop)} включительно.`}</p>
+      ${lims.length ? `<div class="qdl">${lims.map(k => `<span>${k.s} ${esc(k.n)} <b class="num">${gel(d.lim[k.id] / 30)}</b></span>`).join('')}</div><p class="qp" style="margin-top:6px">примерно в день по статьям</p>` : ''}
       ${gm ? `<p class="qp">На цели — <b class="num">${gel(gm)}</b> в месяц, сразу после зарплаты.</p>` : ''}
       ${c.short ? `<p class="qwarn">Не хватает ${gel(c.short)}. В плане подскажу, где именно.</p>` : c.res ? `<p class="qp">И ещё ${gel(c.res)} лежит в запасе на непредвиденное.</p>` : ''}
       <button class="qnext" data-w="finish">Посмотреть план</button></div>`;
@@ -1626,15 +1758,29 @@ function showWiz(anim) {
       ${q && !wiz.only ? `<button class="qskip" data-w="skip">Пропустить</button>` : '<span style="width:52px"></span>'}</div>
     <div class="qcount">${q && !wiz.only ? `вопрос ${i} из ${QN}` : '&nbsp;'}</div>
     <div class="qbody ${anim ? wiz.fwd ? 'fwd' : 'back' : ''}"><div>${b}</div></div>
-    <div class="qbottom">${i > 0 && !wiz.only ? `<button class="qprev" data-w="prev">‹ Назад</button>` : ''}</div>`;
-  if (st === 'have' && anim) setTimeout(() => { const f = document.getElementById('wHave'); if (f && !f.value) f.focus(); }, 380);
+    <div class="qbottom">${i > 0 && !wiz.only ? `<button class="qprev" data-w="prev">‹ Назад</button>` : '<span></span>'}${q && !wiz.only ? `<button class="qprev qtab" data-w="totable">Дальше заполню в таблицах ›</button>` : ''}</div>`;
+  if (st === 'have' && anim) setTimeout(() => { const f = document.querySelector('#quick [data-k="accts"][data-f="a"]'); if (f && !f.value) f.focus(); }, 380);
   if (st === 'done' && anim) setTimeout(() => popButton({ el: document.getElementById('wBig'), stars: true, color: 'acc' }), 420);
+}
+const haveTot = d => { const t = haveGel(d); return d.accts.length > 1 || d.accts.some(x => x.c !== 'GEL') ? `Всего на счетах: <b class="num">${gel(t)}</b>` : ''; };
+function limHint(d) {
+  const c = budgetCalc(d), m = c.months[1] || c.months[0], life = m.life, sum = Object.values(d.lim || {}).reduce((t, v) => t + (+v || 0), 0);
+  const base = `В месяц после обязательных трат и целей остаётся ≈ <b class="num">${gel(life)}</b>. Распределено <b class="num">${gel(sum)}</b>.`;
+  if (sum > life + 1) return base + ` <span class="w">Это больше на ${gel(sum - life)} — уменьшите траты или взносы на цели.</span>`;
+  if (life - sum > 1 && sum > 0) return base + ` Ещё свободно <b class="num">${gel(life - sum)}</b> — на мелочи или можно добавить к целям.`;
+  return base;
+}
+function avgRowW(x) {
+  const a = avgIncome();
+  return `<div class="qrow avgrow" data-id="${x.id}"><div class="qrt"><span class="qico" aria-hidden="true">📈</span><span class="qname">${esc(x.n)}</span>
+      <button class="qrm" data-w="rm" data-k="inc" data-id="${x.id}" aria-label="Убрать">✕</button></div>
+    <div class="qavg"><b class="num">≈ ${gel(a.v)}</b> каждый месяц<i>${avgWord(a)} — по столбцу «Факт» в таблице «Доходы» за прошлые месяцы. Пересчитывается сам, когда вы вписываете новые приходы.</i></div></div>`;
 }
 function wizItem(t) { const k = t.dataset.k; return k && wiz.d[k] ? wiz.d[k].find(x => x.id === t.dataset.id) : null; }
 function wizRedraw() { const bd = document.querySelector('#quick .qbody'), keep = bd ? bd.scrollTop : 0; showWiz(false); const nb = document.querySelector('#quick .qbody'); if (nb) nb.scrollTop = keep; }
 function wizInput(ev) {
   const t = ev.target, d = wiz.d;
-  if (t.id === 'wHave') { d.have.a = t.value; $('#wHaveEq').textContent = eqTxt(t.value, d.have.c); return; }
+  if (t.dataset.lim) { const v = fxNum(t.value); if (v > 0) d.lim[t.dataset.lim] = r2(v); else delete d.lim[t.dataset.lim]; $('#wLimSum').innerHTML = limHint(d); return; }
   if (t.id === 'wResOwn') { d.res.a = t.value; return; }
   const x = wizItem(t); if (!x) return;
   const f = t.dataset.f;
@@ -1642,7 +1788,8 @@ function wizInput(ev) {
   else if (f === 'cnt') { const n = parseInt(t.value, 10); x.cnt = n >= 1 ? Math.min(n, 360) : ''; }
   else x[f] = t.value;
   if (ev.type === 'change' && (f === 'c' || f === 'date' || f === 'by' || f === 'cnt')) return wizRedraw();
-  if (t.dataset.k === 'inc' && f === 'a') { const e = document.querySelector(`[data-eq="${x.id}"]`); if (e) e.textContent = eqTxt(x.a, x.c); }
+  if (f === 'a') { const e = document.querySelector(`[data-eq="${x.id}"]`); if (e) e.textContent = eqTxt(x.a, x.c); }
+  if (t.dataset.k === 'accts') { const e = $('#wHaveSum'); if (e) e.innerHTML = haveTot(d); }
   if (t.dataset.k === 'goals') { const e = document.querySelector(`[data-gh="${x.id}"]`); if (e) e.textContent = goalHint(x); }
   if (t.dataset.k === 'exp') {
     const big = WSTEPS[wiz.i] === 'big', s = d.exp.filter(y => big ? y.rep === 'once' : y.rep !== 'once').reduce((z, y) => z + (toGel(amtOf(y) || 0, y.c) || 0), 0);
@@ -1661,7 +1808,12 @@ function wizClick(ev) {
     case 'next': case 'skip': return wizNext();
     case 'prev': return wizGo(wiz.i - 1);
     case 'finish': return wizFinish();
-    case 'hcur': d.have.c = t.dataset.c; showWiz(false); return;
+    case 'totable': store.set('planView', 'table'); wiz.skip = true; return wizFinish();
+    case 'addacct': {
+      const x = { id: newId(), n: t.dataset.n, a: '', c: /валют/.test(t.dataset.n) ? 'USD' : 'GEL' };
+      d.accts.push(x); wizRedraw(); return wizFocus(x.id, x.n ? 'a' : 'n');
+    }
+    case 'addavg': { d.inc.unshift(avgItem()); wizRedraw(); return; }
     case 'addinc': {
       const x = { id: newId(), n: t.dataset.n, a: '', c: 'GEL', date: '', rep: t.dataset.r || 'm', cnt: 6 };
       d.inc.push(x); wizRedraw(); return wizFocus(x.id, x.n ? 'a' : 'n');
@@ -1731,7 +1883,8 @@ function renderPlan() {
       <div class="card bhello" style="--d:40ms"><div class="qwave" aria-hidden="true">👋</div>
         <h3>Здравствуйте!</h3>
         <p>Давайте спланируем ваш бюджет. Несколько коротких вопросов: сколько денег есть, какие доходы и обязательные траты каждый месяц, крупные покупки, на что копите и сколько отложить на непредвиденное.</p>
-        <button class="fix" data-act="bwiz">Начать</button></div>
+        <button class="fix" data-act="bwiz">Начать</button>
+        <button class="btn outline" data-act="bskip" style="margin-top:10px">Пропустить — заполню в таблицах</button></div>
       <p class="hint" style="margin:12px 24px">Всё считается в лари по курсу НБГ на сегодня. Ответы можно поменять в любой момент.</p>`;
     return;
   }
@@ -1770,7 +1923,7 @@ function renderPlan() {
   for (const e of c.pOut) { const k = e.kind + '|' + e.id; if (!merged[k]) merged[k] = { n: e.n, ic: e.kind === 'goal' ? goalIcon(e.n) : iconOf(e.n), v: 0, col: e.color || C_NEED, kind: e.kind }; merged[k].v += e.gel; }
   const parts = [...Object.values(merged).sort((a, b) => (a.kind === 'goal') - (b.kind === 'goal') || b.v - a.v),
     ...(c.res ? [{ n: 'Запас на непредвиденное', ic: '🛟', v: c.res, col: C_RES }] : []),
-    ...(c.pLife > 0 ? [{ n: 'На каждый день', ic: '☕', v: c.pLife, col: C_FREE }] : []),
+    ...dailyParts(c),
     ...(c.pKeep > 1 ? [{ n: 'На следующие месяцы', ic: '📅', v: c.pKeep, col: '#9AA5B1' }] : [])];
   const ptot = parts.reduce((t, x) => t + x.v, 0) || 1;
   let acc = 0;
@@ -1795,7 +1948,7 @@ function renderPlan() {
   // траты текущего периода по датам
   const expRows = c.pOut.map(e => `<tr><td><span class="tic" style="--c:${e.color || C_NEED}">${e.kind === 'goal' ? goalIcon(e.n) : iconOf(e.n)}</span></td><td class="tn"><b>${esc(e.n)}</b><i>${e.date === now ? 'сегодня' : `${shortDate(e.date)} · ${whenWord(e.date).replace(/, .*/, '')}`}${e.kind === 'goal' ? ' · на цель' : e.kind === 'once' ? ' · разово' : ''}</i></td>
     <td class="tv num">${gel(e.gel)}</td></tr>`).join('');
-  const tiles = [['Будет денег', c.total, 'var(--acc)'], ['Обязательные и разовые', c.pNeed, C_NEED], ['На цели', c.pGoal, C_GOAL], ['На жизнь', c.pLife, C_FREE]];
+  const tiles = [['Будет денег', c.total, 'var(--acc)'], ['Обязательные и разовые', c.pNeed, C_NEED], ['На цели', c.pGoal, C_GOAL], ['Повседневное', c.pLife, C_FREE]];
   const stack = c.total > 0 ? [[c.pNeed, C_NEED], [c.pGoal, C_GOAL], [c.res, C_RES], [c.pLife, C_FREE], [c.pKeep, '#9AA5B1']].map(([v, col]) => v > 0.5 ? `<i style="flex:${v};background:${col}"></i>` : '').join('') : '';
 
   $main.innerHTML = `
@@ -1813,6 +1966,9 @@ function renderPlan() {
 
     ${c.goals.length ? `<div class="card" style="--d:80ms"><h2 class="hl">Цели</h2>${goalsHtml}
       <button class="addrow" data-act="bwizgoals">+ добавить цель</button></div>` : ''}
+
+    ${incomeCard(c)}
+    ${dailyCard(c)}
 
     <div class="card" style="--d:100ms"><h2 class="hl">До зарплаты</h2><div class="tl">${tl}</div></div>
 
@@ -1886,6 +2042,50 @@ function lineTip(c) {
   svg.addEventListener('pointerleave', () => { $('#lctip').hidden = true; $('#lcx').setAttribute('visibility', 'hidden'); $('#lcd').setAttribute('visibility', 'hidden'); });
 }
 
+/* ---------- повседневные траты по статьям вместо безликого «на жизнь» ---------- */
+function dailyParts(c) {
+  const lim = budget.lim || {}, ks = CATS.filter(k => lim[k.id] > 0);
+  if (!(c.pLife > 0)) return [];
+  if (!ks.length) return [{ n: 'Повседневное: продукты, кафе, транспорт', ic: '🛒', v: c.pLife, col: C_FREE }];
+  const k = c.N / 30.4, want = ks.reduce((t, x) => t + lim[x.id] * k, 0), sc = want > c.pLife ? c.pLife / want : 1;
+  const parts = ks.map((x, i) => ({ n: x.n, ic: x.s, v: lim[x.id] * k * sc, col: ['#58B37E', '#7CC79A', '#3E9A62', '#9AD3AE', '#2F7F55', '#B5DEC2', '#6DB98A'][i % 7] }));
+  const rest = c.pLife - parts.reduce((t, x) => t + x.v, 0);
+  if (rest > 1) parts.push({ n: 'Свободно на мелочи', ic: '✨', v: rest, col: '#CDE8D6' });
+  return parts;
+}
+function dailyCard(c) {
+  const lim = budget.lim || {}, ym = ymOf(now), dim = daysTo(`${ym}-01`, endOfMonth(now)) + 1, dl = dim - ymd(now)[2] + 1;
+  const spent = id => spends.filter(x => x.date.startsWith(ym) && (x.cat || 'other') === id).reduce((t, x) => t + x.gel, 0);
+  const list = CATS.filter(k => lim[k.id] > 0 || spent(k.id) > 0 && k.id !== 'home').map((k, i) => ({ k, lim: lim[k.id] || 0, sp: spent(k.id), col: PAL[CATS.indexOf(k) % PAL.length] }));
+  const limSum = list.reduce((t, r) => t + r.lim, 0), spSum = list.reduce((t, r) => t + r.sp, 0);
+  const life = (c.months[1] || c.months[0]).life;
+  if (!limSum) return `<div class="card" style="--d:90ms"><h2 class="hl">Повседневные траты</h2>
+    <p class="hint" style="margin:8px 0 10px">Сейчас на продукты, кафе, транспорт и мелочи остаётся ≈ <b class="num">${gel(life)}</b> в месяц одной суммой. Распределите по статьям — будет видно, сколько осталось на каждую.</p>
+    <button class="btn outline" data-act="bwizdaily" style="margin:0">Распределить по статьям</button></div>`;
+  return `<div class="card" style="--d:90ms"><h2 class="hl">Повседневные траты · ${MONTHS[ymd(now)[1] - 1].toLowerCase()}</h2>
+    <table class="ftable dtab"><thead><tr><th></th><th>Статья</th><th>Лимит</th><th>Потрачено</th><th>Осталось</th></tr></thead><tbody>
+    ${list.map(r => { const left = r.lim - r.sp, p = r.lim ? Math.min(100, r.sp / r.lim * 100) : 100;
+      return `<tr><td><span class="tic" style="--c:${r.col}">${r.k.s}</span></td><td class="tn"><b>${esc(r.k.n)}</b><span class="pbar"><i style="width:${p}%;background:${left < 0 ? 'var(--danger)' : r.col}"></i></span>${r.lim && left > 0 ? `<i>≈ ${gel(left / dl)} в день до конца месяца</i>` : ''}</td>
+        <td class="tv num">${r.lim ? money(r.lim, 0) : '—'}</td><td class="tv num">${money(r.sp, 0)}</td><td class="tv num ${left < 0 ? 'neg' : 'pos'}">${money(left, 0)}</td></tr>`; }).join('')}</tbody>
+    <tfoot><tr><td></td><td class="tn"><b>Всего</b></td><td class="tv num">${money(limSum, 0)}</td><td class="tv num">${money(spSum, 0)}</td><td class="tv num ${limSum - spSum < 0 ? 'neg' : ''}">${money(limSum - spSum, 0)}</td></tr></tfoot></table>
+    <p class="hint" style="margin:8px 0 0">${limSum > life + 1 ? `Лимиты больше, чем остаётся после обязательных трат и целей (${gel(life)}), на <b class="num">${gel(limSum - life)}</b>.` : life - limSum > 1 ? `Ещё свободно ≈ <b class="num">${gel(life - limSum)}</b> в месяц.` : 'Все деньги распределены.'} Потрачено — по вкладке «Расходы».</p>
+    <button class="addrow" data-act="bwizdaily">изменить лимиты</button></div>`;
+}
+
+
+/* ---------- доходы в плане: выключатели и средний по факту ---------- */
+const swBtn = x => `<button class="tsw ${x.off ? '' : 'on'}" data-act="incoff" data-id="${x.id}" role="switch" aria-checked="${!x.off}" aria-label="${x.off ? 'Включить' : 'Выключить'} «${esc(x.n)}»"><i></i></button>`;
+function incomeCard(c) {
+  const a = avgIncome(), list = budget.inc, hasAvg = list.some(isAvg);
+  if (!list.length && !a.n) return '';
+  return `<div class="card" style="--d:70ms"><h2 class="hl">Доходы в плане</h2>
+    ${list.map(x => { const v = incA(x), cur = incC(x);
+      return `<div class="incr ${x.off ? 'off' : ''}"><span class="tic" style="--c:${C_FREE}">${isAvg(x) ? '📈' : '💼'}</span>
+        <div class="it"><b>${esc(x.n || 'Доход')}</b><i>${isAvg(x) ? avgWord(a) : x.rep === 'n' ? mword(+x.cnt || 1) : REP[x.rep || 'once']}${x.date ? ` · ${x.rep === 'once' ? shortDate(x.date) : ymd(x.date)[2] + '-го'}` : ''}</i></div>
+        <b class="iv num">${v > 0 ? `${money(v, 0)} ${CUR[cur].s}` : '—'}</b>${swBtn(x)}</div>`; }).join('')}
+    ${!hasAvg && a.n ? `<button class="incsug" data-act="addavg"><span>📈</span><span><b>Средний доход по факту ≈ <span class="num">${gel(a.v)}</span></b><i>${avgWord(a)}. Добавить в план как ежемесячный доход</i></span><span class="plus">+</span></button>` : ''}
+    <p class="hint" style="margin:8px 0 0">Выключенный доход не учитывается в плане, графиках и таблицах. Можно, например, выключить зарплату и включить средний доход по факту.</p></div>`;
+}
 /* ---------- вид плана: карточки (телефон) или таблицы (компьютер) ---------- */
 const wideScreen = () => window.matchMedia && matchMedia('(min-width: 900px)').matches;
 const planView = () => store.get('planView', wideScreen() ? 'table' : 'cards');
@@ -1913,7 +2113,7 @@ function monthBars(F, W = 340, H = 170) {
 function avgFacts(c) {
   const cur = ymOf(now), d0 = ymd(now)[2], dim = daysTo(`${cur}-01`, endOfMonth(now)) + 1;
   const prev = [1, 2, 3].map(k => ymAdd(cur, -k)), inM = (d, ym) => d.slice(0, 7) === ym;
-  const incV = prev.filter(ym => rows.some(r => inM(r.date, ym))).map(ym => rows.filter(r => inM(r.date, ym)).reduce((t, r) => t + (gelOf(r) || 0), 0));
+  const ai = avgIncome(), incV = ai.n ? Array(ai.n).fill(ai.v) : [];
   const spV = prev.filter(ym => spends.some(x => inM(x.date, ym))).map(ym => spends.filter(x => inM(x.date, ym)).reduce((t, x) => t + x.gel, 0));
   const curSp = spends.filter(x => inM(x.date, cur)).reduce((t, x) => t + x.gel, 0);
   const part = d0 >= 7 && curSp > 0;
@@ -1953,7 +2153,7 @@ function forecastHtml(c) {
   if (mode === 'avg') {
     const f = avgForecast(c), a = f.a;
     const src = (n, what) => n ? `среднее за ${n} ${plural(n, 'месяц', 'месяца', 'месяцев')}${what === 'sp' && a.part ? ' и этот месяц' : ''}` : (what === 'sp' && a.part ? 'по этому месяцу' : 'записей пока нет — взято из плана');
-    const tiles = [['Средний доход', a.inc, 'var(--acc)', src(a.incN, 'inc') + (a.incN ? ' · вкладка «Приходы»' : '')], ['Средние траты', a.sp, C_NEED, src(a.spN, 'sp') + (a.spN || a.part ? ' · вкладка «Расходы»' : '')],
+    const tiles = [['Средний доход', a.inc, 'var(--acc)', (a.incN ? avgWord(avgIncome()) + ' · по столбцу «Факт» в «Доходах»' : 'записей пока нет — взято из плана')], ['Средние траты', a.sp, C_NEED, src(a.spN, 'sp') + (a.spN || a.part ? ' · вкладка «Расходы»' : '')],
       ...(f.withBills ? [['Обязательные из плана', a.bills, C_ONCE, 'аренда, коммуналка, разовые — в среднем']] : []), ['Остаётся в месяц', f.surplus, f.surplus >= 0 ? C_FREE : 'var(--danger)', 'можно отложить на цели']];
     const F = f.months.map(m => ({ ym: m.ym, inc: m.inc, short: m.free < -1 ? -m.free : 0, parts: [[m.sp, C_NEED], [m.bills, C_ONCE], [m.goal, C_GOAL], [m.free, C_FREE]] }));
     return head + `
@@ -1974,12 +2174,12 @@ function forecastHtml(c) {
   const frows = c.months.map(m => `<tr class="${m.short > 1 ? 'bad' : ''}"><td class="tn"><b>${ymName(m.ym)}</b>${m.onceList.length ? `<i>${m.onceList.map(e => `${iconOf(e.n)} ${esc(e.n)}`).join(', ')}</i>` : ''}</td>
     <td class="tv num">${m.inc ? '+' + money(m.inc, 0) : '—'}</td><td class="tv num">${money(m.need + m.once, 0)}</td><td class="tv num">${m.goal ? money(m.goal, 0) : '—'}</td><td class="tv num"><b>${money(m.perDay, 0)}</b></td></tr>`).join('');
   return head + `
-      <div class="lgnd"><span><em style="background:${C_NEED}"></em>обязательные</span><span><em style="background:${C_ONCE}"></em>разовые</span><span><em style="background:${C_GOAL}"></em>цели</span><span><em style="background:${C_FREE}"></em>на жизнь</span><span><em style="background:var(--ink);height:2px"></em>доход</span></div>
+      <div class="lgnd"><span><em style="background:${C_NEED}"></em>обязательные</span><span><em style="background:${C_ONCE}"></em>разовые</span><span><em style="background:${C_GOAL}"></em>цели</span><span><em style="background:${C_FREE}"></em>повседневное</span><span><em style="background:var(--ink);height:2px"></em>доход</span></div>
       <svg viewBox="0 0 340 170" role="img" aria-label="Прогноз по месяцам">${monthBars(F)}</svg>
       ${yearGoals ? `<div class="pline sum"><span>за год отложите на цели</span><b class="num">${gel(yearGoals)}</b></div>` : ''}
       ${c.goals.length ? `<div class="fetas">${c.goals.map(({ g, gi, color }) => `<span style="--c:${color}">${goalIcon(g.n)} ${esc(g.n)}: <b>${gi.done ? 'накоплено' : gi.eta ? `к ${ymNameG(gi.eta)}` : 'нет взносов'}</b></span>`).join('')}</div>` : ''}
       <table class="ftable fc"><thead><tr><th>Месяц</th><th>Доход</th><th>Траты</th><th>Цели</th><th>В день</th></tr></thead><tbody>${frows}</tbody></table>
-      <p class="hint" style="margin:8px 0 0">«В день» — сколько остаётся на жизнь после обязательных трат, целей и накоплений на крупные покупки.</p></div>`;
+      <p class="hint" style="margin:8px 0 0">«В день» — сколько остаётся на повседневное (продукты, кафе, транспорт) после обязательных трат, целей и накоплений на крупные покупки.</p></div>`;
 }
 
 /* ---------- таблицы на месяц, как в бюджетной таблице Excel ---------- */
@@ -1995,15 +2195,25 @@ function occursIn(x, ym, kind) {
   const k = ymDiff(x.from || ymOf(budget.start || now), ym);
   return k >= 0 && (x.rep !== 'n' || k < (+x.cnt || 1));
 }
+/* столбец «Факт» таблицы «Доходы» за месяц: вписанные суммы, галочки «получено», записи из «Приходов»
+   и суммы, вписанные за месяц (их раскладываем по статьям, крупные регулярные первыми). Средний доход — без участия. */
+function incFactOf(ym) {
+  const G = (a, cc) => toGel(fxNum(a) || 0, cc) || 0, F = (budget.fact && budget.fact[ym]) || {}, Fi = F.inc || {}, Fg = F.got || {};
+  const rows = budget.inc.filter(x => !isAvg(x) && occursIn(x, ym, 'inc')).map(x => ({ x, off: !!x.off, plan: x.off ? 0 : G(amtOf(x), x.c), full: G(amtOf(x), x.c), day: ymd(x.date || budget.start || now)[2] }));
+  const recInc = incomeOfMonth(ym);
+  let pool = recInc;
+  rows.forEach(r => { r.auto = null; });
+  const live = rows.filter(r => !r.off && Fi[r.x.id] == null && !Fg[r.x.id]).sort((a, b) => (a.x.rep === 'once') - (b.x.rep === 'once') || b.plan - a.plan);
+  live.forEach((r, i) => { const v = i === live.length - 1 ? pool : Math.min(pool, r.plan); r.auto = v > 0.005 ? v : null; pool -= v > 0 ? v : 0; });
+  for (const r of rows) r.fact = Fi[r.x.id] != null ? Fi[r.x.id] : Fg[r.x.id] ? r.full : r.auto;
+  const extra = Math.max(0, pool);       // пришло, но разложить не на что
+  return { rows, recInc, extra, total: rows.reduce((t, r) => t + (r.fact || 0), 0) + extra };
+}
 function monthTable(c, ym) {
   const G = (a, cc) => toGel(fxNum(a) || 0, cc) || 0, F = factOf(ym), inM = d => d.slice(0, 7) === ym;
-  const inc = budget.inc.filter(x => occursIn(x, ym, 'inc')).map(x => ({ x, plan: G(x.a, x.c), day: ymd(x.date || budget.start || now)[2] }));
-  // факт доходов: из вкладки «Приходы» (раскладываем по статьям, крупные регулярные первыми), можно поправить
-  const recInc = rows.filter(r => inM(r.date)).reduce((t, r) => t + (gelOf(r) || 0), 0);
-  let pool = recInc;
-  [...inc].sort((a, b) => (a.x.rep === 'once') - (b.x.rep === 'once') || b.plan - a.plan).forEach((r, i, arr) => { const v = i === arr.length - 1 ? pool : Math.min(pool, r.plan); r.auto = v > 0.005 ? v : null; pool -= v > 0 ? v : 0; });
-  for (const r of inc) r.fact = F.inc[r.x.id] != null ? F.inc[r.x.id] : F.got[r.x.id] ? r.plan : r.auto;
-  const extra = inc.length ? Math.max(0, pool) : recInc;    // записано в «Приходах», но статьи в плане нет
+  const IF = incFactOf(ym), recInc = IF.recInc, extra = IF.extra;
+  const avgRows = budget.inc.filter(x => isAvg(x) && occursIn(x, ym, 'inc')).map(x => ({ x, off: !!x.off, plan: x.off ? 0 : G(incA(x), 'GEL'), day: ymd(x.date || now)[2], fact: null, auto: null }));
+  const inc = [...avgRows, ...IF.rows];
   const bills = budget.exp.filter(x => x.rep !== 'once' && occursIn(x, ym, 'exp')).map(x => ({ x, plan: G(x.a, x.c) }));
   const once = budget.exp.filter(x => x.rep === 'once' && occursIn(x, ym, 'exp')).map(x => ({ x, plan: G(x.a, x.c) }));
   for (const r of [...bills, ...once]) r.fact = F.bill[r.x.id] != null ? F.bill[r.x.id] : F.paid[r.x.id] ? r.plan : null;
@@ -2024,7 +2234,7 @@ function monthTable(c, ym) {
   const life = mrow ? mrow.life : Math.max(0, sum(inc, 'plan') - sum(bills, 'plan') - sum(once, 'plan') - sum(goals, 'plan'));
   const limSum = cats.reduce((t, r) => t + r.lim, 0);
   const P = { inc: sum(inc, 'plan'), bills: sum(bills, 'plan'), once: sum(once, 'plan'), exp: limSum || life, goals: sum(goals, 'plan') };
-  const A = { inc: sum(inc, 'fact') + (inc.length ? 0 : recInc), bills: sum(bills, 'fact'), once: sum(once, 'fact'), exp: cats.reduce((t, r) => t + r.fact, 0), goals: sum(goals, 'fact') };
+  const A = { inc: IF.total, bills: sum(bills, 'fact'), once: sum(once, 'fact'), exp: cats.reduce((t, r) => t + r.fact, 0), goals: sum(goals, 'fact') };
   return { F, inc, recInc, extra, bills, once, cats, goals, life, limSum, P, A };
 }
 
@@ -2055,20 +2265,20 @@ function renderTables() {
   const daysLeft = ym === cur ? dim - ymd(now)[2] + 1 : ym > cur ? dim : 0;
   const leftToSpend = T.P.exp - T.A.exp;
   const cell = v => v ? money(v, 0) : '<span class="z">—</span>';
-  const flow = [['Доходы', T.P.inc, T.A.inc, '+'], ['Счета', T.P.bills, T.A.bills, '−'], ['Разовые', T.P.once, T.A.once, '−'], ['Расходы', T.P.exp, T.A.exp, '−'], ['Цели', T.P.goals, T.A.goals, '−']];
+  const flow = [['Доходы', T.P.inc, T.A.inc, '+'], ['Платежи', T.P.bills, T.A.bills, '−'], ['Разовые', T.P.once, T.A.once, '−'], ['Расходы', T.P.exp, T.A.exp, '−'], ['Цели', T.P.goals, T.A.goals, '−']];
   const restP = T.P.inc - T.P.bills - T.P.once - T.P.exp - T.P.goals, restA = T.A.inc - T.A.bills - T.A.once - T.A.exp - T.A.goals;
   const G_HC = '#8FBFA0', P_HC = '#E7B3AC';
 
   const incT = `<div class="tsc"><table class="tt"><thead><tr><th class="ck"></th><th>Статья</th><th>Число</th><th>План</th><th>Факт ₾</th><th></th></tr></thead><tbody>
-    ${T.inc.map(r => `<tr><td class="ck"><input type="checkbox" data-tb="incGot" data-id="${r.x.id}" ${T.F.got[r.x.id] || r.fact != null && r.fact >= r.plan - .5 ? 'checked' : ''} aria-label="Получено"></td>
-      <td class="tcn"><div class="tcw">${tin('incN', r.x.id, r.x.n, '', 'название')}<i class="rp">${r.x.rep === 'n' ? mword(+r.x.cnt || 1) : REP[r.x.rep || 'once']}</i></div></td>
+    ${T.inc.map(r => `<tr class="${r.off ? 'off' : ''} ${isAvg(r.x) ? 'avg' : ''}"><td class="ck">${isAvg(r.x) ? '' : `<input type="checkbox" data-tb="incGot" data-id="${r.x.id}" ${T.F.got[r.x.id] || !r.off && r.fact != null && r.fact >= r.plan - .5 ? 'checked' : ''} aria-label="Получено">`}</td>
+      <td class="tcn"><div class="tcw">${swBtn(r.x)}${isAvg(r.x) ? `<span class="tl">📈 ${esc(r.x.n)}</span>` : tin('incN', r.x.id, r.x.n, '', 'название')}<i class="rp">${isAvg(r.x) ? avgWord(avgIncome()) : r.x.rep === 'n' ? mword(+r.x.cnt || 1) : REP[r.x.rep || 'once']}${r.off ? ' · выключен' : ''}</i></div></td>
       <td>${tin('incDay', r.x.id, r.day, 'num day', 'число')}</td>
-      <td class="nw">${tin('incA', r.x.id, r.x.a, 'num', '0')}<span class="cs">${CUR[r.x.c].s}</span></td>
-      <td>${tin('incFact', r.x.id, tnum(r.fact), 'num ' + (T.F.inc[r.x.id] != null ? 'ovr' : r.auto != null && !T.F.got[r.x.id] ? 'auto' : ''), '—')}</td>
+      <td class="nw">${isAvg(r.x) ? `<span class="tro num">≈ ${money(incA(r.x), 0)}</span><span class="cs">₾</span>` : `${tin('incA', r.x.id, r.x.a, 'num', '0')}<span class="cs">${CUR[r.x.c].s}</span>`}</td>
+      <td>${isAvg(r.x) ? '<span class="tro z" title="Это прогноз; фактические суммы вписывайте в строки статей или «Вписать за месяц»">прогноз</span>' : tin('incFact', r.x.id, tnum(r.fact), 'num ' + (T.F.inc[r.x.id] != null ? 'ovr' : r.auto != null && !T.F.got[r.x.id] ? 'auto' : ''), '—')}</td>
       <td><button class="tdel" data-act="tdel" data-k="inc" data-id="${r.x.id}" aria-label="Удалить">✕</button></td></tr>`).join('')}
-    ${T.extra > 0.5 && !T.inc.length ? `<tr><td class="ck"><span class="okm">✓</span></td><td class="tcn"><div class="tcw"><span class="tl">Из вкладки «Приходы»</span><i class="rp">без статьи в плане</i></div></td><td></td><td class="num"><span class="z">—</span></td><td class="num">${money(T.extra, 0)}</td><td></td></tr>` : ''}</tbody>
+    ${T.extra > 0.5 ? `<tr><td class="ck"><span class="okm">✓</span></td><td class="tcn"><div class="tcw"><span class="tl">Пришло без статьи</span><i class="rp">«Приходы» и «Вписать за месяц»</i></div></td><td></td><td class="num"><span class="z">—</span></td><td class="num">${money(T.extra, 0)}</td><td></td></tr>` : ''}</tbody>
     <tfoot><tr><td></td><td>Всего</td><td></td><td class="num">${gel(T.P.inc)}</td><td class="num">${gel(T.A.inc)}</td><td></td></tr></tfoot></table></div>
-    <button class="tadd" data-act="tadd" data-k="inc">+ доход</button>${T.recInc ? `<p class="tnote">Во вкладке «Приходы» за месяц: <b class="num">${gel(T.recInc)}</b> — разложено по статьям автоматически.</p>` : ''}`;
+    <button class="tadd" data-act="tadd" data-k="inc">+ доход</button>${!budget.inc.some(isAvg) && avgIncome().n ? `<button class="tadd" data-act="addavg">+ 📈 средний по факту ≈ ${gel(avgIncome().v)}</button>` : ''}${T.recInc ? `<p class="tnote">Пришло за месяц: <b class="num">${gel(T.recInc)}</b> (вкладка «Приходы»${mincGel(ym) ? ' и вписанные вручную' : ''}) — разложено по статьям автоматически.</p>` : ''}`;
 
   const billRows = (list, k) => list.map(r => `<tr class="${T.F.paid[r.x.id] || r.fact != null ? 'done' : ''}"><td class="ck"><input type="checkbox" data-tb="billPaid" data-id="${r.x.id}" ${T.F.paid[r.x.id] || r.fact != null ? 'checked' : ''} aria-label="Оплачено"></td>
       <td class="tcn"><div class="tcw"><span class="ti">${iconOf(r.x.n)}</span>${tin('billN', r.x.id, r.x.n, '', 'название')}${r.x.rep === 'n' ? `<i class="rp">${mword(+r.x.cnt || 1)}</i>` : ''}</div></td>
@@ -2076,9 +2286,9 @@ function renderTables() {
       <td class="nw">${tin('billA', r.x.id, r.x.a, 'num', '0')}<span class="cs">${CUR[r.x.c].s}</span></td>
       <td>${tin('billFact', r.x.id, tnum(r.fact), 'num ' + (T.F.bill[r.x.id] != null ? 'ovr' : ''), '—')}</td>
       <td><button class="tdel" data-act="tdel" data-k="exp" data-id="${r.x.id}" aria-label="Удалить">✕</button></td></tr>`).join('');
-  const billT = `<div class="tsc"><table class="tt"><thead><tr><th class="ck"></th><th>Счёт</th><th>Число</th><th>План</th><th>Факт ₾</th><th></th></tr></thead><tbody>${billRows(T.bills, 'bill')}</tbody>
+  const billT = `<div class="tsc"><table class="tt"><thead><tr><th class="ck"></th><th>Платёж</th><th>Число</th><th>План</th><th>Факт ₾</th><th></th></tr></thead><tbody>${billRows(T.bills, 'bill')}</tbody>
     <tfoot><tr><td></td><td>Всего</td><td></td><td class="num">${gel(T.P.bills)}</td><td class="num">${gel(T.A.bills)}</td><td></td></tr></tfoot></table></div>
-    <button class="tadd" data-act="tadd" data-k="bill">+ счёт</button>`;
+    <button class="tadd" data-act="tadd" data-k="bill">+ платёж</button>`;
   const onceT = `<div class="tsc"><table class="tt"><thead><tr><th class="ck"></th><th>Трата</th><th>Дата</th><th>План</th><th>Факт ₾</th><th></th></tr></thead><tbody>${billRows(T.once, 'once')}</tbody>
     ${T.once.length ? `<tfoot><tr><td></td><td>Всего</td><td></td><td class="num">${gel(T.P.once)}</td><td class="num">${gel(T.A.once)}</td><td></td></tr></tfoot>` : ''}</table></div>
     ${T.once.length ? '' : '<p class="tnote">В этом месяце крупных разовых трат нет.</p>'}<button class="tadd" data-act="tadd" data-k="once">+ разовая трата</button>`;
@@ -2093,7 +2303,7 @@ function renderTables() {
         <td><button class="tdel" data-act="tdel" data-k="cat" data-id="${r.k.id}" aria-label="Убрать">✕</button></td></tr>`; }).join('')}</tbody>
     <tfoot><tr><td>Всего</td><td class="num">${gel(T.limSum)}</td><td class="num">${gel(T.A.exp)}</td><td class="num ${T.limSum - T.A.exp < 0 ? 'neg' : ''}">${money(T.limSum - T.A.exp, 0)}</td><td></td></tr></tfoot></table></div>
     ${freeCats.length ? `<select class="tadd sel" data-tb="addCat" data-id="new" aria-label="Добавить категорию"><option value="">+ категория</option>${freeCats.map(k => `<option value="${k.id}">${k.s} ${esc(k.n)}</option>`).join('')}</select>` : ''}
-    <p class="tnote">${T.limSum ? (Math.abs(T.life - T.limSum) < 1 ? 'Все деньги «на жизнь» распределены.' : T.life > T.limSum ? `Не распределено <b class="num">${gel(T.life - T.limSum)}</b> из ${gel(T.life)} «на жизнь».` : `Лимиты больше денег «на жизнь» (${gel(T.life)}) на <b class="num">${gel(T.limSum - T.life)}</b>.`) : `На жизнь в этом месяце — <b class="num">${gel(T.life)}</b>. Задайте лимиты, чтобы распределить по категориям.`} Факт — из вкладки «Расходы».</p>`;
+    <p class="tnote">${T.limSum ? (Math.abs(T.life - T.limSum) < 1 ? 'Все деньги на повседневное распределены.' : T.life > T.limSum ? `Не распределено <b class="num">${gel(T.life - T.limSum)}</b> из ${gel(T.life)} на повседневное.` : `Лимиты больше, чем остаётся на повседневное (${gel(T.life)}), на <b class="num">${gel(T.limSum - T.life)}</b>.`) : `На повседневное в этом месяце — <b class="num">${gel(T.life)}</b>. Задайте лимиты, чтобы распределить по категориям.`} Факт — из вкладки «Расходы».</p>`;
 
   const goalT = `<div class="tsc"><table class="tt"><thead><tr><th class="ck"></th><th>Цель</th><th>План</th><th>Факт ₾</th><th>Накоплено</th><th>Срок</th></tr></thead><tbody>
     ${T.goals.map(r => `<tr class="${r.plan && r.fact >= r.plan - .5 ? 'done' : ''}"><td class="ck">${r.plan && r.fact >= r.plan - .5 ? '<span class="okm">✓</span>' : ''}</td>
@@ -2105,9 +2315,9 @@ function renderTables() {
     <button class="tadd" data-act="bwizgoals">+ цель</button>`;
 
   const spentCats = T.cats.filter(r => r.fact > 0).map(r => ({ n: r.k.n, v: r.fact, col: r.color }));
-  const actualParts = [{ n: 'Счета', v: T.A.bills, col: C_NEED }, { n: 'Разовые', v: T.A.once, col: C_ONCE }, { n: 'Расходы', v: T.A.exp, col: '#E68AB0' }, { n: 'Цели', v: T.A.goals, col: C_GOAL }].filter(x => x.v > 0);
+  const actualParts = [{ n: 'Платежи', v: T.A.bills, col: C_NEED }, { n: 'Разовые', v: T.A.once, col: C_ONCE }, { n: 'Расходы', v: T.A.exp, col: '#E68AB0' }, { n: 'Цели', v: T.A.goals, col: C_GOAL }].filter(x => x.v > 0);
   const incParts = T.inc.map((r, i) => ({ n: r.x.n, v: r.fact != null ? r.fact : r.plan, col: ['#4E8F6A', '#7DB894', '#A9D3B8', '#5FA37E', '#C5E3CF'][i % 5] })).filter(x => x.v > 0);
-  if (T.extra > 0.5 && !T.inc.length) incParts.push({ n: 'Из «Приходов»', v: T.extra, col: '#4E8F6A' });
+  if (T.extra > 0.5) incParts.push({ n: 'Из «Приходов»', v: T.extra, col: '#4E8F6A' });
 
   $main.innerHTML = `
     <div class="jhead" style="--d:0ms"><div class="t"><div class="big">План</div><div class="sub">таблицы по месяцам</div></div>${viewSeg()}
@@ -2116,22 +2326,25 @@ function renderTables() {
       <div class="tgrid top">
         <section class="tmonth"><div class="tmn">${MONTHS[m - 1]}</div><div class="tmy">${y} · бюджет на месяц</div>
           <div class="tmarr"><button class="rbtn" data-act="tprev" aria-label="Предыдущий месяц">${arrow(0)}</button>${ym !== cur ? `<button class="tlink" data-act="tnow">сегодня</button>` : ''}<button class="rbtn" data-act="tnext" aria-label="Следующий месяц">${arrow(1)}</button></div></section>
-        ${tcard('Обзор', G_HC, `<table class="tkv"><tr><td>Период</td><td>1 – ${dim} ${MONTHS_G[m - 1]}</td></tr><tr><td>Валюта</td><td>лари ₾ · курс НБГ</td></tr>
-          <tr><td>На руках сейчас</td><td class="num">${gel(c.have)}</td></tr><tr><td>Запас</td><td class="num">${gel(c.res)}</td></tr></table>`)}
-        ${tcard('Осталось на расходы', P_HC, `<div class="tbig num ${leftToSpend < 0 ? 'neg' : ''}">${gel(leftToSpend)}</div><div class="tsub">из ${gel(T.P.exp)} ${T.limSum ? 'по лимитам' : 'на жизнь'}</div>`)}
+        ${tcard('Обзор · счета', G_HC, `<table class="tkv"><tr><td>Период</td><td>1 – ${dim} ${MONTHS_G[m - 1]}</td></tr>
+          ${(budget.accts || []).map(x => `<tr class="acr"><td>${tin('acN', x.id, x.n, '', 'счёт')}</td><td class="nw">${tin('acA', x.id, x.a, 'num', '0')}<select class="tin cur" data-tb="acC" data-id="${x.id}" aria-label="Валюта">${BCUR.map(cc => `<option value="${cc}" ${x.c === cc ? 'selected' : ''}>${CUR[cc].s}</option>`).join('')}</select><button class="tdel" data-act="tdel" data-k="acct" data-id="${x.id}" aria-label="Удалить">✕</button></td></tr>`).join('')}
+          <tr class="tot"><td>Всего сейчас</td><td class="num">${gel(c.have)}</td></tr><tr><td>Запас</td><td class="num">${gel(c.res)}</td></tr></table>
+          <button class="tadd" data-act="tadd" data-k="acct" style="margin:0 0 10px">+ счёт</button>`)}
+        ${tcard('Осталось на расходы', P_HC, `<div class="tbig num ${leftToSpend < 0 ? 'neg' : ''}">${gel(leftToSpend)}</div><div class="tsub">из ${gel(T.P.exp)} ${T.limSum ? 'по лимитам' : 'на повседневное'}</div>`)}
         ${tcard('Дней осталось', P_HC, `<div class="tbig num">${daysLeft}</div><div class="tsub">${daysLeft && ym <= cur ? `≈ ${gel(Math.max(0, leftToSpend) / daysLeft)} в день` : ym > cur ? 'месяц ещё впереди' : 'месяц прошёл'}</div>`)}
       </div>
       <div class="tgrid">
         ${tcard('Движение денег', P_HC, `<table class="tt flow"><thead><tr><th></th><th>План</th><th>Факт</th></tr></thead><tbody>
           ${flow.map(([n, p, a, s]) => `<tr><td><span class="sg">${s}</span>${n}</td><td class="num">${cell(p)}</td><td class="num">${cell(a)}</td></tr>`).join('')}</tbody>
           <tfoot><tr><td>Остаток</td><td class="num ${restP < 0 ? 'neg' : ''}">${money(restP, 0)}</td><td class="num ${restA < 0 ? 'neg' : ''}">${money(restA, 0)}</td></tr></tfoot></table>`)}
-        ${tcard('План и факт', G_HC, `<div class="lgnd" style="justify-content:center"><span><em style="background:${C_FREE}"></em>план</span><span><em style="background:#E8A5A0"></em>факт</span></div>${hbars([['Доходы', T.P.inc, T.A.inc], ['Счета', T.P.bills + T.P.once, T.A.bills + T.A.once], ['Расходы', T.P.exp, T.A.exp], ['Цели', T.P.goals, T.A.goals]])}`)}
+        ${tcard('План и факт', G_HC, `<div class="lgnd" style="justify-content:center"><span><em style="background:${C_FREE}"></em>план</span><span><em style="background:#E8A5A0"></em>факт</span></div>${hbars([['Доходы', T.P.inc, T.A.inc], ['Платежи', T.P.bills + T.P.once, T.A.bills + T.A.once], ['Расходы', T.P.exp, T.A.exp], ['Цели', T.P.goals, T.A.goals]])}`)}
         ${tcard('На что ушли деньги', P_HC, donut(spentCats.length ? spentCats : actualParts, money(spentCats.length ? T.A.exp : T.A.bills + T.A.once + T.A.exp + T.A.goals, 0), spentCats.length ? '₾ расходы' : '₾ факт'))}
         ${tcard('Доходы', G_HC, donut(incParts, money(incParts.reduce((t, x) => t + x.v, 0), 0), '₾ за месяц'))}
       </div>
       <div class="tgrid tables">
         ${tcard('Доходы', G_HC, incT)}
-        ${tcard('Счета · каждый месяц', P_HC, billT)}
+        ${tcard('Приходы по месяцам', G_HC, mincT(ym))}
+        ${tcard('Обязательные платежи', P_HC, billT)}
         ${tcard('Расходы · лимиты', P_HC, catT)}
         ${tcard('Цели · накопления', G_HC, goalT).replace('<section class="tcardx"', '<section class="tcardx span2"')}
         ${tcard('Крупные разовые траты', P_HC, onceT)}
@@ -2160,7 +2373,13 @@ function tblEdit(t) {
     case 'billFact': if (String(v).trim() === '') delete F.bill[id]; else F.bill[id] = num(v); break;
     case 'catLim': budget.lim = budget.lim || {}; budget.lim[id] = num(v) || 0; break;
     case 'catFact': if (String(v).trim() === '') delete F.cat[id]; else F.cat[id] = num(v); break;
+    case 'mincA': case 'mincC': { const e = minc[id] = minc[id] || { a: '', c: 'GEL' };
+      if (f === 'mincA') e.a = num(v) == null ? '' : String(num(v)); else e.c = v;
+      if (!(fxNum(e.a) > 0) && f === 'mincA') delete minc[id];
+      saveMinc(); break; }
     case 'addCat': if (v) { budget.lim = budget.lim || {}; budget.lim[v] = 0; } break;
+    case 'acN': case 'acA': case 'acC': { const x = (budget.accts || []).find(y => y.id === id); if (!x) return;
+      if (f === 'acN') x.n = v.trim(); else if (f === 'acA') x.a = num(v) == null ? '' : String(num(v)); else x.c = v; break; }
     default: return;
   }
   saveBudget();
@@ -2177,7 +2396,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.ma
 function tblAdd(k) {
   const y = window.scrollY, ym = tblYm < ymOf(now) ? ymOf(now) : tblYm;
   let x, f;
-  if (k === 'inc') { x = { id: newId(), n: '', a: '', c: 'GEL', date: atDay(ym, ym === ymOf(now) ? ymd(now)[2] : 1), rep: 'm', cnt: 6 }; budget.inc.push(x); f = 'incN'; }
+  if (k === 'acct') { x = { id: newId(), n: '', a: '', c: 'GEL' }; (budget.accts = budget.accts || []).push(x); f = 'acN'; }
+  else if (k === 'inc') { x = { id: newId(), n: '', a: '', c: 'GEL', date: atDay(ym, ym === ymOf(now) ? ymd(now)[2] : 1), rep: 'm', cnt: 6 }; budget.inc.push(x); f = 'incN'; }
   else { x = { id: newId(), n: '', a: '', c: 'GEL', day: '', rep: k === 'once' ? 'once' : 'm', cnt: 12, from: ym, date: k === 'once' ? atDay(ym, 15) < now ? now : atDay(ym, 15) : '' }; budget.exp.push(x); f = 'billN'; }
   saveBudget(); render(); window.scrollTo(0, y);
   const el = document.querySelector(`[data-tb="${f}"][data-id="${x.id}"]`); if (el) el.focus();
@@ -2187,9 +2407,27 @@ function tblDel(k, id) {
   if (k === 'inc') budget.inc = budget.inc.filter(x => x.id !== id);
   else if (k === 'exp') budget.exp = budget.exp.filter(x => x.id !== id);
   else if (k === 'cat' && budget.lim) delete budget.lim[id];
+  else if (k === 'acct') budget.accts = (budget.accts || []).filter(x => x.id !== id);
   saveBudget(); render(); window.scrollTo(0, y); toast('Удалено');
 }
 
+
+// факт доходов по месяцам за последний год (итог столбца «Факт» таблицы «Доходы»); из него — средний доход
+function mincT(sel) {
+  const cur = ymOf(now), all = Array.from({ length: 12 }, (_, i) => ymAdd(cur, -i));
+  const lastData = all.reduce((k, ym, i) => incFactOf(ym).total > 0.5 || minc[ym] ? i : k, 0);
+  const ms = all.slice(0, Math.max(6, lastData + 2));      // месяцы с данными и ещё один пустой, но не меньше шести
+  const a = avgIncome(), hasAvg = budget.inc.some(isAvg), mx = Math.max(...ms.map(ym => incFactOf(ym).total), 1);
+  return `<div class="tsc"><table class="tt minc"><thead><tr><th>Месяц</th><th>Вписать за месяц</th><th>Факт ₾</th></tr></thead><tbody>
+    ${ms.map(ym => { const m = minc[ym] || { a: '', c: 'GEL' }, t = incFactOf(ym).total, inAvg = a.months.some(z => z.ym === ym);
+      return `<tr class="${ym === sel ? 'sel' : ''} ${ym === cur ? 'cur' : ''}"><td class="tcn"><div class="tcw"><span class="tl"><button class="tlink2" data-act="tgo" data-ym="${ym}">${ymName(ym)}</button>${ym === cur ? ' <i class="rp" style="display:inline;margin:0">идёт</i>' : inAvg ? ' <i class="rp" style="display:inline;margin:0">в среднем</i>' : ''}</span></div>
+          <span class="mbar"><i style="width:${t / mx * 100}%;background:${C_FREE}"></i></span></td>
+        <td class="nw">${tin('mincA', ym, m.a, 'num', '0')}<select class="tin cur" data-tb="mincC" data-id="${ym}" aria-label="Валюта">${BCUR.map(cc => `<option value="${cc}" ${(m.c || 'GEL') === cc ? 'selected' : ''}>${CUR[cc].s}</option>`).join('')}</select></td>
+        <td class="num"><b>${t > 0.5 ? money(t, 0) : '<span class="z">—</span>'}</b></td></tr>`; }).join('')}</tbody>
+    <tfoot><tr><td>Средний <i class="rp" style="display:inline;margin:0">${avgWord(a)}</i></td><td></td><td class="num">${a.n ? gel(a.v) : '—'}</td></tr></tfoot></table></div>
+    ${a.n ? hasAvg ? `<p class="tnote">✓ Средний доход уже в плане как ежемесячный — выключателем в таблице «Доходы» его можно отключить.</p>` : `<button class="tadd" data-act="addavg">Использовать ${gel(a.v)} как ежемесячный доход</button>` : ''}
+    <p class="tnote">«Факт» — то же, что итог столбца «Факт» в таблице «Доходы» за этот месяц: вписанные суммы, галочки «получено» и записи из «Приходов». Если статьи в плане нет (например, прошлые месяцы) — впишите сумму здесь. Нажмите на месяц, чтобы открыть его таблицы. Текущий месяц в среднее не входит.</p>`;
+}
 function renderSettings() {
   $main.innerHTML = `
     <div class="section" style="--d:0ms"><h2 class="hl">Стиль</h2><div class="skins">${SKINS.map(([id, n]) => `<button class="skinb ${skin === id ? 'on' : ''}" data-act="skin" data-id="${id}">
@@ -2335,6 +2573,7 @@ function render(anim) {
   $main.classList.toggle('intro', !!anim);
   document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
   document.body.classList.toggle('wide', tab === 'plan' && !!budget && planView() === 'table');
+  avgReset();
   if (tab === 'income') renderIncome(); else if (tab === 'year') renderYear(); else if (tab === 'spend') renderSpend(); else if (tab === 'plan') renderPlan(); else renderSettings();
 }
 
@@ -2633,12 +2872,17 @@ document.addEventListener('click', e => {
     case 'bnewyes': budget = null; store.set('budget', null); wizDraft = null; render(); openWizard(0); break;
     case 'skin': applySkin(el.dataset.id); render(); break;
     case 'bwizgoals': openWizard(WSTEPS.indexOf('goals')); break;
+    case 'bwizdaily': openWizard(WSTEPS.indexOf('daily')); break;
+    case 'incoff': { const x = budget.inc.find(y => y.id === el.dataset.id); if (!x) break; x.off = !x.off; saveBudget(); const y = window.scrollY; render(); window.scrollTo(0, y); toast(x.off ? `«${x.n}» выключен — план пересчитан` : `«${x.n}» включён — план пересчитан`); break; }
+    case 'addavg': { const ex = budget.inc.find(isAvg); if (ex) ex.off = false; else budget.inc.unshift(avgItem()); saveBudget(); const y = window.scrollY; render(); window.scrollTo(0, y); toast('Средний доход по факту добавлен в план'); break; }
+    case 'bskip': budget = budgetAccts(emptyBudget()); budget.accts.push({ id: newId(), n: 'Карта', a: '', c: 'GEL' }); saveBudget(); store.set('planView', 'table'); render(); window.scrollTo(0, 0); break;
     case 'pview': store.set('planView', el.dataset.v); render(); window.scrollTo(0, 0); break;
     case 'fmode': { const y = window.scrollY; budget.fmode = el.dataset.v; saveBudget(); render(); window.scrollTo(0, y); break; }
     case 'fbills': { const y = window.scrollY; budget.fBills = el.checked; saveBudget(); render(); window.scrollTo(0, y); break; }
     case 'tprev': tblYm = ymAdd(tblYm, -1); render(); break;
     case 'tnext': tblYm = ymAdd(tblYm, 1); render(); break;
     case 'tnow': tblYm = ymOf(now); render(); break;
+    case 'tgo': tblYm = el.dataset.ym; render(); window.scrollTo(0, 0); break;
     case 'tadd': tblAdd(el.dataset.k); break;
     case 'tdel': tblDel(el.dataset.k, el.dataset.id); break;
     case 'goal': openGoal(el.dataset.id); break;
