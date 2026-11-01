@@ -1816,6 +1816,22 @@ html body.compact-ui article.book.piggy .gextra .seg button{min-height:34px}
   }
   html body.compact-ui article.book.plan-book .bcal > .bsh > .row2 { flex-wrap: nowrap; justify-content: flex-end; }
 }
+/* Account allocations in the goal sheet use each theme's existing palette. */
+.goal-use { display:flex; align-items:center; gap:10px; min-height:44px; margin-top:12px; font-size:15px; }
+.goal-use input { width:20px; height:20px; accent-color:var(--acc); }
+.goal-fund-row { display:grid; grid-template-columns:minmax(0,1fr) 112px 32px; align-items:end; gap:8px; margin:10px 0; }
+.goal-fund-row label { min-width:0; }
+.goal-field-label { display:block; font-size:12px; color:var(--soft); margin-bottom:4px; }
+.goal-fund-row .in { width:100%; min-width:0; min-height:44px; padding:8px; font-size:16px; }
+.goal-fund-row .x { width:32px; min-height:44px; font-size:20px; }
+.goal-log-funds { display:block; max-width:230px; color:var(--soft); font-size:12px; line-height:1.4; }
+#goalCheck { min-height:20px; margin:10px 0; }
+@media(max-width:430px) {
+  .goal-fund-row { grid-template-columns:minmax(0,1fr) 44px; }
+  .goal-fund-row > label:first-child { grid-column:1 / -1; }
+  .goal-fund-row .x { width:44px; }
+  .goal-log-funds { max-width:150px; }
+}
 </style>
 </head>
 <body class="compact-ui">
@@ -2030,7 +2046,8 @@ async function loadMissing() {
     try { await getRate(d, c); delete failed[k]; } catch (e) { failed[k] = e.message; }
   }
   $('#sync').textContent = '';
-  render();
+  avgReset();
+  if (syncCanApply()) render(); else syncRenderWait = true;
 }
 
 /* ---------- экраны ---------- */
@@ -2228,7 +2245,13 @@ const incC = x => isAvg(x) ? 'GEL' : x.c;
 const incLive = x => !x.off && incA(x) > 0;
 const AVG_N = 'Средний доход по приходам';
 const avgItem = () => { const a = avgIncome(); return { id: newId(), n: AVG_N, kind: 'avg', a: '', c: 'GEL', date: nextDay(a.day), rep: 'm', cnt: 6 }; };
-const avgWord = a => a.part ? `пока только за ${MONTHS[+a.from.slice(5) - 1].toLowerCase()} — месяц ещё идёт` : a.n ? `среднее за ${mword(a.n)}${a.n > 1 ? ` (${ymName(a.from, true)} – ${ymName(a.to, true)})` : ` (${ymName(a.from, true)})`}` : 'приходов пока нет';
+const avgWord = a => {
+  const missing = rows.filter(r => !r.manual && !rateOf(r));
+  const status = !missing.length ? '' : missing.some(r => failed[rkey(r.date, curOf(r))]) ? 'не удалось загрузить курсы НБГ для части приходов' : 'загружаются курсы НБГ для приходов';
+  if (!a.n && status) return status;
+  const text = a.part ? `пока только за ${MONTHS[+a.from.slice(5) - 1].toLowerCase()} — месяц ещё идёт` : a.n ? `среднее за ${mword(a.n)}${a.n > 1 ? ` (${ymName(a.from, true)} – ${ymName(a.to, true)})` : ` (${ymName(a.from, true)})`}` : 'приходов пока нет';
+  return status ? text + ' · ' + status : text;
+};
 
 // средние повседневные траты по категориям из «Расходов» за последние 3 месяца
 function catAvg() {
@@ -2726,31 +2749,112 @@ function wizClick(ev) {
 }
 
 /* ---------- окно цели: «Отложил» и «Снять» ---------- */
-let goalEdit = null;
+let goalEdit = null, goalTxn = null;
 function openGoal(id) {
   const g = budget.goals.find(x => x.id === id); if (!g) return;
   const gi = goalInfo(g, payday(budget), undefined, budget.start || now);
   goalEdit = g;
+  goalTxn = { sign: 1, use: !!budget.accts.length, parts: [{ id: '', a: '' }] };
   const log = [...(g.log || [])].reverse().slice(0, 8);
-  $modal.innerHTML = `<div class="dlg" role="dialog" aria-label="${esc(g.n)}"><div class="dh"><b>${goalIcon(g.n)} ${esc(g.n || 'Цель')}</b><button class="x" data-act="close" aria-label="Закрыть">✕</button></div>
+  $modal.innerHTML = `<div class="dlg" role="dialog" aria-modal="true" aria-label="${esc(g.n)}"><div class="dh"><b>${goalIcon(g.n)} ${esc(g.n || 'Цель')}</b><button class="x" data-act="close" aria-label="Закрыть">✕</button></div>
     <div class="gprog"><div class="gbar2"><i style="width:${gi.t ? Math.min(100, gi.saved / gi.t * 100) : 0}%"></i></div>
       <div class="gnums"><span>накоплено <b class="num">${gel(gi.saved)}</b></span><span>из <b class="num">${gel(gi.t)}</b></span></div></div>
     <p class="hint" style="margin:10px 0 0">${goalLine(g, gi)}${gi.loggedNow ? ` · в этом месяце уже отложено ${gel(gi.loggedNow)}` : ''}</p>
+    <div class="seg small goal-mode" style="margin-top:14px"><button class="on" data-act="gmode" data-s="1">Пополнить</button><button data-act="gmode" data-s="-1">Снять с цели</button></div>
     <label class="fld"><span>Сколько, ${bS()}</span><input class="in big num" id="gAmt" inputmode="decimal" value="${gi.thisM > 0 ? Math.round(gi.thisM / bK()) : gi.monthly > 0 && !gi.done ? Math.round(Math.min(gi.monthly, gi.left) / bK()) : ''}" placeholder="0"></label>
-    <div class="two" style="margin-top:12px"><button class="btn outline" data-act="gput" data-s="-1" style="margin:0">Снять с цели</button><button class="btn primary" data-act="gput" data-s="1" style="margin:0">Отложил</button></div>
-    ${log.length ? `<h2 class="hl" style="margin-top:20px">История</h2>${log.map(l => `<div class="glog"><span>${shortDate(l.d)}${ymd(l.d)[0] !== ymd(now)[0] ? ' ' + ymd(l.d)[0] : ''}</span><b class="num ${l.g < 0 ? 'neg' : ''}">${l.g > 0 ? '+' : '−'}${gel(Math.abs(l.g))}</b><button class="rm" data-act="glogrm" data-t="${l.t}" aria-label="Удалить запись">✕</button></div>`).join('')}` : ''}
-    <p class="hint" style="margin:14px 0 0">Если деньги ушли с карты на накопительный счёт, обновите в плане, сколько у вас сейчас.</p></div>`;
+    <div id="goalFunds"></div><p class="hint" id="goalCheck" role="status" aria-live="polite"></p>
+    <button class="btn primary" id="goalSubmit" data-act="gput" data-s="1">Отложить на цель</button>
+    ${log.length ? `<h2 class="hl" style="margin-top:20px">История</h2>${log.map(l => `<div class="glog"><span>${shortDate(l.d)}${ymd(l.d)[0] !== ymd(now)[0] ? ' ' + ymd(l.d)[0] : ''}${l.funds ? `<small class="goal-log-funds">${l.funds.map(f => `${esc(f.n)}: ${fxFmt(f.a, f.c)} ${CUR[f.c] ? CUR[f.c].s : esc(f.c)}`).join(' · ')}</small>` : ''}</span><b class="num ${l.g < 0 ? 'neg' : ''}">${l.g > 0 ? '+' : '−'}${gel(Math.abs(l.g))}</b><button class="rm" data-act="glogrm" data-id="${esc(l.id || '')}" data-t="${l.t}" aria-label="Отменить запись${l.funds ? ' и вернуть остатки на счетах' : ''}">✕</button></div>`).join('')}` : ''}</div>`;
   $modal.classList.add('open');
+  goalFundsRender();
+}
+function goalFundsRender() {
+  if (!goalTxn || !$('#goalFunds')) return;
+  const t = goalTxn, accts = budget.accts;
+  $('#goalFunds').innerHTML = `<label class="goal-use"><input type="checkbox" id="goalUse" ${t.use ? 'checked' : ''} ${accts.length ? '' : 'disabled'}><span>${t.sign > 0 ? 'Списать со счетов' : 'Вернуть на счета'}</span></label>
+    ${t.use ? `<p class="hint" style="margin:4px 0 10px">${t.sign > 0 ? 'Выберите один или несколько счетов. Суммы — в валюте каждого счёта.' : 'Выберите, на какие счета вернуть деньги. Суммы — в валюте каждого счёта.'}</p>
+    ${t.parts.map((p, i) => { const a = accts.find(a => a.id === p.id); return `<div class="goal-fund-row">
+      <label><span class="goal-field-label">Счёт</span><select class="in" data-goal-account="${i}" aria-label="Счёт ${i + 1}"><option value="">Выберите счёт</option>${accts.map(a => `<option value="${esc(a.id)}" ${a.id === p.id ? 'selected' : ''}>${esc(a.n || 'Счёт')} · ${fxFmt(fxNum(a.a) || 0, a.c)} ${CUR[a.c] ? CUR[a.c].s : esc(a.c)}</option>`).join('')}</select></label>
+      <label><span class="goal-field-label">Сумма${a ? ', ' + (CUR[a.c] ? CUR[a.c].s : esc(a.c)) : ''}</span><input class="in num" data-goal-part="${i}" inputmode="decimal" value="${esc(p.a)}" placeholder="0" aria-label="Сумма со счёта ${i + 1}"></label>
+      ${t.parts.length > 1 ? `<button class="x" data-act="gfundrm" data-i="${i}" aria-label="Убрать счёт ${i + 1}">✕</button>` : '<span></span>'}</div>`; }).join('')}
+      ${t.parts.length < accts.length ? '<button class="btn outline" data-act="gfundadd">+ Ещё счёт</button>' : ''}` : `<p class="hint">${accts.length ? 'Изменится только сумма на цели; остатки на счетах останутся прежними.' : 'В Плане пока нет счетов. Изменится только сумма на цели.'}</p>`}`;
+  goalFundsCheck();
+}
+function goalTransfer() {
+  const g = goalEdit && budget.goals.find(g => g.id === goalEdit.id), t = goalTxn, v = fxNum($('#gAmt').value), k = bK();
+  if (!g || !t) return { error: 'Цель больше недоступна' };
+  if (!(Number.isFinite(v) && v > 0)) return { error: 'Впишите сумму' };
+  if (!(Number.isFinite(k) && k > 0)) return { error: 'Не загружен курс валюты плана' };
+  let amount = r2(v * k), funds = [];
+  if (amount <= 0) return { error: 'Сумма слишком мала' };
+  if (t.use) {
+    const used = new Set();
+    for (const p of t.parts) {
+      const a = budget.accts.find(a => a.id === p.id), n = r2(fxNum(p.a)), rate = a && fxRate(a.c);
+      if (!a) return { error: 'Выберите счёт для каждой части взноса' };
+      if (used.has(a.id)) return { error: 'Укажите каждый счёт только один раз' };
+      used.add(a.id);
+      if (!(Number.isFinite(rate) && rate > 0)) return { error: 'Не загружен курс для счёта «' + a.n + '»' };
+      if (!(Number.isFinite(n) && n > 0)) return { error: 'Впишите сумму для каждого счёта' };
+      if (!Number.isFinite(fxNum(a.a) || 0)) return { error: 'Проверьте остаток счёта «' + a.n + '»' };
+      if (t.sign > 0 && n > r2(fxNum(a.a) || 0)) return { error: 'На счёте «' + a.n + '» недостаточно денег' };
+      funds.push({ id: a.id, n: a.n || 'Счёт', a: n, c: a.c, k: rate });
+    }
+    const total = r2(funds.reduce((s, f) => s + r2(f.a * f.k), 0));
+    if (r2(total / k) !== r2(v)) return { error: `Со счетов набрано ${gel(total, 2)}. Нужно ${gel(amount, 2)}.` };
+    amount = total;
+  }
+  if (t.sign < 0 && amount > goalInfo(g, payday(budget)).saved + .005) return { error: 'На цели недостаточно денег' };
+  return { g, sign: t.sign, amount, funds };
+}
+function goalFundsCheck() {
+  if (!goalTxn || !$('#goalCheck')) return;
+  const q = goalTransfer();
+  $('#goalCheck').textContent = q.error || (goalTxn.use ? `${goalTxn.sign > 0 ? 'Спишется со счетов' : 'Вернётся на счета'}: ${gel(q.amount, 2)}. ${goalTxn.sign > 0 ? 'На цели станет' : 'На цели останется'} ${gel(goalInfo(q.g, payday(budget)).saved + q.sign * q.amount, 2)}.` : '');
+  $('#goalCheck').style.color = q.error ? 'var(--danger)' : 'var(--soft)';
+  $('#goalSubmit').disabled = !!q.error;
+}
+function goalFillPart(i) {
+  const t = goalTxn, p = t.parts[i], a = budget.accts.find(a => a.id === p.id), rate = a && fxRate(a.c);
+  if (!a || !rate || !bK()) { p.a = ''; return; }
+  const others = t.parts.reduce((s, p, j) => { const a = budget.accts.find(a => a.id === p.id); return s + (j === i || !a ? 0 : (fxNum(p.a) || 0) * (fxRate(a.c) || 0)); }, 0);
+  const need = Math.max(0, ((fxNum($('#gAmt').value) || 0) * bK() - others) / rate);
+  p.a = String(r2(t.sign > 0 ? Math.min(need, Math.max(0, fxNum(a.a) || 0)) : need));
 }
 function goalPut(sign) {
-  const g = goalEdit, v = fxNum($('#gAmt').value);
-  if (!(v > 0)) { toast('Впишите сумму'); $('#gAmt').focus(); return; }
+  if (!goalTxn || sign !== goalTxn.sign) return;
+  const q = goalTransfer(); if (q.error) { toast(q.error); goalFundsCheck(); return; }
+  const { g, amount, funds } = q;
+  for (const f of funds) { const a = budget.accts.find(a => a.id === f.id); a.a = String(r2((fxNum(a.a) || 0) - sign * f.a)); }
   g.log = g.log || [];
-  g.log.push({ id: newId(), d: now, g: r2(v * bK() * sign), t: Date.now() });
+  g.log.push({ id: newId(), d: now, g: r2(amount * sign), t: Date.now(), ...(funds.length ? { funds } : {}) });
   saveBudget(); closeModal(); goalEdit = null; render();
-  if (sign > 0) { toast(`Отложено ${gel(v)} на «${g.n}»`); setTimeout(() => popButton({ el: document.querySelector(`.goalc[data-id="${g.id}"] .gbar2`), stars: true, color: 'acc' }), 120); }
-  else toast(`Снято ${gel(v)} с «${g.n}»`);
+  if (sign > 0) { toast(`Отложено ${gel(amount)} на «${g.n}»`); setTimeout(() => popButton({ el: document.querySelector(`.goalc[data-id="${g.id}"] .gbar2`), stars: true, color: 'acc' }), 120); }
+  else toast(`Снято ${gel(amount)} с «${g.n}»`);
 }
+function goalLogRemove(id, time) {
+  const g = goalEdit && budget.goals.find(g => g.id === goalEdit.id); if (!g) return;
+  const l = (g.log || []).find(l => id ? l.id === id : String(l.t) === time); if (!l) return;
+  if (l.g > 0 && goalInfo(g, payday(budget)).saved < l.g - .005) { toast('Нельзя отменить взнос: часть денег уже снята с цели'); return; }
+  const sign = l.g > 0 ? 1 : -1;
+  for (const f of l.funds || []) {
+    const a = budget.accts.find(a => a.id === f.id);
+    if (!a || a.c !== f.c) { toast('Не удалось вернуть остатки: счёт удалён или его валюта изменена'); return; }
+    if (r2((fxNum(a.a) || 0) + sign * f.a) < 0) { toast('Недостаточно денег на счёте для отмены снятия'); return; }
+  }
+  for (const f of l.funds || []) { const a = budget.accts.find(a => a.id === f.id); a.a = String(r2((fxNum(a.a) || 0) + sign * f.a)); }
+  g.log = g.log.filter(x => x !== l); saveBudget(); render(); openGoal(g.id); toast('Запись отменена' + (l.funds ? ', остатки восстановлены' : ''));
+}
+document.addEventListener('input', e => {
+  if (!goalTxn || !$modal.classList.contains('open')) return;
+  if (e.target.id === 'gAmt') { if (goalTxn.parts.length === 1) { goalFillPart(0); goalFundsRender(); } else goalFundsCheck(); }
+  else if (e.target.hasAttribute('data-goal-part')) { goalTxn.parts[+e.target.dataset.goalPart].a = e.target.value; goalFundsCheck(); }
+});
+document.addEventListener('change', e => {
+  if (!goalTxn || !$modal.classList.contains('open')) return;
+  if (e.target.id === 'goalUse') { goalTxn.use = e.target.checked; goalFundsRender(); }
+  else if (e.target.hasAttribute('data-goal-account')) { const i = +e.target.dataset.goalAccount; goalTxn.parts[i].id = e.target.value; goalFillPart(i); goalFundsRender(); $modal.querySelector(`[data-goal-account="${i}"]`).focus(); }
+});
 
 /* ---------- экран плана ---------- */
 function planWarns(c, pSegs = c.segs.filter(s => s.start <= c.end)) {
@@ -4395,7 +4499,7 @@ function openSpend(x) {
   edit = { spend: x.id, cat: x.cat || 'other' };
   $modal.classList.add('open');
 }
-function closeModal() { $modal.classList.remove('open'); $modal.innerHTML = ''; edit = null; if (syncWait) syncSoon(800); }
+function closeModal() { $modal.classList.remove('open'); $modal.innerHTML = ''; edit = null; goalEdit = null; goalTxn = null; if (syncWait) syncSoon(800); }
 
 /* ---------- CSV ---------- */
 function toCsv() {
@@ -4628,7 +4732,16 @@ document.addEventListener('click', e => {
     case 'tdel': tblDel(el.dataset.k, el.dataset.id); break;
     case 'goal': openGoal(el.dataset.id); break;
     case 'gput': goalPut(+el.dataset.s); break;
-    case 'glogrm': if (goalEdit) { goalEdit.log = goalEdit.log.filter(l => String(l.t) !== el.dataset.t); saveBudget(); render(); openGoal(goalEdit.id); } break;
+    case 'gmode': if (goalTxn) {
+      goalTxn.sign = +el.dataset.s;
+      document.querySelectorAll('.goal-mode button').forEach(b => b.classList.toggle('on', +b.dataset.s === goalTxn.sign));
+      if (goalTxn.sign < 0 && bK()) { const g = budget.goals.find(g => g.id === goalEdit.id); if (g) $('#gAmt').value = r2(Math.min(fxNum($('#gAmt').value) || 0, Math.max(0, goalInfo(g, payday(budget)).saved / bK()))); }
+      goalTxn.parts.forEach(p => p.a = ''); goalTxn.parts.forEach((p, i) => goalFillPart(i));
+      $('#goalSubmit').dataset.s = String(goalTxn.sign); $('#goalSubmit').textContent = goalTxn.sign > 0 ? 'Отложить на цель' : 'Снять с цели'; goalFundsRender();
+    } break;
+    case 'gfundadd': if (goalTxn && goalTxn.parts.length < budget.accts.length) { goalTxn.parts.push({ id:'', a:'' }); goalFundsRender(); } break;
+    case 'gfundrm': if (goalTxn) { goalTxn.parts.splice(+el.dataset.i, 1); goalFundsRender(); } break;
+    case 'glogrm': goalLogRemove(el.dataset.id, el.dataset.t); break;
     case 'theme': if (skin !== 'classic') applySkin('classic'); applyTheme(el.dataset.id); render(); break;
     case 'export': exportCsv(); break;
     case 'import': $('#importFile').click(); break;
@@ -4832,6 +4945,7 @@ window.addEventListener('storage', e => {
   const v = getK(k);
   syncLoadMem(k, v); syncSeen(k, v);
   if (syncCanApply()) render(); else syncRenderWait = true;
+  if (k === 'rows') loadMissing();
 });
 
 // ---------- слияние ----------
@@ -4862,6 +4976,7 @@ function syncApply(M, D, write = true) {
   if (write) for (const dk of Object.keys(D)) { const k = D2SK[dk]; syncSetLocal(k, D[dk]); syncLoadMem(k, D[dk]); syncSeen(k, D[dk]); }
   const clk = {}; for (const [p, e] of M.f) clk[p] = [e.t, hv(e.v)];
   syncSetLocal('syncClk', clk); syncSetLocal('syncTomb', Object.fromEntries(M.z));
+  if (write) loadMissing();
 }
 
 // ---------- синхронизация ----------
