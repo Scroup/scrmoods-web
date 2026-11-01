@@ -4,7 +4,7 @@
 // Other files: cache first, refreshed in the background. Exchange rates and the sync server
 // (other origins) always go to the network.
 // Bump VERSION when files change so phones pick up the new version on the next launch.
-const VERSION = 'scrmoney-v28';
+const VERSION = 'scrmoney-v30';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   '../lora_regular.woff', '../lora_medium.woff', '../lora_italic.woff', '../lora_medium_italic.woff'];
 

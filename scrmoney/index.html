@@ -1689,6 +1689,133 @@ html body.compact-ui article.book.piggy .gextra .seg button{min-height:34px}
  html body.compact-ui article.book .gpanel .gforecast .cap{overflow-wrap:anywhere}
 }
 
+
+/* v29: the page itself is centered on the viewport, independently of the menu. */
+@media(min-width:900px){
+ html body.compact-ui{--page-width:min(860px,calc(100vw - 440px))}
+ html body.compact-ui #main,html body.compact-ui:not(.wide) #main{
+  width:var(--page-width);max-width:none;margin-inline:auto;
+ }
+ html body.compact-ui #nav.six{
+  left:calc((100vw - var(--page-width))/2 - var(--preview-side) - var(--preview-gap));
+ }
+ html body.compact-ui #top .row{
+  width:calc(var(--page-width) + var(--preview-side) + var(--preview-gap));max-width:none;
+  margin-left:calc((100vw - var(--page-width))/2 - var(--preview-side) - var(--preview-gap));margin-right:0;
+ }
+ html.skin-paper body.compact-ui #nav.six button:nth-child(n),
+ html.skin-notebook body.compact-ui #nav.six button:nth-child(n){width:calc(var(--preview-side) + var(--preview-gap) + 28px)}
+ html body.compact-ui article.book{padding:18px 20px 24px 52px}
+ html body.compact-ui article.book::before{left:36px}
+ html body.compact-ui article.book::after{left:12px}
+ html body.compact-ui #main.intro>article.book{animation:none}
+ html body.compact-ui article.book .blay{grid-template-columns:minmax(0,1fr) 204px;gap:16px;margin-top:16px}
+ html body.compact-ui article.book .btd{gap:16px}
+ html body.compact-ui article.book .btd .big{font-size:60px}
+ html body.compact-ui article.book .bhead .hello{font-size:24px}
+ html body.compact-ui article.book .bnote .hand.big2{font-size:20px}
+ html body.compact-ui article.book .bnote{min-width:200px}
+ html body.compact-ui article.book .bcal{margin-top:20px}
+ html body.compact-ui article.book .calm .cd{min-height:80px;padding:5px;gap:3px}
+ html body.compact-ui article.book .calm .st{font-size:12px;padding:3px}
+ html body.compact-ui article.book .st-amount{white-space:normal;overflow-wrap:anywhere}
+ html body.compact-ui article.book .sticky h2.t{font-size:23px}
+ html body.compact-ui article.book .sticky .r{font-size:12px}
+ html body.compact-ui article.book.workspace-page{min-height:360px}
+ html body.compact-ui .workspace-page>.jhead{padding:0 0 12px;gap:8px}
+ html body.compact-ui .workspace-page .jhead .big{font-size:28px;line-height:1.15}
+ html body.compact-ui .workspace-page .jhead .sub{font-size:13px;line-height:1.4;margin-top:4px}
+ html body.compact-ui .workspace-page .rbtn{width:34px;height:34px;margin-bottom:0}
+ html body.compact-ui .workspace-page>.card{margin:12px 0 0;padding:12px 16px}
+ html body.compact-ui .workspace-page .card h2.hl{margin-top:0;font-size:17px;line-height:1.25}
+ html body.compact-ui .workspace-page>.rate{margin:0;padding:12px 16px;gap:8px}
+ html body.compact-ui .workspace-page .rate .rv{font-size:24px;line-height:1.2}
+ html body.compact-ui .workspace-page .rate .rv small{font-size:14px}
+ html body.compact-ui .workspace-page .rate .rs{font-size:12px;line-height:1.45}
+ html body.compact-ui .workspace-page>.sumbtn{width:100%;margin:12px 0 0;padding:10px 14px;min-height:56px}
+ html body.compact-ui .workspace-page .sumbtn b{font-size:18px}
+ html body.compact-ui .workspace-page .sumbtn i{font-size:12px}
+ html body.compact-ui .workspace-page .empty{padding:18px 8px;font-size:13px;line-height:1.5}
+ html body.compact-ui .workspace-page .section{padding:0}
+ html body.compact-ui .workspace-page h2.hl{font-size:17px;margin:20px 0 8px}
+ html body.compact-ui .workspace-page>.section:first-child h2.hl{margin-top:0}
+ html body.compact-ui .workspace-page .skins{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:8px}
+ html body.compact-ui .workspace-page .skinb{padding:7px;border-radius:10px;min-width:0}
+ html body.compact-ui .workspace-page .skinb .sp0{height:36px;margin-bottom:6px}
+ html body.compact-ui .workspace-page .skinb b{font-size:12px}
+ html body.compact-ui .workspace-page .themes{gap:8px}
+ html body.compact-ui .workspace-page .theme{padding:7px}
+ html body.compact-ui .workspace-page .theme .mini{min-height:0;padding:6px}
+ html body.compact-ui .workspace-page .theme .nm{font-size:12px}
+ html body.compact-ui .workspace-page .setrow{padding:8px 0;font-size:14px}
+ html body.compact-ui .workspace-page .setrow .l{min-width:0}
+ html body.compact-ui .workspace-page .setrow .l i{font-size:12px}
+ html body.compact-ui .workspace-page .btn{width:100%;min-height:36px;font-size:13px;margin-top:8px}
+ html body.compact-ui .workspace-page .hint{font-size:12px;line-height:1.5}
+ html body.compact-ui .workspace-page .in{font-size:15px;min-height:36px;padding:8px 10px}
+ html body.compact-ui .workspace-page .yearbig{padding:0}
+ html body.compact-ui .workspace-page .yearbig .v,html body.compact-ui .workspace-page .spbig{font-size:30px;line-height:1.2}
+ html body.compact-ui .workspace-page .yearbig .k,html body.compact-ui .workspace-page .pair .k{font-size:12px}
+ html body.compact-ui .workspace-page .pair>div{padding:10px 12px}
+ html body.compact-ui .workspace-page .yearbig .alt,html body.compact-ui .workspace-page .pair .alt{font-size:12px}
+ html body.compact-ui .workspace-page .limit .lt{font-size:12px;flex-wrap:wrap;gap:4px}
+ html body.compact-ui .workspace-page .card.chart>svg{width:100%;height:180px;max-height:180px}
+ html body.compact-ui .workspace-page .mrow{padding:8px;min-height:34px;font-size:12px;gap:8px;min-width:0}
+ html body.compact-ui .workspace-page .mrow .mu{font-size:11px;overflow-wrap:anywhere}
+ html body.compact-ui .workspace-page .spend-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+ html body.compact-ui .workspace-page .spend-grid>.card{margin:0;min-width:0;padding:12px}
+ html body.compact-ui .workspace-page .fxrow{gap:8px;padding:7px 0}
+ html body.compact-ui .workspace-page .fxrow .sym{width:30px;height:30px;font-size:17px}
+ html body.compact-ui .workspace-page .fxrow .nm b{font-size:13px}
+ html body.compact-ui .workspace-page .fxrow .nm i{font-size:11px;line-height:1.4}
+ html body.compact-ui .workspace-page .fxrow input{width:34%;max-width:120px;font-size:18px;padding:6px 8px}
+ html body.compact-ui .workspace-page .fxrow .rm{width:26px;height:30px}
+ html body.compact-ui .workspace-page .catbtn{font-size:13px;padding:10px;gap:8px}
+ html body.compact-ui .workspace-page .sprow{gap:6px;flex-wrap:wrap}
+ html body.compact-ui .workspace-page .sprow .seg button{font-size:12px;padding:5px 8px}
+ html body.compact-ui .workspace-page .sprow input{flex:1 1 130px;width:130px;min-width:0}
+ html body.compact-ui .workspace-page .fix{font-size:17px;min-height:40px;padding:10px;margin-top:10px}
+ html body.compact-ui .workspace-page .cmp{font-size:12px;gap:4px 10px;line-height:1.45}
+}
+@media(min-width:1200px){html body.compact-ui #main[data-page="year"] .mrows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}}
+@media(min-width:900px) and (max-width:1299px){
+ html body.compact-ui{--preview-side:140px;--preview-gap:14px;--page-width:min(860px,calc(100vw - 340px))}
+ html body.compact-ui #nav.six button:nth-child(n),html body.compact-ui #nav.six button.on{font-size:12px;gap:8px;padding-inline:10px}
+ html body.compact-ui #nav.six button .ic{width:20px}
+}
+@media(min-width:900px) and (max-width:1199px){
+ html body.compact-ui article.book .blay{grid-template-columns:minmax(0,1fr)}
+ html body.compact-ui .workspace-page .spend-grid{grid-template-columns:minmax(0,1fr)}
+ html body.compact-ui .workspace-page .skins{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* Keep the Plan controls in their agreed positions as its width changes. */
+@media (min-width: 900px) {
+  html body.compact-ui article.book.plan-book .bhead {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 12px;
+  }
+  html body.compact-ui article.book.plan-book .bhead > div { min-width: 0; }
+  html body.compact-ui article.book.plan-book .bacts { flex-wrap: nowrap; justify-content: flex-end; }
+  html body.compact-ui article.book.plan-book .btd {
+    display: grid;
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+    align-items: start;
+    gap: 16px;
+  }
+  html body.compact-ui article.book.plan-book .btd > div { min-width: 0; }
+  html body.compact-ui article.book.plan-book .bnote { min-width: 0; }
+  html body.compact-ui article.book.plan-book .bnote .row2 { flex-wrap: nowrap; }
+  html body.compact-ui article.book.plan-book .bnote .btn { padding-inline: 8px; font-size: 12px; }
+  html body.compact-ui article.book.plan-book .bcal > .bsh {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+  html body.compact-ui article.book.plan-book .bcal > .bsh > .row2 { flex-wrap: nowrap; justify-content: flex-end; }
+}
 </style>
 </head>
 <body class="compact-ui">
@@ -3722,7 +3849,7 @@ function renderBook() {
   const cal = calView === 'year' ? calYear(c, by, s) : calMonth(c, by, calYm);
   const tight = c.series.length ? c.series.reduce((a, b) => b.bal < a.bal ? b : a) : null;
   $main.innerHTML = `
-    <article class="book">
+    <article class="book plan-book">
       <div class="bhead"><div><div class="cap">план · ${longDate(now)}</div>${handNote(hello, 'hello pen')}</div>
         <div class="bacts">${viewSeg()}<button class="btn outline" data-act="bwiz">Настроить план</button><button class="btn outline sq" data-act="bmore" aria-label="Ещё">⋯</button></div></div>
       <div id="bnewBox"></div>
@@ -4104,7 +4231,7 @@ document.addEventListener('keydown', e => {
 });
 // при переходе через 900 px — другой вид плана
 let wasWide = wideScreen(), rsT;
-window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { const w = wideScreen(); if (w !== wasWide) { wasWide = w; if (tab === 'plan' || tab === 'piggy') render(); } }, 150); });
+window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { const w = wideScreen(); if (w !== wasWide) { wasWide = w; render(); } }, 150); });
 
 // Match the selected paper tab to the page, including scroll and font reflow.
 function navBottomInset() { return wideScreen() ? 0 : (($('#nav') || {}).offsetHeight || 68); }
@@ -4130,6 +4257,7 @@ function uiLayoutSoon() {
 }
 window.addEventListener('scroll', uiLayoutSoon, { passive: true });
 window.addEventListener('resize', uiLayoutSoon, { passive: true });
+document.addEventListener('animationend', e => { if (e.target.parentElement === $main) uiLayoutSoon(); });
 if (document.fonts) document.fonts.ready.then(uiLayoutSoon);
 let fabOpen = false;
 function fabRender() {
@@ -4147,6 +4275,26 @@ function fabRender() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && fabOpen) { fabOpen = false; fabRender(); $('#viewCurrency').focus(); } });
 document.addEventListener('click', e => { if (fabOpen && !e.target.closest('#fab, #viewCurrency')) { fabOpen = false; fabRender(); } }, true);
+// Reparent existing nodes so input handlers and data bindings stay intact.
+function prepareWorkspace() {
+  $main.dataset.page = tab;
+  if (wideScreen() && !$main.querySelector(':scope > article.book')) {
+    const sheet = document.createElement('article');
+    sheet.className = 'book workspace-page';
+    while ($main.firstChild) sheet.appendChild($main.firstChild);
+    $main.appendChild(sheet);
+    if (tab === 'spend') {
+      const converter = sheet.querySelector('.card.fx');
+      const summary = [...sheet.querySelectorAll(':scope > .card')].find(x => x !== converter);
+      if (converter && summary) {
+        const grid = document.createElement('div'); grid.className = 'spend-grid';
+        converter.before(grid); grid.append(converter, summary);
+      }
+    }
+  }
+  document.body.classList.toggle('book-view', !!$main.querySelector(':scope > article.book'));
+}
+
 function render(anim) {
   fabRender();
   $main.classList.toggle('intro', !!anim);
@@ -4155,6 +4303,7 @@ function render(anim) {
   document.body.classList.toggle('book-view', tab === 'plan' && !!budget && planView() === 'book' || tab === 'piggy');
   avgReset();
   if (tab === 'income') renderIncome(); else if (tab === 'year') renderYear(); else if (tab === 'spend') renderSpend(); else if (tab === 'plan') renderPlan(); else if (tab === 'piggy') renderPiggy(); else renderSettings();
+  prepareWorkspace();
   uiLayoutSoon();
 }
 
@@ -4528,6 +4677,7 @@ let syncCfg = store.get('sync', null);          // { code, server, dev, me, v, o
 let members = store.get('members', {});         // { id: { n: имя } }
 let syncKeyC = {}, syncBusy = false, syncAgain = false, syncWait = false, syncTimer = null, syncState = '', syncJoin = null, syncRenderWait = false;
 let syncHist = null;                            // версии на сервере для окна восстановления
+let syncDraftName = '';                         // незавершённая форма подключения на этом экране
 // старые ключи формата 1 больше не нужны
 try { localStorage.removeItem('scrmoney.syncBase'); localStorage.removeItem('scrmoney.syncRecv'); } catch (e) {}
 
@@ -4901,8 +5051,9 @@ function syncSection() {
   return `
     <p class="hint" style="margin:6px 0 8px">Ведите план, расходы и приходы вместе на разных устройствах. Данные шифруются прямо на телефоне кодом синхронизации — сервер видит только шифр.</p>
     ${need ? `<label class="setrow syncsrv"><span class="l">Адрес сервера<i>ваш Cloudflare Worker, как его завести — в SYNC.md</i></span></label>
-      <input class="in" id="syncSrvIn" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://scrmoney-sync….workers.dev" value="${esc(store.get('syncServer', ''))}">` : ''}
-    <label class="setrow"><span class="l">Ваше имя<i>чтобы было видно, чей приход</i></span><input class="in" id="syncNameIn" maxlength="24" placeholder="Имя" style="width:150px;text-align:left"></label>
+      <input class="in" id="syncSrvIn" type="url" inputmode="url" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="https://ваш-сервер.workers.dev" aria-label="Адрес сервера синхронизации" value="${esc(store.get('syncServer', ''))}">` : ''}
+    ${(navigator.standalone || matchMedia('(display-mode: standalone)').matches) ? '<p class="hint">Приложение с домашнего экрана подключается к общему бюджету отдельно от Safari.</p>' : ''}
+    <label class="setrow"><span class="l">Ваше имя<i>чтобы было видно, чей приход</i></span><input class="in" id="syncNameIn" maxlength="24" placeholder="Имя" value="${esc(syncDraftName)}" style="width:150px;text-align:left"></label>
     <button class="btn primary" data-act="synccreate" style="margin-top:6px">Создать общий бюджет</button>
     <button class="btn outline" data-act="syncjoin">Подключиться по коду</button>
     <div id="syncBox">${syncJoin && !syncJoin.D ? syncJoinHtml() : ''}</div>`;
@@ -4925,15 +5076,44 @@ function syncWhoHtml() {
     <button class="btn primary" data-act="syncjoinyes" style="margin-top:10px">Подключиться</button>
     <button class="btn outline" data-act="syncjoinno">Отмена</button></div>`;
 }
-const syncServerIn = () => { const i = $('#syncSrvIn'); const v = (i ? i.value.trim() : syncSrv()).replace(/\/+$/, ''); if (i) store.set('syncServer', v); return v; };
+// Validate an actual URL rather than just its prefix. Handle pasted invisible
+// characters and Safari's URL entry without changing the draft while typing.
+function syncServerUrl(value) {
+  let raw = String(value || '').trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
+  if (!raw) return '';
+  if (!/^https?:\/\//i.test(raw)) {
+    if (/^(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:\/|$)/i.test(raw)) raw = 'http://' + raw;
+    else if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) return '';
+    else raw = 'https://' + raw;
+  }
+  try {
+    const u = new URL(raw);
+    const local = ['localhost', '127.0.0.1', '[::1]'].includes(u.hostname);
+    if ((u.protocol !== 'https:' && !(u.protocol === 'http:' && local)) || !u.hostname || u.username || u.password || u.search || u.hash) return '';
+    return u.href.replace(/\/+$/, '');
+  } catch (e) { return ''; }
+}
+const syncServerIn = () => {
+  const i = $('#syncSrvIn');
+  const value = i ? i.value : syncSrv();
+  const server = syncServerUrl(value);
+  if (i && server) { i.value = server; store.set('syncServer', server); }
+  return server;
+};
+function syncServerPrompt() {
+  const field = $('#syncSrvIn');
+  const hasValue = !!(field ? field.value.trim() : syncSrv());
+  toast(hasValue ? 'Проверьте адрес сервера: нужен адрес Worker, например https://имя.workers.dev' : 'Впишите адрес сервера');
+  if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
+}
 const syncBox = h => { const b = $('#syncBox'); if (b) b.innerHTML = h; };
-const okServer = s => /^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)/.test(s);
+const okServer = s => !!syncServerUrl(s);
 async function syncAct(act, el) {
   if (document.activeElement && document.activeElement.blur && !['syncjoin', 'syncme', 'syncplan'].includes(act)) document.activeElement.blur();
   switch (act) {
     case 'synccreate': {
       const s = syncServerIn(), name = ($('#syncNameIn').value || '').trim();
-      if (!okServer(s)) { toast('Впишите адрес сервера'); $('#syncSrvIn') && $('#syncSrvIn').focus(); return; }
+      if (!okServer(s)) { syncServerPrompt(); return; }
       if (!name) { toast('Впишите своё имя'); $('#syncNameIn').focus(); return; }
       syncBox('<p class="hint" style="text-align:center">создаю…</p>');
       backupMake('перед созданием общего бюджета');
@@ -4941,11 +5121,14 @@ async function syncAct(act, el) {
       if (!ok) { const e = syncCfg && syncCfg.err; syncOff(); render(); syncBox(`<p class="hint syncerr" style="text-align:center">Не получилось: ${esc(e || 'нет связи с сервером')}</p>`); return; }
       render(); toast('Общий бюджет создан'); syncBox(syncInviteHtml()); return;
     }
-    case 'syncjoin': syncJoin = { code: (syncJoin && syncJoin.code) || '' }; syncBox(syncJoinHtml()); $('#syncCodeIn').focus(); return;
+    case 'syncjoin':
+      syncServerIn();
+      syncJoin = { code: (syncJoin && syncJoin.code) || '' };
+      syncBox(syncJoinHtml()); $('#syncCodeIn').focus(); return;
     case 'syncjoingo': {
       const code = syncNorm($('#syncCodeIn').value), s = syncServerIn();
       if (code.length !== 20) { toast('В коде 20 знаков'); return; }
-      if (!okServer(s)) { toast('Впишите адрес сервера'); return; }
+      if (!okServer(s)) { syncServerPrompt(); return; }
       syncJoin = { code, server: s, name: ($('#syncNameIn') && $('#syncNameIn').value || '').trim() };
       syncBox('<p class="hint" style="text-align:center">проверяю код…</p>');
       try { Object.assign(syncJoin, await syncPeek(code, s)); } catch (e) { syncBox(syncJoinHtml() + `<p class="hint syncerr" style="text-align:center">${esc(netErr(e))}</p>`); return; }
@@ -5054,6 +5237,21 @@ const syncInviteHtml = () => `<div class="syncinv"><p class="hint" style="margin
   setTimeout(() => { const b = document.querySelector('[data-act=syncjoingo]'); if (b) b.click(); }, 50);
 })();
 document.addEventListener('click', e => { const el = e.target.closest('[data-act^=sync]'); if (el) syncAct(el.dataset.act, el); });
+
+// Keep setup inputs through rate refreshes and other renders. The unfinished
+// encryption code stays in memory only; it is never logged or saved as a draft.
+function syncDraftInput(e) {
+  if (e.target.id === 'syncSrvIn') {
+    store.set('syncServer', e.target.value);
+    e.target.removeAttribute('aria-invalid');
+  } else if (e.target.id === 'syncNameIn' && !syncCfg) {
+    syncDraftName = e.target.value;
+  } else if (e.target.id === 'syncCodeIn' && syncJoin && !syncJoin.D) {
+    syncJoin.code = syncNorm(e.target.value);
+  }
+}
+document.addEventListener('input', syncDraftInput);
+document.addEventListener('change', syncDraftInput);
 document.addEventListener('change', e => {
   if (e.target.id !== 'syncNameIn' || !syncCfg) return;
   const n = e.target.value.trim(); if (!n) return;
