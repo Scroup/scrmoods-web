@@ -4,7 +4,7 @@
 // Other files: cache first, refreshed in the background. Exchange rates and the sync server
 // (other origins) always go to the network.
 // Bump VERSION when files change so phones pick up the new version on the next launch.
-const VERSION = 'scrmoney-v27';
+const VERSION = 'scrmoney-v28';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   '../lora_regular.woff', '../lora_medium.woff', '../lora_italic.woff', '../lora_medium_italic.woff'];
 
@@ -15,7 +15,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k.startsWith('scrmoney-') && k !== VERSION) /* only this app's own caches: the apps share one site */.map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
