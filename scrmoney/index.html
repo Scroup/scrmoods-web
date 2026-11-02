@@ -1860,6 +1860,28 @@ html body.compact-ui.skin-notebook article.book.piggy .gbox .gtabs button { font
  html body.compact-ui article.book.plan-book .bacts { width:max-content; }
  html body.compact-ui article.book.plan-book .cash-tools { margin:12px 0; }
 }
+/* Keep sidebar amounts intact; give names and details full readable rows. */
+html body.compact-ui article.book .bside .money-account { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; gap:4px 8px; padding:8px 0; }
+html body.compact-ui article.book .bside .money-amount,
+html body.compact-ui article.book .bside .r > b { white-space:nowrap; overflow-wrap:normal; flex-shrink:0; }
+html body.compact-ui article.book .bside .money-native,
+html body.compact-ui article.book .bside .account-reserve { grid-column:1 / -1; }
+html body.compact-ui article.book .bside .account-reserve { display:grid; gap:4px; color:var(--soft); font-size:11px; line-height:1.4; }
+html body.compact-ui article.book .bside .account-reserve > span { display:flex; flex-wrap:wrap; gap:0 4px; }
+html body.compact-ui article.book .bside .account-reserve b { font-weight:400; }
+html body.compact-ui article.book .bside .bi { display:grid; grid-template-columns:24px minmax(0,1fr); gap:4px 8px; padding:10px 0; }
+html body.compact-ui article.book .bside .bi .tick { grid-column:1; grid-row:1 / 3; }
+html body.compact-ui article.book .bside .bi .bn { grid-column:2; grid-row:1; line-height:1.4; }
+html body.compact-ui article.book .bside .bi .bn i { margin-top:3px; line-height:1.4; }
+html body.compact-ui article.book .bside .bi > b { grid-column:2; grid-row:2; white-space:nowrap; justify-self:start; }
+html body.compact-ui article.book .bside .goal-summary .glt { display:flex; flex-direction:column; align-items:stretch; gap:6px; }
+html body.compact-ui article.book .bside .goal-summary-name { line-height:1.4; }
+html body.compact-ui article.book .bside .goal-summary-total { display:flex; flex-wrap:wrap; gap:2px 6px; font-size:12px; }
+html body.compact-ui article.book .bside .goal-summary-total > span,
+html body.compact-ui article.book .bside .goal-summary-line { white-space:nowrap; }
+html body.compact-ui article.book .bside .goal-summary-line { display:block; line-height:1.5; }
+html body.compact-ui article.book .bside .goal-summary .mini { width:100%; min-height:44px; padding:8px; font-size:12px; white-space:nowrap; margin:2px 0 8px; }
+html body.compact-ui article.book .bside .goal-summary .gl0 { padding:10px 0; }
 </style>
 </head>
 <body class="compact-ui">
@@ -3990,8 +4012,9 @@ function bookIncome() {
   const a = avgIncome(), list = budget.inc, cur = ymOf(now);
   const ms = Array.from({ length: 6 }, (_, i) => ymAdd(cur, i - 5)), vals = ms.map(ym => incFactOf(ym).total), mx = Math.max(...vals, 1);
   const row = x => { const v = incA(x), c = incC(x);
+    const note = (isAvg(x) ? avgWord(a) : `${x.rep === 'once' ? (x.date ? shortDate(x.date) : 'разово') : (x.date ? ymd(x.date)[2] + '-го · ' : '') + (x.rep === 'n' ? mword(+x.cnt || 1) : 'каждый месяц')}`).replace(/(\d+|каждый) (месяц(?:а|ев)?)/g, '$1\u00a0$2');
     return `<div class="bi ${x.off ? 'off' : ''}"><button class="tick" data-act="incoff" data-id="${x.id}" role="switch" aria-checked="${!x.off}" aria-label="${x.off ? 'Включить' : 'Выключить'} «${esc(isAvg(x) ? AVG_N : x.n)}»">${x.off ? '' : '✓'}</button>
-      <button class="bn" data-act="cfrow" data-k="inc" data-id="${x.id}">${isAvg(x) ? 'Средний по приходам' : esc(x.n || 'Доход')}<i>${isAvg(x) ? avgWord(a) : `${x.rep === 'once' ? (x.date ? shortDate(x.date) : 'разово') : (x.date ? ymd(x.date)[2] + '-го · ' : '') + (x.rep === 'n' ? mword(+x.cnt || 1) : 'каждый месяц')}`}</i></button>
+      <button class="bn" data-act="cfrow" data-k="inc" data-id="${x.id}">${isAvg(x) ? 'Средний по приходам' : esc(x.n || 'Доход')}<i>${note}</i></button>
       <b class="num">${v > 0 ? `${money(v, 0)} ${CUR[c].s}` : '—'}</b></div>`; };
   return `<section class="sticky mint"><span class="tape" aria-hidden="true"></span><h2 class="t">Доходы в плане</h2>${handNote('галочка — считаем в плане', 'sub')}
     ${list.map(row).join('')}
@@ -4000,17 +4023,17 @@ function bookIncome() {
     <div class="links"><button class="lnk" data-act="cfrow" data-k="inc" data-id="new">+ доход</button><button class="lnk" data-act="add">записать приход</button></div></section>`;
 }
 function bookGoals(c) {
-  return `<section class="sticky lemon"><span class="tape" aria-hidden="true"></span><h2 class="t">Копим</h2>
-    ${c.goals.length ? c.goals.map(({ g, gi }) => `<div class="gl0"><div class="glt"><span>${esc(g.n || 'Цель')}</span><span class="num">${bm(gi.saved)} / ${bm(gi.t)}</span></div>
+  return `<section class="sticky lemon goal-summary"><span class="tape" aria-hidden="true"></span><h2 class="t">Копим</h2>
+    ${c.goals.length ? c.goals.map(({ g, gi }) => `<div class="gl0"><div class="glt"><span class="goal-summary-name">${esc(g.n || 'Цель')}</span><span class="num goal-summary-total"><span>${gel(gi.saved)}</span><span>из ${gel(gi.t)}</span></span></div>
       <div class="meter"><i style="width:${gi.t ? Math.min(100, gi.saved / gi.t * 100) : 0}%"></i></div>
-      <div class="glt"><i>${gi.done ? 'накоплено 🎉' : gi.monthly > 0 ? `${gel(gi.monthly)}/мес · к ${ymNameG(gi.eta)}` : 'не задано, сколько в месяц'}</i>${gi.done ? '' : `<button class="mini" data-act="goal" data-id="${g.id}">Внести на цель</button>`}</div></div>`).join('')
+      <div class="glt"><i>${gi.done ? 'накоплено 🎉' : gi.monthly > 0 ? `<span class="goal-summary-line">${gel(gi.monthly)} в месяц</span><span class="goal-summary-line">к ${ymNameG(gi.eta)}</span>` : 'не задано, сколько в месяц'}</i>${gi.done ? '' : `<button class="mini" data-act="goal" data-id="${g.id}">Внести на цель</button>`}</div></div>`).join('')
       : '<p class="hint">Целей пока нет — добавьте, на что копите.</p>'}
     <div class="links">${c.goals.some(x => !x.gi.done) && c.goals[0].gi.contrib[0] ? handNote(`взнос — ${shortDate(c.goals.map(x => x.gi.contrib[0]).filter(Boolean).sort((a, b) => a.date.localeCompare(b.date))[0].date)}`, 'pen') : ''}<button class="lnk" data-act="bwizgoals">+ цель</button></div></section>`;
 }
 function bookMoney(c) {
   const ago = accAgo();
   return `<section class="sticky white"><span class="tape" aria-hidden="true"></span><h2 class="t">Деньги сейчас</h2>
-    ${(budget.accts || []).map(x => `<div class="r"><span>${esc(x.n || 'Счёт')}${x.c !== baseCur() && fxNum(x.a) ? ` <i class="num">${money(fxNum(x.a), 0)} ${CUR[x.c].s}</i>` : ''}${accountHeld(budget, x) > 0 ? `<small class="goal-log-funds">На целях ${fxFmt(accountHeld(budget, x), x.c)} ${CUR[x.c].s} · свободно ${fxFmt(accountFree(budget, x), x.c)} ${CUR[x.c].s}</small>` : ''}</span><b class="num">${x.c === baseCur() ? money(fxNum(x.a) || 0, 0) : bm(G0(x.a, x.c))} ${bS()}</b></div>`).join('')}
+    ${(budget.accts || []).map(x => `<div class="r money-account"><span class="account-name">${esc(x.n || 'Счёт')}</span><b class="num money-amount">${x.c === baseCur() ? money(fxNum(x.a) || 0, 0) : bm(G0(x.a, x.c))} ${bS()}</b>${x.c !== baseCur() && fxNum(x.a) ? `<i class="num money-native money-amount">${money(fxNum(x.a), 0)} ${CUR[x.c].s}</i>` : ''}${accountHeld(budget, x) > 0 ? `<div class="account-reserve"><span>На целях <b class="num money-amount">${fxFmt(accountHeld(budget, x), x.c)} ${CUR[x.c].s}</b></span><span>Свободно <b class="num money-amount">${fxFmt(accountFree(budget, x), x.c)} ${CUR[x.c].s}</b></span></div>` : ''}</div>`).join('')}
     <div class="r tot"><span>Всего на счетах</span><b class="num">${gel(c.fullHave)}</b></div>
     ${c.held ? `<div class="r"><span>Из них на целях</span><b class="num">${gel(c.held)}</b></div><div class="r"><span>Свободно</span><b class="num">${gel(c.have)}</b></div>` : ''}
     ${reservationError(budget) ? `<p class="hint" style="color:var(--danger)">${esc(reservationError(budget))}</p>` : ''}
