@@ -1832,6 +1832,34 @@ html body.compact-ui article.book.piggy .gextra .seg button{min-height:34px}
   .goal-fund-row .x { width:44px; }
   .goal-log-funds { max-width:150px; }
 }
+html body.compact-ui article.book.piggy .gbox { padding:16px; }
+html body.compact-ui article.book.piggy .gbox .gtabs {
+ display:flex; flex-wrap:nowrap; align-items:stretch; gap:6px; min-width:0;
+ overflow-x:auto; margin:0 -16px 16px; padding:4px 16px 0;
+ background:linear-gradient(var(--rule),var(--rule)) left bottom / 100% 1px no-repeat;
+ scrollbar-width:thin;
+}
+html body.compact-ui article.book.piggy .gbox .gtabs button,
+html body.compact-ui article.book.piggy .gbox .gtabs button.on {
+ flex:0 0 auto; max-width:min(280px,75vw); min-height:48px; padding:10px 16px;
+ border:1px solid var(--rule); border-radius:18px 18px 0 0;
+ font-family:inherit; font-size:16px; font-weight:600; line-height:1.25;
+ background:color-mix(in srgb,var(--page) 70%,var(--rule)); color:var(--soft);
+ text-align:left; overflow-wrap:anywhere; box-shadow:none;
+}
+html body.compact-ui article.book.piggy .gbox .gtabs button.on {
+ border-color:var(--rule); border-bottom-color:var(--st-lemon); background:var(--st-lemon); color:var(--ink);
+}
+html body.compact-ui article.book.piggy .gbox .gtabs button:focus-visible { outline:2px solid var(--acc); outline-offset:-4px; }
+html body.compact-ui.skin-paper article.book.piggy .gbox .gtabs button,
+html body.compact-ui.skin-notebook article.book.piggy .gbox .gtabs button { font-family:var(--hand); font-size:20px; }
+.sticky .r > span { min-width:0; }
+.goal-log-funds { overflow-wrap:anywhere; }
+@media(min-width:900px) {
+ html body.compact-ui article.book.plan-book .bhead { min-height:70px; }
+ html body.compact-ui article.book.plan-book .bacts { width:max-content; }
+ html body.compact-ui article.book.plan-book .cash-tools { margin:12px 0; }
+}
 </style>
 </head>
 <body class="compact-ui">
@@ -2815,6 +2843,7 @@ function goalFundsRender() {
 function goalTransfer() {
   const g = goalEdit && budget.goals.find(g => g.id === goalEdit.id), t = goalTxn, v = fxNum($('#gAmt').value), k = bK();
   if (!g || !t) return { error: 'Цель больше недоступна' };
+  if (t.sign > 0 && t.use && reservationError(budget)) return { error: reservationError(budget) };
   if (!(Number.isFinite(v) && v > 0)) return { error: 'Впишите сумму' };
   if (!(Number.isFinite(k) && k > 0)) return { error: 'Не загружен курс валюты плана' };
   let amount = r2(v * k), funds = [];
@@ -2899,6 +2928,7 @@ document.addEventListener('change', e => {
 /* ---------- экран плана ---------- */
 function planWarns(c, pSegs = c.segs.filter(s => s.start <= c.end)) {
   const warns = [];
+  const reservationIssue = reservationError(budget); if (reservationIssue) warns.push(esc(reservationIssue));
   for (const s of pSegs) if (s.short) warns.push(`До ${shortDate(s.stop < c.end ? s.stop : c.end)} не хватает <b class="num">${gel(s.short)}</b>. ${s.out.length ? `Можно перенести «${esc(s.out[s.out.length - 1].n)}» на после зарплаты, взять из запаса или урезать траты.` : 'Можно взять из запаса.'}`);
   if (c.limMode) {
     // постоянная нехватка: лимиты + платежи + взносы больше дохода почти каждый месяц — одно предупреждение на все месяцы
@@ -3138,7 +3168,7 @@ function saveSim(c) {
   const M = c.months.map((m, i) => ({ ym: m.ym, inc: m.inc, out: m.need + m.once, daily: (limSum ? limSumFor(m.ym) : daily) * (i === 0 ? restK : 1), goalPlan: m.goal }));
   for (const m of M) m.free = m.inc - m.out - m.daily;
   const tail = M.slice(1), avgFree = tail.reduce((t, m) => t + m.free, 0) / Math.max(1, tail.length), avgPlan = tail.reduce((t, m) => t + m.goalPlan, 0) / Math.max(1, tail.length);
-  const start = saved0 + Math.max(0, c.have - c.res);            // уже накоплено на целях + свободные деньги на счетах сверх запаса
+  const start = saved0 - Math.max(0, c.held - c.fullHave) + Math.max(0, c.have - c.res); // reserve is part of account balances, counted once
   // сколько месяцев показывать: пока не закроются все цели (до 10 лет), но не меньше года
   const targets = []; let acc = 0;
   for (const x of goals) { acc += x.gi.t; targets.push({ ...x, cum: acc }); }
@@ -4100,7 +4130,7 @@ function renderPiggy() {
     <article class="book piggy">
       <div class="bhead"><div class="cap">копилка · ${longDate(now)}</div>
         <div class="bacts"><button class="btn outline" data-act="bwizgoals">+ цель</button></div></div>
-      <section class="sticky lemon gbox"><div class="gtabs" role="tablist" aria-label="Цели">${goals.map(({ g }) => `<button role="tab" aria-selected="${g.id === pgGoal}" class="${g.id === pgGoal ? 'on' : ''}" data-act="pggoal" data-id="${g.id}">${esc(g.n || 'Цель')}</button>`).join('')}</div>${goalHtml}</section>
+      <section class="sticky lemon gbox"><div class="gtabs" role="tablist" aria-label="Цели">${goals.map(({ g }, i) => `<button id="goal-tab-${i}" role="tab" aria-controls="goal-panel" tabindex="${g.id === pgGoal ? '0' : '-1'}" aria-selected="${g.id === pgGoal}" class="${g.id === pgGoal ? 'on' : ''}" data-act="pggoal" data-id="${g.id}">${esc(g.n || 'Цель')}</button>`).join('')}</div><div id="goal-panel" role="tabpanel" aria-labelledby="goal-tab-${goals.findIndex(({g}) => g.id === pgGoal)}">${goalHtml}</div></section>
       <section class="bsav">${savings}</section>
       <div class="blay">
         <section class="bmain bspend">
@@ -4175,9 +4205,12 @@ function renderCash() {
     ? `<tr class="sum fold"><th scope="row"><button class="rn" data-act="cfdaily" aria-expanded="false">▸ Повседневное · ${M.cats.length} ${plural(M.cats.length, 'категория', 'категории', 'категорий')}</button></th>${M.dayT.map((v, i) => `<td class="num ${M.yms[i] === cur ? 'curm' : ''}">${bm(v)}</td>`).join('')}<td class="tot num">${bm(M.dayT.reduce((t, v) => t + v, 0))}</td></tr>`
     : M.cats.map(rowHtml).join('');
   $main.innerHTML = `
-    <article class="book cash">
-      <div class="bhead"><div><div class="cap">план · движение денег на 12 месяцев</div>${handNote(`${MONTHS[+cur.slice(5) - 1]} и дальше — план: траты по лимитам, остальное копится.`, 'hello pen')}<p class="hint" style="margin:6px 0 0">Щёлкните по синей сумме, чтобы вписать свою — только в этот месяц или с него и дальше. По названию строки — поменять статью.</p>${''}</div>
-        <div class="bacts">${viewSeg()}<button class="btn outline" data-act="cfcsv">Скачать CSV</button><button class="btn outline" data-act="gotab" data-tab="year">прошлые месяцы — «Год»</button></div></div>
+    <article class="book cash plan-book">
+      <div class="bhead"><div><div class="cap">план · движение денег на 12 месяцев</div>${handNote(`${MONTHS[+cur.slice(5) - 1]} и дальше — план: траты по лимитам, остальное копится.`, 'hello pen')}</div>
+        <div class="bacts">${viewSeg()}<button class="btn outline" data-act="bwiz">Настроить план</button><button class="btn outline sq" data-act="bmore" aria-label="Ещё">⋯</button></div></div>
+      <div id="bnewBox"></div>
+      <p class="hint">Щёлкните по синей сумме, чтобы вписать свою — только в этот месяц или с него и дальше. По названию строки — поменять статью.</p>
+      <div class="row2 cash-tools"><button class="btn outline" data-act="cfcsv">Скачать CSV</button><button class="btn outline" data-act="gotab" data-tab="year">прошлые месяцы — «Год»</button></div>
       <div class="clg"><span class="num">1 000 — план</span><span class="num fact">1 000 — факт</span><span><i class="dot"></i> изменено вручную</span><span class="curl">${MONTHS[+cur.slice(5) - 1].toLowerCase()} — идёт</span><span class="num">406<small> · 88</small> — лимит · записано в «Расходах»</span></div>
       <div class="cfw"><table class="cft">
         <thead><tr><th scope="col">Статья</th>${M.yms.map(ym => `<th scope="col" class="${ym === cur ? 'curm' : ''}"><b>${MONTHS_S[+ym.slice(5) - 1]}${ym.slice(5) === '01' || ym === cur ? ` ’${ym.slice(2, 4)}` : ''}</b><i>${ym === cur ? 'идёт' : 'план'}</i></th>`).join('')}<th scope="col" class="tot"><b>Итого</b><i>12 мес</i></th></tr></thead>
@@ -4797,6 +4830,15 @@ document.addEventListener('click', e => {
   }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && wiz) closeWizard(); else if (e.key === 'Escape' && $modal.classList.contains('open')) closeModal(); });
+document.addEventListener('keydown', e => {
+  const t = e.target.closest('[role="tablist"] [data-act="pggoal"]');
+  if (!t || !['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
+  e.preventDefault();
+  const tabs = [...t.parentElement.querySelectorAll('[role="tab"]')], i = tabs.indexOf(t);
+  const next = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+  const id = tabs[next].id; tabs[next].click();
+  const selected = document.getElementById(id); if (selected) { selected.focus({preventScroll:true}); selected.scrollIntoView({block:'nearest',inline:'nearest'}); }
+});
 $('#importFile').onchange = e => {
   const f = e.target.files[0]; if (!f) return;
   const rd = new FileReader();
