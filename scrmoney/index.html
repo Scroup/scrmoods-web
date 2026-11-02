@@ -2212,6 +2212,29 @@ const ACC_HINTS = [['💳', 'Карта'], ['💵', 'Наличные'], ['🏦'
 const acIcon = n => (ACC_HINTS.find(h => h[1] === n) || ['👛'])[0];
 // деньги на всех счетах, в лари
 const haveGel = (B, G = (a, c) => toGel(a, c) || 0) => (B.accts || []).reduce((t, x) => t + G(fxNum(x.a) || 0, x.c), 0);
+// Reservations are links to money still present in accts. Legacy goal transfers
+// without reserve:true keep their original off-account accounting.
+function goalHolds(g) {
+  const holds = new Map();
+  for (const l of g.log || []) if (l.reserve) for (const f of l.funds || []) {
+    const key = JSON.stringify([f.id, f.c]), h = holds.get(key) || { id:f.id, n:f.n, c:f.c, a:0 };
+    h.a = r2(h.a + (l.g < 0 ? -1 : 1) * f.a); holds.set(key, h);
+  }
+  return [...holds.values()].filter(h => Math.abs(h.a) > .005);
+}
+const accountHeld = (B, a) => r2((B.goals || []).reduce((t, g) => t + goalHolds(g).filter(h => h.id === a.id && h.c === a.c).reduce((s, h) => s + h.a, 0), 0));
+const accountFree = (B, a) => Math.max(0, r2((fxNum(a.a) || 0) - accountHeld(B, a)));
+const goalHeldGel = (g, G = (a, c) => toGel(a, c) || 0) => goalHolds(g).reduce((s, h) => s + G(h.a, h.c), 0);
+const reservedGel = (B, G = (a, c) => toGel(a, c) || 0) => (B.goals || []).reduce((s, g) => s + goalHeldGel(g, G), 0);
+function reservationError(B) {
+  for (const g of B.goals || []) for (const h of goalHolds(g)) {
+    const a = (B.accts || []).find(a => a.id === h.id && a.c === h.c);
+    if (h.a < 0) return 'Нельзя отменить резерв: часть денег уже освобождена';
+    if (!a) return 'Сначала освободите резерв цели «' + (g.n || 'Цель') + '»: счёт удалён или его валюта изменена';
+  }
+  for (const a of B.accts || []) if (accountHeld(B, a) > 0 && accountHeld(B, a) > (fxNum(a.a) || 0) + .005) return 'Остаток счёта «' + (a.n || 'Счёт') + '» меньше резерва на цели. Сначала освободите резерв.';
+  return '';
+}
 /* ---------- фактические приходы по месяцам и средний доход ---------- */
 // вписанные вручную приходы за месяц: { 'ГГГГ-ММ': { a, c } } — дополняют вкладку «Приходы»
 let minc = store.get('minc', {});
@@ -2300,7 +2323,7 @@ function payday(B) {
 function goalInfo(g, pd, G = (a, c) => toGel(a, c) || 0, start = now) {
   const cur = ymOf(now);
   const t = G(fxNum(g.a) || 0, g.c), s0 = G(fxNum(g.s) || 0, g.c);
-  const log = g.log || [], logged = log.reduce((z, l) => z + l.g, 0), loggedNow = log.filter(l => ymOf(l.d) === cur).reduce((z, l) => z + l.g, 0);
+  const log = g.log || [], logged = log.filter(l => !l.reserve).reduce((z, l) => z + l.g, 0) + goalHeldGel(g, G), loggedNow = log.filter(l => ymOf(l.d) === cur).reduce((z, l) => z + l.g, 0);
   const saved = s0 + logged, left = Math.max(0, t - saved);
   // план составлен уже после зарплаты этого месяца — первый взнос со следующей зарплаты
   const skip = !loggedNow && atDay(cur, pd) < now && start > atDay(cur, pd) ? 1 : 0;
@@ -2365,7 +2388,8 @@ function budgetCalc(B) {
   let noRate = false;
   const G = (a, c) => { const v = toGel(a || 0, c); if (v == null) { noRate = true; return 0; } return v; };
   const cur = ymOf(now), hEnd = endOfMonth(atDay(ymAdd(cur, 17), 1));    // считаем на 18 месяцев, показываем 12
-  const have = Math.max(0, haveGel(B, G));
+  const fullHave = Math.max(0, haveGel(B, G)), held = reservedGel(B, G);
+  const have = Math.max(0, fullHave - held);
   const ev = budgetEvents(B, hEnd, G);
   const incs = ev.filter(e => e.kind === 'inc'), outs = ev.filter(e => e.kind !== 'inc');
   const past = B.inc.filter(x => !x.off && (x.rep === 'once' || !x.rep) && amtOf(x) > 0 && x.date && x.date < now);
@@ -2448,7 +2472,7 @@ function budgetCalc(B) {
   const pd = payday(B);
   const goals = B.goals.map((g, i) => ({ g, gi: goalInfo(g, pd, G, B.start || now), color: GPAL[i % GPAL.length] }));
   const spentToday = spends.filter(x => x.date === now).reduce((t, x) => t + x.gel, 0);
-  return { have, past, res, end: pEnd, N, segs, series, months, goals, pd, noRate, spentToday, limMode,
+  return { have, fullHave, held, past, res, end: pEnd, N, segs, series, months, goals, pd, noRate, spentToday, limMode,
     pInc, pIncSum, pOut, pNeed, pGoal, pLife, pKeep, total: have + pIncSum,
     short: limMode ? months.filter(m => m.ym <= ymOf(pEnd)).reduce((t, m) => t + m.short, 0) : segs.filter(s => s.start <= pEnd).reduce((t, s) => t + s.short, 0) };
 }
@@ -2483,6 +2507,7 @@ function wizGo(to) {
 function wizNext() { wizGo(wiz.i + 1); }
 function wizFinish() {
   const d = wiz.d, only = wiz.only, skip = wiz.skip;
+  const reservationIssue = reservationError(d); if (reservationIssue) { toast(reservationIssue); return; }
   d.inc = d.inc.filter(x => isAvg(x) || amtOf(x) > 0);
   d.exp = d.exp.filter(x => amtOf(x) > 0);
   d.goals = d.goals.filter(g => fxNum(g.a) > 0);
@@ -2732,7 +2757,7 @@ function wizClick(ev) {
     case 'rep': { const x = d[t.dataset.k].find(y => y.id === t.dataset.id); x.rep = t.dataset.r; if (x.rep === 'n' && !x.cnt) x.cnt = 6; wizRedraw(); if (x.rep === 'n') wizFocus(x.id, 'cnt'); return; }
     case 'gby': { const g = d.goals.find(y => y.id === t.dataset.id); g.by = t.dataset.ym; wizRedraw(); return; }
     case 'gmode': { const g = d.goals.find(y => y.id === t.dataset.id); g.mode = t.dataset.m; wizRedraw(); return wizFocus(g.id, g.mode === 'm' ? 'm' : 'byM'); }
-    case 'rm': { const k = t.dataset.k; d[k] = d[k].filter(x => x.id !== t.dataset.id); wizRedraw(); return; }
+    case 'rm': { const k = t.dataset.k; if (k === 'accts') { const a = d.accts.find(a => a.id === t.dataset.id); if (a && accountHeld(d, a) > 0) { toast('Сначала освободите резерв на этом счёте'); return; } } d[k] = d[k].filter(x => x.id !== t.dataset.id); wizRedraw(); return; }
     case 'day': { const x = d.inc.find(y => y.id === t.dataset.id); x.date = nextDay(+t.dataset.n); wizRedraw();
       popButton({ el: document.querySelector(`#quick [data-w="day"][data-id="${x.id}"][data-n="${t.dataset.n}"]`), stars: true, color: 'acc' }); return; }
     case 'res': {
@@ -2764,20 +2789,27 @@ function openGoal(id) {
     <label class="fld"><span>Сколько, ${bS()}</span><input class="in big num" id="gAmt" inputmode="decimal" value="${gi.thisM > 0 ? Math.round(gi.thisM / bK()) : gi.monthly > 0 && !gi.done ? Math.round(Math.min(gi.monthly, gi.left) / bK()) : ''}" placeholder="0"></label>
     <div id="goalFunds"></div><p class="hint" id="goalCheck" role="status" aria-live="polite"></p>
     <button class="btn primary" id="goalSubmit" data-act="gput" data-s="1">Отложить на цель</button>
-    ${log.length ? `<h2 class="hl" style="margin-top:20px">История</h2>${log.map(l => `<div class="glog"><span>${shortDate(l.d)}${ymd(l.d)[0] !== ymd(now)[0] ? ' ' + ymd(l.d)[0] : ''}${l.funds ? `<small class="goal-log-funds">${l.funds.map(f => `${esc(f.n)}: ${fxFmt(f.a, f.c)} ${CUR[f.c] ? CUR[f.c].s : esc(f.c)}`).join(' · ')}</small>` : ''}</span><b class="num ${l.g < 0 ? 'neg' : ''}">${l.g > 0 ? '+' : '−'}${gel(Math.abs(l.g))}</b><button class="rm" data-act="glogrm" data-id="${esc(l.id || '')}" data-t="${l.t}" aria-label="Отменить запись${l.funds ? ' и вернуть остатки на счетах' : ''}">✕</button></div>`).join('')}` : ''}</div>`;
+    ${goalHolds(g).length ? `<h2 class="hl">Где зарезервировано</h2>${goalHolds(g).map(h => `<p class="hint">${esc((budget.accts.find(a => a.id === h.id) || {}).n || h.n)} · ${fxFmt(h.a, h.c)} ${CUR[h.c].s}</p>`).join('')}` : ''}
+    ${log.length ? `<h2 class="hl" style="margin-top:20px">История</h2>${log.map(l => `<div class="glog"><span>${shortDate(l.d)}${ymd(l.d)[0] !== ymd(now)[0] ? ' ' + ymd(l.d)[0] : ''}${l.funds ? `<small class="goal-log-funds">${l.reserve ? (l.g > 0 ? 'Резерв · ' : 'Освобождение · ') : 'Перевод · '}${l.funds.map(f => `${esc(f.n)}: ${fxFmt(f.a, f.c)} ${CUR[f.c] ? CUR[f.c].s : esc(f.c)}`).join(' · ')}</small>` : ''}</span><b class="num ${l.g < 0 ? 'neg' : ''}">${l.g > 0 ? '+' : '−'}${gel(Math.abs(l.g))}</b><button class="rm" data-act="glogrm" data-id="${esc(l.id || '')}" data-t="${l.t}" aria-label="Отменить запись">✕</button></div>`).join('')}` : ''}</div>`;
   $modal.classList.add('open');
   goalFundsRender();
 }
+function goalSources() {
+  if (!goalTxn || goalTxn.sign > 0) return budget.accts;
+  const g = goalEdit && budget.goals.find(g => g.id === goalEdit.id);
+  return g ? goalHolds(g).filter(h => h.a > 0).map(h => ({...h, n:(budget.accts.find(a => a.id === h.id && a.c === h.c) || h).n})) : [];
+}
+const goalSourceAvailable = a => goalTxn.sign > 0 ? accountFree(budget, a) : a.a;
 function goalFundsRender() {
   if (!goalTxn || !$('#goalFunds')) return;
-  const t = goalTxn, accts = budget.accts;
-  $('#goalFunds').innerHTML = `<label class="goal-use"><input type="checkbox" id="goalUse" ${t.use ? 'checked' : ''} ${accts.length ? '' : 'disabled'}><span>${t.sign > 0 ? 'Списать со счетов' : 'Вернуть на счета'}</span></label>
-    ${t.use ? `<p class="hint" style="margin:4px 0 10px">${t.sign > 0 ? 'Выберите один или несколько счетов. Суммы — в валюте каждого счёта.' : 'Выберите, на какие счета вернуть деньги. Суммы — в валюте каждого счёта.'}</p>
+  const t = goalTxn, accts = goalSources();
+  $('#goalFunds').innerHTML = `<label class="goal-use"><input type="checkbox" id="goalUse" ${t.use ? 'checked' : ''} ${accts.length ? '' : 'disabled'}><span>${t.sign > 0 ? 'Зарезервировать на счетах' : 'Освободить резерв на счетах'}</span></label>
+    ${t.use ? `<p class="hint" style="margin:4px 0 10px">${t.sign > 0 ? 'Деньги останутся на счетах, но будут закреплены за этой целью. Выберите один или несколько счетов.' : 'Деньги уже на счетах. Выберите, какую часть резерва этой цели освободить.'}</p>
     ${t.parts.map((p, i) => { const a = accts.find(a => a.id === p.id); return `<div class="goal-fund-row">
-      <label><span class="goal-field-label">Счёт</span><select class="in" data-goal-account="${i}" aria-label="Счёт ${i + 1}"><option value="">Выберите счёт</option>${accts.map(a => `<option value="${esc(a.id)}" ${a.id === p.id ? 'selected' : ''}>${esc(a.n || 'Счёт')} · ${fxFmt(fxNum(a.a) || 0, a.c)} ${CUR[a.c] ? CUR[a.c].s : esc(a.c)}</option>`).join('')}</select></label>
+      <label><span class="goal-field-label">Счёт · ${t.sign > 0 ? 'свободно' : 'резерв цели'}</span><select class="in" data-goal-account="${i}" aria-label="Счёт ${i + 1}"><option value="">Выберите счёт</option>${accts.map(a => `<option value="${esc(a.id)}" ${a.id === p.id ? 'selected' : ''}>${esc(a.n || 'Счёт')} · ${fxFmt(goalSourceAvailable(a), a.c)} ${CUR[a.c] ? CUR[a.c].s : esc(a.c)}</option>`).join('')}</select></label>
       <label><span class="goal-field-label">Сумма${a ? ', ' + (CUR[a.c] ? CUR[a.c].s : esc(a.c)) : ''}</span><input class="in num" data-goal-part="${i}" inputmode="decimal" value="${esc(p.a)}" placeholder="0" aria-label="Сумма со счёта ${i + 1}"></label>
       ${t.parts.length > 1 ? `<button class="x" data-act="gfundrm" data-i="${i}" aria-label="Убрать счёт ${i + 1}">✕</button>` : '<span></span>'}</div>`; }).join('')}
-      ${t.parts.length < accts.length ? '<button class="btn outline" data-act="gfundadd">+ Ещё счёт</button>' : ''}` : `<p class="hint">${accts.length ? 'Изменится только сумма на цели; остатки на счетах останутся прежними.' : 'В Плане пока нет счетов. Изменится только сумма на цели.'}</p>`}`;
+      ${t.parts.length < accts.length ? '<button class="btn outline" data-act="gfundadd">+ Ещё счёт</button>' : ''}` : `<p class="hint">${t.sign > 0 ? 'Пополнение вне указанных счетов. Остатки и свободные деньги на них не изменятся.' : 'Снять можно только накопления вне резерва счетов. Для резерва включите его освобождение.'}</p>`}`;
   goalFundsCheck();
 }
 function goalTransfer() {
@@ -2790,14 +2822,14 @@ function goalTransfer() {
   if (t.use) {
     const used = new Set();
     for (const p of t.parts) {
-      const a = budget.accts.find(a => a.id === p.id), n = r2(fxNum(p.a)), rate = a && fxRate(a.c);
+      const a = goalSources().find(a => a.id === p.id), n = r2(fxNum(p.a)), rate = a && fxRate(a.c);
       if (!a) return { error: 'Выберите счёт для каждой части взноса' };
       if (used.has(a.id)) return { error: 'Укажите каждый счёт только один раз' };
       used.add(a.id);
       if (!(Number.isFinite(rate) && rate > 0)) return { error: 'Не загружен курс для счёта «' + a.n + '»' };
       if (!(Number.isFinite(n) && n > 0)) return { error: 'Впишите сумму для каждого счёта' };
       if (!Number.isFinite(fxNum(a.a) || 0)) return { error: 'Проверьте остаток счёта «' + a.n + '»' };
-      if (t.sign > 0 && n > r2(fxNum(a.a) || 0)) return { error: 'На счёте «' + a.n + '» недостаточно денег' };
+      if (n > goalSourceAvailable(a) + .005) return { error: t.sign > 0 ? 'На счёте «' + a.n + '» недостаточно свободных денег' : 'В резерве этой цели на счёте «' + a.n + '» недостаточно денег' };
       funds.push({ id: a.id, n: a.n || 'Счёт', a: n, c: a.c, k: rate });
     }
     const total = r2(funds.reduce((s, f) => s + r2(f.a * f.k), 0));
@@ -2805,29 +2837,29 @@ function goalTransfer() {
     amount = total;
   }
   if (t.sign < 0 && amount > goalInfo(g, payday(budget)).saved + .005) return { error: 'На цели недостаточно денег' };
+  if (t.sign < 0 && !t.use && amount > goalInfo(g, payday(budget)).saved - goalHeldGel(g) + .005) return { error: 'Эти деньги зарезервированы на счетах. Включите освобождение резерва.' };
   return { g, sign: t.sign, amount, funds };
 }
 function goalFundsCheck() {
   if (!goalTxn || !$('#goalCheck')) return;
   const q = goalTransfer();
-  $('#goalCheck').textContent = q.error || (goalTxn.use ? `${goalTxn.sign > 0 ? 'Спишется со счетов' : 'Вернётся на счета'}: ${gel(q.amount, 2)}. ${goalTxn.sign > 0 ? 'На цели станет' : 'На цели останется'} ${gel(goalInfo(q.g, payday(budget)).saved + q.sign * q.amount, 2)}.` : '');
+  $('#goalCheck').textContent = q.error || (goalTxn.use ? `${goalTxn.sign > 0 ? 'Будет зарезервировано' : 'Освободится'}: ${gel(q.amount, 2)}. Остатки счетов не изменятся. ${goalTxn.sign > 0 ? 'На цели станет' : 'На цели останется'} ${gel(goalInfo(q.g, payday(budget)).saved + q.sign * q.amount, 2)}.` : '');
   $('#goalCheck').style.color = q.error ? 'var(--danger)' : 'var(--soft)';
   $('#goalSubmit').disabled = !!q.error;
 }
 function goalFillPart(i) {
-  const t = goalTxn, p = t.parts[i], a = budget.accts.find(a => a.id === p.id), rate = a && fxRate(a.c);
+  const t = goalTxn, p = t.parts[i], a = goalSources().find(a => a.id === p.id), rate = a && fxRate(a.c);
   if (!a || !rate || !bK()) { p.a = ''; return; }
-  const others = t.parts.reduce((s, p, j) => { const a = budget.accts.find(a => a.id === p.id); return s + (j === i || !a ? 0 : (fxNum(p.a) || 0) * (fxRate(a.c) || 0)); }, 0);
+  const others = t.parts.reduce((s, p, j) => { const a = goalSources().find(a => a.id === p.id); return s + (j === i || !a ? 0 : (fxNum(p.a) || 0) * (fxRate(a.c) || 0)); }, 0);
   const need = Math.max(0, ((fxNum($('#gAmt').value) || 0) * bK() - others) / rate);
-  p.a = String(r2(t.sign > 0 ? Math.min(need, Math.max(0, fxNum(a.a) || 0)) : need));
+  p.a = String(r2(Math.min(need, Math.max(0, goalSourceAvailable(a)))));
 }
 function goalPut(sign) {
   if (!goalTxn || sign !== goalTxn.sign) return;
   const q = goalTransfer(); if (q.error) { toast(q.error); goalFundsCheck(); return; }
   const { g, amount, funds } = q;
-  for (const f of funds) { const a = budget.accts.find(a => a.id === f.id); a.a = String(r2((fxNum(a.a) || 0) - sign * f.a)); }
   g.log = g.log || [];
-  g.log.push({ id: newId(), d: now, g: r2(amount * sign), t: Date.now(), ...(funds.length ? { funds } : {}) });
+  g.log.push({ id: newId(), d: now, g: r2(amount * sign), t: Date.now(), ...(funds.length ? { funds, reserve:true } : {}) });
   saveBudget(); closeModal(); goalEdit = null; render();
   if (sign > 0) { toast(`Отложено ${gel(amount)} на «${g.n}»`); setTimeout(() => popButton({ el: document.querySelector(`.goalc[data-id="${g.id}"] .gbar2`), stars: true, color: 'acc' }), 120); }
   else toast(`Снято ${gel(amount)} с «${g.n}»`);
@@ -2835,12 +2867,20 @@ function goalPut(sign) {
 function goalLogRemove(id, time) {
   const g = goalEdit && budget.goals.find(g => g.id === goalEdit.id); if (!g) return;
   const l = (g.log || []).find(l => id ? l.id === id : String(l.t) === time); if (!l) return;
-  if (l.g > 0 && goalInfo(g, payday(budget)).saved < l.g - .005) { toast('Нельзя отменить взнос: часть денег уже снята с цели'); return; }
+  if (l.reserve) {
+    const copy = JSON.parse(JSON.stringify(budget)), cg = copy.goals.find(x => x.id === g.id);
+    cg.log = cg.log.filter(x => x.id !== l.id);
+    const issue = reservationError(copy);
+    if (issue) { toast(issue); return; }
+    g.log = g.log.filter(x => x !== l); saveBudget(); render(); openGoal(g.id); toast('Резерв пересчитан. Остатки счетов не изменились'); return;
+  }
+  if (l.g > 0 && goalInfo(g, payday(budget)).saved - goalHeldGel(g) < l.g - .005) { toast('Нельзя отменить взнос: часть денег уже снята с цели'); return; }
   const sign = l.g > 0 ? 1 : -1;
   for (const f of l.funds || []) {
     const a = budget.accts.find(a => a.id === f.id);
     if (!a || a.c !== f.c) { toast('Не удалось вернуть остатки: счёт удалён или его валюта изменена'); return; }
     if (r2((fxNum(a.a) || 0) + sign * f.a) < 0) { toast('Недостаточно денег на счёте для отмены снятия'); return; }
+    if (r2((fxNum(a.a) || 0) + sign * f.a) < accountHeld(budget, a) - .005) { toast('Эти деньги уже зарезервированы на цели. Сначала освободите резерв'); return; }
   }
   for (const f of l.funds || []) { const a = budget.accts.find(a => a.id === f.id); a.a = String(r2((fxNum(a.a) || 0) + sign * f.a)); }
   g.log = g.log.filter(x => x !== l); saveBudget(); render(); openGoal(g.id); toast('Запись отменена' + (l.funds ? ', остатки восстановлены' : ''));
@@ -2904,7 +2944,7 @@ function renderPlan() {
   // таймлайн «до зарплаты»
   const maxRate = Math.max(...pSegs.map(s => s.rate), 1);
   const evRow = e => `<span><em style="background:${e.kind === 'goal' ? e.color : e.color || C_NEED}"></em>${tinyDate(e.date)} · ${e.kind === 'goal' ? '🎯 ' : ''}${esc(e.n)} <b class="num">${gel(e.gel)}</b></span>`;
-  let tl = `<div class="tli"><span class="dot now"></span><div><b>Сегодня, ${shortDate(now)}</b><i class="num">на руках ${gel(c.have)}</i></div></div>`;
+  let tl = `<div class="tli"><span class="dot now"></span><div><b>Сегодня, ${shortDate(now)}</b><i class="num">свободно ${gel(c.have)}</i></div></div>`;
   pSegs.forEach((s, k) => {
     const stop = s.stop < c.end ? s.stop : c.end, n = daysTo(s.start, stop) + 1, out = s.out.filter(e => e.date <= c.end);
     if (k > 0) tl += `<div class="tli inc"><span class="dot">+</span><div><b>${shortDate(s.start)} · ${s.inc.map(e => esc(e.n || 'Доход')).join(', ')}</b><i class="plus num">+${gel(s.incGel)}</i></div></div>`;
@@ -3525,8 +3565,8 @@ function renderTables() {
       <td class="nw">${tin('acA', x.id, x.a, 'num', '0')}<select class="tin cur" data-tb="acC" data-id="${x.id}" aria-label="Валюта">${BCUR.map(cc => `<option value="${cc}" ${x.c === cc ? 'selected' : ''}>${CUR[cc].s}</option>`).join('')}</select></td>
       <td class="num soft">${x.c === baseCur() ? '' : bm(toGel(fxNum(x.a) || 0, x.c) || 0)}</td>
       <td><button class="tdel" data-act="tdel" data-k="acct" data-id="${x.id}" aria-label="Удалить">✕</button></td></tr>`).join('')}</tbody>
-    <tfoot><tr><td>Всего сейчас</td><td></td><td class="num">${gel(c.have)}</td><td></td></tr></tfoot></table></div>
-    <div class="trow"><button class="tadd" data-act="tadd" data-k="acct">+ счёт</button><span class="tnote">в запасе: <b class="num">${gel(c.res)}</b></span></div>`;
+    <tfoot><tr><td>Всего сейчас</td><td></td><td class="num">${gel(c.fullHave)}</td><td></td></tr></tfoot></table></div>
+    <div class="trow"><button class="tadd" data-act="tadd" data-k="acct">+ счёт</button><span class="tnote">${c.held ? `на целях: <b class="num">${gel(c.held)}</b> · свободно: <b class="num">${gel(c.have)}</b> · ` : ''}в запасе: <b class="num">${gel(c.res)}</b></span></div>`;
   const kpi = (label, val, sub, col, cls = '') => `<div class="kpi ${cls}" style="--c:${col}"><span>${label}</span><b class="num">${val}</b><i>${sub}</i></div>`;
   const incFactShown = T.A.inc > 0.5;
 
@@ -3597,7 +3637,9 @@ function tblEdit(t) {
       saveMinc(); break; }
     case 'addCat': if (v) { budget.lim = budget.lim || {}; budget.lim[v] = 0; } break;
     case 'acN': case 'acA': case 'acC': { const x = (budget.accts || []).find(y => y.id === id); if (!x) return;
-      if (f === 'acN') x.n = v.trim(); else if (f === 'acA') x.a = num(v) == null ? '' : String(num(v)); else x.c = v; break; }
+      const old = {...x};
+      if (f === 'acN') x.n = v.trim(); else if (f === 'acA') x.a = num(v) == null ? '' : String(num(v)); else x.c = v;
+      if (f !== 'acN') { const issue = reservationError(budget); if (issue) { Object.assign(x, old); t.value = f === 'acA' ? old.a : old.c; toast(issue); return; } } break; }
     default: return;
   }
   saveBudget();
@@ -3625,7 +3667,7 @@ function tblDel(k, id) {
   if (k === 'inc') budget.inc = budget.inc.filter(x => x.id !== id);
   else if (k === 'exp') budget.exp = budget.exp.filter(x => x.id !== id);
   else if (k === 'cat' && budget.lim) delete budget.lim[id];
-  else if (k === 'acct') budget.accts = (budget.accts || []).filter(x => x.id !== id);
+  else if (k === 'acct') { const a = budget.accts.find(a => a.id === id); if (a && accountHeld(budget, a) > 0) { toast('Сначала освободите резерв на этом счёте'); return; } budget.accts = (budget.accts || []).filter(x => x.id !== id); }
   saveBudget(); render(); window.scrollTo(0, y); toast('Удалено');
 }
 
@@ -3842,9 +3884,9 @@ function monthFact(ym) {
   const a = balAt(ym), b = balAt(ymAdd(ym, 1));
   if (!a || !b || a.d >= b.d) return null;
   const fi = incFactOf(ym).total, inc = fi > 0 ? fi : planIncOf(ym), out = planOutOf(ym);
-  let goals = 0, goalsPlan = false;
-  for (const g of budget.goals) goals += (g.log || []).filter(l => ymOf(l.d) === ym).reduce((t, l) => t + l.g, 0);
-  if (!goals) { const m = budgetCalc(budget).months.find(q => q.ym === ym); if (m) { goals = m.goal; goalsPlan = goals > 0; } }
+  let goals = 0, goalsPlan = false, hasGoalLogs = false;
+  for (const g of budget.goals) { const ls = (g.log || []).filter(l => ymOf(l.d) === ym); if (ls.length) hasGoalLogs = true; goals += ls.filter(l => !l.reserve).reduce((t, l) => t + l.g, 0); }
+  if (!goals && !hasGoalLogs) { const m = budgetCalc(budget).months.find(q => q.ym === ym); if (m) { goals = m.goal; goalsPlan = goals > 0; } }
   const life = a.v + inc - out - goals - b.v, lim = limSumFor(ym);
   return { ym, life, lim, diff: life - lim, inc, incPlan: !(fi > 0), out, goals, goalsPlan, approx: !a.exact || !b.exact, from: a.d, to: b.d };
 }
@@ -3938,8 +3980,10 @@ function bookGoals(c) {
 function bookMoney(c) {
   const ago = accAgo();
   return `<section class="sticky white"><span class="tape" aria-hidden="true"></span><h2 class="t">Деньги сейчас</h2>
-    ${(budget.accts || []).map(x => `<div class="r"><span>${esc(x.n || 'Счёт')}${x.c !== baseCur() && fxNum(x.a) ? ` <i class="num">${money(fxNum(x.a), 0)} ${CUR[x.c].s}</i>` : ''}</span><b class="num">${x.c === baseCur() ? money(fxNum(x.a) || 0, 0) : bm(G0(x.a, x.c))} ${bS()}</b></div>`).join('')}
-    <div class="r tot"><span>Всего</span><b class="num">${gel(c.have)}</b></div>
+    ${(budget.accts || []).map(x => `<div class="r"><span>${esc(x.n || 'Счёт')}${x.c !== baseCur() && fxNum(x.a) ? ` <i class="num">${money(fxNum(x.a), 0)} ${CUR[x.c].s}</i>` : ''}${accountHeld(budget, x) > 0 ? `<small class="goal-log-funds">На целях ${fxFmt(accountHeld(budget, x), x.c)} ${CUR[x.c].s} · свободно ${fxFmt(accountFree(budget, x), x.c)} ${CUR[x.c].s}</small>` : ''}</span><b class="num">${x.c === baseCur() ? money(fxNum(x.a) || 0, 0) : bm(G0(x.a, x.c))} ${bS()}</b></div>`).join('')}
+    <div class="r tot"><span>Всего на счетах</span><b class="num">${gel(c.fullHave)}</b></div>
+    ${c.held ? `<div class="r"><span>Из них на целях</span><b class="num">${gel(c.held)}</b></div><div class="r"><span>Свободно</span><b class="num">${gel(c.have)}</b></div>` : ''}
+    ${reservationError(budget) ? `<p class="hint" style="color:var(--danger)">${esc(reservationError(budget))}</p>` : ''}
     ${c.res ? `<p class="hint">из них ${gel(c.res)} — запас</p>` : ''}
     <button class="btn outline" data-act="bwizhave">Обновить остатки</button>
     ${ago != null && ago >= 3 ? handNote(`обновляли ${daysWord(ago)} назад — пора?`, 'red center') : ''}</section>`;
@@ -4115,7 +4159,7 @@ function cashModel(c) {
   const expT = I.map(i => billT[i] + dayT[i]), net = I.map(i => incT[i] - expT[i]), gT = I.map(i => col(goals, i)), free = I.map(i => net[i] - gT[i]);
   // остатки: от «Деньги сейчас», дальше — как в копилке (траты по лимитам, взносы на цели остаются на счетах)
   const s = saveSim(c), end = [], onG = [];
-  let b = c.have, g = s.saved0;
+  let b = c.fullHave, g = c.held;
   I.forEach(i => { b += (s.months[i] || { free: 0 }).free; end.push(b); g += i === 0 ? col(goals, 0) - c.goals.reduce((t, x) => t + x.gi.loggedNow, 0) : gT[i]; onG.push(g); });
   return { cur, yms, inc, bills, once, cats, goals, incT, expT, dayT, net, gT, free, end, onG, hasLim, s };
 }
@@ -4734,12 +4778,14 @@ document.addEventListener('click', e => {
     case 'gput': goalPut(+el.dataset.s); break;
     case 'gmode': if (goalTxn) {
       goalTxn.sign = +el.dataset.s;
+      goalTxn.use = !!goalSources().length;
+      goalTxn.parts = [{id:'', a:''}];
       document.querySelectorAll('.goal-mode button').forEach(b => b.classList.toggle('on', +b.dataset.s === goalTxn.sign));
       if (goalTxn.sign < 0 && bK()) { const g = budget.goals.find(g => g.id === goalEdit.id); if (g) $('#gAmt').value = r2(Math.min(fxNum($('#gAmt').value) || 0, Math.max(0, goalInfo(g, payday(budget)).saved / bK()))); }
       goalTxn.parts.forEach(p => p.a = ''); goalTxn.parts.forEach((p, i) => goalFillPart(i));
       $('#goalSubmit').dataset.s = String(goalTxn.sign); $('#goalSubmit').textContent = goalTxn.sign > 0 ? 'Отложить на цель' : 'Снять с цели'; goalFundsRender();
     } break;
-    case 'gfundadd': if (goalTxn && goalTxn.parts.length < budget.accts.length) { goalTxn.parts.push({ id:'', a:'' }); goalFundsRender(); } break;
+    case 'gfundadd': if (goalTxn && goalTxn.parts.length < goalSources().length) { goalTxn.parts.push({ id:'', a:'' }); goalFundsRender(); } break;
     case 'gfundrm': if (goalTxn) { goalTxn.parts.splice(+el.dataset.i, 1); goalFundsRender(); } break;
     case 'glogrm': goalLogRemove(el.dataset.id, el.dataset.t); break;
     case 'theme': if (skin !== 'classic') applySkin('classic'); applyTheme(el.dataset.id); render(); break;
