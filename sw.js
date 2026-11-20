@@ -51,7 +51,7 @@ self.addEventListener('fetch', e => {
   const isPage = url.origin === scope.origin && (url.pathname === scope.pathname || url.pathname === scope.pathname + 'index.html');
   if (isPage) { e.respondWith(pageFirst(req)); return; }
   // anything else in another app's folder: leave it alone
-  if (url.origin === scope.origin && /\/(scrcook|scrmoney|scrfitness)\//.test(url.pathname)) return;
+  if (url.origin === scope.origin && /\/(scrcook|scrmoney|scrfitness|scrquest)\//.test(url.pathname)) return;
   e.respondWith(
     caches.open(VERSION).then(async cache => {
       const cached = await cache.match(req, { ignoreSearch: true });
