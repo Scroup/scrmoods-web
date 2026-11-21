@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>scrquest</title>
-<meta name="theme-color" content="#F3E1DC">
+<meta name="theme-color" content="#F2EFFA">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=IBM+Plex+Mono:wght@400;600&family=Caveat:wght@500;700&family=Libertinus+Mono&family=Pangolin&family=Nunito:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=IBM+Plex+Mono:wght@400;600&family=Caveat:wght@500;700&family=Libertinus+Mono&family=Pangolin&family=Nunito:wght@500;600;700;800;900&display=swap">
 <style>
 @font-face { font-family: Lora; src: url(../lora_regular.woff) format('woff'); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: Lora; src: url(../lora_medium.woff) format('woff'); font-weight: 500 700; font-style: normal; font-display: swap; }
@@ -1657,13 +1657,201 @@ button.fstep:hover .fgo { transform: translateX(4px); } .fstep .fgo { transition
   .topgrid .sumbtn i::after { content: " · клавиша N"; opacity: .8; }
 }
 
+/* ===================== v3: стиль «Игра» (основной) ===================== */
+.hud { display: none; }
+.emo { display: flex; flex-wrap: wrap; gap: 6px; }
+.emo button { width: 42px; height: 42px; border-radius: 12px; border: 1.5px solid var(--rule); background: var(--paper); font-size: 20px; line-height: 1; }
+.emo button.on { border-color: var(--acc); background: var(--wash); box-shadow: 0 0 0 2px var(--acc); }
+.badge.sm { width: 34px; height: 38px; filter: none; }
+html.skin-game { --good: #1FB572; --gold: #FFB020; --fire: #FF7A1A; --accd: #4B30C9; --lip: #D9D2EC; }
+html.skin-game body, html.skin-game button, html.skin-game input, html.skin-game select, html.skin-game textarea { font-family: Nunito, ui-rounded, 'SF Pro Rounded', 'Segoe UI', system-ui, sans-serif; }
+html.skin-game body { font-weight: 600; background: var(--paper); color: var(--ink); }
+html.skin-game #main *, html.skin-game .dlg *, html.skin-game #top *, html.skin-game #fx *, html.skin-game #toast { font-style: normal; }
+html.skin-game .num { letter-spacing: 0; }
+/* шапка: уровень, серия, копилка */
+html.skin-game #top { background: color-mix(in srgb, var(--paper) 92%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+html.skin-game #top .row { padding: 0 12px; gap: 8px; }
+html.skin-game #top h1 { display: none; }
+html.skin-game .hud { display: flex; align-items: center; }
+html.skin-game #hudLvl { flex: 1; min-width: 0; max-width: 300px; gap: 8px; text-align: left; height: 44px; }
+html.skin-game #hudLvl .hx { flex: 1; min-width: 0; }
+html.skin-game #hudLvl .hx b { display: block; font-size: 13px; line-height: 16px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html.skin-game #hudLvl .pbar { display: block; height: 8px; margin-top: 3px; border-radius: 4px; background: var(--rule); }
+html.skin-game #hudFire { margin-left: auto; gap: 3px; height: 38px; padding: 0 10px; border-radius: 12px; background: var(--page); border: 2px solid var(--rule); font-weight: 800; font-size: 15px; color: var(--faint); }
+html.skin-game #hudFire span { filter: grayscale(1); opacity: .5; }
+html.skin-game #hudFire.on { color: var(--fire); border-color: color-mix(in srgb, var(--fire) 40%, var(--rule)); }
+html.skin-game #hudFire.on span { filter: none; opacity: 1; }
+html.skin-game #hudFire.risk { border-style: dashed; }
+html.skin-game .balpill { height: 38px; margin: 0; border-radius: 12px; border: 2px solid var(--rule); font-weight: 800; font-size: 15px; background: var(--page); }
+html.skin-game .balpill svg { fill: var(--gold); width: 17px; height: 17px; }
+html.skin-game #hudGear { width: 40px; height: 40px; justify-content: center; color: var(--soft); border-radius: 12px; }
+html.skin-game #hudGear svg { width: 22px; height: 22px; fill: currentColor; }
+html.skin-game #top .cloud { margin-left: 0; width: 30px; }
+/* нижнее меню */
+html.skin-game #nav button[data-tab=reps], html.skin-game #nav button[data-tab=settings] { display: none; }
+html.skin-game #nav { background: var(--page); border-top: 2px solid var(--rule); }
+html.skin-game #nav button { font-size: 12px; font-weight: 700; color: var(--faint); max-width: none; height: 64px; gap: 2px; }
+html.skin-game #nav .ic { width: 56px; height: 32px; border-radius: 12px; transition: background .2s, transform .2s; }
+html.skin-game #nav svg { width: 24px; height: 24px; }
+html.skin-game #nav button.on { color: var(--acc); font-weight: 800; }
+html.skin-game #nav button.on .ic { background: var(--wash); transform: translateY(-1px); }
+/* общие детали прежних экранов в новом стиле */
+html.skin-game .card, html.skin-game .g-card { background: var(--page); border: 2px solid var(--rule); border-bottom-width: 4px; border-radius: 20px; }
+html.skin-game h2.hl { font-size: 18px; font-weight: 800; color: var(--ink); }
+html.skin-game .jhead .big { font-weight: 900; font-size: 28px; letter-spacing: 0; }
+html.skin-game .jhead .sub, html.skin-game .hint, html.skin-game .qhint, html.skin-game .k { color: var(--soft); font-weight: 600; }
+html.skin-game .btn, html.skin-game .fix, html.skin-game .sbtn { font-weight: 800; border-radius: 16px; transition: transform .08s, box-shadow .08s; }
+html.skin-game .btn.primary, html.skin-game .fix, html.skin-game .sbtn.fill { background: var(--acc); color: #fff; box-shadow: 0 4px 0 var(--accd); border: 0; }
+html.skin-game .btn.primary:active, html.skin-game .fix:active, html.skin-game .sbtn.fill:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--accd); }
+html.skin-game .btn.outline, html.skin-game .sbtn { border: 2px solid var(--rule); border-bottom-width: 4px; background: var(--page); color: var(--acc); }
+html.skin-game .btn.quiet { color: var(--danger); }
+html.skin-game .in { border: 2px solid var(--rule); background: var(--page); font-weight: 700; border-radius: 14px; }
+html.skin-game .in:focus { outline: none; border-color: var(--acc); }
+html.skin-game .seg button, html.skin-game .chips button, html.skin-game .tagsel button, html.skin-game .dlg .wk7 button { border: 2px solid var(--rule); background: var(--page); font-weight: 700; border-radius: 12px; }
+html.skin-game .seg button.on, html.skin-game .chips button.on, html.skin-game .tagsel button.on, html.skin-game .dlg .wk7 button.on, html.skin-game .cats button.on { background: var(--acc); border-color: var(--acc); color: #fff; }
+html.skin-game .tagsel button.add { border-style: dashed; color: var(--acc); }
+html.skin-game .pbar { height: 10px; border-radius: 5px; background: var(--rule); }
+html.skin-game .pbar i { border-radius: 5px; background: var(--good); }
+html.skin-game .pbar.xp i { background: linear-gradient(90deg, var(--acc), #B08CFF); }
+html.skin-game .pbar.full i { background: var(--gold); }
+html.skin-game .dlg { border-radius: 26px 26px 0 0; }
+html.skin-game .dlg .dh b { font-weight: 900; }
+html.skin-game .fld > span { font-weight: 700; color: var(--soft); }
+html.skin-game .bank3 > div { border-radius: 16px; }
+html.skin-game .bank3 > div:last-child { background: var(--acc); }
+html.skin-game .note { background: var(--wash); border-radius: 16px; }
+html.skin-game .addrow, html.skin-game .morebtn { color: var(--acc); font-weight: 700; }
+html.skin-game .parts span { background: var(--paper); font-weight: 700; }
+html.skin-game #toast { border-radius: 14px; font-weight: 700; }
+html.skin-game .tiles6 > div, html.skin-game .ach { background: var(--paper); }
+html.skin-game .ach.ok { background: #FFF6DF; }
+html.skin-game .section { padding: 0 14px; }
+html.skin-game .shopi.goal .sm b::before { color: var(--gold); }
+html.skin-game .lrow .ld { color: var(--soft); }
+/* экран «Сегодня» */
+.g-head { display: flex; align-items: center; gap: 8px; padding: 10px 14px 4px 16px; }
+.g-title { flex: 1; min-width: 0; }
+.g-title b { display: block; font-size: 30px; line-height: 34px; font-weight: 900; }
+.g-title span { font-size: 14.5px; color: var(--soft); font-weight: 600; }
+.g-link { min-height: 40px; padding: 0 10px; color: var(--acc); font-weight: 800; font-size: 14.5px; white-space: nowrap; border-radius: 10px; }
+.g-link:hover { background: var(--wash); }
+.g-link.back { padding-left: 0; }
+.g-ar { width: 42px; height: 42px; flex: none; border-radius: 14px; border: 2px solid var(--rule); border-bottom-width: 4px; background: var(--page); display: grid; place-items: center; }
+.g-ar svg { width: 20px; height: 20px; fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.g-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin: 8px 12px 0; }
+.g-week button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0 4px; border-radius: 16px; min-width: 0; }
+.g-week i { font-size: 12px; font-weight: 700; color: var(--faint); text-transform: uppercase; }
+.g-week span { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-size: 15px; font-weight: 800; background: var(--page); border: 2px solid var(--rule); color: var(--soft); transition: transform .15s; }
+.g-week small { font-size: 11px; font-weight: 700; color: var(--soft); min-height: 14px; }
+.g-week .has span { border-color: var(--good); color: var(--good); }
+.g-week .hit span { background: var(--gold); border-color: var(--gold); color: #fff; font-size: 17px; }
+.g-week .today i { color: var(--acc); }
+.g-week .on { background: var(--wash); }
+.g-week .on span { border-color: var(--acc); box-shadow: 0 0 0 2px var(--acc); transform: scale(1.04); }
+.g-cols { margin: 0 12px; }
+.g-card { margin-top: 12px; padding: 12px 14px 14px; }
+.g-sec { display: flex; align-items: center; gap: 8px; margin-top: 16px; min-height: 40px; }
+.g-card > .g-sec:first-child { margin-top: -4px; }
+.g-sec h2 { flex: 1; min-width: 0; margin: 0; font-size: 19px; font-weight: 900; }
+.g-sec h2 small { font-size: 14px; font-weight: 800; color: var(--soft); margin-left: 4px; }
+.g-hint { margin: 4px 2px 8px; font-size: 14px; line-height: 19px; color: var(--soft); font-weight: 600; }
+.g-goal { margin-top: 10px; background: linear-gradient(135deg, #7B5CFA, #5A3DE0) !important; border-color: #4B30C9 !important; color: #fff; }
+.g-goal.full { background: linear-gradient(135deg, #FFB928, #FF8A1F) !important; border-color: #D9730B !important; }
+.g-gt { display: flex; align-items: center; gap: 12px; }
+.g-gi { font-size: 30px; line-height: 1; }
+.g-gt > div { flex: 1; min-width: 0; }
+.g-gt b { display: block; font-size: 17px; font-weight: 900; }
+.g-gt i { display: block; font-size: 13.5px; opacity: .88; font-weight: 600; }
+.g-gn { font-size: 15px; font-weight: 800; white-space: nowrap; opacity: .95; }
+.g-gn b { display: inline; font-size: 28px; font-weight: 900; }
+.g-goal .pbar.big { height: 14px; border-radius: 7px; margin-top: 12px; background: rgba(255, 255, 255, .28); }
+.g-goal .pbar.big i { background: #fff; border-radius: 7px; }
+.g-list { display: flex; flex-direction: column; gap: 8px; }
+.g-task { display: flex; align-items: stretch; gap: 6px; }
+.g-tmain { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 8px 12px 8px 10px; text-align: left; background: var(--page); border: 2px solid var(--rule); border-bottom-width: 4px; border-radius: 18px; transition: transform .08s, border-color .2s, background .2s; }
+.g-tmain:active { transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; }
+.g-ic { width: 46px; height: 46px; flex: none; display: grid; place-items: center; font-size: 25px; line-height: 1; border-radius: 14px; background: var(--paper); }
+.g-ic.big { width: 60px; height: 60px; font-size: 34px; border-radius: 18px; }
+.g-tt { flex: 1; min-width: 0; }
+.g-tt b { display: block; font-size: 16.5px; line-height: 21px; font-weight: 800; overflow-wrap: anywhere; }
+.g-tt i { display: block; font-size: 13px; line-height: 17px; color: var(--soft); font-weight: 600; overflow-wrap: anywhere; }
+.g-tt .due { font-style: normal; color: var(--fire); font-weight: 800; }
+.g-chk { flex: none; min-width: 52px; height: 40px; padding: 0 10px; display: grid; place-items: center; border-radius: 13px; background: var(--wash); color: var(--acc); font-weight: 900; font-size: 16px; font-variant-numeric: tabular-nums; }
+.g-task.done .g-tmain { background: color-mix(in srgb, var(--good) 10%, var(--page)); border-color: color-mix(in srgb, var(--good) 55%, var(--rule)); }
+.g-task.done .g-chk { background: var(--good); color: #fff; font-size: 20px; }
+.g-task.done .g-tt b { color: color-mix(in srgb, var(--ink) 70%, var(--good)); }
+.g-task.win .g-tmain { animation: gwin .7s ease-out; }
+@keyframes gwin { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--good) 60%, transparent); transform: scale(.98); } 40% { transform: scale(1.015); } 100% { box-shadow: 0 0 0 14px transparent; transform: none; } }
+.g-more { flex: none; width: 40px; border-radius: 14px; color: var(--faint); font-size: 20px; font-weight: 900; }
+.g-more:hover { background: var(--wash); color: var(--acc); }
+.g-more.plus { width: auto; min-width: 48px; padding: 0 10px; font-size: 15px; color: var(--acc); background: var(--page); border: 2px solid var(--rule); border-bottom-width: 4px; }
+.g-dots { display: inline-flex; gap: 3px; margin-right: 6px; vertical-align: 1px; }
+.g-dots u { width: 7px; height: 7px; border-radius: 50%; background: var(--rule); text-decoration: none; }
+.g-dots u.on { background: var(--good); } .g-dots.full u.on { background: var(--gold); }
+.g-add { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; border: 2px dashed color-mix(in srgb, var(--acc) 45%, var(--rule)); border-radius: 18px; color: var(--acc); font-weight: 800; font-size: 14.5px; }
+.g-add span { font-size: 18px; }
+.g-btn { display: block; width: 100%; min-height: 50px; margin-top: 12px; padding: 0 16px; border-radius: 16px; background: var(--acc); color: #fff; font-weight: 900; font-size: 15.5px; box-shadow: 0 4px 0 var(--accd); transition: transform .08s, box-shadow .08s; }
+.g-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--accd); }
+.g-btn.ghost { background: var(--page); color: var(--acc); border: 2px solid var(--rule); border-bottom-width: 4px; box-shadow: none; }
+.g-btn.gold { background: var(--gold); color: #4A2E00; box-shadow: 0 4px 0 #D98A00; animation: glow 1.8s ease-in-out infinite; }
+.g-rw { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+.g-rt { flex: 1; min-width: 0; }
+.g-rt b { display: block; font-size: 18px; font-weight: 900; overflow-wrap: anywhere; }
+.g-rt .pbar { margin: 6px 0 4px; }
+.g-rt i { font-size: 13px; color: var(--soft); font-weight: 700; }
+.g-rew.can { border-color: var(--gold) !important; }
+.g-tot { font-size: 20px; font-weight: 900; color: var(--acc); white-space: nowrap; }
+.g-sum .parts { margin-top: 4px; }
+.gq-h { display: flex; align-items: center; gap: 12px; }
+.gq-p { font-weight: 900; color: var(--acc); white-space: nowrap; }
+.gq-bar { display: flex; align-items: center; gap: 8px; margin-top: 12px; } .gq-bar .pbar { flex: 1; } .gq-bar em { font-size: 13px; font-weight: 800; color: var(--soft); }
+.gq-steps { display: flex; flex-direction: column; margin-top: 6px; }
+.gq .step { min-height: 44px; font-size: 15.5px; font-weight: 700; gap: 12px; }
+.gq .step .sb { width: 24px; height: 24px; border-radius: 8px; border: 2px solid var(--faint); }
+.gq .step.ok .sb::after { width: 10px; height: 5px; border-width: 2.5px; }
+.gq-done { margin-top: 12px; min-height: 46px; display: grid; place-items: center; border-radius: 14px; background: color-mix(in srgb, var(--good) 14%, var(--page)); color: var(--good); font-weight: 900; }
+.gq.done { border-color: color-mix(in srgb, var(--good) 50%, var(--rule)) !important; }
+.gq.win { animation: questwin 1s ease-out; }
+@media (min-width: 900px) {
+  html.skin-game #top h1 { display: block; flex: none; width: 204px; font-weight: 900; font-size: 22px; color: var(--acc); }
+  html.skin-game #hudGear { display: none; }
+  html.skin-game #nav button[data-tab=settings] { display: flex; }
+  html.skin-game body.compact-ui #main, html.skin-game body.compact-ui:not(.wide) #main { max-width: 1000px; width: min(1000px, calc(100vw - 244px)); }
+  html.skin-game body.compact-ui #nav.six button:nth-child(n) { height: 50px; min-height: 50px; border-radius: 14px; font-size: 15.5px; font-weight: 700; color: var(--soft); border: 2px solid transparent; }
+  html.skin-game body.compact-ui #nav.six button.on { background: var(--wash); color: var(--acc); font-weight: 800; border-color: color-mix(in srgb, var(--acc) 35%, var(--rule)); }
+  html.skin-game body.compact-ui #nav.six button .ic { transform: none; }
+  html.skin-game body.compact-ui #nav.six { border: 0; }
+  .g-cols { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 0 20px; align-items: start; margin: 0 4px; }
+  .g-head { padding-left: 6px; padding-right: 4px; }
+  .g-week { margin: 8px 4px 0; max-width: 560px; }
+  html.skin-game #main > .card, html.skin-game #main > .note, html.skin-game #main > .sumbtn { margin-left: 4px; margin-right: 4px; }
+  html.skin-game body.compact-ui #main[data-page=rewards], html.skin-game body.compact-ui #main[data-page=hero], html.skin-game body.compact-ui #main[data-page=settings] { max-width: 720px; }
+}
+@media (prefers-reduced-motion: reduce) { .g-task.win .g-tmain, .g-btn.gold, .gq.win { animation: none; } }
+.g-more { width: 34px; }
+.g-more.minus { width: 40px; font-size: 24px; color: var(--soft); background: var(--page); border: 2px solid var(--rule); border-bottom-width: 4px; }
+.g-task.done .g-chk { font-size: 18px; }
+@media (max-width: 899px) { html.skin-game #nav { display: flex; } html.skin-game #nav button { flex: 1 1 0; } }
+.g-more.minus, .g-more.plus { align-self: center; height: 48px; }
+@media (min-width: 900px) {
+  html.skin-game body.compact-ui { --g-left: max(16px, calc((100vw - 1000px) / 2 - 204px)); }
+  html.skin-game body.compact-ui #nav.six { left: var(--g-left); width: 184px; }
+  html.skin-game body.compact-ui #nav.six button[data-tab=reps] { display: none; }
+  html.skin-game body.compact-ui #main, html.skin-game body.compact-ui:not(.wide) #main { width: min(1000px, calc(100vw - 236px)); max-width: 1000px; margin-left: calc(var(--g-left) + 204px); margin-right: 16px; }
+  html.skin-game body.compact-ui #top .row { max-width: none; padding: 0 var(--g-left); }
+  html.skin-game body.compact-ui #top h1 { width: 204px; padding-left: 12px; }
+}
+
 </style>
 </head>
 <body class="compact-ui">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="pencil" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div id="top"><div class="row">
   <h1>scrquest</h1>
+  <button class="hud hl" id="hudLvl" data-act="gotab" data-tab="hero"></button>
+  <button class="hud hf" id="hudFire" data-act="gotab" data-tab="hero"></button>
   <button class="balpill" id="bal" data-act="gotab" data-tab="rewards" aria-label="Баллы в копилке"></button>
+  <button class="hud hg" id="hudGear" data-act="gotab" data-tab="settings" aria-label="Настройки"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.740 8.870a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.580a.49.49 0 0 0-.12.61l1.920 3.320c.12.22.37.29.59.22l2.390-.96c.5.38 1.030.7 1.620.94l.36 2.540c.05.24.24.41.48.41h3.840c.24 0 .44-.17.47-.41l.36-2.540c.59-.24 1.130-.56 1.620-.94l2.390.96c.22.08.47 0 .59-.22l1.920-3.320a.48.48 0 0 0-.12-.61zM12 15.600A3.600 3.600 0 1 1 12 8.400a3.600 3.600 0 0 1 0 7.200z"/></svg></button>
   <button class="cloud" id="cloud" data-act="syncgo" hidden aria-label="Синхронизация"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg></button>
 </div></div>
 
@@ -1711,12 +1899,15 @@ const THEMES = [
   { id: 'night', name: 'Night', paper: '#221A17', page: '#2E2420', ink: '#F1E4DC', soft: '#BCA79C', faint: '#7E6B62', rule: '#44362F', acc: '#E39A7E', wash: '#4A3129', onAcc: '#2A1C17', dark: true },
 ];
 let theme = THEMES[0];
-const SKINS = [['classic', 'Классика'], ['paper', 'Бумага'], ['notebook', 'Блокнот'], ['apple', 'Зелёное яблоко']];
+const SKINS = [['game', 'Игра'], ['classic', 'Классика'], ['paper', 'Бумага'], ['notebook', 'Блокнот'], ['apple', 'Зелёное яблоко']];
 const APPLE = { paper: '#FFFEF7', page: '#F5FDE8', ink: '#3D4F2A', soft: '#5E7349', faint: '#94A57F', rule: '#CDEBB0', acc: '#4C8F22', wash: '#DCF7B4', onAcc: '#FFFFFF' };
 const NOTE = { paper: '#CFC6B4', page: '#FBF7EE', ink: '#2A2926', soft: '#57524A', faint: '#8E887C', rule: '#DDD5C4', acc: '#2D4C9E', wash: '#DCE3F5', onAcc: '#FBF7EE' };
+const GAME = { paper: '#F2EFFA', page: '#FFFFFF', ink: '#201A33', soft: '#6B6580', faint: '#A9A3BD', rule: '#E4DEF3', acc: '#6C4DF5', wash: '#ECE7FF', onAcc: '#FFFFFF' };
 const PAPER = { paper: '#B3B19C', page: '#EDE7D7', ink: '#26251F', soft: '#45423A', faint: '#6B6758', rule: '#C9BFA6', acc: '#2747C9', wash: '#D3DAF6', onAcc: '#F4F1E8' };
-let skin = SKINS.some(s => s[0] === store.get('skin', 'classic')) ? store.get('skin', 'classic') : 'classic';
-function applySkin(id) { skin = SKINS.some(s => s[0] === id) ? id : 'classic'; store.set('skin', skin); applyTheme(theme.id); }
+// версия 3: новый стиль «Игра» — основной; один раз включается на каждом устройстве, прежние стили остаются в Настройках
+if (!store.get('ui3', false)) { store.set('skin', 'game'); store.set('ui3', true); }
+let skin = SKINS.some(s => s[0] === store.get('skin', 'game')) ? store.get('skin', 'game') : 'game';
+function applySkin(id) { skin = SKINS.some(s => s[0] === id) ? id : 'game'; store.set('skin', skin); applyTheme(theme.id); }
 function applyTheme(id) {
   theme = THEMES.find(t => t.id === id) || THEMES[0];
   const r = document.documentElement.style;
@@ -1729,7 +1920,8 @@ function applyTheme(id) {
   document.documentElement.classList.toggle('skin-paper', skin === 'paper');
   document.documentElement.classList.toggle('skin-apple', skin === 'apple');
   document.documentElement.classList.toggle('skin-notebook', skin === 'notebook');
-  const own = skin === 'paper' ? PAPER : skin === 'apple' ? APPLE : skin === 'notebook' ? NOTE : null;
+  document.documentElement.classList.toggle('skin-game', skin === 'game');
+  const own = skin === 'game' ? GAME : skin === 'paper' ? PAPER : skin === 'apple' ? APPLE : skin === 'notebook' ? NOTE : null;
   if (own) {
     for (const k of ['paper', 'page', 'ink', 'soft', 'faint', 'rule', 'wash']) r.setProperty('--' + k, own[k]);
     r.setProperty('--acc', own.acc); r.setProperty('--on-acc', own.onAcc);
@@ -1797,12 +1989,15 @@ const DEFS = {
     ['sd7', ['t-nature', 't-social'], 'Погулять с другом', 1.5, 0, 'Договориться; подходящая погода'],
     ['sd8', ['t-home', 't-food', 't-social'], 'Испечь печенье вместе', 2, 500, 'Продукты, духовка, компания'],
   ].map(([id, tags, n, h, rub, cond]) => ({ id, tags, n, h, rub, cond, st: '' })),
-  secs: [{ id: 's-body', n: 'Тело', cat: 'c-body' }, { id: 's-home', n: 'Быт', cat: 'c-home' }],
-  reps: [{ id: 'r-clean', sec: 's-home', freq: 'w', n: 'Уборка', list: 'протереть пыль\nстирка\nпомыть пол\nвыкинуть мусор', p: 5 }],
-  shop: [],
+  secs: [{ id: 's-body', n: 'Тело', cat: 'c-body' }, { id: 's-home', n: 'Быт', cat: 'c-home' }, { id: 's-study', n: 'Учёба', cat: 'c-study' }],
+  reps: [{ id: 'r-study', sec: 's-study', freq: 'd', n: 'Сделать 1 стадик', ic: '📚', list: '', p: 5, many: true },
+    { id: 'r-clean', sec: 's-home', freq: 'w', n: 'Сделать уборку', ic: '🧹', list: 'протереть пыль\nстирка\nпомыть пол\nвыкинуть мусор', p: 5 },
+    { id: 'r-cook', sec: 's-home', freq: 'd', n: 'Приготовить еду', ic: '🍳', list: '', p: 3 },
+    { id: 'r-gym', sec: 's-body', freq: 'd', n: 'Сделать зарядку', ic: '🤸', list: '', p: 2 }],
+  shop: [{ id: 'sh-tea', n: 'Бабл ти', ic: '🧋', cat: 'еда', rub: 0, p: 30 }, { id: 'sh-vac', n: 'Пылесос', ic: '🌀', cat: 'вещи', rub: 0, p: 400 }, { id: 'sh-ps', n: 'Плейстейшн', ic: '🎮', cat: 'вещи', rub: 0, p: 1500 }],
   buys: [],
   earn: [],
-  meta: {},
+  meta: { seed: 3, goal: 'sh-tea' },
 };
 const LIST_KEYS = Object.keys(DEFS).filter(k => Array.isArray(DEFS[k]));
 const D = {};
@@ -2326,7 +2521,7 @@ function renderRewards() {
       </div>
     </div>
     <div class="card" style="--d:90ms"><h2 class="hl">Магазин</h2>
-      ${D.shop.length ? `<div class="slist">${D.shop.map(x => `<div class="shopi ${x.id === D.meta.goal ? 'goal' : ''} ${B.bal >= num(x.p) ? 'can' : ''}"><button class="sm" data-act="shopedit" data-id="${esc(x.id)}"><b>${esc(x.n)}</b><i>${[x.cat, num(x.rub) ? fp(x.rub) + ' ₽' : '', B.bal >= num(x.p) ? 'можно взять!' : `ещё ${pts(num(x.p) - B.bal)}`].filter(Boolean).map(esc).join(' · ')}</i><span class="pbar ${B.bal >= num(x.p) ? 'full' : ''}"><i data-bar="shop${esc(x.id)}" data-w="${num(x.p) > 0 ? Math.max(0, B.bal / num(x.p) * 100) : 100}"></i></span></button>
+      ${D.shop.length ? `<div class="slist">${D.shop.map(x => `<div class="shopi ${x.id === D.meta.goal ? 'goal' : ''} ${B.bal >= num(x.p) ? 'can' : ''}"><button class="sm" data-act="shopedit" data-id="${esc(x.id)}"><b>${x.ic ? x.ic + ' ' : ''}${esc(x.n)}</b><i>${[x.cat, num(x.rub) ? fp(x.rub) + ' ₽' : '', B.bal >= num(x.p) ? 'можно взять!' : `ещё ${pts(num(x.p) - B.bal)}`].filter(Boolean).map(esc).join(' · ')}</i><span class="pbar ${B.bal >= num(x.p) ? 'full' : ''}"><i data-bar="shop${esc(x.id)}" data-w="${num(x.p) > 0 ? Math.max(0, B.bal / num(x.p) * 100) : 100}"></i></span></button>
         <b class="shp num">${pts(x.p)}</b><button class="sbtn ${B.bal >= num(x.p) ? 'fill' : ''}" data-act="buy" data-id="${esc(x.id)}" ${B.bal >= num(x.p) ? '' : 'disabled'} aria-label="Взять «${esc(x.n)}»">Взять</button></div>`).join('')}</div>`
         : '<p class="qhint">Добавляйте сюда вещи, впечатления и другие приятные награды, назначайте им стоимость в баллах и копите на то, что хочется.</p>'}
       <button class="addrow" data-act="shopadd">+ награда</button>
@@ -2391,8 +2586,8 @@ function renderSettings() {
       <button class="btn outline" data-act="fxdemo" style="margin-top:10px">Показать, как выглядит новый уровень</button>
     </div>
     <div class="section" style="--d:30ms"><h2 class="hl">Стиль</h2><div class="skins">${SKINS.map(([id, n]) => `<button class="skinb ${skin === id ? 'on' : ''}" data-act="skin" data-id="${id}">
-        <span class="sp0" style="${id === 'paper' ? 'background:#B3B19C;box-shadow:inset 0 -18px 0 #EDE7D7, inset 0 -20px 0 #26251F' : id === 'apple' ? 'background:#F5FDE8;box-shadow:inset 0 0 0 2.5px #8ed24a' : id === 'notebook' ? 'background:#FBF7EE repeating-linear-gradient(180deg,transparent 0 9px,#DCE6EF 9px 10px);box-shadow:inset 9px 0 0 -7.5px #E7A39A' : `background:${theme.paper};box-shadow:inset 0 -18px 0 ${theme.page}`}">${id === 'apple' ? '<span style="position:absolute;inset:0;display:grid;place-items:center;font-size:26px">🍏</span>' : id === 'paper' ? '<span style="position:absolute;left:8px;top:8px;font:600 10px monospace;color:#26251F">01 //</span>' : id === 'notebook' ? '<span style="position:absolute;left:12px;top:6px;font:700 18px Caveat,cursive;color:#2D4C9E">квест</span>' : ''}</span><b>${n}</b></button>`).join('')}</div>
-      ${skin !== 'classic' ? '<p class="hint" style="margin:8px 4px 0">У этого стиля своя палитра. Цвета ниже работают в стиле «Классика».</p>' : ''}</div>
+        <span class="sp0" style="${id === 'game' ? 'background:#F2EFFA;box-shadow:inset 0 -18px 0 #6C4DF5' : id === 'paper' ? 'background:#B3B19C;box-shadow:inset 0 -18px 0 #EDE7D7, inset 0 -20px 0 #26251F' : id === 'apple' ? 'background:#F5FDE8;box-shadow:inset 0 0 0 2.5px #8ed24a' : id === 'notebook' ? 'background:#FBF7EE repeating-linear-gradient(180deg,transparent 0 9px,#DCE6EF 9px 10px);box-shadow:inset 9px 0 0 -7.5px #E7A39A' : `background:${theme.paper};box-shadow:inset 0 -18px 0 ${theme.page}`}">${id === 'game' ? '<span style="position:absolute;left:0;right:0;top:3px;text-align:center;font-size:20px">⭐</span>' : id === 'apple' ? '<span style="position:absolute;inset:0;display:grid;place-items:center;font-size:26px">🍏</span>' : id === 'paper' ? '<span style="position:absolute;left:8px;top:8px;font:600 10px monospace;color:#26251F">01 //</span>' : id === 'notebook' ? '<span style="position:absolute;left:12px;top:6px;font:700 18px Caveat,cursive;color:#2D4C9E">квест</span>' : ''}</span><b>${n}</b></button>`).join('')}</div>
+      ${skin === 'game' ? '<p class="hint" style="margin:8px 4px 0">«Игра» — основной стиль с экраном «Сегодня». В остальных стилях прежний вид с неделей, «Повторами» и «Побочками».</p>' : ''}${skin !== 'classic' ? '<p class="hint" style="margin:8px 4px 0">У этого стиля своя палитра. Цвета ниже работают в стиле «Классика».</p>' : ''}</div>
     <div class="section" style="--d:45ms"><h2 class="hl">Цвета</h2><div class="themes ${skin !== 'classic' ? 'off' : ''}">${THEMES.map(t => `
       <button class="theme ${t.id === theme.id ? 'on' : ''}" data-act="theme" data-id="${t.id}" style="background:${t.paper};border-color:${t.id === theme.id ? t.acc : t.rule};color:${t.ink}">
         <span class="mini" style="display:block;background:${t.page};border-color:${t.rule}"><i style="background:${t.acc};width:60%"></i><i style="background:${t.rule}"></i>
@@ -2413,9 +2608,20 @@ function render(anim) {
   $main.classList.toggle('intro', !!anim);
   document.querySelectorAll('#nav button').forEach(b => { const on = b.dataset.tab === tab; b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   document.body.classList.toggle('wkwide', tab === 'week');
-  if (tab === 'week') renderWeek(); else if (tab === 'reps') renderReps(); else if (tab === 'side') renderSide(); else if (tab === 'rewards') renderRewards(); else if (tab === 'hero') renderHero(); else renderSettings();
+  const game = isGame();
+  if (game && tab === 'reps') tab = 'week';
+  const NL = game ? { week: 'Сегодня', side: 'Квесты' } : { week: 'Неделя', side: 'Побочки' };
+  document.querySelectorAll('#nav button').forEach(b => { if (NL[b.dataset.tab]) b.querySelector('.nav-label').textContent = NL[b.dataset.tab]; });
+  if (game && tab === 'week') renderToday(); else if (game && tab === 'side') renderQuests(); else if (tab === 'week') renderWeek(); else if (tab === 'reps') renderReps(); else if (tab === 'side') renderSide(); else if (tab === 'rewards') renderRewards(); else if (tab === 'hero') renderHero(); else renderSettings();
   const B = bank();
   $('#bal').innerHTML = `<svg viewBox="-1 -1 2 2" aria-hidden="true"><path d="${STAR_PATH}"/></svg><b class="num" data-count="bal" data-v="${B.bal}">${fp(B.bal)}</b> Б`;
+  if (game && tab === 'settings') $main.insertAdjacentHTML('afterbegin', '<div class="g-head"><button class="g-link back" data-act="gotab" data-tab="week">← Назад</button><div class="g-title"><b>Настройки</b></div></div>');
+  const G = gameStats();
+  $('#hudLvl').innerHTML = `${badge(G.lvl, 'sm')}<span class="hx"><b>${G.rank} · ур. ${G.lvl}</b><span class="pbar xp"><i data-bar="hudxp" data-w="${G.lvlPct}"></i></span></span>`;
+  $('#hudLvl').setAttribute('aria-label', `${G.rank}, уровень ${G.lvl}. До следующего ещё ${fp(G.xpNeed - G.xpIn)} баллов`);
+  $('#hudFire').innerHTML = `<span aria-hidden="true">🔥</span><b class="num">${G.streak}</b>`;
+  $('#hudFire').className = `hud hf ${G.streak ? 'on' : ''} ${G.streak && !G.todayActive ? 'risk' : ''}`;
+  $('#hudFire').setAttribute('aria-label', `Серия: ${G.streak} дней подряд`);
   animateBars();
   $('#bal').setAttribute('aria-label', `В копилке ${fp(B.bal)} баллов`);
   prepareWorkspace();
@@ -2428,7 +2634,7 @@ function goTab(t) { tab = t; store.set('tab', t); render(true); window.scrollTo(
 /* на компьютере страница — лист бумаги, выбранный ярлычок меню соединяется с ним (как в scrmoney) */
 function prepareWorkspace() {
   $main.dataset.page = tab;
-  if (wideScreen() && !$main.querySelector(':scope > article.book')) {
+  if (wideScreen() && !isGame() && !$main.querySelector(':scope > article.book')) {
     const sheet = document.createElement('article');
     sheet.className = 'book workspace-page';
     while ($main.firstChild) sheet.appendChild($main.firstChild);
@@ -2462,6 +2668,111 @@ document.addEventListener('animationend', e => { if (e.target.parentElement === 
 if (document.fonts) document.fonts.ready.then(uiLayoutSoon);
 let wasWide = wideScreen(), rsT;
 window.addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { const w = wideScreen(); if (w !== wasWide) { wasWide = w; render(); } }, 150); });
+
+
+/* ---------- стиль «Игра»: экран «Сегодня» и «Квесты» ----------
+   Главный экран — список дел на выбранный день: нажал — сделано, баллы в копилке.
+   Готовые дела берутся из «Повторов» (D.reps), привычки и квесты — те же данные, что и в других стилях. */
+const isGame = () => skin === 'game';
+const EMO = ['📚', '🧹', '🍳', '🤸', '🏃', '💧', '🧘', '🛏️', '🧺', '🛒', '💻', '✍️', '📞', '🌿', '🎨', '🎵', '💊', '😴', '🦷', '🐕', '⭐', '🧋', '🎮', '🌀', '🍰', '☕', '🎬', '📖', '👟', '🎁', '✈️', '🍕'];
+const emoRow = sel => `<div class="fld"><span>Значок</span><div class="emo">${EMO.map(e => `<button type="button" data-act="emo" data-v="${e}" class="${e === sel ? 'on' : ''}" aria-label="Значок ${e}">${e}</button>`).join('')}</div></div>`;
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+function gTask({ key, ic, name, sub, right, done, act, extra = '', undo = '', edit = '', mark = '' }) {
+  return `<div class="g-task ${done ? 'done' : ''}" data-row="${esc(key)}">
+    <button class="g-tmain" data-act="${act}" ${extra}><span class="g-ic" aria-hidden="true">${ic}</span><span class="g-tt"><b>${esc(name)}</b><i>${sub}</i></span><span class="g-chk">${done ? mark || '✓' : right}</span></button>${undo}${edit}</div>`;
+}
+function renderToday() {
+  const td = today(), cur = monday(td);
+  if (!(selDay >= wk && selDay <= shift(wk, 6))) selDay = wk === cur ? td : wk;
+  const S = weekStats(wk), G = gameStats(), B = G.B, dg = dayGoal(), d = selDay, isT = d === td;
+  const tp = G.dayPts[d] || 0, left = dg - tp, [, m, dd] = ymd(d);
+  const dayLog = S.log.filter(e => e.date === d).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  const title = isT ? 'Сегодня' : d === shift(td, -1) ? 'Вчера' : d === shift(td, 1) ? 'Завтра' : cap(WDL[toD(d).getDay()]);
+  const more = b => `<button class="g-more" data-act="${b[0]}" data-id="${esc(b[1])}" aria-label="Изменить «${esc(b[2])}»">⋯</button>`;
+  // дела
+  const reps = D.reps.map(r => {
+    const n = dayLog.filter(e => e.rep === r.id).length, due = isT && !n && repDue(r), per = freqOf(r.freq);
+    const sub = n ? `сделано · +${fp(num(r.p) * n)} Б${r.many ? ' · можно ещё' : ''}` : due && per[2] > 1 ? '<em class="due">пора сделать</em>' : r.many ? 'нажимайте за каждый раз' : per[2] ? per[1].toLowerCase() : 'когда захочется';
+    return gTask({ key: 'r' + r.id, ic: r.ic || '⭐', name: r.n, sub, right: `+${fp(r.p)}`, mark: r.many && n ? `×${n}` : '', done: n > 0, act: 'gdo', extra: `data-id="${esc(r.id)}" aria-label="${esc(r.n)}: ${n ? 'сделано' : `отметить, плюс ${fp(r.p)} баллов`}"`,
+      undo: r.many && n ? `<button class="g-more minus" data-act="gundo" data-id="${esc(r.id)}" aria-label="Отменить один раз">−</button>` : '', edit: more(['repedit', r.id, r.n]) });
+  }).join('');
+  const custom = dayLog.filter(e => !e.rep || !D.reps.some(r => r.id === e.rep)).map(e =>
+    `<div class="g-task done" data-row="e${esc(e.id)}" data-ent="${esc(e.id)}"><button class="g-tmain" data-act="logedit" data-id="${esc(e.id)}"><span class="g-ic" aria-hidden="true">✍️</span><span class="g-tt"><b>${esc(e.t || '—')}</b><i>${esc(catName(e.cat))} · +${fp(e.p)} Б</i></span><span class="g-chk">✓</span></button></div>`).join('');
+  // привычки
+  const habs = S.hstat.map(({ h, n }) => {
+    const on = isChecked((D.checks[d] || {})[h.id]);
+    const dots = `<span class="g-dots ${n === 7 ? 'full' : ''}">${S.days.map(x => `<u class="${isChecked((D.checks[x] || {})[h.id]) ? 'on' : ''}"></u>`).join('')}</span>`;
+    return gTask({ key: 'h' + h.id, ic: h.ic || '✨', name: h.n, sub: `${dots}${n}/7${num(h.bonus) ? ` · за 7/7 бонус +${fp(h.bonus)}` : ''}`, right: `+${fp(h.p)}`, done: on, act: 'habit', extra: `data-d="${d}" data-id="${esc(h.id)}" aria-pressed="${on}"`, edit: more(['habedit', h.id, h.n]) });
+  }).join('');
+  // квесты недели
+  const qs = S.qs, qdone = qs.filter(q => q.st === 'done').length;
+  const quests = qs.map(q => { const st = q.steps || [], k = st.filter(s => s.ok).length;
+    return gTask({ key: 'q' + q.id, ic: q.kind === 'side' ? '🍋' : '🗡️', name: q.n || 'Квест', sub: q.st === 'done' ? `выполнен · +${fp(q.p)} Б` : st.length ? `шаги: ${k} из ${st.length}` : q.win ? esc(q.win) : q.kind === 'side' ? 'побочный квест' : 'главная цель недели', right: `+${fp(q.p)}`, done: q.st === 'done', act: st.length && q.st !== 'done' ? 'gotab' : 'qfin', extra: st.length && q.st !== 'done' ? 'data-tab="side"' : `data-id="${esc(q.id)}" data-qfin="${esc(q.id)}"` }); }).join('');
+  // награда-цель
+  const g = D.shop.find(x => x.id === D.meta.goal), gp = g ? num(g.p) : 0, can = g && B.bal >= gp;
+  const reward = g ? `<div class="g-card g-rew ${can ? 'can' : ''}"><div class="g-sec"><h2>Коплю на награду</h2><button class="g-link" data-act="gotab" data-tab="rewards">Все награды</button></div>
+      <div class="g-rw"><span class="g-ic big" aria-hidden="true">${g.ic || '🎁'}</span><div class="g-rt"><b>${esc(g.n)}</b>
+        <div class="pbar ${can ? 'full' : ''}"><i data-bar="goal" data-w="${gp > 0 ? Math.max(0, Math.min(100, B.bal / gp * 100)) : 100}"></i></div>
+        <i class="num">${can ? 'Баллов хватает!' : `${fp(Math.max(0, B.bal))} из ${fp(gp)} Б · ещё ${fp(gp - B.bal)}`}</i></div></div>
+      ${can ? `<button class="g-btn gold" data-act="buy" data-id="${esc(g.id)}">Забрать награду</button>` : ''}</div>`
+    : `<div class="g-card"><div class="g-sec"><h2>Награда</h2></div><p class="g-hint">Выберите, на что копите баллы — так играть интереснее.</p><button class="g-btn ghost" data-act="gotab" data-tab="rewards">Выбрать награду</button></div>`;
+  const part = (l, v) => v ? `<span>${l} <b class="num">${fp(v)}</b></span>` : '';
+  $main.innerHTML = `
+    <div class="g-head" style="--d:0ms"><div class="g-title"><b>${title}</b><span>${dd} ${MONTHS_G[m - 1]}${isT ? ', ' + WDL[toD(d).getDay()] : ''}</span></div>
+      ${wk !== cur || !isT ? '<button class="g-link" data-act="wnow">К сегодня</button>' : ''}
+      <button class="g-ar" data-act="wprev" aria-label="Прошлая неделя">${arrow(0)}</button><button class="g-ar" data-act="wnext" aria-label="Следующая неделя">${arrow(1)}</button></div>
+    <div class="g-week" style="--d:20ms">${S.days.map(x => { const p = G.dayPts[x] || 0, hit = p >= dg;
+      return `<button class="${x === d ? 'on' : ''} ${x === td ? 'today' : ''} ${hit ? 'hit' : p ? 'has' : ''}" data-act="day" data-d="${x}" aria-pressed="${x === d}" aria-label="${WDL[toD(x).getDay()]}, ${ymd(x)[2]}: ${fp(p)} баллов"><i>${wd(x)}</i><span>${hit ? '★' : ymd(x)[2]}</span><small class="num">${p ? fp(p) : ''}</small></button>`; }).join('')}</div>
+    <div class="g-cols" style="--d:40ms">
+      <div class="g-c1">
+        <div class="g-card g-goal ${left <= 0 ? 'full' : ''}"><div class="g-gt"><span class="g-gi" aria-hidden="true">${left <= 0 ? '🏆' : '🎯'}</span><div><b>${left <= 0 ? 'Цель дня выполнена!' : 'Цель дня'}</b><i>${left <= 0 ? 'Всё, что сверху, — бонус' : tp ? `ещё ${fp(left)} Б — и день удался` : 'отметьте любое дело ниже'}</i></div>
+          <span class="g-gn num"><b data-count="day${d}" data-v="${tp}">${fp(tp)}</b> / ${fp(dg)} Б</span></div>
+          <div class="pbar big"><i data-bar="day${d}" data-w="${Math.min(100, tp / dg * 100)}"></i></div></div>
+        <div class="g-sec"><h2>Дела</h2><button class="g-link" data-act="repadd" data-f="d">+ Новое дело</button></div>
+        <div class="g-list">${reps}${custom}
+          <button class="g-add" data-act="logadd" data-d="${d}"><span aria-hidden="true">＋</span> Сделал что-то другое — записать</button></div>
+        <div class="g-sec"><h2>Привычки</h2><button class="g-link" data-act="habadd">+ Привычка</button></div>
+        ${habs ? `<div class="g-list">${habs}</div>` : '<p class="g-hint">Привычка — то, что отмечаете каждый день: вода, чтение, прогулка. За 7 дней из 7 — бонусные баллы.</p>'}
+      </div>
+      <div class="g-c2">
+        <div class="g-card"><div class="g-sec"><h2>Квесты недели${qs.length ? ` <small class="num">${qdone}/${qs.length}</small>` : ''}</h2><button class="g-link" data-act="gotab" data-tab="side">${qs.length ? 'Все квесты' : ''}</button></div>
+          ${qs.length ? `<div class="g-list">${quests}</div>` : '<p class="g-hint">Квест — большая цель недели с большой наградой. Например: «генеральная уборка» или «дочитать книгу».</p>'}
+          <button class="g-btn ghost" data-act="qadd" data-k="story">+ Взять квест</button></div>
+        ${reward}
+        <div class="g-card g-sum"><div class="g-sec"><h2>Неделя ${weekLabel(wk)}</h2><b class="g-tot num">${fp(S.total)} Б</b></div>
+          <div class="parts">${part('дела', S.ordinary)}${part('привычки', S.habitPts)}${part('квесты', S.story + S.side)}${part('серии 7/7', S.series)}${S.total ? '' : '<span>пока пусто — начните с любого дела</span>'}</div></div>
+      </div>
+    </div>`;
+}
+function gQuest(q) {
+  const st = q.steps || [], done = q.st === 'done';
+  return `<div class="g-card gq ${done ? 'done' : ''}" data-q="${esc(q.id)}">
+    <div class="gq-h"><span class="g-ic" aria-hidden="true">${q.kind === 'side' ? '🍋' : '🗡️'}</span><div class="g-tt"><b>${esc(q.n || 'Квест')}</b>${q.win ? `<i>победа: ${esc(q.win)}</i>` : ''}</div><span class="gq-p num">+${fp(q.p)} Б</span><button class="g-more" data-act="qedit" data-id="${esc(q.id)}" aria-label="Изменить квест">⋯</button></div>
+    ${st.length ? `<div class="gq-bar"><div class="pbar"><i data-bar="q${esc(q.id)}" data-w="${st.filter(s => s.ok).length / st.length * 100}"></i></div><em class="num">${st.filter(s => s.ok).length}/${st.length}</em></div>
+      <div class="gq-steps">${st.map(s => `<button class="step ${s.ok ? 'ok' : ''}" data-act="qstep" data-id="${esc(q.id)}" data-s="${esc(s.id)}" aria-pressed="${!!s.ok}"><span class="sb"></span><span class="st">${esc(s.t)}</span></button>`).join('')}</div>` : ''}
+    ${done ? '<div class="gq-done">✓ Квест выполнен</div>' : `<button class="g-btn" data-act="qfin" data-id="${esc(q.id)}" data-qfin="${esc(q.id)}">Завершить квест · +${fp(q.p)} Б</button>`}</div>`;
+}
+function renderQuests() {
+  const cur = monday(today()); if (wk !== cur) { wk = cur; selDay = today(); }
+  const qs = D.quests.filter(q => q.wk === wk), story = qs.filter(q => q.kind === 'story'), side = qs.filter(q => q.kind === 'side');
+  const prevOpen = D.quests.filter(q => q.wk === shift(wk, -7) && q.st !== 'done');
+  tagSel = tagSel.filter(id => D.tags.some(t => t.id === id));
+  const ideas = D.sides.filter(s => s.st !== 'done' && s.st !== 'archive' && s.st !== 'week' && tagSel.every(t => (s.tags || []).includes(t)));
+  $main.innerHTML = `
+    <div class="g-head" style="--d:0ms"><div class="g-title"><b>Квесты</b><span>неделя ${weekLabel(wk)}</span></div></div>
+    <div class="g-cols" style="--d:30ms"><div class="g-c1">
+      <div class="g-sec"><h2>Главные квесты</h2><button class="g-link" data-act="qadd" data-k="story">+ Квест</button></div>
+      ${story.length ? story.map(gQuest).join('') : '<p class="g-hint">Две-три главные цели недели. Назовите квест, решите, что считается победой, и назначьте награду в баллах. Шаги можно вписать чек-листом.</p>'}
+      ${!qs.length && prevOpen.length ? `<button class="g-btn ghost" data-act="qcarry">↪ Перенести незавершённые с прошлой недели (${prevOpen.length})</button>` : ''}
+      <div class="g-sec"><h2>Побочные квесты</h2><button class="g-link" data-act="qadd" data-k="side">+ Квест</button></div>
+      ${side.length ? side.map(gQuest).join('') : '<p class="g-hint">Необязательные приятные дела — для радости, а не для пользы. Идеи — ниже.</p>'}
+    </div><div class="g-c2">
+      <div class="g-card"><div class="g-sec"><h2>Идеи побочных квестов</h2><button class="g-link" data-act="sideadd">+ Идея</button></div>
+        <div class="tagsel">${D.tags.map(t => `<button class="${tagSel.includes(t.id) ? 'on' : ''}" data-act="tagsel" data-id="${esc(t.id)}" aria-pressed="${tagSel.includes(t.id)}">${esc(t.n)}</button>`).join('')}<button class="add" data-act="tagsadmin">✎ теги</button></div>
+        <div class="g-list" style="margin-top:12px">${ideas.map(s => `<div class="g-task"><button class="g-tmain" data-act="sideedit" data-id="${esc(s.id)}"><span class="g-ic" aria-hidden="true">💡</span><span class="g-tt"><b>${esc(s.n)}</b><i>${esc([(s.tags || []).map(tagName).filter(Boolean).join(', '), num(s.h) ? fpIn(s.h) + ' ч' : ''].filter(Boolean).join(' · '))}</i></span></button><button class="g-more plus" data-act="sidetake" data-id="${esc(s.id)}">Взять</button></div>`).join('') || '<p class="g-hint">Подходящих идей нет — снимите тег или добавьте свою.</p>'}</div>
+      </div>
+    </div></div>`;
+}
 
 
 /* ---------- окна ---------- */
@@ -2527,8 +2838,8 @@ function logSave() {
   selDay = x.date; wk = monday(x.date);
   if (tab !== 'week') { tab = 'week'; store.set('tab', tab); }
   rerender();
-  toast(isNew ? `+${fp(p)} Б · ${catName(x.cat)}` : 'Сохранено');
-  if (isNew) { const n = document.querySelector(`.day[data-d="${x.date}"] .ent[data-id="${CSS.escape(x.id)}"]`); if (n) n.classList.add('new'); popButton(n); flyPts(n && rectOf(n) ? n : $('.sumbtn'), p); }
+  if (!isNew) toast('Сохранено');
+  if (isNew) { const n = document.querySelector(`.day[data-d="${x.date}"] .ent[data-id="${CSS.escape(x.id)}"], [data-ent="${CSS.escape(x.id)}"]`); if (n) n.classList.add('new'); popButton(n); flyPts(n && rectOf(n) ? n : $('.sumbtn'), p); }
 }
 
 /* квест */
@@ -2572,7 +2883,7 @@ function questSave() {
     if (x.src) { const s = D.sides.find(y => y.id === x.src); if (s && !s.st) { s.st = 'week'; put('sides'); } }
   } else { const i = D.quests.findIndex(q => q.id === x.id); if (i >= 0) D.quests[i] = x; else D.quests.push(x); }
   put('quests'); closeModal();
-  if (tab !== 'week' || wk !== x.wk) { wk = x.wk; tab = 'week'; store.set('tab', tab); }
+  if (isGame()) wk = x.wk; else if (tab !== 'week' || wk !== x.wk) { wk = x.wk; tab = 'week'; store.set('tab', tab); }
   rerender();
   if (st === 'done' && was !== 'done') questWin(x); else toast(isNew ? 'Квест добавлен' : 'Сохранено');
 }
@@ -2583,6 +2894,7 @@ function openHabit(h) {
   edit = { k: 'habit', isNew, x: h ? { ...h } : { id: null, n: '', p: '', bonus: '' } };
   openModal(`${dlgHead(isNew ? 'Новая привычка' : 'Привычка')}
     <label class="fld"><span>Привычка</span><input class="in" id="hN" maxlength="60" placeholder="например: 10 000 шагов" value="${esc(edit.x.n)}"></label>
+    ${emoRow(edit.x.ic)}
     <div class="two"><label class="fld"><span>Б за день</span><input class="in num" id="hP" inputmode="decimal" placeholder="1" value="${fpIn(edit.x.p)}"></label>
     <label class="fld"><span>Бонус за 7/7</span><input class="in num" id="hB" inputmode="decimal" placeholder="0" value="${fpIn(edit.x.bonus)}"></label></div>
     <p class="hint">Бонус начисляется, если привычка отмечена все семь дней недели. Уже поставленные галочки сохраняют свои баллы, даже если поменять баллы за день.</p>
@@ -2615,7 +2927,9 @@ function openRep(r, sec, f) {
   openModal(`${dlgHead(isNew ? (x.freq === 'once' ? 'Отдельное дело' : 'Повторяющееся дело') : 'Дело из повторов')}
     <label class="fld"><span>Раздел</span><select class="in" id="rS">${D.secs.map(s => `<option value="${esc(s.id)}" ${s.id === x.sec ? 'selected' : ''}>${esc(s.n)}</option>`).join('')}${!secOf(x.sec) ? '<option value="" selected>без раздела</option>' : ''}</select></label>
     <div class="fld"><span>Как часто</span><div class="seg small wrap" id="rF">${FREQ.map(([v, l]) => `<button data-act="rfreq" data-v="${v}" class="${x.freq === v ? 'on' : ''}">${v === 'once' ? 'без частоты' : l.toLowerCase()}</button>`).join('')}</div></div>
-    <label class="fld"><span>Дело или квест</span><input class="in" id="rN" maxlength="120" placeholder="например: уборка" value="${esc(x.n)}"></label>
+    <label class="fld"><span>Дело</span><input class="in" id="rN" maxlength="120" placeholder="например: уборка" value="${esc(x.n)}"></label>
+    ${emoRow(x.ic)}
+    <label class="toggle"><input type="checkbox" id="rM" ${x.many ? 'checked' : ''}><span>Можно отмечать несколько раз в день</span></label>
     <label class="fld"><span>Чек-лист — по шагу в строке (необязательно)</span><textarea class="in" id="rL" rows="4" placeholder="протереть пыль&#10;стирка&#10;помыть пол">${esc(x.list)}</textarea></label>
     <label class="fld"><span>Баллы</span><input class="in big num" id="rP" inputmode="decimal" placeholder="0" value="${fpIn(x.p)}"></label>
     ${pchips('rP')}
@@ -2625,7 +2939,7 @@ function openRep(r, sec, f) {
 function repSave() {
   const n = $('#rN').value.trim();
   if (!n) { toast('Назовите дело'); $('#rN').focus(); return; }
-  const x = { ...edit.x, n, sec: $('#rS').value, list: $('#rL').value.trim(), p: num($('#rP').value) };
+  const x = { ...edit.x, n, sec: $('#rS').value, list: $('#rL').value.trim(), p: num($('#rP').value), many: $('#rM').checked };
   if (edit.isNew) { x.id = newId(); D.reps.push(x); } else { const i = D.reps.findIndex(r => r.id === x.id); if (i >= 0) D.reps[i] = x; }
   put('reps'); closeModal(); rerender(); toast('Сохранено');
 }
@@ -2680,6 +2994,7 @@ function openShop(x) {
   const cats = [...new Set(D.shop.map(s => s.cat).filter(Boolean))];
   openModal(`${dlgHead(isNew ? 'Новая награда' : 'Награда')}
     <label class="fld"><span>Награда</span><input class="in" id="shN" maxlength="120" placeholder="например: билеты в кино" value="${esc(edit.x.n)}"></label>
+    ${emoRow(edit.x.ic)}
     <label class="fld"><span>Категория (необязательно)</span><input class="in" id="shC" list="shCats" maxlength="40" placeholder="вещи, впечатления…" value="${esc(edit.x.cat)}"></label>
     <datalist id="shCats">${['вещи', 'впечатления', 'еда', 'отдых', ...cats].filter((v, i, a) => a.indexOf(v) === i).map(c => `<option value="${esc(c)}">`).join('')}</datalist>
     <div class="two"><label class="fld"><span>Цена, ₽</span><input class="in num" id="shR" inputmode="decimal" placeholder="0" value="${fpIn(edit.x.rub)}"></label>
@@ -2723,7 +3038,7 @@ function openWelcome() {
   openModal(`<div class="welcome"><div class="wbadge">${badge(1, 'big')}</div><h2 id="dt">Превратим дела в игру</h2>
     <p class="wl">Вы — герой первого уровня. Правила простые:</p>
     <ul class="wlist">
-      ${li('✍️', 'Делайте дела', 'записали сделанное — получили баллы (Б)')}
+      ${li('✍️', 'Делайте дела', 'нажали на дело — получили баллы (Б). Готовые дела уже в списке')}
       ${li('🔥', 'Держите серию', 'отмечайте привычки и не пропускайте дни')}
       ${li('🗡️', 'Берите квесты', 'главные цели недели с большой наградой')}
       ${li('🎁', 'Забирайте награды', 'копите баллы и меняйте на то, что назначили сами')}
@@ -2791,7 +3106,7 @@ document.addEventListener('click', e => {
     case 'wnext': wk = shift(wk, 7); selDay = wk; render(); break;
     case 'wnow': wk = monday(today()); selDay = today(); render(); break;
     case 'gowk': wk = el.dataset.wk; selDay = wk === monday(today()) ? today() : wk; goTab('week'); break;
-    case 'day': selDay = el.dataset.d; document.querySelectorAll('.dstrip button').forEach(b => { const on = b.dataset.d === selDay; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    case 'day': selDay = el.dataset.d; if (isGame()) { rerender(); break; } document.querySelectorAll('.dstrip button').forEach(b => { const on = b.dataset.d === selDay; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
       document.querySelectorAll('.day').forEach(s => s.classList.toggle('sel', s.dataset.d === selDay)); break;
     case 'habit': {
       const d = el.dataset.d, h = findBy('habits', id); if (!h) break;
@@ -2802,7 +3117,7 @@ document.addEventListener('click', e => {
       put('checks');
       rerender();
       if (!on) {
-        const b = document.querySelector(`.hab[data-d="${d}"][data-id="${CSS.escape(id)}"]`); popButton(b);
+        const b = document.querySelector(`[data-act="habit"][data-d="${d}"][data-id="${CSS.escape(id)}"] .g-chk, .hab[data-d="${d}"][data-id="${CSS.escape(id)}"]`); popButton(b);
         const S = weekStats(monday(d)), st = S.hstat.find(x => x.h.id === id), full = st && st.n === 7;
         flyPts(b, num(h.p) + (full ? num(h.bonus) : 0));
         if (full) { banner('⭐', 'Серия 7/7!', `«${h.n}» — все семь дней${num(h.bonus) ? ` · бонус +${fp(h.bonus)} Б` : ''}`); confetti(null, null, 90); sound('done'); }
@@ -2817,6 +3132,23 @@ document.addEventListener('click', e => {
     case 'logdel': confirmBox('Удалить это дело?', 'logdelyes'); break;
     case 'logdelyes': D.log = D.log.filter(x => x.id !== edit.x.id); put('log'); closeModal(); rerender(); toast('Дело удалено'); break;
 
+    // стиль «Игра»: дело одним нажатием
+    case 'gdo': {
+      const r = findBy('reps', id); if (!r) break;
+      const d = selDay, have = D.log.filter(e => e.rep === id && e.date === d);
+      if (have.length && !r.many) {
+        const last = have[have.length - 1]; D.log = D.log.filter(e => e !== last); put('log'); rerender(); break;
+      }
+      const s = secOf(r.sec);
+      D.log.push({ id: newId(), ts: Date.now(), date: d, cat: s && catOf(s.cat) ? s.cat : '', t: r.n, p: num(r.p), rep: r.id });
+      put('log'); rerender();
+      const row = document.querySelector(`[data-row="r${CSS.escape(id)}"]`), chk = row && row.querySelector('.g-chk');
+      if (row) row.classList.add('win'); popButton(chk); flyPts(chk, r.p);
+      break;
+    }
+    case 'gundo': { const have = D.log.filter(e => e.rep === id && e.date === selDay); if (have.length) { const last = have[have.length - 1]; D.log = D.log.filter(e => e !== last); put('log'); rerender(); } break; }
+    case 'qfin': { const q = findBy('quests', id); if (!q) break; if (q.st === 'done') { openQuest(q); break; } setQuestStatus(q, 'done'); put('quests'); rerender(); questWin(q); break; }
+    case 'emo': edit.x.ic = edit.x.ic === el.dataset.v ? '' : el.dataset.v; el.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el && !!edit.x.ic)); break;
     // квесты
     case 'qadd': openQuest(null, el.dataset.k); break;
     case 'qedit': openQuest(findBy('quests', id)); break;
@@ -2927,7 +3259,6 @@ document.addEventListener('click', e => {
       if (bank().bal < num(x.p)) { toast('Баллов не хватает'); closeModal(); break; }
       D.buys.push({ id: newId(), ts: Date.now(), date: today(), rid: x.id, n: x.n, p: num(x.p) });
       put('buys');
-      if (D.meta.goal === x.id) { D.meta = { ...D.meta, goal: null }; put('meta'); }
       closeModal(); rerender(); fxQ.push({ t: 'reward', n: x.n, p: num(x.p) }); fxNext(); break;
     }
     case 'buyedit': openBuyEdit(findBy('buys', id)); break;
@@ -2968,11 +3299,11 @@ document.addEventListener('change', e => {
   if (t) { const x = findBy('tags', t), n = e.target.value.trim(); if (x && n && n !== x.n) { x.n = n; put('tags'); rerender(); } else if (x) e.target.value = x.n; }
 });
 function questWin(q) {
-  const b = document.querySelector(`.qst[data-id="${CSS.escape(q.id)}"]`), r = rectOf(b);
+  const b = document.querySelector(`.qst[data-id="${CSS.escape(q.id)}"], [data-row="q${CSS.escape(q.id)}"] .g-chk, .gq[data-q="${CSS.escape(q.id)}"] .gq-done`), r = rectOf(b);
   popButton(b); flyPts(b, q.p); sound('done');
   if (r) confetti(r.left + r.width / 2, r.top + r.height / 2, 70); else confetti();
   banner(q.kind === 'side' ? '🍋' : '🗡️', 'Квест выполнен!', `«${q.n}» · +${fp(q.p)} Б`);
-  const card = document.querySelector(`.quest[data-q="${CSS.escape(q.id)}"]`); if (card) card.classList.add('win');
+  const card = document.querySelector(`.quest[data-q="${CSS.escape(q.id)}"], .gq[data-q="${CSS.escape(q.id)}"], [data-row="q${CSS.escape(q.id)}"]`); if (card) card.classList.add('win');
 }
 document.addEventListener('keydown', e => {
   if ($('#fx').classList.contains('open')) { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); fxClose(); } return; }
@@ -3495,6 +3826,14 @@ syncReady = true;
 let lastDay = today();
 setInterval(() => { const d = today(); if (d !== lastDay) { const wasNow = wk === monday(lastDay); lastDay = d; if (wasNow) { wk = monday(d); selDay = d; } if (syncCanApply()) rerender(); } }, 60000);
 
+// версия 3: готовые дела и награды для тех, у кого приложение уже стояло (у новых они есть сразу)
+if (num(D.meta.seed) < 3) {
+  const add = k => { let ch = false; for (const x of DEFS[k]) if (!D[k].some(y => y.id === x.id)) { D[k].push(clone(x)); ch = true; } return ch; };
+  const ks = ['secs', 'reps', 'shop'].filter(add);
+  const c = D.reps.find(r => r.id === 'r-clean'); if (c && c.n === 'Уборка') { c.n = 'Сделать уборку'; c.ic = c.ic || '🧹'; if (!ks.includes('reps')) ks.push('reps'); }
+  D.meta = { ...D.meta, seed: 3, goal: D.shop.some(x => x.id === D.meta.goal) ? D.meta.goal : 'sh-tea' };
+  put(...ks, 'meta'); clearTimeout(gameT);
+}
 gameMark();
 render(true);
 if (!store.get('hello', false)) { if (D.log.length || D.habits.length || D.quests.length) store.set('hello', true); else if (!syncJoin) openWelcome(); }
