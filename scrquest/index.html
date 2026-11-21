@@ -1464,6 +1464,199 @@ html body.compact-ui .workspace-page > .note { margin: 12px 0 0; }
 #sparkles svg { display: block; width: 100%; height: 100%; }
 html:not(.skin-notebook):not(.skin-paper) .book h2.hl { background: none; padding: 0; }
 
+/* ===================== v2: игра — герой, серия, цель дня, эффекты ===================== */
+.badge { display: block; width: 56px; height: 63px; filter: drop-shadow(0 2px 3px rgba(0,0,0,.18)); }
+.badge .b1 { fill: #E8A93A; }
+.badge .b2 { fill: var(--acc); }
+.badge text { fill: var(--on-acc); font-weight: 700; font-family: inherit; font-variant-numeric: tabular-nums; }
+.badge.big { width: 96px; height: 108px; }
+.hero .hr1 { display: flex; align-items: center; gap: 14px; padding-top: 12px; }
+.hero .lvl { flex: none; border-radius: 14px; transition: transform .2s; }
+.hero .lvl:hover { transform: scale(1.06) rotate(-3deg); }
+.hero .hx { flex: 1; min-width: 0; }
+.hrank { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.hrank b { font-size: 21px; font-weight: 500; }
+.hrank span { font-size: 13.5px; color: var(--soft); font-style: italic; }
+.pbar i { width: 0; }
+.pbar.xp { height: 10px; border-radius: 5px; margin-top: 6px; }
+.pbar.xp i { border-radius: 5px; background: linear-gradient(90deg, var(--acc), #E8A93A); transition: width .9s cubic-bezier(.2,.8,.2,1); }
+.hxp { font-size: 12.5px; color: var(--soft); margin-top: 4px; }
+.streak { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 8px 14px; border-radius: 14px; background: var(--paper); font-size: 14px; color: var(--soft); line-height: 18px; }
+.streak .fl { font-size: 20px; filter: grayscale(1); opacity: .5; }
+.streak b { font-size: 20px; font-weight: 600; color: var(--ink); }
+.streak.on { background: color-mix(in srgb, #E8A93A 20%, var(--page)); color: var(--ink); }
+.streak.on .fl { filter: none; opacity: 1; display: inline-block; animation: flame 1.6s ease-in-out infinite; transform-origin: 50% 90%; }
+.streak.risk { outline: 1.5px dashed #E8A93A; }
+@keyframes flame { 0%, 100% { transform: scale(1) rotate(-3deg); } 50% { transform: scale(1.14) rotate(3deg); } }
+.hero .hr2 { display: grid; grid-template-columns: 88px minmax(0, 1fr) minmax(0, 1fr); gap: 6px 14px; align-items: center; margin-top: 14px; }
+.hero .ring { grid-row: span 2; }
+.hero .hs3:nth-child(2) { grid-column: 2 / 4; }
+.hero .hsv { font-size: 19px; font-weight: 500; }
+.hero .sc-big { font-size: 30px; line-height: 34px; font-weight: 500; }
+.hero .sc-bank { text-align: left; }
+.hero .sc-bank b { font-size: 22px; line-height: 34px; font-weight: 500; color: var(--acc); white-space: nowrap; display: block; }
+.ring { position: relative; width: 88px; height: 88px; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); display: block; }
+.ring circle { fill: none; stroke-width: 8; }
+.ring .rt { stroke: var(--paper); }
+.ring .rv { stroke: var(--acc); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1), stroke .3s; }
+.ring.full .rv { stroke: #E8A93A; }
+.ring .rc { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.ring .rc b { font-size: 24px; line-height: 26px; font-weight: 600; }
+.ring .rc i { font-size: 11.5px; color: var(--soft); font-style: normal; }
+.pbar i { transition: width .8s cubic-bezier(.2,.8,.2,1); }
+@media (min-width: 900px) {
+  .hero .hr2 { grid-template-columns: 88px repeat(3, minmax(0, 1fr)); }
+  .hero .ring { grid-row: auto; }
+  .hero .hs3:nth-child(2) { grid-column: auto; }
+  html body.compact-ui .workspace-page .hero .sc-big { font-size: 30px; line-height: 34px; }
+}
+
+/* первые шаги */
+.fh { display: flex; align-items: center; gap: 10px; }
+.fh h2.hl { flex: 1; min-width: 0; }
+.fh > b { margin-top: 14px; font-weight: 500; color: var(--acc); white-space: nowrap; }
+.fx0 { width: 36px; height: 36px; margin-top: 14px; color: var(--faint); flex: none; }
+.first { border-color: var(--acc); }
+.fstep { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 8px 0; text-align: left; border-bottom: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); }
+.first > .fstep:last-child { border-bottom: 0; }
+.fstep .fn { width: 30px; height: 30px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--acc); color: var(--on-acc); font-weight: 600; font-size: 14px; }
+.fstep .ft { flex: 1; min-width: 0; }
+.fstep .ft b { display: block; font-weight: 500; }
+.fstep .ft i { display: block; font-size: 13px; color: var(--soft); line-height: 17px; }
+.fstep .fgo { color: var(--acc); font-size: 20px; }
+.fstep.ok .fn { background: var(--good); color: #fff; }
+.fstep.ok .ft b { color: var(--soft); text-decoration: line-through; font-weight: 400; }
+button.fstep:hover .fgo { transform: translateX(4px); } .fstep .fgo { transition: transform .2s; }
+
+/* пора сделать */
+.duel { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.dueb { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 14px 6px 8px; border-radius: 999px; border: 1.5px solid var(--acc); background: var(--page); max-width: 100%; transition: transform .15s, background .2s; }
+.dueb:hover { background: var(--wash); transform: translateY(-1px); }
+.dueb .dk { width: 28px; height: 28px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--acc); color: var(--on-acc); font-size: 14px; }
+.dueb .dn { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dueb b { color: var(--acc); font-weight: 600; white-space: nowrap; }
+.skin-paper .dueb, .skin-notebook .dueb, .skin-paper .dueb .dk, .skin-notebook .dueb .dk, .skin-paper .streak, .skin-notebook .streak, .skin-paper .fstep .fn, .skin-notebook .fstep .fn { border-radius: 2px; }
+
+/* квесты, дела, награды: движение */
+.qbar { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.qbar .pbar { flex: 1; max-width: 220px; height: 6px; margin: 0; }
+.qbar em { font-size: 12px; font-style: normal; color: var(--soft); }
+.quest.done .qm b::after { content: " ✓"; color: var(--good); }
+.quest.win { animation: questwin 1s ease-out; border-radius: 12px; }
+@keyframes questwin { 0% { background: color-mix(in srgb, #E8A93A 55%, transparent); box-shadow: 0 0 0 8px color-mix(in srgb, #E8A93A 40%, transparent); } 100% { background: transparent; box-shadow: 0 0 0 0 transparent; } }
+.ent.new { animation: entnew .9s ease-out; }
+@keyframes entnew { 0% { background: color-mix(in srgb, #E8A93A 50%, transparent); transform: translateX(-10px); opacity: 0; } 30% { transform: none; opacity: 1; } 100% { background: transparent; } }
+.hab .hb, .step .sb { transition: background .2s, border-color .2s; }
+.hab.on .hb::after, .step.ok .sb::after { animation: tickin .25s ease-out; }
+@keyframes tickin { from { opacity: 0; scale: .2; } to { opacity: 1; scale: 1; } }
+.shopi .sm .pbar { display: block; height: 5px; margin-top: 6px; max-width: 260px; }
+.shopi.can .sbtn, .btn.glow { animation: glow 1.8s ease-in-out infinite; }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, #E8A93A 70%, transparent); } 50% { box-shadow: 0 0 0 7px color-mix(in srgb, #E8A93A 0%, transparent); } }
+.sumbtn { transition: transform .15s, box-shadow .2s; }
+.sumbtn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px color-mix(in srgb, var(--acc) 30%, transparent); }
+.sumbtn:active { transform: scale(.985); }
+.flypts { position: fixed; left: 0; top: 0; z-index: 70; pointer-events: none; font-weight: 700; font-size: 22px; color: var(--acc); text-shadow: 0 0 6px var(--page), 0 0 2px var(--page), 0 1px 0 var(--page); white-space: nowrap; will-change: transform, opacity; }
+.flypts::after { content: " Б"; font-size: 15px; }
+
+/* баннеры: достижение, цель дня, квест */
+#banners { position: fixed; left: 0; right: 0; top: calc(10px + var(--safe-top, 0px)); z-index: 80; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; padding: 0 12px; }
+.bnr { pointer-events: auto; cursor: pointer; display: flex; align-items: center; gap: 12px; max-width: min(440px, 100%); padding: 10px 18px 10px 12px; border-radius: 18px; background: var(--ink); color: var(--page); box-shadow: 0 8px 24px rgba(0,0,0,.28); transform: translateY(-160%) scale(.9); opacity: 0; transition: transform .45s cubic-bezier(.2,1.3,.4,1), opacity .3s; }
+.bnr.in { transform: none; opacity: 1; }
+.bnr .bi { font-size: 30px; line-height: 1; flex: none; }
+.bnr .bt b { display: block; font-weight: 600; font-size: 15.5px; }
+.bnr .bt i { display: block; font-size: 13px; opacity: .85; font-style: normal; line-height: 17px; }
+.skin-paper .bnr, .skin-notebook .bnr { border-radius: 3px; }
+#confetti { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 95; pointer-events: none; }
+
+/* окно-поздравление: новый уровень, награда */
+#fx { display: none; }
+#fx.open { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; overflow: hidden; background: color-mix(in srgb, #1b1210 72%, transparent); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); animation: fxbg .3s ease-out; }
+@keyframes fxbg { from { opacity: 0; } }
+#fx .rays { position: absolute; left: 50%; top: 50%; width: 180vmax; height: 180vmax; margin: -90vmax 0 0 -90vmax; background: repeating-conic-gradient(from 0deg, rgba(255, 214, 110, .22) 0 9deg, transparent 9deg 18deg); -webkit-mask-image: radial-gradient(circle, #000 0, transparent 46%); mask-image: radial-gradient(circle, #000 0, transparent 46%); animation: rays 28s linear infinite; }
+@keyframes rays { to { transform: rotate(360deg); } }
+#fx .fxc { position: relative; width: min(340px, 88vw); padding: 26px 22px 20px; border-radius: 28px; background: var(--page); color: var(--ink); text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.4); animation: fxpop .55s cubic-bezier(.2,1.4,.4,1); }
+@keyframes fxpop { from { transform: scale(.6); opacity: 0; } }
+#fx .fxk { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--acc); font-weight: 600; }
+#fx .fxbadge { display: grid; place-items: center; margin: 14px 0 6px; }
+#fx .fxbadge .badge { width: 124px; height: 140px; animation: badgein .9s cubic-bezier(.2,1.5,.4,1) .15s backwards; }
+@keyframes badgein { from { transform: scale(0) rotate(-200deg); } }
+#fx .fxn { font-size: 28px; line-height: 34px; font-weight: 500; overflow-wrap: anywhere; }
+#fx p { margin: 8px 0 16px; font-size: 14.5px; line-height: 20px; color: var(--soft); }
+#fx .btn { width: 100%; }
+#fx.reward .fxc { min-height: 290px; display: flex; flex-direction: column; justify-content: flex-end; }
+#fx .gift { position: absolute; left: 0; right: 0; top: 54px; font-size: 96px; line-height: 1; animation: gift 1s ease-in forwards; }
+@keyframes gift { 0% { transform: scale(.4); } 15% { transform: scale(1); } 25%, 45%, 65% { transform: rotate(-9deg) scale(1.02); } 35%, 55%, 75% { transform: rotate(9deg) scale(1.06); } 88% { transform: scale(1.35); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
+#fx .rev { animation: rev .5s ease-out .95s backwards; }
+#fx .rev::before { content: "🎉"; display: block; font-size: 64px; line-height: 1.1; margin-bottom: 8px; }
+@keyframes rev { from { opacity: 0; transform: translateY(18px) scale(.9); } }
+.skin-paper #fx .fxc, .skin-notebook #fx .fxc { border-radius: 4px; }
+
+/* вкладка «Герой» */
+.herobig .hb1 { display: flex; align-items: center; gap: 18px; padding-top: 14px; }
+.herobig .hb2 { flex: 1; min-width: 0; }
+.herobig .hbr { font-size: 28px; line-height: 32px; font-weight: 500; }
+.herobig .hbl { font-size: 14px; color: var(--soft); font-style: italic; }
+.ranks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.ranks span { padding: 5px 12px; border-radius: 999px; background: var(--paper); color: var(--faint); font-size: 13px; white-space: nowrap; }
+.ranks span b { font-weight: 500; } .ranks span i { font-style: normal; font-size: 11.5px; margin-left: 4px; }
+.ranks span.on { background: var(--wash); color: var(--ink); }
+.ranks span.cur { background: var(--acc); color: var(--on-acc); }
+.tiles6 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.tiles6 > div { background: var(--paper); border-radius: 16px; padding: 10px 6px; text-align: center; min-width: 0; }
+.tiles6 .ti { display: block; font-size: 20px; line-height: 24px; }
+.tiles6 b { display: block; font-size: 24px; line-height: 30px; font-weight: 500; }
+.tiles6 i { display: block; font-size: 12px; line-height: 15px; color: var(--soft); font-style: normal; }
+.wbars { display: flex; align-items: stretch; gap: 6px; height: 170px; margin-top: 12px; }
+.wbars button { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; }
+.wbars em { font-size: 11.5px; font-style: normal; color: var(--soft); }
+.wbars span { display: block; width: 100%; max-width: 46px; border-radius: 8px 8px 3px 3px; background: color-mix(in srgb, var(--acc) 38%, var(--paper)); transition: background .2s; transform-origin: bottom; animation: growbar .7s cubic-bezier(.2,.8,.2,1) backwards; }
+@keyframes growbar { from { transform: scaleY(0); } }
+.wbars button:hover span { background: color-mix(in srgb, var(--acc) 65%, var(--paper)); }
+.wbars .now span { background: var(--acc); }
+.wbars i { font-size: 10.5px; font-style: normal; color: var(--faint); white-space: nowrap; }
+.achs { display: grid; grid-template-columns: repeat(auto-fill, minmax(138px, 1fr)); gap: 8px; margin-top: 12px; }
+.ach { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 8px 10px; border-radius: 16px; background: var(--paper); text-align: center; min-width: 0; }
+.ach .ai { font-size: 32px; line-height: 38px; filter: grayscale(1); opacity: .4; }
+.ach b { font-weight: 500; font-size: 14px; line-height: 18px; color: var(--soft); }
+.ach i { font-size: 12px; line-height: 15px; color: var(--faint); font-style: normal; }
+.ach .pbar { width: 80%; height: 5px; margin-top: 6px; background: color-mix(in srgb, var(--faint) 30%, var(--paper)); }
+.ach em { font-size: 11.5px; font-style: normal; color: var(--faint); margin-top: 3px; }
+.ach.ok { background: var(--wash); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, #E8A93A 80%, transparent); }
+.ach.ok .ai { filter: none; opacity: 1; }
+.ach.ok b { color: var(--ink); } .ach.ok i { color: var(--soft); } .ach.ok em { color: var(--acc); font-weight: 600; }
+.skin-paper .tiles6 > div, .skin-notebook .tiles6 > div, .skin-paper .ach, .skin-notebook .ach, .skin-paper .ranks span, .skin-notebook .ranks span, .skin-paper .wbars span, .skin-notebook .wbars span { border-radius: 2px; }
+@media (min-width: 900px) { .tiles6 { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+/* первый запуск */
+.welcome { text-align: center; }
+.welcome .wbadge { display: grid; place-items: center; margin-top: 4px; }
+.welcome .wbadge .badge { animation: badgein .9s cubic-bezier(.2,1.5,.4,1) .1s backwards; }
+.welcome h2 { margin: 10px 0 2px; font-size: 26px; line-height: 32px; font-weight: 500; }
+.welcome .wl { margin: 0 0 6px; color: var(--soft); font-style: italic; }
+.wlist { list-style: none; margin: 0; padding: 0; text-align: left; }
+.wlist li { display: flex; align-items: center; gap: 12px; padding: 7px 0; }
+.wlist li > span { width: 40px; height: 40px; flex: none; display: grid; place-items: center; font-size: 22px; border-radius: 12px; background: var(--wash); }
+.wlist b { display: block; font-weight: 500; } .wlist i { display: block; font-size: 13px; line-height: 17px; color: var(--soft); }
+.welcome .fld { text-align: left; }
+@media (prefers-reduced-motion: reduce) {
+  .streak.on .fl, .shopi.can .sbtn, .btn.glow, .quest.win, .ent.new, #fx .rays, #fx .fxc, #fx .fxbadge .badge, .welcome .wbadge .badge, .wbars span, .hab.on .hb::after, .step.ok .sb::after { animation: none; }
+  #fx .gift { display: none; } #fx .rev { animation: none; }
+  .pbar i, .ring .rv, .bnr { transition: none; }
+}
+.achs { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+@media (max-width: 899px) { .skin-paper #nav.six button { font-size: 9px; padding: 8px 3px 0; overflow: hidden; } .skin-paper .jhead .big { font-size: 30px; line-height: 34px; } }
+@media (min-width: 900px) {
+  html body.compact-ui .workspace-page .topgrid .card { margin: 12px 0 0; padding: 12px 16px; }
+  html body.compact-ui .workspace-page .topgrid .sumbtn { width: 100%; margin: 12px 0 0; }
+}
+@media (min-width: 1200px) {
+  .topgrid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 0 16px; align-items: start; }
+  .topgrid .sumbtn { padding: 18px 20px; }
+  .topgrid .sumbtn b { font-size: 20px; }
+  .topgrid .sumbtn i::after { content: " · клавиша N"; opacity: .8; }
+}
+
 </style>
 </head>
 <body class="compact-ui">
@@ -1476,16 +1669,20 @@ html:not(.skin-notebook):not(.skin-paper) .book h2.hl { background: none; paddin
 
 <main id="main"></main>
 
-<nav id="nav" class="five six">
+<nav id="nav" class="six">
   <button data-tab="week"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 2.6l2.9 6.1 6.6.8-4.9 4.6 1.3 6.5L12 17.3l-5.9 3.3 1.3-6.5-4.9-4.6 6.6-.8z"/></svg></span><span class="nav-label">Неделя</span></button>
   <button data-tab="reps"><span class="ic"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg></span><span class="nav-label">Повторы</span></button>
   <button data-tab="side"><span class="ic"><svg viewBox="0 0 24 24"><path d="M15 5.1 9 3 3 5v16l6-2.1 6 2.1 6-2V3zM15 19l-6-2.1V5l6 2.1z"/></svg></span><span class="nav-label">Побочки</span></button>
   <button data-tab="rewards"><span class="ic"><svg viewBox="0 0 24 24"><path d="M20 7h-2.2c.1-.3.2-.6.2-1a3 3 0 0 0-5.5-1.7L12 5l-.5-.7A3 3 0 0 0 6 6c0 .4.1.7.2 1H4a2 2 0 0 0-2 2v2c0 .6.4 1 1 1h8V7h2v5h8c.6 0 1-.4 1-1V9a2 2 0 0 0-2-2zM9 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2zM3 13v7a2 2 0 0 0 2 2h6v-9zm10 9h6a2 2 0 0 0 2-2v-7h-8z"/></svg></span><span class="nav-label">Награды</span></button>
+  <button data-tab="hero"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 1.800 20.500 5v6.600c0 5.300-3.600 9.300-8.500 10.900-4.900-1.600-8.500-5.600-8.500-10.900V5zm0 5.100-1.500 3.200-3.500.4 2.600 2.400-.7 3.500 3.100-1.800 3.100 1.800-.7-3.500 2.600-2.400-3.500-.4z"/></svg></span><span class="nav-label">Герой</span></button>
   <button data-tab="settings"><span class="ic"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96a7 7 0 0 0-1.62-.94l-.36-2.54a.48.48 0 0 0-.48-.41h-3.84a.48.48 0 0 0-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 0 0-.59.22L2.74 8.87a.47.47 0 0 0 .12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.48.48 0 0 0-.12-.61zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></span><span class="nav-label">Настройки</span></button>
 </nav>
 
 <div id="modal"></div>
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="banners" aria-live="polite"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div id="fx"></div>
 <input type="file" id="importFile" accept=".json,application/json,text/plain" hidden>
 
 <script>
@@ -1613,7 +1810,7 @@ const getK = k => { const v = store.get(k, undefined); return v === undefined ||
 for (const k of Object.keys(DEFS)) D[k] = getK(k);
 // первый запуск: стартовые записи — в хранилище (без времени правки, поэтому любая правка с другого устройства важнее)
 if (!store.get('seeded', false)) { for (const k of Object.keys(DEFS)) store.set(k, D[k]); store.set('seeded', true); }
-const put = (...ks) => { for (const k of ks) store.set(k, D[k]); bankC = null; };
+const put = (...ks) => { for (const k of ks) store.set(k, D[k]); bankC = null; gameSoon(); };
 
 const catOf = id => D.cats.find(c => c.id === id);
 const catName = id => { const c = catOf(id); return c ? c.n : 'без категории'; };
@@ -1714,8 +1911,214 @@ let toastT;
 function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('in'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('in'), 2400); }
 
 
+/* ---------- игра: уровень героя, серия дней, цель дня, достижения ----------
+   Всё считается из тех же данных (дела, галочки, квесты, покупки), поэтому на всех устройствах одинаково.
+   На устройстве хранится только «что уже отпраздновали» (seen), чтобы не поздравлять дважды. */
+const RANKS = [[1, 'Новичок'], [3, 'Искатель'], [5, 'Путник'], [8, 'Герой'], [12, 'Мастер'], [17, 'Легенда']];
+const lvlAt = L => 5 * (L - 1) * (L + 2);            // сколько Б нужно всего, чтобы получить уровень L: 0, 20, 50, 90, 140…
+const rankOf = L => RANKS.filter(r => L >= r[0]).pop()[1];
+const nextRank = L => RANKS.find(r => r[0] > L);
+const dayGoal = () => { const g = num(D.meta.dayGoal); return g > 0 ? g : 10; };
+let gameC = null;
+function gameStats() {
+  const B = bank();
+  if (gameC && gameC.B === B) return gameC;
+  const td = today(), dayPts = {}, active = new Set();
+  for (const w of B.weeks) for (const d of w.days) if (w.dayTot[d]) dayPts[d] = (dayPts[d] || 0) + w.dayTot[d];
+  for (const e of D.log) active.add(e.date);
+  for (const d of Object.keys(D.checks)) if (Object.values(D.checks[d] || {}).some(isChecked)) active.add(d);
+  let questsDone = 0, sideDone = 0, heroWeek = false; const storyByWk = {};
+  for (const q of D.quests) {
+    if (q.kind === 'story') (storyByWk[q.wk] = storyByWk[q.wk] || []).push(q);
+    if (q.st !== 'done') continue;
+    questsDone++; if (q.kind === 'side') sideDone++;
+    if (q.doneAt) { active.add(q.doneAt); dayPts[q.doneAt] = (dayPts[q.doneAt] || 0) + num(q.p); }
+  }
+  for (const k of Object.keys(storyByWk)) if (storyByWk[k].length >= 2 && storyByWk[k].every(q => q.st === 'done')) heroWeek = true;
+  // серия: сколько дней подряд было хоть одно действие (сегодня ещё можно успеть — серия не рвётся до конца дня)
+  let streak = 0, d = active.has(td) ? td : shift(td, -1);
+  while (active.has(d)) { streak++; d = shift(d, -1); }
+  let best = 0, run = 0, prev = null;
+  for (const x of [...active].sort()) { run = prev && shift(prev, 1) === x ? run + 1 : 1; if (run > best) best = run; prev = x; }
+  const xp = Math.max(0, B.earned);
+  let lvl = 1; while (xp >= lvlAt(lvl + 1)) lvl++;
+  const base = lvlAt(lvl), need = lvlAt(lvl + 1) - base, dg = dayGoal();
+  let series = 0, checks = 0;
+  for (const w of B.weeks) for (const h of w.hstat) { checks += h.n; if (h.n === 7) series++; }
+  const goalDays = Object.keys(dayPts).filter(k => dayPts[k] >= dg).length;
+  const G = { B, xp, lvl, rank: rankOf(lvl), xpIn: xp - base, xpNeed: need, lvlPct: Math.min(100, (xp - base) / need * 100), dayPts, active, streak, best, todayActive: active.has(td),
+    deeds: D.log.length, questsDone, sideDone, heroWeek, series, checks, goalDays, goalToday: (dayPts[td] || 0) >= dg, buys: D.buys.length };
+  G.ach = ACH.map(([id, ic, n, desc, f]) => { const [cur, max] = f(G); return { id, ic, n, desc, cur: Math.min(cur, max), max, ok: cur >= max }; });
+  return gameC = G;
+}
+// достижения: [id, значок, название, условие, s => [сколько есть, сколько нужно]]
+const ACH = [
+  ['first', '🌱', 'Первый шаг', 'Записать первое дело', s => [s.deeds, 1]],
+  ['d10', '✍️', 'Разогрев', '10 записанных дел', s => [s.deeds, 10]],
+  ['d50', '💪', 'В ритме', '50 записанных дел', s => [s.deeds, 50]],
+  ['d200', '🏔️', 'Гора дел', '200 записанных дел', s => [s.deeds, 200]],
+  ['s3', '🔥', 'Огонёк', '3 дня подряд', s => [s.best, 3]],
+  ['s7', '🔥', 'Неделя без пропусков', '7 дней подряд', s => [s.best, 7]],
+  ['s14', '☄️', 'Две недели', '14 дней подряд', s => [s.best, 14]],
+  ['s30', '🌋', 'Несгораемый', '30 дней подряд', s => [s.best, 30]],
+  ['g1', '🎯', 'В яблочко', 'Выполнить цель дня', s => [s.goalDays, 1]],
+  ['g7', '🏹', 'Меткий', 'Цель дня — 7 раз', s => [s.goalDays, 7]],
+  ['g30', '🌠', 'Звёздный месяц', 'Цель дня — 30 раз', s => [s.goalDays, 30]],
+  ['h77', '⭐', 'Серия 7/7', 'Привычка все 7 дней недели', s => [s.series, 1]],
+  ['h77x5', '🌟', 'Привычка — вторая натура', '5 серий 7/7', s => [s.series, 5]],
+  ['q1', '🗡️', 'Квест выполнен', 'Завершить первый квест', s => [s.questsDone, 1]],
+  ['q10', '🛡️', 'Искатель приключений', '10 завершённых квестов', s => [s.questsDone, 10]],
+  ['q30', '🐉', 'Победитель драконов', '30 завершённых квестов', s => [s.questsDone, 30]],
+  ['hw', '👑', 'Неделя героя', 'Все сюжетные квесты недели готовы (от двух)', s => [s.heroWeek ? 1 : 0, 1]],
+  ['side3', '🍋', 'Жизнь — не только дела', '3 побочных квеста', s => [s.sideDone, 3]],
+  ['p100', '💰', 'Первая сотня', 'Заработать 100 Б', s => [s.xp, 100]],
+  ['p500', '💎', 'Пятьсот', 'Заработать 500 Б', s => [s.xp, 500]],
+  ['p1000', '🏆', 'Тысячник', 'Заработать 1000 Б', s => [s.xp, 1000]],
+  ['r1', '🎁', 'Заслуженная награда', 'Взять первую награду', s => [s.buys, 1]],
+  ['r5', '🎉', 'Умею радоваться', 'Взять 5 наград', s => [s.buys, 5]],
+  ['l5', '🚀', 'На взлёт', 'Достичь 5 уровня', s => [s.lvl, 5]],
+  ['l10', '🦸', 'Супергерой', 'Достичь 10 уровня', s => [s.lvl, 10]],
+];
+const badge = (L, cls = '') => `<svg class="badge ${cls}" viewBox="0 0 48 54" aria-hidden="true"><path class="b1" d="M24 2 45 9.500v17.500C45 39.500 36 48.500 24 52 12 48.500 3 39.500 3 27V9.500z"/><path class="b2" d="M24 6.500 41 12.600V27c0 10.300-7.200 17.600-17 20.700C14.200 44.600 7 37.300 7 27V12.600z"/><text x="24" y="${L > 99 ? 33 : 35}" text-anchor="middle" font-size="${L > 99 ? 15 : L > 9 ? 19 : 22}">${L}</text></svg>`;
+const daysWord = n => `${n} ${plural(n, 'день', 'дня', 'дней')}`;
+
+/* ---------- что уже отпраздновали ---------- */
+let gameT = 0;
+function gameSoon() { clearTimeout(gameT); gameT = setTimeout(gameCheck, 420); }
+function gameNow(G) { const seen = store.get('seen', null) || { lvl: 1, ach: [], goal: '' }; return { seen, cur: { lvl: Math.max(seen.lvl || 1, G.lvl), ach: [...new Set([...(seen.ach || []), ...G.ach.filter(a => a.ok).map(a => a.id)])], goal: G.goalToday ? today() : seen.goal || '' } }; }
+// тихо: данные пришли с другого устройства или приложение только открылось — там уже поздравили
+function gameMark() { store.set('seen', gameNow(gameStats()).cur); }
+function gameCheck() {
+  const G = gameStats(), had = store.get('seen', null), { seen, cur } = gameNow(G);
+  store.set('seen', cur);
+  if (!had) { if (G.ach.every(a => !a.ok) && G.lvl === 1) return; }
+  const q = [];
+  if (G.goalToday && seen.goal !== today()) q.push({ t: 'goal' });
+  for (const a of G.ach) if (a.ok && !(seen.ach || []).includes(a.id)) q.push({ t: 'ach', a });
+  if (G.lvl > (seen.lvl || 1)) q.push({ t: 'lvl', G });
+  if (q.length) { fxQ.push(...q); fxNext(); if (tab === 'hero' && syncCanApply()) rerender(); }
+}
+
+/* ---------- эффекты: конфетти, летящие баллы, баннеры, окна-поздравления ---------- */
+const calm = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+const SND = { tick: [[740, .07]], coin: [[988, .07], [1319, .16]], done: [[659, .09], [880, .09], [1175, .2]], win: [[523, .12], [659, .12], [784, .12], [1047, .34]] };
+let actx = null;
+function sound(name) {
+  if (!store.get('sound', false)) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    let t = actx.currentTime + 0.01;
+    for (const [f, dur] of SND[name] || []) {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'triangle'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + 0.03); t += dur * 0.8;
+    }
+  } catch (e) {}
+}
+let cfParts = [], cfRun = false;
+function confetti(x, y, n = 80, spread = 1) {
+  if (calm()) return;
+  const cv = $('#confetti'), dpr = Math.min(2, window.devicePixelRatio || 1);
+  if (cv.width !== Math.round(innerWidth * dpr)) { cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr); }
+  const acc = getComputedStyle(document.documentElement).getPropertyValue('--acc').trim() || '#C0584A';
+  const cols = [acc, '#E8A93A', '#F4C95D', '#8FBF7A', '#E58FB1', '#7FA8E0'];
+  if (x == null) { x = innerWidth / 2; y = innerHeight * .34; }
+  for (let i = 0; i < n; i++) {
+    const a = -Math.PI / 2 + (Math.random() - .5) * Math.PI * 1.25 * spread, v = 5 + Math.random() * 9;
+    cfParts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2, r: Math.random() * 6.28, vr: (Math.random() - .5) * .5, w: 6 + Math.random() * 6, h: 3 + Math.random() * 5, c: cols[i % cols.length], t: 0, life: 70 + Math.random() * 50, star: i % 5 === 0 });
+  }
+  if (cfRun) return; cfRun = true;
+  const ctx = cv.getContext('2d'), star = new Path2D(STAR_PATH);
+  (function step() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, innerWidth, innerHeight);
+    cfParts = cfParts.filter(p => p.t < p.life && p.y < innerHeight + 30);
+    for (const p of cfParts) {
+      p.t++; p.vy += .32; p.vx *= .985; p.vy *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+      ctx.save(); ctx.globalAlpha = Math.min(1, (p.life - p.t) / 18); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+      if (p.star) { ctx.scale(p.w * .9, p.w * .9); ctx.fill(star); } else { ctx.scale(1, Math.cos(p.t * .22 + p.r)); ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+      ctx.restore();
+    }
+    if (cfParts.length) requestAnimationFrame(step); else { cfRun = false; ctx.clearRect(0, 0, innerWidth, innerHeight); }
+  })();
+}
+const rectOf = el => { if (!el) return null; const r = el.getBoundingClientRect ? el.getBoundingClientRect() : el; return r.width || r.height ? r : null; };
+// «+7 Б» вылетает из нажатого места и прилетает в копилку
+function flyPts(from, p) {
+  p = num(p); if (!(p > 0)) return;
+  sound('coin');
+  const r = rectOf(from), pill = $('#bal'), to = pill && pill.getBoundingClientRect();
+  if (calm() || !r || !to || !document.body.animate) return;
+  const el = document.createElement('span'); el.className = 'flypts'; el.textContent = `+${fp(p)}`;
+  document.body.appendChild(el);
+  const x0 = r.left + r.width / 2, y0 = r.top + r.height / 2, x1 = to.left + to.width / 2, y1 = to.top + to.height / 2;
+  el.animate([
+    { transform: `translate(${x0}px, ${y0}px) translate(-50%, -50%) scale(.4)`, opacity: 0 },
+    { transform: `translate(${x0}px, ${y0 - 34}px) translate(-50%, -50%) scale(1.25)`, opacity: 1, offset: .22 },
+    { transform: `translate(${x0}px, ${y0 - 40}px) translate(-50%, -50%) scale(1.1)`, opacity: 1, offset: .42 },
+    { transform: `translate(${x1}px, ${y1}px) translate(-50%, -50%) scale(.5)`, opacity: .2 },
+  ], { duration: 900, easing: 'cubic-bezier(.5,0,.3,1)' }).onfinish = () => { el.remove(); popButton(pill, false); };
+}
+function banner(ic, title, text, ms = 3200) {
+  const box = $('#banners'), el = document.createElement('div');
+  el.className = 'bnr'; el.setAttribute('role', 'status');
+  el.innerHTML = `<span class="bi">${ic}</span><span class="bt"><b>${esc(title)}</b>${text ? `<i>${esc(text)}</i>` : ''}</span>`;
+  box.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('in'));
+  setTimeout(() => { el.classList.remove('in'); setTimeout(() => el.remove(), 400); }, ms);
+  el.onclick = () => el.remove();
+}
+const fxQ = []; let fxBusy = false;
+function fxNext() {
+  if (fxBusy) return;
+  const x = fxQ.shift(); if (!x) return;
+  if (x.t === 'ach') { banner(x.a.ic, 'Достижение: ' + x.a.n, x.a.desc); sound('done'); confetti(innerWidth / 2, 90, 36, .9); fxBusy = true; setTimeout(() => { fxBusy = false; fxNext(); }, 900); return; }
+  if (x.t === 'goal') { banner('🎯', 'Цель дня выполнена!', `${fp(dayGoal())} Б за день — отличный день`); sound('done'); confetti(null, null, 70); fxBusy = true; setTimeout(() => { fxBusy = false; fxNext(); }, 900); return; }
+  if (x.t === 'lvl') {
+    const G = x.G, nr = nextRank(G.lvl), newRank = RANKS.some(r => r[0] === G.lvl);
+    fxOverlay('lvlup', `<div class="fxk">Новый уровень!</div><div class="fxbadge">${badge(G.lvl)}</div>
+      <div class="fxn">${esc(G.rank)}</div>
+      <p>${newRank ? `Новое звание — «${esc(G.rank)}». ` : ''}До уровня ${G.lvl + 1} осталось ${fp(G.xpNeed - G.xpIn)} Б${nr && !newRank ? `, до звания «${nr[1]}» — уровень ${nr[0]}` : ''}.</p>`, 'Дальше');
+    return;
+  }
+  if (x.t === 'reward') {
+    fxOverlay('reward', `<div class="gift" aria-hidden="true">🎁</div><div class="rev"><div class="fxk">Награда ваша!</div><div class="fxn">${esc(x.n)}</div>
+      <p>Вы это заслужили: ${fp(x.p)} Б честно заработаны. Наслаждайтесь!</p></div>`, 'Ура!', 950);
+  }
+}
+function fxOverlay(cls, html, btn, delay = 250) {
+  fxBusy = true;
+  const el = $('#fx');
+  el.className = 'open ' + cls;
+  el.innerHTML = `<div class="rays" aria-hidden="true"></div><div class="fxc" role="dialog" aria-modal="true" aria-label="Поздравление">${html}<button class="btn primary" data-act="fxok">${btn}</button></div>`;
+  sound('win');
+  setTimeout(() => { if (el.classList.contains('open')) { confetti(null, null, 130); setTimeout(() => confetti(innerWidth * .25, innerHeight * .4, 50), 260); setTimeout(() => confetti(innerWidth * .75, innerHeight * .4, 50), 420); } }, delay);
+  setTimeout(() => { const b = el.querySelector('[data-act=fxok]'); if (b) b.focus(); }, 60);
+}
+function fxClose() { const el = $('#fx'); el.className = ''; el.innerHTML = ''; fxBusy = false; setTimeout(fxNext, 200); }
+
+/* плавные полоски, кольцо и счётчики: от прошлого значения к новому */
+const barPrev = {}, cntPrev = {};
+function animateBars() {
+  document.querySelectorAll('[data-bar]').forEach(el => {
+    const k = el.dataset.bar, w = Math.max(0, Math.min(100, +el.dataset.w || 0)), p = barPrev[k], ring = el.tagName.toLowerCase() === 'circle';
+    const set = v => { if (ring) el.style.strokeDashoffset = 100 - v; else el.style.width = v + '%'; };
+    if (p != null && p !== w && !calm()) { el.style.transition = 'none'; set(p); el.getBoundingClientRect(); el.style.transition = ''; requestAnimationFrame(() => set(w)); } else set(w);
+    barPrev[k] = w;
+  });
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const k = el.dataset.count, v = +el.dataset.v || 0, p = cntPrev[k];
+    cntPrev[k] = v;
+    if (p == null || p === v || calm()) { el.textContent = fp(v); return; }
+    const t0 = performance.now(), dur = 650;
+    (function tick(t) { if (!el.isConnected) return; const k2 = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k2, 3); el.textContent = fp(Math.round((p + (v - p) * e) * 10) / 10); if (k2 < 1) requestAnimationFrame(tick); })(t0);
+  });
+}
+
+
 /* ---------- экраны ---------- */
-const TABS = ['week', 'reps', 'side', 'rewards', 'settings'];
+const TABS = ['week', 'reps', 'side', 'rewards', 'hero', 'settings'];
 let tab = TABS.includes(store.get('tab', 'week')) ? store.get('tab', 'week') : 'week';
 let wk = monday(today());
 let selDay = today();
@@ -1730,22 +2133,38 @@ function goalLine(B, act = 'gotab') {
   if (!g) return `<button class="goalline" data-act="${act}" data-tab="rewards"><div class="gt"><span>Выберите награду, на которую копите — здесь будет видно, сколько осталось</span><b>→</b></div></button>`;
   const need = num(g.p), p = need > 0 ? Math.max(0, Math.min(100, B.bal / need * 100)) : 100, left = need - B.bal;
   return `<button class="goalline" data-act="${act}" data-tab="rewards"><div class="gt"><span>коплю на «${esc(g.n)}»</span><b class="num">${left > 0 ? `ещё ${pts(left)}` : 'хватает!'}</b></div>
-    <div class="pbar ${left <= 0 ? 'full' : ''}"><i style="width:${p}%"></i></div></button>`;
+    <div class="pbar ${left <= 0 ? 'full' : ''}"><i data-bar="goal" data-w="${p}"></i></div></button>`;
 }
 
 function renderWeek() {
   const S = weekStats(wk), B = bank(), td = today(), isNow = wk === monday(td);
   if (!S.days.includes(selDay)) selDay = isNow ? td : wk;
   const y = ymd(wk)[0], y2 = ymd(S.days[6])[0];
-  const hello = store.get('hello', false) ? '' : `<div class="card hello" style="--d:20ms"><h2 class="hl">Привет! Превратим жизнь в игру?</h2>
-    <p>За сделанные дела, привычки и квесты начисляйте себе баллы (Б). Они копятся в копилке, и их можно обменять на награды. За пропуски баллы не отнимаются.</p>
-    <div class="row2"><button class="btn outline" data-act="help">Как играть</button><button class="btn primary" data-act="hellook">Понятно</button></div></div>`;
+  const G = gameStats(), dg = dayGoal(), tp = G.dayPts[td] || 0;
+  // первые шаги: что сделать, чтобы игра заработала
+  const steps = [[G.deeds > 0, 'Запишите первое дело', 'сделали что-то сегодня? За это положены баллы', 'logadd', ''],
+    [D.habits.length > 0, 'Добавьте привычку', 'галочка каждый день, бонус за 7 дней из 7', 'habadd', ''],
+    [D.quests.length > 0, 'Возьмите квест недели', 'главная цель недели с наградой в баллах', 'qadd', 'data-k="story"'],
+    [D.shop.length > 0, 'Придумайте награду', 'на что будете копить баллы', 'shopadd', '']];
+  const stepsDone = steps.filter(x => x[0]).length;
+  const stepsHtml = stepsDone === steps.length || store.get('stepsOff', false) ? '' : `<div class="card first" style="--d:60ms">
+    <div class="fh"><h2 class="hl">Первые шаги</h2><b class="num">${stepsDone} из ${steps.length}</b><button class="fx0" data-act="stepsoff" aria-label="Скрыть первые шаги">✕</button></div>
+    <div class="pbar"><i data-bar="steps" data-w="${stepsDone / steps.length * 100}"></i></div>
+    ${steps.map(([ok, t, sub, act, extra], i) => ok ? `<div class="fstep ok"><span class="fn">✓</span><span class="ft"><b>${t}</b></span></div>`
+      : `<button class="fstep" data-act="${act}" ${extra}><span class="fn">${i + 1}</span><span class="ft"><b>${t}</b><i>${sub}</i></span><span class="fgo">→</span></button>`).join('')}</div>`;
+  // пора сделать: повторяющиеся дела, срок которых подошёл
+  const due = isNow ? D.reps.filter(repDue) : [];
+  const dueHtml = due.length ? `<div class="card duec" style="--d:100ms"><h2 class="hl">Пора сделать</h2>
+    <div class="duel">${due.slice(0, 6).map(r => `<button class="dueb" data-act="repdo" data-id="${esc(r.id)}" aria-label="Сделано: ${esc(r.n)}, плюс ${fp(r.p)} баллов"><span class="dk">✓</span><span class="dn">${esc(r.n)}</span><b class="num">+${fp(r.p)}</b></button>`).join('')}</div>
+    ${due.length > 6 ? `<button class="addrow" data-act="gotab" data-tab="reps">ещё ${due.length - 6} — в «Повторах»</button>` : ''}</div>` : '';
+  const dw = plural(G.streak, 'день', 'дня', 'дней');
+  const flame = G.streak ? (G.todayActive ? `${dw} подряд` : `${dw} подряд — сделайте что-нибудь сегодня, чтобы не прервать серию`) : 'начните серию: сделайте что-нибудь сегодня';
   const part = (l, v) => `<span>${l} <b class="num">${fp(v)}</b></span>`;
   const dayHtml = d => {
     const ents = S.log.filter(e => e.date === d).sort((a, b) => (a.ts || 0) - (b.ts || 0));
     const [, , dd] = ymd(d);
     return `<section class="day ${d === selDay ? 'sel' : ''} ${d === td ? 'today' : ''}" data-d="${d}" aria-label="${WDL[toD(d).getDay()]}, ${dd} ${MONTHS_G[ymd(d)[1] - 1]}">
-      <header><b class="num">${dd}</b><span>${WDL[toD(d).getDay()]}${d === td ? ' · сегодня' : ''}</span><i class="num">${S.dayTot[d] ? `итого ${pts(S.dayTot[d])}` : ''}</i></header>
+      <header><b class="num">${dd}</b><span>${WDL[toD(d).getDay()]}${d === td ? ' · сегодня' : ''}</span><i class="num">${(G.dayPts[d] || 0) >= dg ? '★ ' : ''}${G.dayPts[d] ? `итого ${pts(G.dayPts[d])}` : ''}</i></header>
       <div class="ents">${ents.map(e => `<button class="ent" data-act="logedit" data-id="${esc(e.id)}"><span class="ec">${esc(catName(e.cat))}</span><span class="et">${esc(e.t || '—')}</span><b class="ep num">${fp(e.p)}</b></button>`).join('')}
         ${!ents.length && !S.hs.length ? '<div class="dayempty">пока пусто</div>' : ''}</div>
       <button class="addent" data-act="logadd" data-d="${d}">+ дело</button>
@@ -1764,16 +2183,31 @@ function renderWeek() {
       ${!isNow ? '<button class="tbtn" data-act="wnow">к сегодня</button>' : ''}
       <button class="rbtn" data-act="wprev" aria-label="Прошлая неделя">${arrow(0)}</button>
       <button class="rbtn" data-act="wnext" aria-label="Следующая неделя">${arrow(1)}</button></div>
-    ${hello}
-    <div class="card score" style="--d:40ms">
-      <div class="sc-top"><div><div class="k">Б за неделю</div><div class="sc-big num">${fp(S.total)}</div></div>
-        <div class="sc-bank"><div class="k">в копилке</div><b class="num">${pts(B.bal)}</b></div></div>
+    <div class="topgrid" style="--d:40ms"><div>
+    <div class="card score hero">
+      <div class="hr1">
+        <button class="lvl" data-act="gotab" data-tab="hero" aria-label="Уровень ${G.lvl}, ${G.rank}. Открыть страницу героя">${badge(G.lvl)}</button>
+        <div class="hx"><div class="hrank"><b>${G.rank}</b><span>уровень ${G.lvl}</span></div>
+          <div class="pbar xp"><i data-bar="xp" data-w="${G.lvlPct}"></i></div>
+          <div class="hxp num">ещё ${fp(G.xpNeed - G.xpIn)} Б до уровня ${G.lvl + 1}</div></div>
+      </div>
+      <div class="streak ${G.streak ? 'on' : ''} ${G.streak && !G.todayActive ? 'risk' : ''}"><span class="fl" aria-hidden="true">🔥</span><b class="num">${G.streak}</b><span>${flame}</span></div>
+      <div class="hr2">
+        <div class="ring ${tp >= dg ? 'full' : ''}" role="img" aria-label="Сегодня ${fp(tp)} из ${fp(dg)} баллов"><svg viewBox="0 0 80 80"><circle class="rt" cx="40" cy="40" r="34" pathLength="100"/><circle class="rv" cx="40" cy="40" r="34" pathLength="100" data-bar="day" data-w="${Math.min(100, tp / dg * 100)}"/></svg>
+          <div class="rc"><b class="num" data-count="day" data-v="${tp}">${fp(tp)}</b><i class="num">из ${fp(dg)}</i></div></div>
+        <div class="hs3"><div class="k">${tp >= dg ? 'цель дня выполнена ★' : 'цель дня'}</div><div class="hsv num">${tp >= dg ? `+${fp(tp)} Б сегодня` : `ещё ${fp(dg - tp)} Б`}</div></div>
+        <div class="hs3"><div class="k">Б за неделю</div><div class="sc-big num" data-count="wk${wk}" data-v="${S.total}">${fp(S.total)}</div></div>
+        <div class="hs3 sc-bank"><div class="k">в копилке</div><b class="num">${pts(B.bal)}</b></div>
+      </div>
       <div class="parts">${part('дела', S.ordinary)}${part('привычки', S.habitPts)}${part('сюжетные', S.story)}${part('побочные', S.side)}${part('серии', S.series)}</div>
       ${goalLine(B)}
-    </div>
-    <button class="sumbtn" data-act="logadd" style="--d:80ms"><span><b>Записать дело</b><i>категория, что сделано и баллы</i></span><span class="plus">+</span></button>
+    </div></div><div>
+    ${stepsHtml}
+    <button class="sumbtn" data-act="logadd" style="--d:80ms"><span><b>Записать дело</b><i>сделали что-то? получите за это баллы</i></span><span class="plus">+</span></button>
+    ${dueHtml}
+    </div></div>
     <div class="dstrip" style="--d:100ms">${S.days.map(d => `<button class="${d === selDay ? 'on' : ''} ${d === td ? 'today' : ''}" data-act="day" data-d="${d}" aria-pressed="${d === selDay}">
-      <i>${wd(d)}</i><b class="num">${ymd(d)[2]}</b><small class="num">${S.dayTot[d] ? fp(S.dayTot[d]) : ''}</small></button>`).join('')}</div>
+      <i>${wd(d)}</i><b class="num">${ymd(d)[2]}</b><small class="num">${(G.dayPts[d] || 0) >= dg ? '★ ' : ''}${G.dayPts[d] ? fp(G.dayPts[d]) : ''}</small></button>`).join('')}</div>
     <div class="days" style="--d:120ms">${S.days.map(dayHtml).join('')}</div>
     <div class="wgrid" style="--d:160ms">
       <div>
@@ -1810,8 +2244,8 @@ function renderWeek() {
 function questHtml(q) {
   const steps = q.steps || [];
   const done = steps.filter(s => s.ok).length;
-  return `<div class="quest ${q.st === 'done' ? 'done' : ''}">
-    <button class="qm" data-act="qedit" data-id="${esc(q.id)}"><b>${esc(q.n || 'Квест')}</b>${q.win ? `<i>победа: ${esc(q.win)}</i>` : ''}${steps.length ? `<i>чек-лист: ${done} из ${steps.length}</i>` : ''}</button>
+  return `<div class="quest ${q.st === 'done' ? 'done' : ''}" data-q="${esc(q.id)}">
+    <button class="qm" data-act="qedit" data-id="${esc(q.id)}"><b>${esc(q.n || 'Квест')}</b>${q.win ? `<i>победа: ${esc(q.win)}</i>` : ''}${steps.length ? `<span class="qbar"><span class="pbar"><i data-bar="q${esc(q.id)}" data-w="${done / steps.length * 100}"></i></span><em class="num">${done}/${steps.length}</em></span>` : ''}</button>
     <span class="qr"><b class="qp num">${pts(q.p)}</b><button class="qst ${q.st || 'todo'}" data-act="qst" data-id="${esc(q.id)}" aria-label="Статус: ${stName(q.st)}. Нажмите, чтобы сменить">${stName(q.st)}</button></span>
     ${steps.length ? `<div class="steps">${steps.map(s => `<button class="step ${s.ok ? 'ok' : ''}" data-act="qstep" data-id="${esc(q.id)}" data-s="${esc(s.id)}" aria-pressed="${!!s.ok}"><span class="sb"></span><span class="st">${esc(s.t)}</span></button>`).join('')}</div>` : ''}
   </div>`;
@@ -1886,13 +2320,13 @@ function renderRewards() {
       <div class="goalbox">
         ${D.shop.length ? `<select class="in" id="goalSel" aria-label="Награда, на которую коплю"><option value="">— выберите награду —</option>${D.shop.map(x => `<option value="${esc(x.id)}" ${x.id === D.meta.goal ? 'selected' : ''}>${esc(x.n)} · ${pts(x.p)}</option>`).join('')}</select>` : '<p class="qhint">Сначала добавьте награды в магазин ниже.</p>'}
         ${g ? `<div class="gname">${esc(g.n)}</div>
-          <div class="pbar ${need <= 0 ? 'full' : ''}"><i style="width:${num(g.p) > 0 ? Math.max(0, Math.min(100, B.bal / num(g.p) * 100)) : 100}%"></i></div>
+          <div class="pbar ${need <= 0 ? 'full' : ''}"><i data-bar="goal" data-w="${num(g.p) > 0 ? Math.max(0, Math.min(100, B.bal / num(g.p) * 100)) : 100}"></i></div>
           <div class="gneed ${need <= 0 ? 'ok' : ''}"><span>${pts(Math.max(0, B.bal))} из ${pts(g.p)}</span><b class="num">${need > 0 ? `нужно ещё ${pts(need)}` : 'хватает!'}</b></div>
-          ${need <= 0 ? `<button class="btn primary" data-act="buy" data-id="${esc(g.id)}" style="margin-top:12px">Взять награду</button>` : ''}` : ''}
+           ${need <= 0 ? `<button class="btn primary glow" data-act="buy" data-id="${esc(g.id)}" style="margin-top:12px">Взять награду</button>` : ''}` : ''}
       </div>
     </div>
     <div class="card" style="--d:90ms"><h2 class="hl">Магазин</h2>
-      ${D.shop.length ? `<div class="slist">${D.shop.map(x => `<div class="shopi ${x.id === D.meta.goal ? 'goal' : ''}"><button class="sm" data-act="shopedit" data-id="${esc(x.id)}"><b>${esc(x.n)}</b><i>${[x.cat, num(x.rub) ? fp(x.rub) + ' ₽' : ''].filter(Boolean).map(esc).join(' · ') || '&nbsp;'}</i></button>
+      ${D.shop.length ? `<div class="slist">${D.shop.map(x => `<div class="shopi ${x.id === D.meta.goal ? 'goal' : ''} ${B.bal >= num(x.p) ? 'can' : ''}"><button class="sm" data-act="shopedit" data-id="${esc(x.id)}"><b>${esc(x.n)}</b><i>${[x.cat, num(x.rub) ? fp(x.rub) + ' ₽' : '', B.bal >= num(x.p) ? 'можно взять!' : `ещё ${pts(num(x.p) - B.bal)}`].filter(Boolean).map(esc).join(' · ')}</i><span class="pbar ${B.bal >= num(x.p) ? 'full' : ''}"><i data-bar="shop${esc(x.id)}" data-w="${num(x.p) > 0 ? Math.max(0, B.bal / num(x.p) * 100) : 100}"></i></span></button>
         <b class="shp num">${pts(x.p)}</b><button class="sbtn ${B.bal >= num(x.p) ? 'fill' : ''}" data-act="buy" data-id="${esc(x.id)}" ${B.bal >= num(x.p) ? '' : 'disabled'} aria-label="Взять «${esc(x.n)}»">Взять</button></div>`).join('')}</div>`
         : '<p class="qhint">Добавляйте сюда вещи, впечатления и другие приятные награды, назначайте им стоимость в баллах и копите на то, что хочется.</p>'}
       <button class="addrow" data-act="shopadd">+ награда</button>
@@ -1913,6 +2347,32 @@ function renderRewards() {
   const sel = $('#goalSel'); if (sel) sel.onchange = () => { D.meta = { ...D.meta, goal: sel.value || null }; put('meta'); rerender(); };
 }
 
+function renderHero() {
+  const G = gameStats(), B = G.B, nr = nextRank(G.lvl), got = G.ach.filter(a => a.ok).length;
+  const cur = monday(today()), wks = Array.from({ length: 8 }, (_, i) => shift(cur, -7 * (7 - i)));
+  const tot = wks.map(w => { const x = B.weeks.find(y => y.wk === w); return x ? x.total : 0; }), mx = Math.max(1, ...tot);
+  const tile = (v, k, ic) => `<div><span class="ti" aria-hidden="true">${ic}</span><b class="num">${v}</b><i>${k}</i></div>`;
+  $main.innerHTML = `
+    <div class="jhead" style="--d:0ms"><div class="t"><div class="big">Герой</div><div class="sub">уровень, серия и достижения</div></div></div>
+    <div class="card herobig" style="--d:30ms">
+      <div class="hb1">${badge(G.lvl, 'big')}<div class="hb2"><div class="hbr">${G.rank}</div><div class="hbl">уровень ${G.lvl}</div>
+        <div class="pbar xp"><i data-bar="xp" data-w="${G.lvlPct}"></i></div>
+        <div class="hxp num">${fp(G.xpIn)} из ${fp(G.xpNeed)} Б · ещё ${fp(G.xpNeed - G.xpIn)} до уровня ${G.lvl + 1}</div></div></div>
+      <p class="qhint">Уровень растёт от всех заработанных баллов — тратить их на награды можно спокойно, уровень не упадёт.${nr ? ` Следующее звание — «${nr[1]}» на уровне ${nr[0]}.` : ''}</p>
+      <div class="ranks">${RANKS.map(([l, n]) => `<span class="${G.lvl >= l ? 'on' : ''} ${G.rank === n ? 'cur' : ''}"><b>${n}</b><i>ур. ${l}</i></span>`).join('')}</div>
+    </div>
+    <div class="card" style="--d:60ms"><h2 class="hl">Статистика</h2>
+      <div class="tiles6">${tile(G.streak, plural(G.streak, 'день подряд', 'дня подряд', 'дней подряд'), '🔥')}${tile(G.best, 'лучшая серия', '☄️')}${tile(G.goalDays, 'раз цель дня', '🎯')}${tile(G.deeds, plural(G.deeds, 'дело', 'дела', 'дел'), '✍️')}${tile(G.questsDone, plural(G.questsDone, 'квест', 'квеста', 'квестов'), '🗡️')}${tile(G.buys, plural(G.buys, 'награда', 'награды', 'наград'), '🎁')}</div>
+    </div>
+    <div class="card" style="--d:90ms"><h2 class="hl">Баллы по неделям</h2>
+      <div class="wbars">${wks.map((w, i) => `<button data-act="gowk" data-wk="${w}" class="${w === cur ? 'now' : ''}" aria-label="Неделя ${weekLabel(w)}: ${fp(tot[i])} баллов"><em class="num">${tot[i] ? fp(tot[i]) : ''}</em><span style="height:${Math.max(tot[i] ? 6 : 2, tot[i] / mx * 100)}%"></span><i>${ymd(w)[2]} ${MONTHS_S[ymd(w)[1] - 1]}</i></button>`).join('')}</div>
+      <p class="qhint">Всего заработано ${pts(B.earned)}. Нажмите на столбик, чтобы открыть неделю.</p>
+    </div>
+    <div class="card" style="--d:120ms"><div class="fh"><h2 class="hl">Достижения</h2><b class="num">${got} из ${G.ach.length}</b></div>
+      <div class="achs">${G.ach.map(a => `<div class="ach ${a.ok ? 'ok' : ''}"><span class="ai" aria-hidden="true">${a.ic}</span><b>${a.n}</b><i>${a.desc}</i>${a.ok ? '<em>получено</em>' : `<span class="pbar"><i style="width:${a.cur / a.max * 100}%"></i></span><em class="num">${fp(Math.floor(a.cur))} из ${fp(a.max)}</em>`}</div>`).join('')}</div>
+    </div>`;
+}
+
 function renderSettings() {
   $main.innerHTML = `
     <div class="section" style="--d:0ms"><h2 class="hl">Категории</h2>
@@ -1924,6 +2384,11 @@ function renderSettings() {
     <div class="section" style="--d:15ms"><h2 class="hl">Привычки</h2>
       ${D.habits.filter(h => !h.to || h.to > monday(today())).map(h => `<button class="lrow" data-act="habedit" data-id="${esc(h.id)}"><span class="ln">${esc(h.n)}</span><b class="lp num">${fp(h.p)} Б/день${num(h.bonus) ? ` · 7/7: ${fp(h.bonus)}` : ''}</b></button>`).join('') || '<p class="hint" style="margin:0 4px">Привычек пока нет.</p>'}
       <button class="addrow" data-act="habadd">+ привычка</button>
+    </div>
+    <div class="section" style="--d:25ms"><h2 class="hl">Игра</h2>
+      <div class="setrow"><span class="l">Цель дня, Б<i>сколько баллов в день — уже хороший день. Кольцо на «Неделе» заполняется до этой цели</i></span><input class="in num" id="dayGoalIn" inputmode="decimal" value="${fpIn(dayGoal())}" aria-label="Цель дня в баллах"></div>
+      <label class="toggle"><input type="checkbox" id="soundIn" ${store.get('sound', false) ? 'checked' : ''}><span>Звуки: баллы, квесты, новый уровень</span></label>
+      <button class="btn outline" data-act="fxdemo" style="margin-top:10px">Показать, как выглядит новый уровень</button>
     </div>
     <div class="section" style="--d:30ms"><h2 class="hl">Стиль</h2><div class="skins">${SKINS.map(([id, n]) => `<button class="skinb ${skin === id ? 'on' : ''}" data-act="skin" data-id="${id}">
         <span class="sp0" style="${id === 'paper' ? 'background:#B3B19C;box-shadow:inset 0 -18px 0 #EDE7D7, inset 0 -20px 0 #26251F' : id === 'apple' ? 'background:#F5FDE8;box-shadow:inset 0 0 0 2.5px #8ed24a' : id === 'notebook' ? 'background:#FBF7EE repeating-linear-gradient(180deg,transparent 0 9px,#DCE6EF 9px 10px);box-shadow:inset 9px 0 0 -7.5px #E7A39A' : `background:${theme.paper};box-shadow:inset 0 -18px 0 ${theme.page}`}">${id === 'apple' ? '<span style="position:absolute;inset:0;display:grid;place-items:center;font-size:26px">🍏</span>' : id === 'paper' ? '<span style="position:absolute;left:8px;top:8px;font:600 10px monospace;color:#26251F">01 //</span>' : id === 'notebook' ? '<span style="position:absolute;left:12px;top:6px;font:700 18px Caveat,cursive;color:#2D4C9E">квест</span>' : ''}</span><b>${n}</b></button>`).join('')}</div>
@@ -1948,12 +2413,15 @@ function render(anim) {
   $main.classList.toggle('intro', !!anim);
   document.querySelectorAll('#nav button').forEach(b => { const on = b.dataset.tab === tab; b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
   document.body.classList.toggle('wkwide', tab === 'week');
-  if (tab === 'week') renderWeek(); else if (tab === 'reps') renderReps(); else if (tab === 'side') renderSide(); else if (tab === 'rewards') renderRewards(); else renderSettings();
+  if (tab === 'week') renderWeek(); else if (tab === 'reps') renderReps(); else if (tab === 'side') renderSide(); else if (tab === 'rewards') renderRewards(); else if (tab === 'hero') renderHero(); else renderSettings();
   const B = bank();
-  $('#bal').innerHTML = `<svg viewBox="-1 -1 2 2" aria-hidden="true"><path d="${STAR_PATH}"/></svg><b class="num">${fp(B.bal)}</b> Б`;
+  $('#bal').innerHTML = `<svg viewBox="-1 -1 2 2" aria-hidden="true"><path d="${STAR_PATH}"/></svg><b class="num" data-count="bal" data-v="${B.bal}">${fp(B.bal)}</b> Б`;
+  animateBars();
   $('#bal').setAttribute('aria-label', `В копилке ${fp(B.bal)} баллов`);
   prepareWorkspace();
   uiLayoutSoon();
+  const di = $('#dayGoalIn'); if (di) di.onchange = () => { const v = num(di.value); if (v > 0) { D.meta = { ...D.meta, dayGoal: v }; put('meta'); toast(`Цель дня: ${fp(v)} Б`); } di.value = fpIn(dayGoal()); };
+  const si = $('#soundIn'); if (si) si.onchange = () => { store.set('sound', si.checked); if (si.checked) sound('done'); };
 }
 function goTab(t) { tab = t; store.set('tab', t); render(true); window.scrollTo(0, 0); }
 
@@ -2060,7 +2528,7 @@ function logSave() {
   if (tab !== 'week') { tab = 'week'; store.set('tab', tab); }
   rerender();
   toast(isNew ? `+${fp(p)} Б · ${catName(x.cat)}` : 'Сохранено');
-  if (isNew) popButton(document.querySelector(`.day.sel .ent[data-id="${CSS.escape(x.id)}"], .day[data-d="${x.date}"] .ent[data-id="${CSS.escape(x.id)}"]`));
+  if (isNew) { const n = document.querySelector(`.day[data-d="${x.date}"] .ent[data-id="${CSS.escape(x.id)}"]`); if (n) n.classList.add('new'); popButton(n); flyPts(n && rectOf(n) ? n : $('.sumbtn'), p); }
 }
 
 /* квест */
@@ -2106,7 +2574,7 @@ function questSave() {
   put('quests'); closeModal();
   if (tab !== 'week' || wk !== x.wk) { wk = x.wk; tab = 'week'; store.set('tab', tab); }
   rerender();
-  toast(st === 'done' && was !== 'done' ? `Квест готов: +${fp(x.p)} Б` : isNew ? 'Квест добавлен' : 'Сохранено');
+  if (st === 'done' && was !== 'done') questWin(x); else toast(isNew ? 'Квест добавлен' : 'Сохранено');
 }
 
 /* привычка */
@@ -2166,9 +2634,9 @@ function repDo(id, btn) {
   const s = secOf(r.sec), cat = s && catOf(s.cat) ? s.cat : '';
   const x = { id: newId(), ts: Date.now(), date: today(), cat, t: r.n, p: num(r.p), rep: r.id };
   D.log.push(x); put('log');
-  popButton(btn);
+  popButton(btn); flyPts(btn, x.p);
   setTimeout(rerender, 260);
-  toast(`+${fp(x.p)} Б · записано на сегодня`);
+  toast(`«${r.n}» записано на сегодня`);
 }
 function openSec(s) {
   const isNew = !s;
@@ -2247,6 +2715,25 @@ function openEarn(x) {
     ${isNew ? '' : delBtn('earndel')}`, isNew ? '#eN' : null);
 }
 
+/* первый запуск */
+function openWelcome() {
+  store.set('hello', true);
+  edit = { k: 'welcome', goal: dayGoal() };
+  const li = (ic, b, i) => `<li><span aria-hidden="true">${ic}</span><div><b>${b}</b><i>${i}</i></div></li>`;
+  openModal(`<div class="welcome"><div class="wbadge">${badge(1, 'big')}</div><h2 id="dt">Превратим дела в игру</h2>
+    <p class="wl">Вы — герой первого уровня. Правила простые:</p>
+    <ul class="wlist">
+      ${li('✍️', 'Делайте дела', 'записали сделанное — получили баллы (Б)')}
+      ${li('🔥', 'Держите серию', 'отмечайте привычки и не пропускайте дни')}
+      ${li('🗡️', 'Берите квесты', 'главные цели недели с большой наградой')}
+      ${li('🎁', 'Забирайте награды', 'копите баллы и меняйте на то, что назначили сами')}
+      ${li('🛡️', 'Растите', 'баллы поднимают уровень, за успехи дают достижения')}
+    </ul>
+    <div class="fld"><span>Цель дня: сколько баллов — уже хороший день?</span><div class="seg small">${[5, 10, 15, 20].map(v => `<button data-act="wgoal" data-v="${v}" class="${v === edit.goal ? 'on' : ''}">${v} Б</button>`).join('')}</div></div>
+    <p class="hint">Ориентир: небольшое дело — 1–3 Б, важное — 5–10 Б. За пропуски баллы не отнимаются. Цель дня можно поменять в Настройках.</p>
+    <button class="fix" data-act="welcomego">Начать игру</button></div>`);
+}
+
 /* как играть */
 function openHelp() {
   edit = { k: 'help' };
@@ -2261,6 +2748,12 @@ function openHelp() {
     <li>Если дело из нескольких шагов, сделайте его квестом с чек-листом.</li></ul>
     <h3>3. Замечайте прогресс</h3><p>Итоги недели считаются сами. Если что-то не успели, вернитесь к этому позже. За пропуски баллы не отнимаются. Новая неделя начинается сама, привычки остаются.</p>
     <h3>4. Получайте награды</h3><p>Баллы недели сразу попадают в копилку. В «Наградах» — магазин, цель накопления и история покупок.</p>
+    <h3>5. Растите</h3>
+    <ul><li><b>Уровень героя</b> растёт от всех заработанных баллов и не падает, когда вы тратите их на награды.</li>
+    <li><b>Серия</b> 🔥 — сколько дней подряд вы сделали хотя бы что-то: дело, привычку или квест.</li>
+    <li><b>Цель дня</b> — кольцо на «Неделе». Набрали столько баллов за день — день удался (★).</li>
+    <li><b>Достижения</b> и статистика — на вкладке «Герой».</li>
+    <li>«Пора сделать» на «Неделе» напоминает о делах из «Повторов», срок которых подошёл.</li></ul>
     <h3>Как назначать баллы</h3>
     <p>Баллы показывают не потраченное время, а ценность действия для вас. Чем сильнее дело приближает к важной цели, тем больше баллов. Два часа не всегда ценнее двадцати минут.</p>
     <ul><li>Подготовка тоже считается, но обычно стоит меньше законченного результата.</li>
@@ -2286,7 +2779,11 @@ document.addEventListener('click', e => {
     case 'delno': { const b = $('#delBox'); if (b) b.innerHTML = ''; break; }
     case 'gotab': goTab(el.dataset.tab); break;
     case 'help': openHelp(); break;
-    case 'hellook': store.set('hello', true); rerender(); break;
+    case 'fxok': fxClose(); break;
+    case 'fxdemo': fxQ.push({ t: 'lvl', G: gameStats() }); fxNext(); break;
+    case 'stepsoff': store.set('stepsOff', true); rerender(); break;
+    case 'wgoal': edit.goal = num(el.dataset.v); el.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); break;
+    case 'welcomego': { const g = edit.goal; closeModal(); if (g && g !== dayGoal()) { D.meta = { ...D.meta, dayGoal: g }; put('meta'); } rerender(); break; }
     case 'pset': { const i = $('#' + el.dataset.t); if (i) { i.value = el.dataset.v; i.dispatchEvent(new Event('input')); } break; }
 
     // неделя
@@ -2306,8 +2803,9 @@ document.addEventListener('click', e => {
       rerender();
       if (!on) {
         const b = document.querySelector(`.hab[data-d="${d}"][data-id="${CSS.escape(id)}"]`); popButton(b);
-        const S = weekStats(monday(d)), st = S.hstat.find(x => x.h.id === id);
-        toast(st && st.n === 7 ? `Серия 7/7: «${h.n}»${num(h.bonus) ? ` · бонус +${fp(h.bonus)} Б` : ''}` : `+${fp(h.p)} Б · ${h.n}`);
+        const S = weekStats(monday(d)), st = S.hstat.find(x => x.h.id === id), full = st && st.n === 7;
+        flyPts(b, num(h.p) + (full ? num(h.bonus) : 0));
+        if (full) { banner('⭐', 'Серия 7/7!', `«${h.n}» — все семь дней${num(h.bonus) ? ` · бонус +${fp(h.bonus)} Б` : ''}`); confetti(null, null, 90); sound('done'); }
       }
       break;
     }
@@ -2331,13 +2829,13 @@ document.addEventListener('click', e => {
       const q = findBy('quests', id); if (!q) break;
       const order = STATUS.map(s => s[0]), next = order[(order.indexOf(q.st || 'todo') + 1) % order.length];
       setQuestStatus(q, next); put('quests'); rerender();
-      if (next === 'done') { popButton(document.querySelector(`.qst[data-id="${CSS.escape(id)}"]`)); toast(`Квест готов: +${fp(q.p)} Б`); }
+      if (next === 'done') questWin(q);
       break;
     }
     case 'qstep': {
       const q = findBy('quests', id); if (!q) break;
       const s = (q.steps || []).find(x => x.id === el.dataset.s); if (!s) break;
-      s.ok = !s.ok; put('quests'); rerender();
+      s.ok = !s.ok; put('quests'); rerender(); if (s.ok) { sound('tick'); popButton(document.querySelector(`.step[data-s="${CSS.escape(s.id)}"]`), false); }
       if (s.ok && q.steps.every(x => x.ok) && q.st !== 'done') toast('Все шаги готовы — отметьте квест «✅ готов»');
       break;
     }
@@ -2430,7 +2928,7 @@ document.addEventListener('click', e => {
       D.buys.push({ id: newId(), ts: Date.now(), date: today(), rid: x.id, n: x.n, p: num(x.p) });
       put('buys');
       if (D.meta.goal === x.id) { D.meta = { ...D.meta, goal: null }; put('meta'); }
-      closeModal(); rerender(); popButton($('#bal')); toast(`Награда ваша: ${x.n}!`); break;
+      closeModal(); rerender(); fxQ.push({ t: 'reward', n: x.n, p: num(x.p) }); fxNext(); break;
     }
     case 'buyedit': openBuyEdit(findBy('buys', id)); break;
     case 'buydel': confirmBox('Отменить покупку? Баллы вернутся в копилку.', 'buydelyes', 'Отменить покупку'); break;
@@ -2469,8 +2967,18 @@ document.addEventListener('change', e => {
   const t = e.target.dataset && e.target.dataset.tag;
   if (t) { const x = findBy('tags', t), n = e.target.value.trim(); if (x && n && n !== x.n) { x.n = n; put('tags'); rerender(); } else if (x) e.target.value = x.n; }
 });
+function questWin(q) {
+  const b = document.querySelector(`.qst[data-id="${CSS.escape(q.id)}"]`), r = rectOf(b);
+  popButton(b); flyPts(b, q.p); sound('done');
+  if (r) confetti(r.left + r.width / 2, r.top + r.height / 2, 70); else confetti();
+  banner(q.kind === 'side' ? '🍋' : '🗡️', 'Квест выполнен!', `«${q.n}» · +${fp(q.p)} Б`);
+  const card = document.querySelector(`.quest[data-q="${CSS.escape(q.id)}"]`); if (card) card.classList.add('win');
+}
 document.addEventListener('keydown', e => {
+  if ($('#fx').classList.contains('open')) { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); fxClose(); } return; }
   if (e.key === 'Escape' && $modal.classList.contains('open')) { closeModal(); return; }
+  // на компьютере: N — записать дело
+  if ((e.key === 'n' || e.key === 'N' || e.key === 'т' || e.key === 'Т') && !e.ctrlKey && !e.metaKey && !e.altKey && !$modal.classList.contains('open') && !/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) { e.preventDefault(); openLog(null, today()); return; }
   if (e.key === 'Enter' && $modal.classList.contains('open') && e.target.tagName === 'INPUT' && !e.isComposing) {
     const b = $modal.querySelector('.fix'); if (b && e.target.id !== 'tagNew') { e.preventDefault(); b.click(); }
     else if (e.target.id === 'tagNew') { e.preventDefault(); const a = $modal.querySelector('[data-act=tagadd]'); if (a) a.click(); }
@@ -2638,7 +3146,7 @@ window.addEventListener('storage', e => {
   if (k === 'sync') { syncCfg = store.get('sync', null); syncStatus(syncState); return; }
   if (!SK2D[k]) return;
   const v = getK(k);
-  syncLoadMem(k, v); syncSeen(k, v);
+  syncLoadMem(k, v); syncSeen(k, v); gameMark();
   if (syncCanApply()) rerender(); else syncRenderWait = true;
 });
 
@@ -2723,7 +3231,7 @@ async function syncRun() {
       if (changed) {
         const a = countOf(Ld), b = countOf(Md);
         if (b.log < a.log || b.quests < a.quests || b.buys < a.buys || b.other < a.other) backupMake('до удаления с другого устройства', Ld);
-        syncApply(M, Md); rerender();
+        syncApply(M, Md); gameMark(); rerender();
         toast('Обновлено с другого устройства');
       } else syncApply(M, Ld, false);
       if (have && sigOf(M) === sigOf(R)) { cfg.v = rv; syncStatus('ok'); return; }
@@ -2760,7 +3268,7 @@ function restoreDoc(Dc, why) {
     const v = Dc[k] == null ? (Array.isArray(DEFS[k]) ? [] : {}) : Dc[k];
     syncLoadMem(k, v); store.set(k, v);
   }
-  rerender(); toast(why || 'Данные возвращены'); syncSoon(500);
+  clearTimeout(gameT); gameMark(); rerender(); toast(why || 'Данные возвращены'); syncSoon(500);
 }
 const backupWord = Dc => { const c = countOf(Dc); return `${c.log} ${plural(c.log, 'дело', 'дела', 'дел')}, ${c.quests} ${plural(c.quests, 'квест', 'квеста', 'квестов')}, ${c.buys} ${plural(c.buys, 'покупка', 'покупки', 'покупок')}`; };
 const atWord = t => { const d = new Date(t), s = dstr(d); return `${s === today() ? 'сегодня' : longDate(s)}, ${hm(t)}`; };
@@ -2797,7 +3305,7 @@ function syncInfoHtml() {
 const syncLink = () => `${location.origin}${location.pathname}#join=${syncFmt(syncCfg.code)}${syncSrv() !== SYNC_SERVER ? '&s=' + encodeURIComponent(syncSrv()) : ''}`;
 function syncSection() {
   if (syncCfg) return `
-    <p class="hint" style="margin:6px 0 4px">Дела, привычки, квесты, повторы, побочки и награды одинаковые на всех устройствах с этим кодом.</p>
+    <p class="hint" style="margin:6px 0 4px">Дела, привычки, квесты, повторы, побочки и награды одинаковые на всех устройствах с этим кодом — а значит, и уровень, серия и достижения.</p>
     <p class="synci" id="syncInfo">${syncInfoHtml()}</p>
     <div class="synccode"><span>Код</span><b>${syncFmt(syncCfg.code)}</b></div>
     <p class="hint" style="margin:0 0 8px">Код — это и ключ шифрования. Вводите его только на своих устройствах.</p>
@@ -2958,6 +3466,7 @@ function syncFromHash() {
   if (h.get('s')) store.set('syncServer', h.get('s').replace(/\/+$/, ''));
   if (syncCfg) syncOff();
   syncJoin = { code };
+  if ($modal.classList.contains('open')) closeModal();
   tab = 'settings';
   if (syncReady) render();
   setTimeout(() => { const b = document.querySelector('[data-act=syncjoingo]'); if (b) b.click(); }, 50);
@@ -2986,7 +3495,9 @@ syncReady = true;
 let lastDay = today();
 setInterval(() => { const d = today(); if (d !== lastDay) { const wasNow = wk === monday(lastDay); lastDay = d; if (wasNow) { wk = monday(d); selDay = d; } if (syncCanApply()) rerender(); } }, 60000);
 
+gameMark();
 render(true);
+if (!store.get('hello', false)) { if (D.log.length || D.habits.length || D.quests.length) store.set('hello', true); else if (!syncJoin) openWelcome(); }
 syncStatus('');
 syncSoon(600);
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});

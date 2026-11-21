@@ -3,7 +3,7 @@
 // (with sync between devices, an outdated copy of the app could otherwise overwrite fresh data).
 // Other files: cache first, refreshed in the background. The sync server (another origin) always goes to the network.
 // Bump VERSION when files change so phones pick up the new version on the next launch.
-const VERSION = 'scrquest-v1';
+const VERSION = 'scrquest-v2';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png',
   '../lora_regular.woff', '../lora_medium.woff', '../lora_italic.woff', '../lora_medium_italic.woff'];
 
